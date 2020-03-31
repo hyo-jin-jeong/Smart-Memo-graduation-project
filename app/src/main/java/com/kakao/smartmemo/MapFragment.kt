@@ -11,7 +11,7 @@ import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
 
-class MapFragment : Fragment() {
+class MapFragment : Fragment(), MapView.POIItemEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -50,7 +50,7 @@ class MapFragment : Fragment() {
 
 
         mapView.addPOIItem(customMarker)
-        mapView.setPOIItemEventListener()
+        mapView.setPOIItemEventListener(this)
 
         return view
     }
@@ -86,12 +86,34 @@ class MapFragment : Fragment() {
         }
     }
 
+    private fun showDialog() {
+        val dialog = FragmentDialog()
+        dialog.show(super.getChildFragmentManager(), "Oh?!")
+    }
+
+    override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onCalloutBalloonOfPOIItemTouched(
+        p0: MapView?,
+        p1: MapPOIItem?,
+        p2: MapPOIItem.CalloutBalloonButtonType?
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?) {
+        TODO("Not yet implemented")
+    }
+
+    //marker 선택 시
+    override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
+        showDialog()
+    }
+
 }
 
-private fun MapView.setPOIItemEventListener() {
-    //여기는 고치는 중이라 안지울게요
-//    val fm: FragmentManager =
-//    val overlay = FragmentDialog()
-//    overlay.show(fm, "FragmentDialog")
 
-}
+
+

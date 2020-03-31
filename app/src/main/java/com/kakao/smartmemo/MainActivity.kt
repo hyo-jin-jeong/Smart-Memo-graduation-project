@@ -1,6 +1,5 @@
 package com.kakao.smartmemo
 
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -17,7 +16,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.ui.main.SectionsPagerAdapter
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -51,7 +49,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.menu)
 
-        val navigationView: NavigationView = findViewById(R.id.nav_view) as NavigationView
+        val navigationView: NavigationView = findViewById<NavigationView>(R.id.nav_view)
         mDrawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
         navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true

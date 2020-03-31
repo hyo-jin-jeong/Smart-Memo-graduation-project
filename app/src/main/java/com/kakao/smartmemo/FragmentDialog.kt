@@ -32,9 +32,20 @@ class FragmentDialog : DialogFragment() {
         // tab slider
         adapter = DialogSectionsPagerAdapter(this, childFragmentManager)
 
+        val indicator = CircleIndicator(context)
         // Set up the ViewPager with the sections adapter.
         viewPager = view.findViewById(R.id.dialog_pager)
         viewPager.adapter = adapter
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            override fun onPageScrollStateChanged(p0: Int) { }
+            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) { }
+            override fun onPageSelected(p0: Int) {
+                indicator.selectDot(p0)
+            }
+        })
+
+        indicator.createDotPanel(2, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
+
         return view
     }
 
