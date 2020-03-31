@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 
 class TodoListFragment : Fragment() {
+
+    private lateinit var todolist : RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -20,37 +24,27 @@ class TodoListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
 
+        todolist = view.findViewById(R.id.todolist) as RecyclerView
+        todolist.adapter = TodoAdapter()
+        todolist.layoutManager = LinearLayoutManager(view.context)
+
         return view
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+        //return super.onCreateOptionsMenu(menu);
         super.onCreateOptionsMenu(menu, menuInflater);
-        (activity as MainActivity).toolbar.title = resources.getString(R.string.tab_text_3)
         val menuInflater = menuInflater
-        menuInflater.inflate(R.menu.opt, menu)
-        menu.getItem(1)?.isChecked = true
+        menuInflater.inflate(R.menu.select_todolist_remove, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        return when (item.itemId) {
-            //학교를 눌렀을 때
-            R.id.action_settings1 -> {
-                item.isChecked = !item.isChecked
-                when(item.isChecked) {
-                    true -> Toast.makeText(view?.context, item.title, Toast.LENGTH_SHORT).show()
-                }
-                true
+        return when(item?.itemId) {
+            R.id.action_todolist_remove -> {
+                return true
             }
-            //가족을 눌렀을 때
-            R.id.action_settings2 -> {
-                item.isChecked = !item.isChecked
-                when(item.isChecked) {
-                    true -> Toast.makeText(view?.context, item.title, Toast.LENGTH_SHORT).show()
-                }
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+            else ->
+                super.onOptionsItemSelected(item)
         }
     }
 }
