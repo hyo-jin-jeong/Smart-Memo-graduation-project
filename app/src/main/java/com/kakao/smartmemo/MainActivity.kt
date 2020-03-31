@@ -1,12 +1,12 @@
 package com.kakao.smartmemo
 
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 
 import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
@@ -67,6 +67,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             menuItem.isChecked=false
             true
+        }
+        val naviHeaderView =nav_view.getHeaderView(0)
+        val memberIcon = naviHeaderView.findViewById<ImageView>(R.id.imageView)
+        memberIcon.setOnClickListener {
+            val memberData = Intent(this,MemberData::class.java)
+            startActivity(memberData)
         }
 
         // FloatingActionButton

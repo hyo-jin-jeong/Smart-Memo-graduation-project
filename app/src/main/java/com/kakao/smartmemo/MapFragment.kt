@@ -3,6 +3,7 @@ package com.kakao.smartmemo
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.map_fragment.view.*
@@ -12,6 +13,8 @@ import net.daum.mf.map.api.MapView
 
 
 class MapFragment : Fragment() {
+    lateinit var mapView :MapView
+    lateinit var mapViewContainer :ViewGroup
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -23,8 +26,14 @@ class MapFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.map_fragment, container, false)
 
-        val mapView = MapView(view.context)
-        val mapViewContainer = view.map_view as ViewGroup
+
+
+        return view
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mapView = MapView(view.context)
+        mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
 
         val mapPoint = MapPoint.mapPointWithGeoCoord(37.581759, 127.010337)
@@ -52,13 +61,11 @@ class MapFragment : Fragment() {
         mapView.addPOIItem(customMarker)
         mapView.setPOIItemEventListener()
 
-        return view
     }
-
     override fun onCreateOptionsMenu(menu: Menu, menuInflater:MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);
-
         (activity as MainActivity).toolbar.title = resources.getString(R.string.tab_text_1)
+
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_group_in_map, menu)
         menu.getItem(1)?.isChecked = true
@@ -66,6 +73,10 @@ class MapFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            android.R.id.home -> {
+                (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
+                return true
+            }
             //학교를 눌렀을 때
             R.id.action_settings1 -> {
                 item.isChecked = !item.isChecked

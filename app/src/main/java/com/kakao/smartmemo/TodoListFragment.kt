@@ -2,12 +2,11 @@ package com.kakao.smartmemo
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 
 class TodoListFragment : Fragment() {
 
@@ -32,14 +31,18 @@ class TodoListFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
-        //return super.onCreateOptionsMenu(menu);
-        super.onCreateOptionsMenu(menu, menuInflater);
+        super.onCreateOptionsMenu(menu, menuInflater)
+        (activity as MainActivity).toolbar.title="Todo List"
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_todolist_remove, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item?.itemId) {
+            android.R.id.home -> {
+                (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
+                return true
+            }
             R.id.action_todolist_remove -> {
                 return true
             }
