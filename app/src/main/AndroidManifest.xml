@@ -57,6 +57,16 @@
             android:name=".ShowMemo"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".MemberData"
+            android:label="회원 정보"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".MemberDataChange"
+            android:label="회원 정보 수정"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

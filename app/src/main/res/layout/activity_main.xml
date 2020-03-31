@@ -43,8 +43,8 @@
             android:visibility="invisible"
             app:srcCompat="@drawable/memo"
             app:borderWidth="0dp"
-            app:fabSize="auto"
-            app:maxImageSize="57dp"
+            app:fabSize="normal"
+            app:maxImageSize="40dp"
             app:pressedTranslationZ="12dp"
             app:layout_constraintBottom_toTopOf="@+id/fab_todo"
             app:layout_constraintRight_toRightOf="parent"/>
@@ -59,8 +59,8 @@
             android:visibility="invisible"
             app:srcCompat="@drawable/check"
             app:borderWidth="0dp"
-            app:fabSize="auto"
-            app:maxImageSize="57dp"
+            app:fabSize="normal"
+            app:maxImageSize="40dp"
             app:pressedTranslationZ="12dp"
             app:layout_constraintBottom_toTopOf="@+id/fab"
             app:layout_constraintRight_toRightOf="parent"/>

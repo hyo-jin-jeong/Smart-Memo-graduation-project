@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_time_alarm"
+        android:orderInCategory="100"
+        android:checkable="true"
+        android:title="시간 알람 관리"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_place_alarm"
+        android:orderInCategory="100"
+        android:checkable="true"
+        android:title="장소 알람 관리"
+        app:showAsAction="never" />
+</menu>
