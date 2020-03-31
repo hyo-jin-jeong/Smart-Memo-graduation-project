@@ -47,12 +47,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         myToolbar = findViewById(R.id.toolbar)
         setSupportActionBar(myToolbar)
 
-        getSupportActionBar()?.setDisplayShowTitleEnabled(false)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
-        getSupportActionBar()?.setHomeAsUpIndicator(R.drawable.menu)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.menu)
 
         val navigationView: NavigationView = findViewById(R.id.nav_view) as NavigationView
-        mDrawerLayout = findViewById(R.id.drawer_layout) as DrawerLayout
+        mDrawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
         navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             mDrawerLayout!!.closeDrawers()
@@ -106,20 +106,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun anim() {
-        if (openFlag) {
-            fab.startAnimation(fab_rotate_end)
-            fab_memo.startAnimation(fab_close)
-            fab_todo.startAnimation(fab_close)
-            fab_memo.isClickable = false
-            fab_todo.isClickable = false
-            openFlag = false
-        } else {
-            fab.startAnimation(fab_rotate_start)
-            fab_memo.startAnimation(fab_open)
-            fab_todo.startAnimation(fab_open)
-            fab_memo.isClickable = true
-            fab_memo.isClickable = true
-            openFlag = true
+        when {
+            openFlag -> {
+                fab.startAnimation(fab_rotate_end)
+                fab_memo.startAnimation(fab_close)
+                fab_todo.startAnimation(fab_close)
+                fab_memo.isClickable = false
+                fab_todo.isClickable = false
+                openFlag = false
+            }
+            else -> {
+                fab.startAnimation(fab_rotate_start)
+                fab_memo.startAnimation(fab_open)
+                fab_todo.startAnimation(fab_open)
+                fab_memo.isClickable = true
+                fab_memo.isClickable = true
+                openFlag = true
+            }
         }
     }
 
