@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="group">
+        <item>그룹 선택</item>
+        <item>내 메모</item>
+        <item>학교</item>
+        <item>여행</item>
+    </string-array>
+</resources>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/content_add_group"
+    android:layout_margin="@dimen/marginLeftRight"
+    android:orientation="vertical"
+    tools:showIn="@layout/app_bar_add_group">
+
+    <LinearLayout
+        android:id="@+id/group_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/group_name"
+            android:textSize="@dimen/font_size"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="@dimen/marginLeftRight"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:hint="@string/group_name"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/group_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marginTop"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/group_color"
+                android:textSize="@dimen/font_size"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/marginLeftRight"/>
+            <ImageButton
+                android:id="@+id/color_picker"
+                android:layout_width="@dimen/color_palatte"
+                android:layout_height="@dimen/color_palatte"
+                android:backgroundTint="@color/colorWhite"
+                android:src="@drawable/color_palette"
+                android:scaleType="centerInside" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/group_invitation"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/marginTop"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/group_invitation"
+            android:textSize="@dimen/font_size"
+            android:layout_margin="@dimen/marginLeftRight"
+            android:layout_gravity="center_vertical"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/marginLeftRight">
+            <ImageView
+                android:layout_width="@dimen/color_palatte"
+                android:layout_height="@dimen/color_palatte"
+                android:scaleType="centerInside"
+                android:src="@drawable/kakaotalk"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kakao Talk로 멤버 초대하기"
+                android:textSize="@dimen/font_size"
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="center_vertical"/>
+        </LinearLayout>
+    </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="S A V E"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:textColor="@color/colorWhite"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/save_button"/>
+</LinearLayout>

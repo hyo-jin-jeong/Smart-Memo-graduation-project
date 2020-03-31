@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">SmartMemo</string>
+    <string name="tab_text_1">MAP</string>
+    <string name="tab_text_2">MEMO LIST</string>
+    <string name="tab_text_3">TODO LIST</string>
+    <string name="tab_text_4">장소알람설정</string>
+
+    <string name="fab_memo">일반메모</string>
+    <string name="fab_todo">TODO LIST</string>
+
+    <string name="nav_profile_name">정지원</string>
+    <string name="nav_my_memo">내 메모</string>
+    <string name="nav_group_memo">그룹 메모</string>
+    <string name="add_group">그룹 추가</string>
+
+    <string name="group_name">그룹 이름</string>
+    <string name="group_color">테마 컬러</string>
+    <string name="group_invitation">그룹 멤버 초대</string>
+
+    <string name="write_memo">메모 작성</string>
+    <string name="writing_location">한성대학교</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:checkableBehavior="single"
+        android:title="@string/nav_my_memo">
+        <item
+            android:id="@+id/nav_my_memo"
+            android:title="@string/nav_my_memo"/>
+    </item>
+    <item android:title="@string/nav_group_memo">
+        <menu>
+            <item
+                android:id="@+id/addGroup"
+                android:icon="@drawable/plus_group"
+                android:title="@string/add_group"/>
+        </menu>
+    </item>
+</menu>
