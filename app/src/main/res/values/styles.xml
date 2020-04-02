@@ -24,4 +24,8 @@
         <item name="android:paddingBottom">4dp</item>
     </style>
 
+    <style name="SplashTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@drawable/app_main_background</item>
+    </style>
+
 </resources>

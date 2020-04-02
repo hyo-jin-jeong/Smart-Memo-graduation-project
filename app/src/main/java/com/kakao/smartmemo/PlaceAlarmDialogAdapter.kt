@@ -3,13 +3,12 @@ package com.kakao.smartmemo
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.kakao.smartmemo.DTO.TodoDTO
+import com.kakao.smartmemo.DTO.AlarmDTO
 import kotlinx.android.synthetic.main.alarm_list_item.view.*
 
 class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.DialogViewHolder>() {
-    private var datas: MutableList<TodoDTO> =
-        mutableListOf(TodoDTO("약먹기"), TodoDTO("도서관 책 반납"))
 
+    var datas:MutableList<AlarmDTO> = mutableListOf(AlarmDTO("한성대학교", "2020.03.14", "도서관 책 "), AlarmDTO("녹십자약국", "2020.03.15", "마스크 사기"))
     //View Holder생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = DialogViewHolder(parent)
 
@@ -20,14 +19,16 @@ class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.Dial
     override fun onBindViewHolder(holder: DialogViewHolder, position: Int) {
         datas[position].let {
             with(holder) {
-                txt_todo!!.text = it.todoContent
+                alarm_place.text = it.place
+                alarm_date.text = it.date
+                alarm_content.text = it.content
             }
         }
 
     }
 
     //데이터들 업데이트
-    fun setDataList(dataList: List<TodoDTO>?) {
+    fun setDataList(dataList: List<AlarmDTO>?) {
         if (dataList == null) {
             return
         }
@@ -35,8 +36,10 @@ class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.Dial
     }
 
     inner class DialogViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.alarm_dialog_list_item, parent, false)) {
+        LayoutInflater.from(parent.context).inflate(R.layout.alarm_list_item, parent, false)) {
 
-        val txt_todo = itemView.textView_alarm_content
+        val alarm_place = itemView.textView_alarm_place
+        val alarm_date = itemView.textView_date
+        val alarm_content = itemView.textView_alarm_content
     }
 }

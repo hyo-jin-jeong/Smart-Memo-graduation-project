@@ -26,81 +26,98 @@
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/time_alarm_layout"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/time_alarm_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="#bfd1ff"
+                android:layout_below="@id/textView"
+                app:cardElevation="10dp"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    app:cardBackgroundColor="#bfd1ff"
-                    android:layout_below="@id/textView"
-                    app:cardElevation="10dp"
-                    app:cardCornerRadius="10dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:id="@+id/textView_time"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp">
-                        <TextView
-                            android:id="@+id/textView_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_gravity="center_vertical"
-                            android:text="시간 알림"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-                        <Switch
-                            android:id="@+id/switch_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="20dp"
-                            android:layout_marginTop="15dp"
-                            android:thumb="@drawable/switch_thumb"
-                            android:track="@drawable/switch_track_selector"
-                            android:layout_alignParentRight="true"/>
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:text="시간 알림"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                    <Switch
+                        android:id="@+id/switch_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:thumb="@drawable/switch_thumb"
+                        android:track="@drawable/switch_track_selector"
+                        android:layout_alignParentRight="true"/>
+
+                    <ViewStub
+                        android:id="@+id/stub_alarm_time"
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:layout="@layout/alarm_settings"
+                        android:layout_below="@id/switch_time"
+                        android:layout_alignParentLeft="true"/>
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
 
 
-                <androidx.cardview.widget.CardView
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_below="@+id/time_alarm_layout"
+                app:cardBackgroundColor="#bfd1ff"
+                app:cardElevation="10dp"
+                app:cardCornerRadius="10dp">
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_below="@+id/time_alarm_layout"
-                    app:cardBackgroundColor="#bfd1ff"
-                    app:cardElevation="10dp"
-                    app:cardCornerRadius="10dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:id="@+id/textView_location"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp">
-                        <TextView
-                            android:id="@+id/textView_location"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:layout_marginTop="10dp"
-                            android:text="장소 알림"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-                        <Switch
-                            android:id="@+id/switch_location"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="20dp"
-                            android:layout_marginTop="15dp"
-                            android:thumb="@drawable/switch_thumb"
-                            android:track="@drawable/switch_track_selector"
-                            android:layout_alignParentRight="true"/>
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-            </RelativeLayout>
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="10dp"
+                        android:text="장소 알림"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                    <Switch
+                        android:id="@+id/switch_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:thumb="@drawable/switch_thumb"
+                        android:track="@drawable/switch_track_selector"
+                        android:layout_alignParentRight="true"/>
+
+                    <ViewStub
+                        android:id="@+id/stub_alarm_location"
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:layout="@layout/alarm_settings"
+                        android:layout_below="@id/switch_location"
+                        android:layout_alignParentLeft="true"/>
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+
     </androidx.core.widget.NestedScrollView>
     <Button
         android:id="@+id/button"
