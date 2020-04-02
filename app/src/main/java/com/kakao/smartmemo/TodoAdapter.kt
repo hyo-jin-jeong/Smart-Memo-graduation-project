@@ -17,7 +17,7 @@ class TodoAdapter : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
         mutableListOf(TodoDTO("약먹기"), TodoDTO("도서관 책 반납"))
 
     private lateinit var textviewCancel : TextView
-    private lateinit var bellTodo : ImageButton
+    private lateinit var bellTodo : Button
     private lateinit var plusTodo : ImageButton
     private lateinit var editTextTodo: EditText
 
