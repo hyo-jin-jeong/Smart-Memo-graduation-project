@@ -3,11 +3,12 @@ package com.kakao.smartmemo
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import kotlinx.android.synthetic.main.content_add_group.*
 
 
 class AddGroup : AppCompatActivity(), ColorPickerDialogListener {
@@ -21,7 +22,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener {
 
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
 
-        var colorPicker = findViewById<ImageButton>(R.id.color_picker)
+        var colorPicker = findViewById<ImageView>(R.id.color_picker)
         colorPicker.setOnClickListener {
             var builder = ColorPickerDialog.newBuilder()
             builder.setDialogType(ColorPickerDialog.TYPE_PRESETS)
@@ -31,6 +32,10 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener {
                 .show(this)
         }
 
+        var saveBtn = save_group
+        saveBtn.setOnClickListener {
+            finish()
+        }
     }
 
     // 뒤로가기 버튼 누르면 이전 액티비티로 돌아가는 것을 판단해주는 함수
@@ -45,11 +50,11 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onDialogDismissed(dialogId: Int) {
-    }
+    override fun onDialogDismissed(dialogId: Int) {  }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
-        Log.e("Color pick - ", "dialogId : ${dialogId.toString()}, color : $color")
+        val selectedColor = selected_color
+        selectedColor.setBackgroundColor(color)
     }
 
 }

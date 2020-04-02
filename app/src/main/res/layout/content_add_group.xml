@@ -24,7 +24,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:hint="@string/group_name"/>
+            android:hint="@string/group_name"
+            android:importantForAutofill="no"
+            tools:targetApi="O" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,13 +46,21 @@
                 android:textSize="@dimen/font_size"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="@dimen/marginLeftRight"/>
-            <ImageButton
+            <ImageView
                 android:id="@+id/color_picker"
                 android:layout_width="@dimen/color_palatte"
                 android:layout_height="@dimen/color_palatte"
-                android:backgroundTint="@color/colorWhite"
                 android:src="@drawable/color_palette"
+                android:background="@android:color/transparent"
                 android:scaleType="centerInside" />
+            <View
+                android:id="@+id/selected_color"
+                android:layout_width="60sp"
+                android:layout_height="match_parent"
+                android:paddingTop="4sp"
+                android:paddingBottom="4sp"
+                android:background="#FCECC0"
+                android:layout_marginLeft="@dimen/marginLeftRight"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -89,6 +99,7 @@
         </LinearLayout>
     </LinearLayout>
     <Button
+        android:id="@+id/save_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
