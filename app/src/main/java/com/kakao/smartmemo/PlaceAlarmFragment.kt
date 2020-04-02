@@ -30,16 +30,12 @@ class PlaceAlarmFragment : Fragment() {
         Alarm.adapter = AlarmAdapter()
         Alarm.layoutManager = LinearLayoutManager(activity)
 
-        val placeView = inflater.inflate(R.layout.activity_main, container, false)
-        val myToolbar = placeView.toolbar
-        myToolbar.title = "알람관리"
-
         return view
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
-        (activity as MainActivity).toolbar.title="장소알람설정"
+        (activity as MainActivity).toolbar.title="알람설정"
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_alarm, menu)
         menu?.getItem(1)?.isChecked = true

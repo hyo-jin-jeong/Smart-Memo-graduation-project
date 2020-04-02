@@ -66,13 +66,9 @@ class TodoAdapter : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
     }
 
     inner class ViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.todo_list_item, parent, false)) {
-        //val check_todo = itemView.checkBox_todo
         val txt_todo = itemView.textView_todo
-        //val btn_todo = itemView.Btn_todo
 
-        /*fun bind(data: TodoDTO) {
-            txt_todo?.text = data.todoContent
-        }*/
+
 
     }
 }

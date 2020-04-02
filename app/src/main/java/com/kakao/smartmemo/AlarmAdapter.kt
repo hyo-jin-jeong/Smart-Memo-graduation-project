@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.alarm_list_item.view.*
 
 class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(){
 
-    var datas:MutableList<AlarmDTO> = mutableListOf(AlarmDTO("한성대학교", "2020.03.14", "도서관 책 반납"), AlarmDTO("녹십자약국", "2020.03.15", "마스크 사기"))
+    var datas:MutableList<AlarmDTO> = mutableListOf(AlarmDTO("한성대학교", "2020.03.14", "도서관 책 "), AlarmDTO("녹십자약국", "2020.03.15", "마스크 사기"))
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
 
