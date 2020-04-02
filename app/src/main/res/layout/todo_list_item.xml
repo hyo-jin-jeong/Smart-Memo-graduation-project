@@ -39,7 +39,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/Btn_todo"
+            android:id="@+id/btn_todo"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="center"
