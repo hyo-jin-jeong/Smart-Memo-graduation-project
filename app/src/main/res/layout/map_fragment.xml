@@ -20,7 +20,7 @@
         <Switch
             android:id="@+id/memo_switch"
             android:layout_width="110dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginLeft="@dimen/switch_margin"
             android:background="@drawable/on_off_background"
             android:checked="true"
@@ -32,7 +32,7 @@
         <Switch
             android:id="@+id/place_alarm_switch"
             android:layout_width="110dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_toRightOf="@+id/memo_switch"
             android:layout_marginLeft="@dimen/switch_margin"
             android:background="@drawable/on_off_background"
