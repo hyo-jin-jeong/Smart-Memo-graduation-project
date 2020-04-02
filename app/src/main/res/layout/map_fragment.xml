@@ -19,8 +19,6 @@
 
         <Switch
             android:id="@+id/memo_switch"
-            android:track="@drawable/switch_track_selector"
-            android:thumb="@drawable/switch_thumb"
             android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/switch_margin"
