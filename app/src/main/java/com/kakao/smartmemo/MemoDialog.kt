@@ -5,18 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.memo_dialog.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MemoDialog : Fragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.memo_dialog, container, false)
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    private lateinit var memoList: RecyclerView
 
-        memo1.text = "memo page"
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.memo_dialog, container, false)
 
+        memoList = view.findViewById<RecyclerView?>(R.id.alarm_settings_view) as RecyclerView
+        memoList.adapter = MemoDialogAdapter()
+        memoList.layoutManager = LinearLayoutManager(view.context)
+
+        return view
     }
 
 }
+
