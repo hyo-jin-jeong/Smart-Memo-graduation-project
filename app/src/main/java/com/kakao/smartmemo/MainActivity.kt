@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             true
         }
         val naviHeaderView =nav_view.getHeaderView(0)
-        val memberIcon = naviHeaderView.findViewById<ImageView>(R.id.imageView)
+        val memberIcon = naviHeaderView.findViewById<ImageView>(R.id.member_icon)
         memberIcon.setOnClickListener {
             val memberData = Intent(this,MemberData::class.java)
             startActivity(memberData)

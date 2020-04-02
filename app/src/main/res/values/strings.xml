@@ -3,7 +3,7 @@
     <string name="tab_text_1">MAP</string>
     <string name="tab_text_2">MEMO LIST</string>
     <string name="tab_text_3">TODO LIST</string>
-    <string name="tab_text_4">장소알람설정</string>
+    <string name="tab_text_4">알람설정</string>
 
     <string name="fab_memo">일반메모</string>
     <string name="fab_todo">TODO LIST</string>
