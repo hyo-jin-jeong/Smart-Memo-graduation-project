@@ -17,6 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.ui.main.SectionsPagerAdapter
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -67,7 +68,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             menuItem.isChecked=false
             true
         }
-        val naviHeaderView =nav_view.getHeaderView(0)
+        val naviHeaderView = nav_view.getHeaderView(0)
         val memberIcon = naviHeaderView.findViewById<ImageView>(R.id.imageView)
         memberIcon.setOnClickListener {
             val memberData = Intent(this,MemberData::class.java)
