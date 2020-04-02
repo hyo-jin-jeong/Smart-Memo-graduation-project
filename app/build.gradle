@@ -38,5 +38,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation files('libs\\libDaumMapAndroid.jar')
     implementation 'androidx.fragment:fragment-ktx:1.0.0'
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
 }
 

@@ -10,8 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 
-
-
 class MemberData :AppCompatActivity(){
     lateinit var memberToolbar: Toolbar
     override fun onCreate(savedInstanceState: Bundle?) {

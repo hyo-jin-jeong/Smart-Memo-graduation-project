@@ -1,5 +1,6 @@
 package com.kakao.smartmemo
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.*
 import androidx.core.view.GravityCompat
@@ -7,6 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.time_location_settings.*
+import kotlinx.android.synthetic.main.todo_list_item.*
+import kotlinx.android.synthetic.main.todo_list_item.view.*
 
 class TodoListFragment : Fragment() {
 
@@ -14,7 +18,7 @@ class TodoListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -26,6 +30,8 @@ class TodoListFragment : Fragment() {
         todolist = view.findViewById(R.id.todolist) as RecyclerView
         todolist.adapter = TodoAdapter()
         todolist.layoutManager = LinearLayoutManager(view.context)
+
+
 
         return view
     }
