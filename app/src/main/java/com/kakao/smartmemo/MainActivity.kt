@@ -57,12 +57,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             mDrawerLayout!!.closeDrawers()
             val id = menuItem.itemId
             val title = menuItem.title.toString()
+            var groupSettingIntent = Intent(this, ModifyGroup::class.java)
+            when (id) {
+                R.id.nav_my_memo -> {
+                    groupSettingIntent.putExtra("groupName", resources.getString(R.string.nav_my_memo))
+                    startActivity(groupSettingIntent)
+                }
+                R.id.groupSchool -> {
+                    groupSettingIntent.putExtra("groupName", resources.getString(R.string.nav_school_memo))
+                    startActivity(groupSettingIntent)
+                }
+                R.id.groupTravel -> {
+                    groupSettingIntent.putExtra("groupName", resources.getString(R.string.nav_travel_memo))
+                    startActivity(groupSettingIntent)
+                }
+                R.id.addGroup -> {
+                    val nextIntent = Intent(this, AddGroup::class.java)
+                    startActivity(nextIntent)
+                }
+
+            }
             if (id == R.id.nav_my_memo) {
-                Toast.makeText(context, "$title: 내 메모를 확인합니다.", Toast.LENGTH_SHORT).show()
+
             } else if (id == R.id.addGroup) {
 
-                val nextIntent = Intent(this, AddGroup::class.java)
-                startActivity(nextIntent)
+
             }
             menuItem.isChecked=false
             true
