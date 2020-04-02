@@ -1,6 +1,8 @@
 package com.kakao.smartmemo
 
 import android.app.TimePickerDialog
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +17,7 @@ class MemberDataChange :AppCompatActivity(){
         setContentView(R.layout.member_change_view)
         memberToolbar = findViewById(R.id.member_toolbar)
         setSupportActionBar(memberToolbar)
+        member_icon.setClipToOutline(true)
 
         //앱 이름 없애는-
         getSupportActionBar()?.setDisplayShowTitleEnabled(true)

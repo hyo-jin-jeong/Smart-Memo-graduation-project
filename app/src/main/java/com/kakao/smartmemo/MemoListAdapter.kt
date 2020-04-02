@@ -32,9 +32,7 @@ class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>() {
                     memoBackground.setBackgroundColor(Color.parseColor("#AEC0F2"))
                 }
             }
-
         }
-
     }
 
     inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
