@@ -1,55 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="130dp"
-    android:background="@drawable/alarm_settings"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="15dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    app:cardBackgroundColor="#bfd1ff"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="15dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:orientation="horizontal">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView_alarm_place"
+        <RelativeLayout
+            android:id="@+id/outer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:text="장소"
-            android:textColor="#585858"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints">
+            <TextView
+                android:id="@+id/textView_alarm_place"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:text="장소"
+                android:textColor="#585858"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="30dp"
+                android:text="날짜"
+                android:textColor="#585858"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/textView_date"
-            android:layout_width="100dp"
+            android:id="@+id/textView_alarm_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="150dp"
-            android:layout_weight="1"
-            android:text="날짜"
-            android:textColor="#585858"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_marginRight="100dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:text="내용"
+            android:textColor="#050505"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/outer_layout"/>
 
-    <TextView
-        android:id="@+id/textView_alarm_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="10dp"
-        android:text="내용"
-        android:textColor="#050505"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <Switch
-        android:id="@+id/switch_alarm_settings"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="250dp"
-        android:layout_weight="1"
-        android:thumb="@drawable/switch_thumb"
-        android:track="@drawable/switch_track_selector" />
-</LinearLayout>
+        <Switch
+            android:id="@+id/switch_alarm_settings"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:thumb="@drawable/switch_thumb"
+            android:track="@drawable/switch_track_selector"
+            app:layout_constraintTop_toBottomOf="@id/textView_alarm_content"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:ignore="MissingConstraints" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

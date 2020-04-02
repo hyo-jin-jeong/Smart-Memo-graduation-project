@@ -31,8 +31,6 @@ class TodoListFragment : Fragment() {
         todolist.adapter = TodoAdapter()
         todolist.layoutManager = LinearLayoutManager(view.context)
 
-
-
         return view
     }
 
