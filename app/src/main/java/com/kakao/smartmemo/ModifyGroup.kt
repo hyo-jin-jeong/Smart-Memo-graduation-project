@@ -1,7 +1,6 @@
 package com.kakao.smartmemo
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
@@ -17,10 +16,16 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener {
         setContentView(R.layout.app_bar_add_group)
 
         val toolBar:Toolbar = findViewById(R.id.addGroupToolbar)
-        toolBar.title = resources.getString(R.string.add_group)
+        toolBar.title = resources.getString(R.string.setting_group)
         setSupportActionBar(toolBar)
 
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+
+        if (intent.hasExtra("groupName")) {
+            editGroupName.setText(intent.getStringExtra("groupName"))
+        }
+
+        group_invitation.text = resources.getString(R.string.group_member)
 
         var colorPicker = findViewById<ImageView>(R.id.color_picker)
         colorPicker.setOnClickListener {
