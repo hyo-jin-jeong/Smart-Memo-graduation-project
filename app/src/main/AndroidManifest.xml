@@ -18,6 +18,7 @@
             android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -77,6 +78,11 @@
         <activity
             android:name=".MemberDataChange"
             android:label="회원 정보 수정"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ModifyGroup"
+            android:label="그룹 설정"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

@@ -21,11 +21,13 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="@dimen/marginLeftRight"/>
         <EditText
+            android:id="@+id/editGroupName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:hint="@string/group_name"
             android:importantForAutofill="no"
+            android:singleLine="true"
             tools:targetApi="O" />
     </LinearLayout>
 
@@ -66,13 +68,14 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/group_invitation"
+        android:id="@+id/invitation_linear"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/marginTop"
         android:layout_weight="1"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/group_invitation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/group_invitation"

@@ -9,6 +9,12 @@
     <item android:title="@string/nav_group_memo">
         <menu>
             <item
+                android:id="@+id/groupSchool"
+                android:title="@string/nav_school_memo"/>
+            <item
+                android:id="@+id/groupTravel"
+                android:title="@string/nav_travel_memo"/>
+            <item
                 android:id="@+id/addGroup"
                 android:icon="@drawable/plus_group"
                 android:title="@string/add_group"/>
