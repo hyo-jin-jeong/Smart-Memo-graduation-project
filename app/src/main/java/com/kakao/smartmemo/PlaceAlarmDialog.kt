@@ -1,22 +1,29 @@
 package com.kakao.smartmemo
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.memo_dialog.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class PlaceAlarmDialog : Fragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.memo_dialog, container, false)
+
+    private lateinit var placeAlarmList: RecyclerView
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.place_alarm_dialog, container, false)
+
+        placeAlarmList = view.findViewById<RecyclerView?>(R.id.alarm_settings_view) as RecyclerView
+        placeAlarmList.adapter = PlaceAlarmDialogAdapter()
+        placeAlarmList.layoutManager = LinearLayoutManager(view.context)
+
+        return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
 
-        memo1.text = "place alarm page"
-
-    }
 
 }

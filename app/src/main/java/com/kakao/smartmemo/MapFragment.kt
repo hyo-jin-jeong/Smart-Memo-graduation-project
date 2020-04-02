@@ -5,7 +5,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.main_dialog.*
 import kotlinx.android.synthetic.main.map_fragment.view.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
@@ -15,6 +15,7 @@ import net.daum.mf.map.api.MapView
 class MapFragment : Fragment(), MapView.POIItemEventListener {
     lateinit var mapView :MapView
     lateinit var mapViewContainer :ViewGroup
+    lateinit var myDialog: FragmentDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -33,7 +34,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener {
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
 
-        val mapPoint = MapPoint.mapPointWithGeoCoord(37.581759, 127.010337)
+        val mapPoint = MapPoint.mapPointWithGeoCoord(37.565841, 126.976825)
         val customMarker = MapPOIItem()
         customMarker.itemName = "Custom Marker"
         customMarker.tag = 1
@@ -53,7 +54,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener {
             0.5f,
             1.0f
         ) // 마커 이미지중 기준이 되는 위치(앵커포인트) 지정 - 마커 이미지 좌측 상단 기준 x(0.0f ~ 1.0f), y(0.0f ~ 1.0f) 값.
-
 
         mapView.addPOIItem(customMarker)
         mapView.setPOIItemEventListener(this)
@@ -95,8 +95,10 @@ class MapFragment : Fragment(), MapView.POIItemEventListener {
     }
 
     private fun showDialog() {
-        val dialog = FragmentDialog()
-        dialog.show(super.getChildFragmentManager(), "Oh?!")
+
+        myDialog = FragmentDialog()
+        myDialog.show(super.getChildFragmentManager(), "Oh?!")
+
     }
 
     override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?) {
