@@ -24,7 +24,7 @@
                 android:text="Todo List"
                 android:textColor="@color/font_default_color"
                 android:textSize="30sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/time_alarm_layout"
