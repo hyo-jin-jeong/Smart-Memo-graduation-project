@@ -2,10 +2,8 @@ package com.kakao.smartmemo
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.viewpager.widget.ViewPager
 import com.kakao.smartmemo.ui.main.DialogSectionsPagerAdapter
@@ -13,13 +11,24 @@ import com.kakao.smartmemo.ui.main.DialogSectionsPagerAdapter
 class FragmentDialog : DialogFragment() {
     private lateinit var adapter: DialogSectionsPagerAdapter
     private lateinit var viewPager: ViewPager
+    private lateinit var myDialog: Dialog
+    private lateinit var myToolbar: Toolbar
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window
-            .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        return dialog
+        myDialog = super.onCreateDialog(savedInstanceState)
+        myDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        myDialog.setContentView(R.layout.main_dialog)
+        var params: WindowManager.LayoutParams = myDialog.window.attributes
+        params.width = 1000
+        params.height = 1200
+        myDialog.window.attributes = params
+
+        return myDialog
     }
 
     override fun onCreateView(
@@ -32,9 +41,16 @@ class FragmentDialog : DialogFragment() {
         // tab slider
         adapter = DialogSectionsPagerAdapter(this, childFragmentManager)
 
-        val indicator = CircleIndicator(context)
+        val indicator = view.findViewById<CircleIndicator>(R.id.circle_indicator)
+
+        myToolbar = view.findViewById<Toolbar>(R.id.toolbar)
+        myToolbar.setNavigationIcon(R.drawable.back)
+        myToolbar.setNavigationOnClickListener {
+            dismiss()
+        }
+
         // Set up the ViewPager with the sections adapter.
-        viewPager = view.findViewById(R.id.dialog_pager)
+        viewPager = view.findViewById<ViewPager>(R.id.dialog_pager)
         viewPager.adapter = adapter
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(p0: Int) { }
@@ -44,7 +60,7 @@ class FragmentDialog : DialogFragment() {
             }
         })
 
-        indicator.createDotPanel(2, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
+        indicator.createDotPanel(2, R.drawable.indicator_dot_on, R.drawable.indicator_dot_off, 0)
 
         return view
     }
