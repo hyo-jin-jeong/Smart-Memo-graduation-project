@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 
 class LoginActivity: AppCompatActivity() {
     private lateinit var id: String
@@ -17,13 +18,13 @@ class LoginActivity: AppCompatActivity() {
 
 
 
-        val loginButton = findViewById<Button>(R.id.login_button)
+        val loginButton = findViewById<CardView>(R.id.login_button)
         loginButton.setOnClickListener {
             //id = findViewById<EditText>(R.id.id).toString()
             //pw = findViewById<EditText>(R.id.pw).toString()
             //if(id == "admin" && pw == "1111") {
                 startActivity(Intent(this,MainActivity::class.java))
-            //}
+            //}s
         }
 
         val searchInfoButton = findViewById<Button>(R.id.search_id_pw)
