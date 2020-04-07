@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="40dp"
+                android:layout_marginBottom="20dp"
                 android:layout_alignParentTop="true"
                 android:text="Todo List"
                 android:textColor="@color/font_default_color"
@@ -51,7 +51,8 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp">
                     <TextView
                         android:id="@+id/textView_time"
                         android:layout_width="wrap_content"
@@ -67,7 +68,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_marginRight="20dp"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="10dp"
                         android:thumb="@drawable/switch_thumb"
                         android:track="@drawable/switch_track_selector"
                         android:layout_alignParentRight="true"/>
@@ -91,12 +92,12 @@
                 android:layout_below="@+id/time_alarm_layout"
                 app:cardBackgroundColor="#bfd1ff"
                 app:cardElevation="10dp"
-                app:cardCornerRadius="10dp"
-                >
+                app:cardCornerRadius="10dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp">
                     <TextView
                         android:id="@+id/textView_location"
                         android:layout_width="wrap_content"
@@ -111,7 +112,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_marginRight="20dp"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="10dp"
                         android:thumb="@drawable/switch_thumb"
                         android:track="@drawable/switch_track_selector"
                         android:layout_alignParentRight="true"/>
@@ -127,14 +128,14 @@
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
         </RelativeLayout>
-
     </androidx.core.widget.NestedScrollView>
     <Button
-        android:id="@+id/button"
+        android:id="@+id/saveTodoAlarmButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:background="@drawable/save_button"
         android:text="save"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true"/>
 </RelativeLayout>

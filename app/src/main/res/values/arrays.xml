@@ -6,4 +6,11 @@
         <item>학교</item>
         <item>여행</item>
     </string-array>
+    <string-array name="again_time">
+        <item>없음</item>
+        <item>1분</item>
+        <item>3분</item>
+        <item>5분</item>
+        <item>10분</item>
+    </string-array>
 </resources>
