@@ -1,78 +1,84 @@
 package com.kakao.smartmemo
 
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.DTO.PlaceDTO
 import com.kakao.smartmemo.DTO.TodoDTO
 import kotlinx.android.synthetic.main.todo_list_item.view.*
+import org.w3c.dom.Text
 
-class TodoAdapter : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
+class TodoAdapter(val context: Context, val TodoList: ArrayList<TodoDTO>) : BaseAdapter() {
 
-    private var datas: MutableList<TodoDTO> =
-        mutableListOf(TodoDTO("약먹기"), TodoDTO("도서관 책 반납"))
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+       val view: View = LayoutInflater.from(context).inflate(R.layout.todo_list_item, null)
+        val txt_todo = view.findViewById(R.id.textView_todo) as TextView
+        val bell_todo = view.findViewById(R.id.btn_todo) as Button
+        val delete_todo = view.findViewById(R.id.btn_todo_delete) as Button
+        val view_group = view.findViewById(R.id.group_color) as View
 
-    lateinit var textview : TextView
-    lateinit var bellTodo : Button
-    lateinit var checkBox : CheckBox
-
-    //View Holder생성
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
-
-    //Recycler View에 표시할 갯수
-    override fun getItemCount(): Int = datas.size
-
-    //View가 Bind되었을때의 설정
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-        datas[position].let {
-            with(holder) {
-                textview=this.txt_todo
-             /*   bellTodo=this.btn_todo
-                checkBox= this.checkBox_todo*/
-                textview.text = it.todoContent
-
-            }
-        }
-
-        holder.itemView.setOnClickListener(View.OnClickListener {
-            textview = it.findViewById(R.id.textView_todo) //취소선
-            bellTodo = it.findViewById(R.id.btn_todo)
-            checkBox = it.findViewById(R.id.checkBox_todo)
-            if(checkBox.isChecked){
-                textview.paintFlags =  Paint.STRIKE_THRU_TEXT_FLAG  //취소선 설정
-            }
-            else{
-                textview.paintFlags = 0  //취소선 설정
-            }
-            bellTodo.setOnClickListener(View.OnClickListener {
-                val alarmSettingsIntent = Intent(it.context, TodoListActivity::class.java)
-                Log.v("seyuuuun", "Intent")
-                it.context.startActivity(alarmSettingsIntent)
-                Log.v("seyuuuun", "Intent2")
-            })
-
-
+        view.setOnClickListener(View.OnClickListener {
+            txt_todo.setPaintFlags(txt_todo.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG)  //취소선 설정
         })
+
+        view.setOnLongClickListener(View.OnLongClickListener {
+            /*val delete = bell_todo.setBackgroundResource(R.drawable.delete_todo) as Button
+            delete.setOnClickListener(View.OnClickListener {
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("TODO LIST" + TodoList[position] + "을(를) 삭제하시겠습니까?")
+                builder.setPositiveButton("확인", DialogInterface.OnClickListener {
+
+                })
+                TodoList.removeAt(position)
+            })*/
+            val count = getCount()
+            for(i in 0.. count) {
+                bell_todo.visibility = INVISIBLE
+                delete_todo.visibility = VISIBLE
+            }
+
+
+            return@OnLongClickListener false
+        })
+
+        bell_todo.setOnClickListener(View.OnClickListener {
+            bell_todo.setBackgroundResource(R.drawable.bell_icon_on)
+            val alarmSettingsIntent = Intent(it.context, TodoListActivity::class.java)
+            Log.v("seyuuuun", "Intent")
+            it.context.startActivity(alarmSettingsIntent)
+            Log.v("seyuuuun", "Intent2")
+        })
+
+        val todo = TodoList[position]
+        txt_todo.text = todo.todoContent
+        view_group.setBackgroundColor(Color.parseColor("#B2CCFF"))
+        return view
     }
 
-    //데이터들 업데이트
-    fun setDataList(dataList: List<TodoDTO>?) {
-        if (dataList == null) {
-            return
-        }
-        this@TodoAdapter.datas = dataList.toMutableList()
+    override fun getItem(position: Int) :Any{
+        return TodoList[position]
     }
 
-    inner class ViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.todo_list_item, parent, false)) {
-        val txt_todo = itemView.textView_todo
-        val btn_todo = itemView.btn_todo
-        val checkBox_todo = itemView.checkBox_todo
+    override fun getItemId(position: Int): Long {
+       return 0
+    }
 
+    override fun getCount(): Int {
+       return TodoList.size
+    }
+
+    fun todo_delete() {
 
     }
 }
