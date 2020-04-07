@@ -1,10 +1,13 @@
 package com.kakao.smartmemo
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 
 class TimeAlarmFragment : Fragment(){
@@ -35,32 +38,34 @@ class TimeAlarmFragment : Fragment(){
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
-        //return super.onCreateOptionsMenu(menu);
-        super.onCreateOptionsMenu(menu, menuInflater);
+        super.onCreateOptionsMenu(menu, menuInflater)
+        (activity as MainActivity).toolbar.title="시간알람설정"
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_alarm, menu)
-        menu?.getItem(1)?.isChecked = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        return when (item?.itemId) {
-            //android.R.id.home -> {
-//                mDrawerLayout!!.openDrawer(GravityCompat.START)
-//                true
-//            }
+        return when (item.itemId) {
+            android.R.id.home -> {
+                (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
+                return true
+            }
             //시간알람관리를 눌렀을 때
             R.id.action_time_alarm -> {
-                //val timealarmIntent = Intent(context, TimeAlarmActivity::class.java)
-                //startActivity(timealarmIntent)
+                (activity as MainActivity).toolbar.title=item.title
+                //val timeIntent = Intent(context, TimeAlarmFragment::class.java)
+                //startActivity(timeIntent)
                 return true
             }
             //장소알람관리를 눌렀을 때
             R.id.action_place_alarm -> {
-                //val placealarmIntent =Intent(context, PlaceAlarmActivity::class.java)
-                //startActivity(placealarmIntent)
+                (activity as MainActivity).toolbar.title=item.title
+                //val placeIntent = Intent(context, PlaceAlarmFragment::class.java)
+                //startActivity(placeIntent)
                 return true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

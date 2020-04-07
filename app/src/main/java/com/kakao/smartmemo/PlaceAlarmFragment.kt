@@ -1,5 +1,6 @@
 package com.kakao.smartmemo
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -35,10 +36,9 @@ class PlaceAlarmFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
-        (activity as MainActivity).toolbar.title="알람설정"
+        (activity as MainActivity).toolbar.title="장소알람설정"
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_alarm, menu)
-        menu?.getItem(1)?.isChecked = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -50,20 +50,19 @@ class PlaceAlarmFragment : Fragment() {
             }
             //시간알람관리를 눌렀을 때
             R.id.action_time_alarm -> {
-                item.isChecked = !item.isChecked
-                when(item.isChecked) {
-                    true -> Toast.makeText(view?.context, item.title, Toast.LENGTH_SHORT).show()
-                }
-                true
+                (activity as MainActivity).toolbar.title=item.title
+                //val timeIntent = Intent(context, TimeAlarmFragment::class.java)
+                //startActivity(timeIntent)
+                return true
             }
             //장소알람관리를 눌렀을 때
             R.id.action_place_alarm -> {
-                item.isChecked = !item.isChecked
-                when(item.isChecked) {
-                    true -> Toast.makeText(view?.context, item.title, Toast.LENGTH_SHORT).show()
-                }
-                true
+                (activity as MainActivity).toolbar.title=item.title
+                //val placeIntent = Intent(context, PlaceAlarmFragment::class.java)
+                //startActivity(placeIntent)
+                return true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

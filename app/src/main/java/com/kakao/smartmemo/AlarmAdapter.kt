@@ -3,19 +3,19 @@ package com.kakao.smartmemo
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.kakao.smartmemo.DTO.AlarmDTO
+import com.kakao.smartmemo.DTO.PlaceAlarmDTO
 import kotlinx.android.synthetic.main.alarm_list_item.view.*
 
 class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(){
 
-    var datas:MutableList<AlarmDTO> = mutableListOf(AlarmDTO("한성대학교", "2020.03.14", "도서관 책 "), AlarmDTO("녹십자약국", "2020.03.15", "마스크 사기"))
+    var data:MutableList<PlaceAlarmDTO> = mutableListOf(PlaceAlarmDTO("한성대학교", "2020.03.14", "도서관 책 "), PlaceAlarmDTO("녹십자약국", "2020.03.15", "마스크 사기"))
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
 
-    override fun getItemCount(): Int = datas.size
+    override fun getItemCount(): Int = data.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        datas[position].let {
+        data[position].let {
             with(holder) {
                 alarm_place.text = it.place
                 alarm_date.text = it.date
@@ -25,11 +25,11 @@ class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(){
     }
 
     //데이터들 업데이트
-    fun setDataList(dataList: List<AlarmDTO>?) {
+    fun setDataList(dataList: List<PlaceAlarmDTO>?) {
         if (dataList == null) {
             return
         }
-        this@AlarmAdapter.datas = dataList.toMutableList()
+        this@AlarmAdapter.data = dataList.toMutableList()
     }
 
     inner class ViewHolder(parent:ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.alarm_list_item, parent, false)) {
