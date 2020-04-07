@@ -25,6 +25,7 @@ class TodoListActivity : AppCompatActivity() {
     private lateinit var placelistview : ListView
     private lateinit var timeSpinner : Spinner
     private lateinit var placeSpinner : Spinner
+    private lateinit var saveBtn : Button
 
     private var placeList = arrayListOf<PlaceDTO>(PlaceDTO("연세병원"))
 
@@ -32,6 +33,9 @@ class TodoListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.time_location_settings)
 
+        saveBtn.setOnClickListener {
+            finish()
+        }
         var ringingAdapter = ArrayAdapter.createFromResource(applicationContext, R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
         val todostub_time = stub_alarm_time
         val view_time = todostub_time.inflate()
