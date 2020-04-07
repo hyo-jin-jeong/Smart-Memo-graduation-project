@@ -1,38 +1,38 @@
 package com.kakao.smartmemo
 
-import android.app.AlertDialog
+import android.annotation.SuppressLint
+
 import android.content.Context
-import android.content.DialogInterface
+
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+
 import android.view.ViewGroup
 import android.widget.*
-import androidx.recyclerview.widget.RecyclerView
-import com.kakao.smartmemo.DTO.PlaceDTO
+
 import com.kakao.smartmemo.DTO.TodoDTO
-import kotlinx.android.synthetic.main.todo_list_item.view.*
-import org.w3c.dom.Text
+import kotlinx.android.synthetic.main.todolist_fragment.view.*
 
-class TodoAdapter(val context: Context, val TodoList: ArrayList<TodoDTO>) : BaseAdapter() {
+class TodoAdapter(val context: Context, private val TodoList: ArrayList<TodoDTO>) : BaseAdapter() {
 
+    @SuppressLint("ResourceType")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-       val view: View = LayoutInflater.from(context).inflate(R.layout.todo_list_item, null)
+        val view: View = LayoutInflater.from(context).inflate(R.layout.todo_list_item, null)
         val txt_todo = view.findViewById(R.id.textView_todo) as TextView
         val bell_todo = view.findViewById(R.id.btn_todo) as Button
         val delete_todo = view.findViewById(R.id.btn_todo_delete) as Button
         val view_group = view.findViewById(R.id.group_color) as View
 
         view.setOnClickListener(View.OnClickListener {
-            txt_todo.setPaintFlags(txt_todo.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG)  //취소선 설정
+            txt_todo.paintFlags = txt_todo.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG  //취소선 설정
         })
 
         view.setOnLongClickListener(View.OnLongClickListener {
+
             /*val delete = bell_todo.setBackgroundResource(R.drawable.delete_todo) as Button
             delete.setOnClickListener(View.OnClickListener {
                 val builder = AlertDialog.Builder(context)
@@ -42,11 +42,6 @@ class TodoAdapter(val context: Context, val TodoList: ArrayList<TodoDTO>) : Base
                 })
                 TodoList.removeAt(position)
             })*/
-            val count = getCount()
-            for(i in 0.. count) {
-                bell_todo.visibility = INVISIBLE
-                delete_todo.visibility = VISIBLE
-            }
 
 
             return@OnLongClickListener false
@@ -62,11 +57,12 @@ class TodoAdapter(val context: Context, val TodoList: ArrayList<TodoDTO>) : Base
 
         val todo = TodoList[position]
         txt_todo.text = todo.todoContent
+
         view_group.setBackgroundColor(Color.parseColor("#B2CCFF"))
         return view
     }
 
-    override fun getItem(position: Int) :Any{
+    override fun getItem(position: Int) : TodoDTO {
         return TodoList[position]
     }
 
@@ -78,7 +74,4 @@ class TodoAdapter(val context: Context, val TodoList: ArrayList<TodoDTO>) : Base
        return TodoList.size
     }
 
-    fun todo_delete() {
-
-    }
 }
