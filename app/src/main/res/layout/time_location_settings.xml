@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/settings_toolbar"
-        android:layout_above="@+id/button"
+        android:layout_above="@+id/saveTodoAlarmButton"
         android:fillViewport="true">
         <RelativeLayout
             android:layout_width="match_parent"
@@ -134,7 +134,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/save_button"
-        android:layout_marginBottom="10dp"
         android:text="save"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
