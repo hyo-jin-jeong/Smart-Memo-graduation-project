@@ -18,7 +18,6 @@ class TodoAdapter : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
     lateinit var textview : TextView
     lateinit var bellTodo : Button
-    lateinit var checkBox : CheckBox
 
     //View Holder생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
@@ -41,15 +40,16 @@ class TodoAdapter : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
         holder.itemView.setOnClickListener(View.OnClickListener {
             textview = it.findViewById(R.id.textView_todo) //취소선
+            textview.setPaintFlags(textview.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG)  //취소선 설정
             bellTodo = it.findViewById(R.id.btn_todo)
-            checkBox = it.findViewById(R.id.checkBox_todo)
-            if(checkBox.isChecked){
+            /*if(checkBox.isChecked){
                 textview.paintFlags =  Paint.STRIKE_THRU_TEXT_FLAG  //취소선 설정
             }
             else{
                 textview.paintFlags = 0  //취소선 설정
-            }
+            }*/
             bellTodo.setOnClickListener(View.OnClickListener {
+                bellTodo.setBackgroundResource(R.drawable.bell_icon_on)
                 val alarmSettingsIntent = Intent(it.context, TodoListActivity::class.java)
                 Log.v("seyuuuun", "Intent")
                 it.context.startActivity(alarmSettingsIntent)
@@ -71,8 +71,5 @@ class TodoAdapter : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
     inner class ViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.todo_list_item, parent, false)) {
         val txt_todo = itemView.textView_todo
         val btn_todo = itemView.btn_todo
-        val checkBox_todo = itemView.checkBox_todo
-
-
     }
 }
