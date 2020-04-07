@@ -37,17 +37,24 @@
             android:textColor="#000000"
             android:textSize="15dp" />
 
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
         <Button
             android:id="@+id/btn_todo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="3"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="2"
             android:background="@drawable/bell_icon" />
-
+        <Button
+            android:id="@+id/btn_todo_delete"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="2"
+            android:background="@drawable/delete_todo"
+            android:visibility="invisible"/>
+        </FrameLayout>
     </LinearLayout>
 
     <View android:layout_gravity="bottom"
