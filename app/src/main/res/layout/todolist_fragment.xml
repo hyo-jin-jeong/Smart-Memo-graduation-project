@@ -9,14 +9,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
 
         <TextView
             android:id="@+id/textView7"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingTop="5dp"
             android:text="TODO LIST"
             android:textAlignment="center"
             android:textSize="25sp"
@@ -33,13 +33,13 @@
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <ListView
         android:id="@+id/todolist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:scrollbars="vertical"
-        tools:listitem="@layout/todo_list_item" />
+        tools:listitem="@layout/todo_list_item"/>
 
 </LinearLayout>

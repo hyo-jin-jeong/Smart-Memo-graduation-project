@@ -6,18 +6,24 @@ import android.content.DialogInterface
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.*
+import android.view.View.VISIBLE
 import android.widget.*
 import androidx.core.view.GravityCompat
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.DTO.TodoDTO
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.todolist_fragment.view.*
+import java.util.zip.Inflater
 
 
 class TodoListFragment : Fragment() {
 
-    private lateinit var todolist : RecyclerView
+    private lateinit var todolist : ListView
     private lateinit var todoEditingbtn : ImageButton
+    private var todoList = arrayListOf<TodoDTO>(TodoDTO("약먹기"), TodoDTO("도서관 책 반납"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -29,19 +35,22 @@ class TodoListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
+        val todoInflate = inflater.inflate(R.layout.todo_list_item, container, false)
 
-        todolist = view.findViewById(R.id.todolist) as RecyclerView
+        todolist = view.findViewById(R.id.todolist) as ListView
+        todolist.adapter = TodoAdapter(view.context, todoList)
         todoEditingbtn = view.findViewById(R.id.imagebtn_editing) as ImageButton
         todoEditingbtn.setOnClickListener(View.OnClickListener {
-            //val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            onCreateDialog()
+            val count = todolist.adapter.count
+
+            for(i in 0.. count) {
+                /*todolist.adapter.getItem(i)
+                val delete = todoInflate.findViewById(R.id.imagebtn_editing) as ImageButton
+                delete.visibility = VISIBLE*/
+            }
         })
-        todolist.adapter = TodoAdapter()
-        todolist.layoutManager = LinearLayoutManager(view.context)
-
-
-            return view
-
+        todolist.clearChoices() //listview 선택 초기화
+        return view
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
