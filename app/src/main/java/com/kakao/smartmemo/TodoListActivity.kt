@@ -1,40 +1,42 @@
 package com.kakao.smartmemo
 
+import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.kakao.smartmemo.DTO.PlaceDTO
+import kotlinx.android.synthetic.main.alarm_settings_place.*
 import kotlinx.android.synthetic.main.alarm_settings_time.*
 import kotlinx.android.synthetic.main.time_location_settings.*
+import java.time.LocalDate
 
 class TodoListActivity : AppCompatActivity() {
-
     private lateinit var myToolbar: Toolbar
     private lateinit var alarmswitch_time : Switch
     private lateinit var alarmswitch_location : Switch
     private lateinit var timebtn: ImageButton
-    private lateinit var timeagainbtn : ImageButton
     private lateinit var placebtn: ImageButton
     private lateinit var placelistview : ListView
-    private lateinit var placeagainbtn: ImageButton
+    private lateinit var timeSpinner : Spinner
+    private lateinit var placeSpinner : Spinner
+    private lateinit var saveBtn : Button
+
     private var placeList = arrayListOf<PlaceDTO>(PlaceDTO("연세병원"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.time_location_settings)
 
-        // Toolbar달기
-        myToolbar = findViewById(R.id.settings_toolbar)
-        setSupportActionBar(myToolbar)
-
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
-
+        saveBtn.setOnClickListener {
+            finish()
+        }
+        var ringingAdapter = ArrayAdapter.createFromResource(applicationContext, R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
         val todostub_time = stub_alarm_time
         val view_time = todostub_time.inflate()
         todostub_time.visibility = GONE
@@ -42,15 +44,62 @@ class TodoListActivity : AppCompatActivity() {
         val todostub_location = stub_alarm_location
         val view_location = todostub_location.inflate()
         todostub_location.visibility = GONE
-
         val textview_Time = textView_time_show
 
-        alarmswitch_time = this.findViewById(R.id.switch_time)
-        alarmswitch_location = this.findViewById(R.id.switch_location)
+        var dateSettingInTime = view_time.findViewById(R.id.date_layout) as ConstraintLayout
+        var dateSettingInPlace = view_location.findViewById(R.id.date_layout) as ConstraintLayout
+        var dateTextInTime = view_time.findViewById<TextView>(R.id.textView4)
+        var dateTextInPlace = view_location.findViewById<TextView>(R.id.textView4)
+
+        // Toolbar달기
+        myToolbar = findViewById(R.id.settings_toolbar)
+        setSupportActionBar(myToolbar)
+
+        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+
+        alarmswitch_time = switch_time
+        alarmswitch_location = switch_location
         timebtn = view_time.findViewById(R.id.btn_time_settings)
+
         placebtn = view_location.findViewById(R.id.btn_place_choice)
         placelistview = view_location.findViewById(R.id.listview_place)
-        placeagainbtn = view_location.findViewById(R.id.btn_repeat_place)
+
+        dateSettingInTime.setOnClickListener {
+            var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                dateTextInTime.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
+            }
+            val dateDia = DatePickerDialog(this,dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
+            dateDia.show()
+        }
+
+        dateSettingInPlace.setOnClickListener {
+            var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                dateTextInPlace.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
+            }
+            val dateDia = DatePickerDialog(this,dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
+            dateDia.show()
+        }
+
+
+        timeSpinner = repeat_time_spinner
+        timeSpinner.adapter = ringingAdapter
+        timeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {   }
+        }
+
+        placeSpinner = repeat_place_spinner
+        placeSpinner.adapter = ringingAdapter
+        placeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {   }
+        }
 
         alarmswitch_time.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
@@ -81,13 +130,10 @@ class TodoListActivity : AppCompatActivity() {
                         textview_Time.text = "${am_pm} ${hour} : ${m} "
                     }
                     val dialog = TimePickerDialog(this,listener,12,0,false)
-
                     dialog.show()
                 }
-
-            }else {
+            } else {
                 todostub_time.visibility = GONE
-                Log.v("seyuuuun", "viewstub_gone")
             }
         }
 
@@ -98,13 +144,9 @@ class TodoListActivity : AppCompatActivity() {
                     val placechoiceIntent = Intent(it.context, MainActivity::class.java)
                     this.startActivity(placechoiceIntent)
                 })
-                Log.v("seyuuuun", "viewstub")
-
-            }else {
+            } else {
                 todostub_location.visibility = GONE
-                Log.v("seyuuuun", "viewstub_gone")
             }
-
         }
 
         placelistview.adapter = PlaceListAdapter(this, placeList)

@@ -56,9 +56,6 @@ class AddMemo : AppCompatActivity() {
         memoContent = memo_content.text.toString()
 
         saveBtn.setOnClickListener {
-//            if(memoTitle.equals("") || memoContent.equals("")) {
-//                Snackbar.make(it, "제목과 내용 모두 채워주세요", Snackbar.LENGTH_SHORT).show()
-//            } else {
                 val intent = Intent(applicationContext, ShowMemo::class.java)
                 intent.putExtra("date", today)
                 intent.putExtra("title", memoTitle)
