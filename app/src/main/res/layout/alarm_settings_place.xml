@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="15dp">
 
         <ImageView
             android:id="@+id/imageView2"
@@ -27,7 +27,8 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="4dp"
             android:text="[기본] 날짜 미설정"
             android:textColor="#585858"
             android:textSize="18sp"
@@ -51,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
         android:layout_below="@+id/dash">
 
@@ -70,7 +71,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
-            app:srcCompat="@drawable/palce_icon"
+            app:srcCompat="@drawable/place_icon"
+            android:scaleType="fitCenter"
             app:layout_constraintRight_toRightOf="parent"
             tools:ignore="MissingConstraints" />
 
@@ -81,7 +83,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:layout_below="@+id/place_layout"
         android:orientation="horizontal">
@@ -91,6 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ring_again"
+            android:textColor="#585858"
             android:layout_weight="3"
             android:textSize="18sp"
             android:layout_gravity="center_vertical"/>
@@ -99,7 +101,7 @@
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="17dp"
             android:entries="@array/again_time"/>
     </LinearLayout>
 
