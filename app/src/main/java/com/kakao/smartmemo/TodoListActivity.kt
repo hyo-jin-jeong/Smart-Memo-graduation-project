@@ -12,8 +12,6 @@ import androidx.appcompat.widget.Toolbar
 import com.kakao.smartmemo.DTO.PlaceDTO
 import kotlinx.android.synthetic.main.alarm_settings_time.*
 import kotlinx.android.synthetic.main.time_location_settings.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 class TodoListActivity : AppCompatActivity() {
     private lateinit var myToolbar: Toolbar
@@ -30,7 +28,7 @@ class TodoListActivity : AppCompatActivity() {
         setContentView(R.layout.time_location_settings)
 
         // Toolbar달기
-        myToolbar = findViewById(R.id.settingstoolbar)
+        myToolbar = findViewById(R.id.settings_toolbar)
         setSupportActionBar(myToolbar)
 
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
@@ -54,17 +52,36 @@ class TodoListActivity : AppCompatActivity() {
         alarmswitch_time.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
                 todostub_time.visibility = VISIBLE
-                timebtn.setOnClickListener(View.OnClickListener {
-                    val cal = Calendar.getInstance()
-                    val am_pm = ""
-                    val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
-                        cal.set(Calendar.HOUR_OF_DAY, hour)
-                        cal.set(Calendar.MINUTE, minute)
+                timebtn.setOnClickListener {
+                    var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                        var hour = 0
+                        var am_pm = "오전"
+                        var m = minute.toString()
+                        if (hourOfDay == 0) {
+                            am_pm = "오전"
+                            hour = 12
+                        }
+                        if (hourOfDay >= 12) {
+                            am_pm = "오후"
+                            hour = hourOfDay % 12
+                            if (hour == 0) {
+                                hour = 12
+                            }
 
-                        textview_Time.text =SimpleDateFormat("a HH:mm").format(cal.time)
+                        }
+                        else{
+                            hour = hourOfDay
+                        }
+                        if (minute == 0) {
+                            m = "00"
+                        }
+                        textview_Time.text = "${am_pm} ${hour} : ${m} "
                     }
-                    TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false).show()
-                })
+                    val dialog = TimePickerDialog(this,listener,12,0,false)
+
+                    dialog.show()
+                }
+
                 Log.v("seyuuuun", "viewstub")
             }else {
                 todostub_time.visibility = GONE
