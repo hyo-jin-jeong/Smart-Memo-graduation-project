@@ -15,7 +15,7 @@
         android:layout_marginRight="30dp"
         android:layout_marginBottom="10dp"
         android:layout_alignParentTop="true">
-
+      
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="30dp"
@@ -103,4 +103,5 @@
             android:layout_marginRight="20dp"
             android:entries="@array/again_time"/>
     </LinearLayout>
+
 </RelativeLayout>

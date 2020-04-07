@@ -112,7 +112,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:layout_below="@+id/again_place_layout">
-
+        
         <ListView
             android:id="@+id/listview_place"
             android:layout_marginBottom="10dp"
