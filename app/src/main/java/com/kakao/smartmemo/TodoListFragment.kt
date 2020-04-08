@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.DTO.TodoDTO
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.todo_list_item.view.*
 import kotlinx.android.synthetic.main.todolist_fragment.view.*
 import java.util.zip.Inflater
 
@@ -35,21 +36,28 @@ class TodoListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
-        val todoInflate = inflater.inflate(R.layout.todo_list_item, container, false)
+        //val todoInflate = inflater.inflate(R.layout.todo_list_item, container, false)
 
-        todolist = view.findViewById(R.id.todolist) as ListView
-        todolist.adapter = TodoAdapter(view.context, todoList)
-        todoEditingbtn = view.findViewById(R.id.imagebtn_editing) as ImageButton
+        todolist = view.todolist
+        todolist.adapter = TodoAdapter(requireContext(), todoList)
+
+        todoEditingbtn = view.imagebtn_editing as ImageButton
         todoEditingbtn.setOnClickListener(View.OnClickListener {
             val count = todolist.adapter.count
-
-            for(i in 0.. count) {
-                /*todolist.adapter.getItem(i)
-                val delete = todoInflate.findViewById(R.id.imagebtn_editing) as ImageButton
-                delete.visibility = VISIBLE*/
-            }
+            todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+            todolist.adapter = TodoDeleteAdapter(view.context, todoList)
+            view.todo_delete_cancel.visibility = VISIBLE
         })
-        todolist.clearChoices() //listview 선택 초기화
+//        todoEditingbtn.setOnClickListener {
+//
+//            for(i in 0 until todolist.adapter.count-1) {
+//                Toast.makeText(context, "todoEditingBtn 클릭됨", Toast.LENGTH_SHORT).show()
+//                var listItem = todolist.adapter.getItem(i)
+//                var deleteImg = getResources().getDrawable(R.drawable.delete_todo)
+//                //listItem.btn_todo.background = deleteImg
+//
+//            }
+//        }
         return view
     }
 
