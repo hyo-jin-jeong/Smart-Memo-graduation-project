@@ -25,8 +25,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
             tools:ignore="MissingConstraints" />
+      
         <TextView
-            android:id="@+id/textView_title"
+            android:id="@+id/textView_todo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -36,6 +37,7 @@
             android:text="Todo"
             android:textColor="#000000"
             android:textSize="15dp" />
+      
         <CheckBox
             android:id="@+id/checkDelete"
             android:layout_width="wrap_content"

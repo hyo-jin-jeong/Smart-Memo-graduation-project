@@ -3,28 +3,25 @@ package com.kakao.smartmemo
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.*
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.*
 import androidx.core.view.GravityCompat
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.DTO.TodoDTO
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.todo_list_item.view.*
-import kotlinx.android.synthetic.main.todolist_fragment.view.*
 import java.util.zip.Inflater
-
+import kotlinx.android.synthetic.main.todolist_fragment.*
 
 class TodoListFragment : Fragment() {
 
     private lateinit var todolist : ListView
     private lateinit var todoEditingbtn : ImageButton
-    private var todoList = arrayListOf<TodoDTO>(TodoDTO("약먹기"), TodoDTO("도서관 책 반납"))
+    private lateinit var todoDeletebtn : ImageButton
+    private var todoArrayList = arrayListOf<TodoDTO>(TodoDTO("약먹기"), TodoDTO("도서관 책 반납"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -36,17 +33,25 @@ class TodoListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
-        //val todoInflate = inflater.inflate(R.layout.todo_list_item, container, false)
-
+        todoEditingbtn = view.findViewById(R.id.imagebtn_save) as ImageButton
+        todoDeletebtn = view.findViewById(R.id.imagebtn_delete) as ImageButton
         todolist = view.todolist
-        todolist.adapter = TodoAdapter(requireContext(), todoList)
-
-        todoEditingbtn = view.imagebtn_editing as ImageButton
+        todolist.adapter = TodoAdapter(view.context, todoArrayList)
+      
+        todoDeletebtn.setOnClickListener(View.OnClickListener {
+              todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+              todolist.adapter = TodoDeleteAdapter(view.context, todoArrayList)
+              todoDeletebtn.visibility = GONE
+              todoEditingbtn.visibility = VISIBLE
+              todo_delete_cancel.visibility= VISIBLE
+        })
+      
         todoEditingbtn.setOnClickListener(View.OnClickListener {
-            val count = todolist.adapter.count
-            todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-            todolist.adapter = TodoDeleteAdapter(view.context, todoList)
-            view.todo_delete_cancel.visibility = VISIBLE
+              todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+              todolist.adapter = TodoAdapter(view.context, todoArrayList)
+              todoDeletebtn.visibility = VISIBLE
+              todoEditingbtn.visibility = GONE
+              todo_delete_cancel.visibility= GONE
         })
 //        todoEditingbtn.setOnClickListener {
 //

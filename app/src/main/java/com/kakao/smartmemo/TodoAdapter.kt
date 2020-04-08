@@ -34,6 +34,7 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoDTO>
                 checkedTodo = true
             }
 
+
         }
 
         view.btn_todo.setOnClickListener() { // 종모양 누르면 알람 설정 페이지로 이동 ( 성공 )
@@ -42,7 +43,6 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoDTO>
             val alarmSettingsIntent = Intent(it.context, TodoListActivity::class.java)
             it.context.startActivity(alarmSettingsIntent)
         }
-
         return view
     }
 
