@@ -12,8 +12,9 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.kakao.smartmemo.DTO.TodoDTO
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.todo_list_item.view.*
+import java.util.zip.Inflater
 import kotlinx.android.synthetic.main.todolist_fragment.*
-
 
 class TodoListFragment : Fragment() {
 
@@ -32,26 +33,36 @@ class TodoListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
-        todolist = view.findViewById(R.id.todolist) as ListView
-        todolist.adapter = TodoAdapter(view.context, todoArrayList)
-        todoDeletebtn = view.findViewById(R.id.imagebtn_delete) as ImageButton
         todoEditingbtn = view.findViewById(R.id.imagebtn_save) as ImageButton
-
+        todoDeletebtn = view.findViewById(R.id.imagebtn_delete) as ImageButton
+        todolist = view.todolist
+        todolist.adapter = TodoAdapter(view.context, todoArrayList)
+      
         todoDeletebtn.setOnClickListener(View.OnClickListener {
-            todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-            todolist.adapter = TodoDeleteAdapter(view.context, todoArrayList)
-            todoDeletebtn.visibility = GONE
-            todoEditingbtn.visibility = VISIBLE
-            todo_delete_cancel.visibility= VISIBLE
+              todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+              todolist.adapter = TodoDeleteAdapter(view.context, todoArrayList)
+              todoDeletebtn.visibility = GONE
+              todoEditingbtn.visibility = VISIBLE
+              todo_delete_cancel.visibility= VISIBLE
         })
+      
         todoEditingbtn.setOnClickListener(View.OnClickListener {
-            todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-            todolist.adapter = TodoAdapter(view.context, todoArrayList)
-            todoDeletebtn.visibility = VISIBLE
-            todoEditingbtn.visibility = GONE
-            todo_delete_cancel.visibility= GONE
+              todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+              todolist.adapter = TodoAdapter(view.context, todoArrayList)
+              todoDeletebtn.visibility = VISIBLE
+              todoEditingbtn.visibility = GONE
+              todo_delete_cancel.visibility= GONE
         })
-        todolist.clearChoices() //listview 선택 초기화
+//        todoEditingbtn.setOnClickListener {
+//
+//            for(i in 0 until todolist.adapter.count-1) {
+//                Toast.makeText(context, "todoEditingBtn 클릭됨", Toast.LENGTH_SHORT).show()
+//                var listItem = todolist.adapter.getItem(i)
+//                var deleteImg = getResources().getDrawable(R.drawable.delete_todo)
+//                //listItem.btn_todo.background = deleteImg
+//
+//            }
+//        }
         return view
     }
 
