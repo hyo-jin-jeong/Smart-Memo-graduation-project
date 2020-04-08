@@ -35,7 +35,7 @@ class TodoListFragment : Fragment() {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
         todoEditingbtn = view.findViewById(R.id.imagebtn_save) as ImageButton
         todoDeletebtn = view.findViewById(R.id.imagebtn_delete) as ImageButton
-        todolist = view.todolist
+        todolist = view.findViewById(R.id.todolist) as ListView
         todolist.adapter = TodoAdapter(view.context, todoArrayList)
       
         todoDeletebtn.setOnClickListener(View.OnClickListener {
