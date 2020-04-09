@@ -134,7 +134,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/save_button"
-        android:text="save"
+        android:text="S A V E"
+        android:textColor="#FFFFFF"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true"/>

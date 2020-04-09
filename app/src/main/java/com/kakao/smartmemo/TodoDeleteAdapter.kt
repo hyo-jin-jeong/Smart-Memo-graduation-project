@@ -21,17 +21,17 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = LayoutInflater.from(context).inflate(R.layout.todo_list_delete, null)
         val todo = todoList[position]
-        view.textView_title.text = todo.todoContent
+        view.textView_todo.text = todo.todoContent
 
         var checkedTodo = false
 
         view.group_color.setBackgroundColor(Color.parseColor("#B2CCFF"))
-        view.textView_title.setOnClickListener() { // 취소선 ( 성 공 )
+        view.textView_todo.setOnClickListener() { // 취소선 ( 성 공 )
             if (checkedTodo) { // todolist에 취소선이 그어져 있으면 true
-                view.textView_title.paintFlags = 0
+                view.textView_todo.paintFlags = 0
                 checkedTodo = false
             } else { // todolist에 취소선이 그어져 있지 않으면 false
-                view.textView_title.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                view.textView_todo.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 checkedTodo = true
             }
         }
