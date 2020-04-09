@@ -4,13 +4,19 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.DTO.PlaceDTO
+import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.DayRepeatAdapter
+import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
+import com.kakao.smartmemo.com.kakao.smartmemo.DTO.DayDTO
 import kotlinx.android.synthetic.main.alarm_settings_place.*
 import kotlinx.android.synthetic.main.alarm_settings_time.*
 import kotlinx.android.synthetic.main.time_location_settings.*
@@ -23,10 +29,13 @@ class TodoListActivity : AppCompatActivity() {
     private lateinit var timebtn: ImageButton
     private lateinit var placebtn: ImageButton
     private lateinit var placelistview : ListView
+    private lateinit var daylistview: RecyclerView
     private lateinit var timeSpinner : Spinner
     private lateinit var placeSpinner : Spinner
+    private lateinit var savebtn : Button
 
     private var placeList = arrayListOf<PlaceDTO>(PlaceDTO("연세병원"))
+    private var dayList = mutableListOf<DayDTO>(DayDTO("월"), DayDTO("화"), DayDTO("수"), DayDTO("목"), DayDTO("금"), DayDTO("토"), DayDTO("일"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +64,12 @@ class TodoListActivity : AppCompatActivity() {
 
         alarmswitch_time = switch_time
         alarmswitch_location = switch_location
-        timebtn = view_time.findViewById(R.id.btn_time_settings)
+        timebtn = view_time.findViewById(R.id.btn_time_settings) //시간설정버튼
+        daylistview = view_time.findViewById(R.id.listview_day_repeat)  //요일반복 나오는 recyclerview
 
-        placebtn = view_location.findViewById(R.id.btn_place_choice)
-        placelistview = view_location.findViewById(R.id.listview_place)
+        placebtn = view_location.findViewById(R.id.btn_place_choice) //장소선택 버튼
+        placelistview = view_location.findViewById(R.id.listview_place) //장소선택시 나오는 listview
+        
 
         dateSettingInTime.setOnClickListener {
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
@@ -76,7 +87,7 @@ class TodoListActivity : AppCompatActivity() {
             dateDia.show()
         }
 
-
+        //시간알림 반복시간 설정
         timeSpinner = repeat_time_spinner
         timeSpinner.adapter = ringingAdapter
         timeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -87,6 +98,7 @@ class TodoListActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {   }
         }
 
+        //장소 알림 반복시간 설정
         placeSpinner = repeat_place_spinner
         placeSpinner.adapter = ringingAdapter
         placeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -133,6 +145,11 @@ class TodoListActivity : AppCompatActivity() {
             }
         }
 
+        //요일반복 선택시 나오는 recyclerview 어댑터
+        daylistview.adapter = DayRepeatAdapter(this, dayList)
+        daylistview.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false) //가로 recyclerview
+        daylistview.scrollToPosition(0)  //recyclerview position 맨앞으로
+        
         alarmswitch_location.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
                 todostub_location.visibility = VISIBLE
@@ -145,7 +162,13 @@ class TodoListActivity : AppCompatActivity() {
             }
         }
 
+        //장소선택시 나오는 listview 어댑터
         placelistview.adapter = PlaceListAdapter(this, placeList)
+
+        savebtn = this.findViewById(R.id.saveTodoAlarmButton)
+        savebtn.setOnClickListener(View.OnClickListener {
+            finish()
+        })
     }
 
     //툴바의 뒤로가기 버튼
@@ -154,6 +177,12 @@ class TodoListActivity : AppCompatActivity() {
         when (id) {
             android.R.id.home -> {
                 finish()
+                //뒤로가기 클릭시 종 off ->실행이안되 고쳐야함.
+                val view = LayoutInflater.from(this).inflate(R.layout.todo_list_item, null)
+                Log.v("seyuuuun", "종 꺼짐")
+                val btn_todo = view.findViewById(R.id.btn_todo) as Button
+                btn_todo.setBackgroundResource(R.drawable.bell_icon)
+                Log.v("seyuuuun", "종 꺼짐22")
                 return true
             }
         }

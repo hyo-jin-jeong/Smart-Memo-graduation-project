@@ -1,9 +1,10 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.com.kakao.smartmemo.Adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.DTO.PlaceAlarmDTO
+import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.alarm_list_item.view.*
 
 class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(){
@@ -32,7 +33,8 @@ class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(){
         this@AlarmAdapter.data = dataList.toMutableList()
     }
 
-    inner class ViewHolder(parent:ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.alarm_list_item, parent, false)) {
+    inner class ViewHolder(parent:ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(
+        R.layout.alarm_list_item, parent, false)) {
         val alarm_place = itemView.textView_alarm_place
         val alarm_date = itemView.textView_date
         val alarm_content = itemView.textView_alarm_content
