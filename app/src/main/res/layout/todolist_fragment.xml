@@ -30,17 +30,19 @@
 
             <ImageButton
                 android:id="@+id/imagebtn_delete"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@null"
                 android:visibility="visible"
+                android:scaleType="fitCenter"
                 app:srcCompat="@drawable/delete_todo" />
             <ImageButton
                 android:id="@+id/imagebtn_save"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@null"
                 android:visibility="gone"
+                android:scaleType="fitCenter"
                 app:srcCompat="@drawable/todolist_pencil" />
       </FrameLayout>
     </RelativeLayout>

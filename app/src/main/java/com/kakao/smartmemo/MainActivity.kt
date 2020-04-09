@@ -11,7 +11,6 @@ import android.widget.ImageView
 import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -75,12 +74,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     val nextIntent = Intent(this, AddGroup::class.java)
                     startActivity(nextIntent)
                 }
-
-            }
-            if (id == R.id.nav_my_memo) {
-
-            } else if (id == R.id.addGroup) {
-
 
             }
             menuItem.isChecked=false
