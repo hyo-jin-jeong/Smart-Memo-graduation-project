@@ -10,15 +10,24 @@ import com.kakao.smartmemo.PlaceAlarmDialog
 
 class DialogSectionsPagerAdapter(private val context: FragmentDialog, fm: FragmentManager) :
     FragmentPagerAdapter(fm) {
+    private var type: Int? = null
 
     override fun getItem(position: Int): Fragment {
-        when(position){
-            0 -> {return MemoDialog()
-            }
-            1 ->  {return PlaceAlarmDialog()
+        when (type) {
+            0 -> return MemoDialog()
+            1 -> return PlaceAlarmDialog()
+            else -> {
+                when (position) {
+                    0 -> {
+                        return MemoDialog()
+                    }
+                    1 -> {
+                        return PlaceAlarmDialog()
+                    }
+                }
+                return MemoDialog()
             }
         }
-        return MemoDialog()
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
@@ -27,7 +36,14 @@ class DialogSectionsPagerAdapter(private val context: FragmentDialog, fm: Fragme
     }
 
     override fun getCount(): Int {
-        // Show 2 total pages.
-        return 2
+        return when (type) {
+            0 -> 1
+            1 -> 1
+            else -> 2
+        }
+    }
+
+    fun setCurType(type: Int) {
+        this.type = type
     }
 }

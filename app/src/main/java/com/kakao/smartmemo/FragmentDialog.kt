@@ -13,10 +13,11 @@ class FragmentDialog : DialogFragment() {
     private lateinit var viewPager: ViewPager
     private lateinit var myDialog: Dialog
     private lateinit var myToolbar: Toolbar
+    private var type: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -40,6 +41,7 @@ class FragmentDialog : DialogFragment() {
 
         // tab slider
         adapter = DialogSectionsPagerAdapter(this, childFragmentManager)
+        adapter.setCurType(type!!)
 
         val indicator = view.findViewById<CircleIndicator>(R.id.circle_indicator)
 
@@ -56,13 +58,20 @@ class FragmentDialog : DialogFragment() {
             override fun onPageScrollStateChanged(p0: Int) { }
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) { }
             override fun onPageSelected(p0: Int) {
-                indicator.selectDot(p0)
+                if(type == 2)
+                    indicator.selectDot(p0)
             }
         })
 
-        indicator.createDotPanel(2, R.drawable.indicator_dot_on, R.drawable.indicator_dot_off, 0)
+
+        if (type == 2)
+            indicator.createDotPanel(2, R.drawable.indicator_dot_on, R.drawable.indicator_dot_off, 0)
 
         return view
+    }
+
+    fun setCurType(type: Int) {
+        this.type = type
     }
 
 }
