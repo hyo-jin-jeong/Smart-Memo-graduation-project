@@ -33,11 +33,10 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
 
-
         mapView.setPOIItemEventListener(this)
         mapView.setMapViewEventListener(this)
-
     }
+
     override fun onCreateOptionsMenu(menu: Menu, menuInflater:MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);
         (activity as MainActivity).toolbar.title = resources.getString(R.string.tab_text_1)
