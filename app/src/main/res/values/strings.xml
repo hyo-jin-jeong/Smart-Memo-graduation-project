@@ -27,4 +27,6 @@
 
     <string name="write_memo">메모 작성</string>
     <string name="writing_location">한성대학교</string>
+
+    <string name="ring_again">다시 울림</string>
 </resources>
