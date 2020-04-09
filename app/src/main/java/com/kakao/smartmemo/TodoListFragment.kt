@@ -12,8 +12,6 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.kakao.smartmemo.DTO.TodoDTO
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.todo_list_item.view.*
-import java.util.zip.Inflater
 import kotlinx.android.synthetic.main.todolist_fragment.*
 
 class TodoListFragment : Fragment() {
