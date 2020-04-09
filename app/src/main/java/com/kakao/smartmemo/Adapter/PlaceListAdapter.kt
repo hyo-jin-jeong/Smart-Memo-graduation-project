@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.com.kakao.smartmemo.Adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import com.kakao.smartmemo.DTO.PlaceDTO
+import com.kakao.smartmemo.R
 
 class PlaceListAdapter(val context: Context, val placeList: ArrayList<PlaceDTO>) : BaseAdapter() {
 

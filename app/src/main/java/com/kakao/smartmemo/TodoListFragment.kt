@@ -11,8 +11,10 @@ import android.widget.*
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.kakao.smartmemo.DTO.TodoDTO
+import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.TodoAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.todolist_fragment.*
+import kotlinx.android.synthetic.main.todolist_fragment.view.*
 
 class TodoListFragment : Fragment() {
 
@@ -33,6 +35,7 @@ class TodoListFragment : Fragment() {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
         todoEditingbtn = view.findViewById(R.id.imagebtn_save) as ImageButton
         todoDeletebtn = view.findViewById(R.id.imagebtn_delete) as ImageButton
+
         todolist = view.findViewById(R.id.todolist) as ListView
         todolist.adapter = TodoAdapter(view.context, todoArrayList)
       
@@ -42,11 +45,21 @@ class TodoListFragment : Fragment() {
               todoDeletebtn.visibility = GONE
               todoEditingbtn.visibility = VISIBLE
               todo_delete_cancel.visibility= VISIBLE
+            todo_delete_cancel.cancel_btn.setOnClickListener {  //취소버튼 눌렀을시
+                todolist.adapter = TodoAdapter(view.context, todoArrayList)
+                todoDeletebtn.visibility = VISIBLE
+                todoEditingbtn.visibility = GONE
+                todo_delete_cancel.visibility= GONE
+            }
         })
       
         todoEditingbtn.setOnClickListener(View.OnClickListener {
               todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-              todolist.adapter = TodoAdapter(view.context, todoArrayList)
+              todolist.adapter =
+                  TodoAdapter(
+                      view.context,
+                      todoArrayList
+                  )
               todoDeletebtn.visibility = VISIBLE
               todoEditingbtn.visibility = GONE
               todo_delete_cancel.visibility= GONE
@@ -68,7 +81,7 @@ class TodoListFragment : Fragment() {
         super.onCreateOptionsMenu(menu, menuInflater)
         (activity as MainActivity).toolbar.title="Todo List"
         val menuInflater = menuInflater
-        menuInflater.inflate(R.menu.select_todolist_remove, menu)
+        menuInflater.inflate(R.menu.select_group_in_todolist, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -77,13 +90,26 @@ class TodoListFragment : Fragment() {
                 (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
                 return true
             }
-            R.id.action_todolist_remove -> {
+            R.id.action_settings_select -> { //그룹선택
+                return true
+            }
+            R.id.action_settings_total -> { //전체 TODOLIST
+                return true
+            }
+            R.id.action_settings_my -> { // 내 TODOLIST
+                return true
+            }
+            R.id.action_settings_group1 -> { //그룹1
+                return true
+            }
+            R.id.action_settings_group2 -> { //그룹2
                 return true
             }
             else ->
                 super.onOptionsItemSelected(item)
         }
     }
+
     fun onCreateDialog() : Dialog {
         return let {
             val builder = AlertDialog.Builder(activity)

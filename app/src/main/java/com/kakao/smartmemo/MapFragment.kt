@@ -12,10 +12,9 @@ import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
 
-class MapFragment : Fragment(), MapView.POIItemEventListener {
+class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener {
     lateinit var mapView :MapView
     lateinit var mapViewContainer :ViewGroup
-    lateinit var myDialog: FragmentDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -34,29 +33,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener {
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
 
-        val mapPoint = MapPoint.mapPointWithGeoCoord(37.565841, 126.976825)
-        val customMarker = MapPOIItem()
-        customMarker.itemName = "Custom Marker"
-        customMarker.tag = 1
-        customMarker.mapPoint = mapPoint
 
-        //customMarker가 너무 큼 수정하고 사용하도록 함
-        //customMarker.markerType = MapPOIItem.MarkerType.CustomImage // 마커타입을 커스텀 마커로 지정.
-        customMarker.markerType = MapPOIItem.MarkerType.BluePin
-        customMarker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
-
-        customMarker.customImageResourceId = R.drawable.memo_marker // 마커 이미지.
-
-        customMarker.isCustomImageAutoscale =
-            false // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
-
-        customMarker.setCustomImageAnchor(
-            0.5f,
-            1.0f
-        ) // 마커 이미지중 기준이 되는 위치(앵커포인트) 지정 - 마커 이미지 좌측 상단 기준 x(0.0f ~ 1.0f), y(0.0f ~ 1.0f) 값.
-
-        mapView.addPOIItem(customMarker)
         mapView.setPOIItemEventListener(this)
+        mapView.setMapViewEventListener(this)
 
     }
     override fun onCreateOptionsMenu(menu: Menu, menuInflater:MenuInflater) {
@@ -94,15 +73,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener {
         }
     }
 
-    private fun showDialog() {
-
-        myDialog = FragmentDialog()
-        myDialog.show(super.getChildFragmentManager(), "Oh?!")
-
-    }
-
+    //setPOIItemEventListener override method
     override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onCalloutBalloonOfPOIItemTouched(
@@ -110,16 +83,114 @@ class MapFragment : Fragment(), MapView.POIItemEventListener {
         p1: MapPOIItem?,
         p2: MapPOIItem.CalloutBalloonButtonType?
     ) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?) {
-        TODO("Not yet implemented")
+
     }
 
     //marker 선택 시
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
-        showDialog()
+        var dialog = FragmentDialog()
+        //type은 memo만이면 0, todo만이면 1, 둘다면 2
+        when (p1?.customImageResourceId) {
+            R.drawable.memo_icon -> {
+                dialog.setCurType(0)
+            }
+            R.drawable.todo_icon -> {
+                dialog.setCurType(1)
+            }
+            else -> {
+                dialog.setCurType(2)
+            }
+        }
+        dialog.show(super.getChildFragmentManager(), "Oh?!")
+    }
+
+
+    //setMapViewEventListener override method
+    override fun onMapViewDoubleTapped(p0: MapView?, p1: MapPoint?) {
+    }
+
+    override fun onMapViewInitialized(p0: MapView?) {
+        val mapPoint1 = MapPoint.mapPointWithGeoCoord(37.565841, 126.976825)
+        val memoAndTodo = MapPOIItem()
+        memoAndTodo.itemName = "Memo And Todo"
+        memoAndTodo.tag = 1
+        memoAndTodo.mapPoint = mapPoint1
+        memoAndTodo.markerType = MapPOIItem.MarkerType.CustomImage // 마커타입을 커스텀 마커로 지정.
+        //customMarker.markerType = MapPOIItem.MarkerType.BluePin   //기본 아이콘 사용
+        //customMarker.selectedMarkerType = MapPOIItem.MarkerType.RedPin    //기본 아이콘 사용
+        memoAndTodo.customImageResourceId = R.drawable.memo_todo_icon // 마커 이미지.
+        memoAndTodo.isCustomImageAutoscale = false // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
+        memoAndTodo.setCustomImageAnchor(
+            0.5f,
+            1.0f
+        ) // 마커 이미지중 기준이 되는 위치(앵커포인트) 지정 - 마커 이미지 좌측 상단 기준 x(0.0f ~ 1.0f), y(0.0f ~ 1.0f) 값.
+
+        mapView.addPOIItem(memoAndTodo)
+
+        val mapPoint2 = MapPoint.mapPointWithGeoCoord(37.565799, 126.975183)
+        val memo = MapPOIItem()
+        memo.itemName = "Memo"
+        memo.tag = 2
+        memo.mapPoint = mapPoint2
+        memo.markerType = MapPOIItem.MarkerType.CustomImage
+        memo.customImageResourceId = R.drawable.memo_icon
+        memo.isCustomImageAutoscale = false
+        memo.setCustomImageAnchor(0.5f, 1.0f)
+
+        mapView.addPOIItem(memo)
+
+        val mapPoint3 = MapPoint.mapPointWithGeoCoord(37.564170, 126.978471)
+        val todo = MapPOIItem()
+        todo.itemName = "Todo"
+        todo.tag = 3
+        todo.mapPoint = mapPoint3
+        todo.markerType = MapPOIItem.MarkerType.CustomImage
+        todo.customImageResourceId = R.drawable.todo_icon
+        todo.isCustomImageAutoscale = false
+        todo.setCustomImageAnchor(0.5f, 1.0f)
+
+        mapView.addPOIItem(todo)
+    }
+
+    override fun onMapViewDragStarted(p0: MapView?, p1: MapPoint?) {
+    }
+
+    override fun onMapViewMoveFinished(p0: MapView?, p1: MapPoint?) {
+
+    }
+
+    override fun onMapViewCenterPointMoved(p0: MapView?, p1: MapPoint?) {
+
+    }
+
+    override fun onMapViewDragEnded(p0: MapView?, p1: MapPoint?) {
+
+    }
+
+    override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
+
+    }
+
+    override fun onMapViewZoomLevelChanged(p0: MapView?, p1: Int) {
+
+    }
+
+    override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
+
+        val curLocationMarker: MapPOIItem = MapPOIItem()
+        curLocationMarker.itemName = "lalala"
+        curLocationMarker.mapPoint = p1
+        curLocationMarker.markerType = MapPOIItem.MarkerType.CustomImage
+        curLocationMarker.customImageResourceId = R.drawable.cur_location_icon
+        curLocationMarker.isCustomImageAutoscale = false
+        curLocationMarker.setCustomImageAnchor(0.5f, 1.0f)
+
+        mapView.addPOIItem(curLocationMarker)
+
     }
 
 }

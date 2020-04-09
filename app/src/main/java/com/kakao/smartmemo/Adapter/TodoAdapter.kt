@@ -1,17 +1,17 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.com.kakao.smartmemo.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.kakao.smartmemo.DTO.TodoDTO
+import com.kakao.smartmemo.R
+import com.kakao.smartmemo.TodoListActivity
 import kotlinx.android.synthetic.main.todo_list_item.view.*
 
 
@@ -30,7 +30,7 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoDTO>
                 view.textView_todo.paintFlags = 0
                 checkedTodo = false
             } else { // todolist에 취소선이 그어져 있지 않으면 false
-                view.textView_todo.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                view.textView_todo.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG //취소선 설정
                 checkedTodo = true
             }
 
