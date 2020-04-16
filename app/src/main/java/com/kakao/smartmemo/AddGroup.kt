@@ -1,7 +1,6 @@
 package com.kakao.smartmemo
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar

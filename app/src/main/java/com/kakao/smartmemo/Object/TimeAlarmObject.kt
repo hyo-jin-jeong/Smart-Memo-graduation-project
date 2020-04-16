@@ -1,6 +1,6 @@
-package com.kakao.smartmemo.Model
+package com.kakao.smartmemo.Object
 
-object TimeAlarmModel{
+object TimeAlarmObject{
     var time_alarm_id:String =""
     var set_alarm:String = ""
     var set_day:String =""

@@ -9,13 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.kakao.smartmemo.DTO.TodoDTO
+import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.TodoListActivity
 import kotlinx.android.synthetic.main.todo_list_item.view.*
 
 
-class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoDTO>) : BaseAdapter() {
+class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter() {
 
     @SuppressLint("ResourceType")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -46,7 +46,7 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoDTO>
         return view
     }
 
-    override fun getItem(position: Int) : TodoDTO {
+    override fun getItem(position: Int) : TodoData {
         return todoList[position]
     }
 

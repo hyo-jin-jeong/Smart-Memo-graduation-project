@@ -1,10 +1,11 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.Adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.kakao.smartmemo.DTO.MemoData
+import com.kakao.smartmemo.Data.MemoData
+import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_view.view.*
 
 class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>() { //memoList RecycleView

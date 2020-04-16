@@ -1,6 +1,6 @@
-package com.kakao.smartmemo.Model
+package com.kakao.smartmemo.Object
 
-object PlaceAlarmModel{
+object PlaceAlarmObject{
     var placeAlarm_id:String =""
     var latitude:String = ""
     var longitude:String =""

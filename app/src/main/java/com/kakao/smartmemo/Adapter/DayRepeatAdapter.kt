@@ -4,15 +4,13 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.Button
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.com.kakao.smartmemo.DTO.DayDTO
+import com.kakao.smartmemo.com.kakao.smartmemo.DTO.DayData
 import kotlinx.android.synthetic.main.repeat_day_item.view.*
 
-class DayRepeatAdapter(val context: Context, val dayList: MutableList<DayDTO>): RecyclerView.Adapter<DayRepeatAdapter.ViewHolder>() {
+class DayRepeatAdapter(val context: Context, val dayList: MutableList<DayData>): RecyclerView.Adapter<DayRepeatAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
 

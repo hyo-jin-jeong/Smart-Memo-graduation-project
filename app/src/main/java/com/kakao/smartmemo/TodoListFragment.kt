@@ -10,7 +10,8 @@ import android.view.View.VISIBLE
 import android.widget.*
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import com.kakao.smartmemo.DTO.TodoDTO
+import com.kakao.smartmemo.Adapter.TodoDeleteAdapter
+import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.TodoAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.todolist_fragment.*
@@ -21,7 +22,7 @@ class TodoListFragment : Fragment() {
     private lateinit var todolist : ListView
     private lateinit var todoEditingbtn : ImageButton
     private lateinit var todoDeletebtn : ImageButton
-    private var todoArrayList = arrayListOf<TodoDTO>(TodoDTO("약먹기"), TodoDTO("도서관 책 반납"))
+    private var todoArrayList = arrayListOf<TodoData>(TodoData("약먹기"), TodoData("도서관 책 반납"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -41,7 +42,10 @@ class TodoListFragment : Fragment() {
       
         todoDeletebtn.setOnClickListener(View.OnClickListener {
               todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-              todolist.adapter = TodoDeleteAdapter(view.context, todoArrayList)
+              todolist.adapter = TodoDeleteAdapter(
+                  view.context,
+                  todoArrayList
+              )
               todoDeletebtn.visibility = GONE
               todoEditingbtn.visibility = VISIBLE
               todo_delete_cancel.visibility= VISIBLE

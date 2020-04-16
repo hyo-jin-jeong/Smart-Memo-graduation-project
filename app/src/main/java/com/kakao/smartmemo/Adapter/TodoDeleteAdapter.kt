@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.Adapter
 
 import android.annotation.SuppressLint
 
@@ -12,10 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 
-import com.kakao.smartmemo.DTO.TodoDTO
+import com.kakao.smartmemo.Data.TodoData
+import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.todo_list_delete.view.*
 
-class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<TodoDTO>) : BaseAdapter() {
+class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter() {
 
     @SuppressLint("ResourceType")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -47,7 +48,7 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
         return view
     }
 
-    override fun getItem(position: Int) : TodoDTO {
+    override fun getItem(position: Int) : TodoData {
         return todoList[position]
     }
 

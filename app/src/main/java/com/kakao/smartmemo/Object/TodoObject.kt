@@ -1,6 +1,6 @@
-package com.kakao.smartmemo.Model
+package com.kakao.smartmemo.Object
 
-object TodoModel{
+object TodoObject{
     var todolist_id:String = ""
     var id_success:String =""
     var todo_content:String =""

@@ -5,6 +5,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.Adapter.PlaceAlarmDialogAdapter
 
 class PlaceAlarmDialog : Fragment() {
 
@@ -18,7 +19,8 @@ class PlaceAlarmDialog : Fragment() {
         val view = inflater.inflate(R.layout.place_alarm_dialog, container, false)
 
         placeAlarmList = view.findViewById<RecyclerView?>(R.id.alarm_settings_view) as RecyclerView
-        placeAlarmList.adapter = PlaceAlarmDialogAdapter()
+        placeAlarmList.adapter =
+            PlaceAlarmDialogAdapter()
         placeAlarmList.layoutManager = LinearLayoutManager(view.context)
 
         return view

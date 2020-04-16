@@ -1,4 +1,4 @@
-package com.kakao.smartmemo.ui.main
+package com.kakao.smartmemo.Adapter
 
 import android.content.Context
 import androidx.fragment.app.Fragment

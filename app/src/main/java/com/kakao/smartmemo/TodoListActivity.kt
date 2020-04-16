@@ -13,10 +13,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kakao.smartmemo.DTO.PlaceDTO
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.DayRepeatAdapter
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
-import com.kakao.smartmemo.com.kakao.smartmemo.DTO.DayDTO
+import com.kakao.smartmemo.com.kakao.smartmemo.DTO.DayData
 import kotlinx.android.synthetic.main.alarm_settings_place.*
 import kotlinx.android.synthetic.main.alarm_settings_time.*
 import kotlinx.android.synthetic.main.time_location_settings.*
@@ -34,8 +34,8 @@ class TodoListActivity : AppCompatActivity() {
     private lateinit var placeSpinner : Spinner
     private lateinit var savebtn : Button
 
-    private var placeList = arrayListOf<PlaceDTO>(PlaceDTO("연세병원"))
-    private var dayList = mutableListOf<DayDTO>(DayDTO("월"), DayDTO("화"), DayDTO("수"), DayDTO("목"), DayDTO("금"), DayDTO("토"), DayDTO("일"))
+    private var placeList = arrayListOf<PlaceData>(PlaceData("연세병원"))
+    private var dayList = mutableListOf<DayData>(DayData("월"), DayData("화"), DayData("수"), DayData("목"), DayData("금"), DayData("토"), DayData("일"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

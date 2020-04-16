@@ -6,7 +6,7 @@ import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.viewpager.widget.ViewPager
-import com.kakao.smartmemo.ui.main.DialogSectionsPagerAdapter
+import com.kakao.smartmemo.Adapter.DialogSectionsPagerAdapter
 
 class FragmentDialog : DialogFragment() {
     private lateinit var adapter: DialogSectionsPagerAdapter
@@ -40,7 +40,10 @@ class FragmentDialog : DialogFragment() {
         val view: View = inflater.inflate(R.layout.main_dialog, container, false)
 
         // tab slider
-        adapter = DialogSectionsPagerAdapter(this, childFragmentManager)
+        adapter = DialogSectionsPagerAdapter(
+            this,
+            childFragmentManager
+        )
         adapter.setCurType(type!!)
 
         val indicator = view.findViewById<CircleIndicator>(R.id.circle_indicator)
