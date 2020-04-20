@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.app.Dialog
 import android.os.Bundle
@@ -7,8 +7,13 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.viewpager.widget.ViewPager
 import com.kakao.smartmemo.Adapter.DialogSectionsPagerAdapter
+import com.kakao.smartmemo.CircleIndicator
+import com.kakao.smartmemo.Contract.DialogContract
+import com.kakao.smartmemo.Presenter.DialogPresenter
+import com.kakao.smartmemo.R
 
-class FragmentDialog : DialogFragment() {
+class FragmentDialog : DialogFragment(), DialogContract.View {
+    private lateinit var presenter : DialogPresenter
     private lateinit var adapter: DialogSectionsPagerAdapter
     private lateinit var viewPager: ViewPager
     private lateinit var myDialog: Dialog
@@ -38,7 +43,7 @@ class FragmentDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view: View = inflater.inflate(R.layout.main_dialog, container, false)
-
+        presenter = DialogPresenter(this)
         // tab slider
         adapter = DialogSectionsPagerAdapter(
             this,
@@ -46,7 +51,9 @@ class FragmentDialog : DialogFragment() {
         )
         adapter.setCurType(type!!)
 
-        val indicator = view.findViewById<CircleIndicator>(R.id.circle_indicator)
+        val indicator = view.findViewById<CircleIndicator>(
+            R.id.circle_indicator
+        )
 
         myToolbar = view.findViewById<Toolbar>(R.id.toolbar)
         myToolbar.setNavigationIcon(R.drawable.back)
@@ -57,6 +64,8 @@ class FragmentDialog : DialogFragment() {
         // Set up the ViewPager with the sections adapter.
         viewPager = view.findViewById<ViewPager>(R.id.dialog_pager)
         viewPager.adapter = adapter
+        presenter.setDialogAdapterModel(adapter)
+        presenter.setDialogAdapterView(adapter)
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(p0: Int) { }
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) { }
@@ -68,7 +77,9 @@ class FragmentDialog : DialogFragment() {
 
 
         if (type == 2)
-            indicator.createDotPanel(2, R.drawable.indicator_dot_on, R.drawable.indicator_dot_off, 0)
+            indicator.createDotPanel(2,
+                R.drawable.indicator_dot_on,
+                R.drawable.indicator_dot_off, 0)
 
         return view
     }

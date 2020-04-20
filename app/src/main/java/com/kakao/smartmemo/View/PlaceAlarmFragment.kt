@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.AlarmContract
 import com.kakao.smartmemo.Presenter.AlarmPresenter
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.AlarmAdapter
+import com.kakao.smartmemo.Adapter.AlarmAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
 class PlaceAlarmFragment : Fragment(), AlarmContract.View {

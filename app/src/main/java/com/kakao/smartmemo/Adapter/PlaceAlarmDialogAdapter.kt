@@ -3,11 +3,12 @@ package com.kakao.smartmemo.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.Contract.TodoDialogAdapterContract
 import com.kakao.smartmemo.Data.PlaceAlarmData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.alarm_list_item.view.*
 
-class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.DialogViewHolder>() {
+class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.DialogViewHolder>(), TodoDialogAdapterContract.View, TodoDialogAdapterContract.Model {
 
     var data:MutableList<PlaceAlarmData> = mutableListOf(PlaceAlarmData("한성대학교", "2020.03.14", "도서관 책 "), PlaceAlarmData("녹십자약국", "2020.03.15", "마스크 사기"))
     //View Holder생성
@@ -42,5 +43,9 @@ class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.Dial
         val alarm_place = itemView.textView_alarm_place
         val alarm_date = itemView.textView_date
         val alarm_content = itemView.textView_alarm_content
+    }
+
+    override fun notifyAdapter() {
+        notifyDataSetChanged()
     }
 }

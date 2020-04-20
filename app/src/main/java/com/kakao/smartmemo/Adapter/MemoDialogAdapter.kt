@@ -3,11 +3,12 @@ package com.kakao.smartmemo.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.Contract.MemoDialogAdapterContract
 import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_view.view.*
 
-class MemoDialogAdapter: RecyclerView.Adapter<MemoDialogAdapter.DialogViewHolder>() {
+class MemoDialogAdapter: RecyclerView.Adapter<MemoDialogAdapter.DialogViewHolder>(), MemoDialogAdapterContract.View, MemoDialogAdapterContract.Model {
 
     var datas: MutableList<MemoData> = mutableListOf(
         MemoData("2020.3.2", "학교","기업조사"),
@@ -56,5 +57,9 @@ class MemoDialogAdapter: RecyclerView.Adapter<MemoDialogAdapter.DialogViewHolder
         val memoDate = itemView.memo_date
         val memoBackground = itemView.memo_list_view
 
+    }
+
+    override fun notifyAdapter() {
+        notifyDataSetChanged()
     }
 }
