@@ -9,13 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.kakao.smartmemo.Contract.TodoAdapterContract
+import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.TodoListActivity
 import kotlinx.android.synthetic.main.todo_list_item.view.*
 
 
-class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter() {
+class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter(), TodoAdapterContract.Model, TodoAdapterContract.View {
 
     @SuppressLint("ResourceType")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -33,7 +35,6 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData
                 view.textView_todo.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG //취소선 설정
                 checkedTodo = true
             }
-
 
         }
 
@@ -56,6 +57,10 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData
 
     override fun getCount(): Int {
         return todoList.size
+    }
+
+    override fun notifyAdpater() {
+        notifyDataSetChanged()
     }
 
 }

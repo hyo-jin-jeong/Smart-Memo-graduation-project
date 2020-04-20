@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.kakao.smartmemo.*
+import com.kakao.smartmemo.View.PlaceAlarmFragment
+import com.kakao.smartmemo.View.TodoListFragment
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_text_1,
@@ -24,8 +26,10 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
         when(position){
             0 -> {return MapFragment()}
             1 ->  {return MemoListFragment()}
-            2 -> {return TodoListFragment()}
-            3 -> {return PlaceAlarmFragment()}
+            2 -> {return TodoListFragment()
+            }
+            3 -> {return PlaceAlarmFragment()
+            }
         }
         return MapFragment()
     }

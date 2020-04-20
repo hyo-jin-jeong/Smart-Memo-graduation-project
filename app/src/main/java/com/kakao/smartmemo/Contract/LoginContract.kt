@@ -1,8 +1,12 @@
 package com.kakao.smartmemo.Contract
 
+
 interface LoginContract {
     interface Presenter {
-        fun checkUser(){}
+        //fun addUser()
+        fun checkUser()
+
+
     }
     interface View {
 
