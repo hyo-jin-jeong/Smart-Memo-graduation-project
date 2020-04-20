@@ -3,6 +3,8 @@ package com.kakao.smartmemo
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import com.kakao.smartmemo.View.LoginActivity
+
 
 class SplashActivity: Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +15,7 @@ class SplashActivity: Activity() {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-        startActivity(Intent(this,LoginActivity::class.java))
+        startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
 }

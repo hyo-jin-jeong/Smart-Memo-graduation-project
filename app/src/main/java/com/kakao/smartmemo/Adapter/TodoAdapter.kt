@@ -1,4 +1,4 @@
-package com.kakao.smartmemo.com.kakao.smartmemo.Adapter
+package com.kakao.smartmemo.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,13 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.kakao.smartmemo.DTO.TodoDTO
+import com.kakao.smartmemo.Contract.TodoAdapterContract
+import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.TodoListActivity
+import com.kakao.smartmemo.View.TodoListActivity
 import kotlinx.android.synthetic.main.todo_list_item.view.*
 
 
-class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoDTO>) : BaseAdapter() {
+class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter(), TodoAdapterContract.Model, TodoAdapterContract.View {
 
     @SuppressLint("ResourceType")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -34,7 +35,6 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoDTO>
                 checkedTodo = true
             }
 
-
         }
 
         view.btn_todo.setOnClickListener() { // 종모양 누르면 알람 설정 페이지로 이동 ( 성공 )
@@ -46,7 +46,7 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoDTO>
         return view
     }
 
-    override fun getItem(position: Int) : TodoDTO {
+    override fun getItem(position: Int) : TodoData {
         return todoList[position]
     }
 
@@ -56,6 +56,10 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoDTO>
 
     override fun getCount(): Int {
         return todoList.size
+    }
+
+    override fun notifyAdapter() {
+        notifyDataSetChanged()
     }
 
 }

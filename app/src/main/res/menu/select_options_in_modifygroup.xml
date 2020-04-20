@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/update_group"
+        android:title="수정하기"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/exit_group"
+        android:title="그룹 탈퇴하기"
+        app:showAsAction="never"/>
+
+</menu>

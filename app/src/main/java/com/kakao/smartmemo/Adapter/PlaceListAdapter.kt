@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import com.kakao.smartmemo.DTO.PlaceDTO
+import com.kakao.smartmemo.Contract.TodoDateAdapterContract
+import com.kakao.smartmemo.Contract.TodoPlaceAdapterContract
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.R
 
-class PlaceListAdapter(val context: Context, val placeList: ArrayList<PlaceDTO>) : BaseAdapter() {
+class PlaceListAdapter(val context: Context, val placeList: ArrayList<PlaceData>) : BaseAdapter(), TodoPlaceAdapterContract.View, TodoPlaceAdapterContract.Model {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view: View = LayoutInflater.from(context).inflate(R.layout.alarm_settings_list_item, null)
@@ -32,6 +34,10 @@ class PlaceListAdapter(val context: Context, val placeList: ArrayList<PlaceDTO>)
 
     override fun getCount(): Int {
         return placeList.size
+    }
+
+    override fun notifyAdapter() {
+        notifyDataSetChanged()
     }
 
 }
