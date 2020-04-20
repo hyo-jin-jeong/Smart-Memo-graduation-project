@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.os.Bundle
 import android.view.*
@@ -7,10 +7,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.kakao.smartmemo.Adapter.MemoListAdapter
-import com.kakao.smartmemo.View.MainActivity
+import com.kakao.smartmemo.Contract.MemoContract
+import com.kakao.smartmemo.Presenter.MemoPresenter
+import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MemoListFragment : Fragment() {
+class MemoListFragment : Fragment(), MemoContract.View {
+    private lateinit var presenter: MemoPresenter
     lateinit var recyclerView1 : RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,8 +27,12 @@ class MemoListFragment : Fragment() {
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.memo_list_fragment, container, false)
+        presenter = MemoPresenter(this)
         recyclerView1 = view.findViewById(R.id.rv_memo_list!!)as RecyclerView
-        recyclerView1.adapter = MemoListAdapter()
+        var memoAdapter =  MemoListAdapter()
+        recyclerView1.adapter = memoAdapter
+        presenter.setMemoAdapterModel(memoAdapter)
+        presenter.setMemoAdapterView(memoAdapter)
         recyclerView1.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
         return view

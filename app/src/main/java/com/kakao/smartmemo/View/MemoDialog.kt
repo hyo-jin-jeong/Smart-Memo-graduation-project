@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Adapter.MemoDialogAdapter
 import com.kakao.smartmemo.Contract.MemoDialogContract
 import com.kakao.smartmemo.Presenter.MemoDialogPresenter
+import com.kakao.smartmemo.R
 
 class MemoDialog : Fragment(), MemoDialogContract.View {
 

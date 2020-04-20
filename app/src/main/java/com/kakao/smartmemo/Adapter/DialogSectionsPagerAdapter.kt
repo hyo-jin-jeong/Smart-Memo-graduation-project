@@ -6,8 +6,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.kakao.smartmemo.Contract.DialogAdapterContract
 import com.kakao.smartmemo.View.FragmentDialog
-import com.kakao.smartmemo.MemoDialog
-import com.kakao.smartmemo.PlaceAlarmDialog
+import com.kakao.smartmemo.View.MemoDialog
+import com.kakao.smartmemo.View.PlaceAlarmDialog
 
 class DialogSectionsPagerAdapter(private val context: FragmentDialog, fm: FragmentManager) : FragmentPagerAdapter(fm), DialogAdapterContract.View, DialogAdapterContract.Model {
     private var type: Int? = null
