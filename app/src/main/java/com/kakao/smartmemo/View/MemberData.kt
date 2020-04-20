@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,13 +9,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
+import com.kakao.smartmemo.Contract.MemberDataContract
+import com.kakao.smartmemo.Object.UserObejct
+import com.kakao.smartmemo.R
+import com.kakao.smartmemo.Presenter.MemberDataPresenter
+import kotlinx.android.synthetic.main.secession_popup.*
 
-class MemberData :AppCompatActivity(){
+class MemberData :AppCompatActivity() , MemberDataContract.View{
+    lateinit var presenter:MemberDataContract.Presenter
     lateinit var memberToolbar: Toolbar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.member_view)
+        presenter = MemberDataPresenter(this)
+
+        presenter.getProfile()//User 정보가져오기
+
         memberToolbar = findViewById(R.id.member_toolbar)
         setSupportActionBar(memberToolbar)
 
@@ -43,18 +52,18 @@ class MemberData :AppCompatActivity(){
                 return true
             }
             R.id.action_settings1 -> {
-                val member_data_change =Intent(this,MemberDataChange::class.java)
-                startActivity(member_data_change)
+                val member_data_change =Intent(this,
+                    MemberDataChange::class.java)
+                    startActivity(member_data_change)
 
                 return true
             }
 
-            R.id.action_settings2 -> {
-                Toast.makeText(this, item.title, Toast.LENGTH_SHORT).show()
-
+            R.id.action_settings2 -> {//로그아웃
+                initUserObject()
                 return true
             }
-            R.id.action_settings3 -> {
+            R.id.action_settings3 -> {//탈퇴
 
                 var builder = AlertDialog.Builder(this)
 
@@ -68,10 +77,19 @@ class MemberData :AppCompatActivity(){
                     builder1.setPositiveButton(
                         "예",
                         DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
-                            var builder2 = AlertDialog.Builder(this)
-                            builder2.setTitle("알림")
-                            builder2.setMessage("저희 서비스를 이용해 주셔서 감사합니다.")
-                            builder2.show()
+                            if(presenter.checkPassword(confirm_password)){
+                                var builder2 = AlertDialog.Builder(this)
+                                builder2.setTitle("알림")
+                                builder2.setMessage("저희 서비스를 이용해 주셔서 감사합니다.")
+                                builder2.show()
+                                presenter.deleteUser()
+                                initUserObject()
+
+                            }
+                            else{
+                                confirm_password.hint="비밀번호를 다시 입력하시오"
+                            }
+
                         })
                     builder1.setNegativeButton(
                         "아니오",
@@ -90,5 +108,22 @@ class MemberData :AppCompatActivity(){
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+    fun initUserObject(){
+        with(UserObejct){
+            email=""
+            password=""
+            uid=""
+            addr=""
+            user_name=""
+            profile_id=""
+            profile_url=""
+            kakao_conected=false
+            kakaoAlarm_time=""
+            group_info = mutableMapOf("" to "")
+        }
+        var intent = Intent(this, LoginActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 }

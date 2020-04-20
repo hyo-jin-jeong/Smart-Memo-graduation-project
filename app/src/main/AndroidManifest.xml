@@ -23,17 +23,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".View.LoginActivity"
             android:label="SmartMemo"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".View.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".SignInActivity"
+            android:name=".View.SignInActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -62,7 +62,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".AddGroup"
+            android:name=".View.AddGroup"
             android:label="@string/add_group"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -76,17 +76,17 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".MemberData"
+            android:name=".View.MemberData"
             android:label="회원 정보"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".MemberDataChange"
+            android:name=".View.MemberDataChange"
             android:label="회원 정보 수정"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".ModifyGroup"
+            android:name=".View.ModifyGroup"
             android:label="그룹 설정"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

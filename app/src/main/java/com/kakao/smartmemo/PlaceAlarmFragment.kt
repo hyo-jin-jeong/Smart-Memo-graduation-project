@@ -6,6 +6,7 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.View.MainActivity
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.AlarmAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 

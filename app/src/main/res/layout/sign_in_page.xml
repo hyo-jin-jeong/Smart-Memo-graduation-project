@@ -266,6 +266,7 @@
             android:paddingTop="20dp">
 
             <Button
+                android:id="@+id/done"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -279,6 +280,7 @@
                 android:background="@drawable/sign_in_button" />
 
             <Button
+                android:id="@+id/cancel"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="CANCEL"
