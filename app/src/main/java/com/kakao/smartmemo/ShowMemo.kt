@@ -16,7 +16,7 @@ class ShowMemo : AppCompatActivity() {
         val memoToolbar = findViewById<Toolbar>(R.id.showMemoToolbar)
         memoToolbar.title = resources.getString(R.string.nav_my_memo)
         setSupportActionBar(memoToolbar)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         writing_location.text = intent.getStringExtra("date")
         show_title.text = intent.getStringExtra("title")

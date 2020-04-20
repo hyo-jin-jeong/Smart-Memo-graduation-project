@@ -18,12 +18,8 @@ class DialogSectionsPagerAdapter(private val context: FragmentDialog, fm: Fragme
             1 -> return PlaceAlarmDialog()
             else -> {
                 when (position) {
-                    0 -> {
-                        return MemoDialog()
-                    }
-                    1 -> {
-                        return PlaceAlarmDialog()
-                    }
+                    0 -> return MemoDialog()
+                    1 -> return PlaceAlarmDialog()
                 }
                 return MemoDialog()
             }
