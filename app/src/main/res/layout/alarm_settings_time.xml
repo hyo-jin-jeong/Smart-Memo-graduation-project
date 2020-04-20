@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        app:cardBackgroundColor="#6D8497"
+        app:cardBackgroundColor="#6FA6D3"
         app:cardCornerRadius="20dp">
 
         <androidx.recyclerview.widget.RecyclerView

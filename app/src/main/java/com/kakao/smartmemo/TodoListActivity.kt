@@ -1,8 +1,9 @@
 package com.kakao.smartmemo
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -11,6 +12,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.DTO.PlaceDTO
@@ -20,7 +22,11 @@ import com.kakao.smartmemo.com.kakao.smartmemo.DTO.DayDTO
 import kotlinx.android.synthetic.main.alarm_settings_place.*
 import kotlinx.android.synthetic.main.alarm_settings_time.*
 import kotlinx.android.synthetic.main.time_location_settings.*
+import java.lang.String.format
+import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class TodoListActivity : AppCompatActivity() {
     private lateinit var myToolbar: Toolbar
@@ -33,6 +39,7 @@ class TodoListActivity : AppCompatActivity() {
     private lateinit var timeSpinner : Spinner
     private lateinit var placeSpinner : Spinner
     private lateinit var savebtn : Button
+    private var time  : String = ""
 
     private var placeList = arrayListOf<PlaceDTO>(PlaceDTO("연세병원"))
     private var dayList = mutableListOf<DayDTO>(DayDTO("월"), DayDTO("화"), DayDTO("수"), DayDTO("목"), DayDTO("금"), DayDTO("토"), DayDTO("일"))
@@ -112,10 +119,13 @@ class TodoListActivity : AppCompatActivity() {
         alarmswitch_time.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
                 todostub_time.visibility = VISIBLE
+                //val cal = Calendar.getInstance()
                 timebtn.setOnClickListener {
                     var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                         var hour = 0
                         var am_pm = "오전"
+                        //cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                        //cal.set(Calendar.MINUTE, minute)
                         var m = minute.toString()
                         if (hourOfDay == 0) {
                             am_pm = "오전"
@@ -136,6 +146,8 @@ class TodoListActivity : AppCompatActivity() {
                             m = "00"
                         }
                         textview_Time.text = "${am_pm} ${hour} : ${m} "
+                        //time = SimpleDateFormat("HH:mm").format(cal.time)
+                        //Log.v("seyuuuun", time)
                     }
                     val dialog = TimePickerDialog(this,listener,12,0,false)
                     dialog.show()
@@ -167,6 +179,7 @@ class TodoListActivity : AppCompatActivity() {
 
         savebtn = this.findViewById(R.id.saveTodoAlarmButton)
         savebtn.setOnClickListener(View.OnClickListener {
+            time_alarm(it)
             finish()
         })
     }
@@ -187,5 +200,71 @@ class TodoListActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+    
+    private fun time_alarm(v: View) { //시간 알림
+        var date_now = LocalDate.now() //현재 시간받아오기.
+        val formatter = DateTimeFormatter.ISO_DATE_TIME
+        val now = date_now.format(formatter)
+
+        val time_now = "20:18"
+        var date_settings = time_now.format(formatter) //설정된 시간 받아오기.
+        if(date_now.toString() == date_settings) { //설정한 시간과 현재시간이 같을 경우
+            noti(v)
+        }
+
+    }
+
+    //알림 구현
+    private fun noti(v: View) {
+        val notificationManager = createNotificationChannel()
+
+        val resultIntent = Intent(this, MainActivity::class.java)
+        resultIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val pendingIntent =
+            PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        //Bitmap IconNoti = BitmapFactory.decodeResource(getResources(), R.drawable.location_icon3);
+        val customNotification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentIntent(pendingIntent) // 알림을 눌렀을때 실행할 작업 인텐트 설정
+            .setWhen(System.currentTimeMillis()) //miliSecond단위로 넣어주면 내부적으로 파싱함.
+            .setDefaults(Notification.DEFAULT_VIBRATE)
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setAutoCancel(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .setFullScreenIntent(pendingIntent,true) //헤드업알림
+            .setNumber(999) //확인하지않은 알림 개수 설정
+
+        val contentview = RemoteViews(packageName, R.layout.location_notification)
+        contentview.setTextViewText(R.id.notification_Title, "notification")
+        contentview.setOnClickPendingIntent(R.id.later_notification, pendingIntent)
+        contentview.setOnClickPendingIntent(R.id.cancel_notification, pendingIntent)
+        customNotification.setContent(contentview)
+
+        notificationManager?.notify(0, customNotification.build())
+
+    }
+
+    private fun createNotificationChannel() : NotificationManager {
+        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val serviceChannel = NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply { description = CHANNEL_DESCRITION }
+
+            notificationManager.createNotificationChannel(serviceChannel)
+            return notificationManager
+        }
+        return notificationManager
+    }
+
+    companion object {
+        val CHANNEL_ID = "테스트 "
+        val CHANNEL_NAME = "알림채널 이름"
+        val CHANNEL_DESCRITION = "알림채널 설명"
     }
 }
