@@ -17,6 +17,8 @@ import net.daum.mf.map.api.MapView
 class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener {
     lateinit var mapView :MapView
     lateinit var mapViewContainer :ViewGroup
+    private var isLongTouch: Boolean = false
+    private val curLocationMarker: MapPOIItem = MapPOIItem()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -181,9 +183,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
-
-        val curLocationMarker: MapPOIItem = MapPOIItem()
-        curLocationMarker.itemName = "lalala"
+        when {
+            !isLongTouch -> isLongTouch = true
+            else -> mapView.removePOIItem(curLocationMarker)
+        }
+        curLocationMarker.itemName = "이 곳에 추가"
         curLocationMarker.mapPoint = p1
         curLocationMarker.markerType = MapPOIItem.MarkerType.CustomImage
         curLocationMarker.customImageResourceId = R.drawable.cur_location_icon
