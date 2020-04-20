@@ -6,6 +6,7 @@ interface AlarmContract {
     }
 
     interface Presenter {
+
         fun setAlarmAdapterModel(adapterModel : AlarmAdapterContract.Model)
         fun setAlarmAdapterView(adapterView : AlarmAdapterContract.View)
 

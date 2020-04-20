@@ -1,12 +1,12 @@
 package com.kakao.smartmemo.Contract
 
-interface TodoAdapterContract {
+interface TodoDateAdapterContract {
+    interface Model {
+
+    }
 
     interface View {
         fun notifyAdapter()
     }
 
-    interface Model {
-        //DB작업
-    }
 }

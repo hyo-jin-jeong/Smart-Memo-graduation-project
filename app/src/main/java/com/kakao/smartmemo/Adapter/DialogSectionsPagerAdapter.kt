@@ -4,12 +4,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.kakao.smartmemo.FragmentDialog
+import com.kakao.smartmemo.Contract.DialogAdapterContract
+import com.kakao.smartmemo.View.FragmentDialog
 import com.kakao.smartmemo.MemoDialog
 import com.kakao.smartmemo.PlaceAlarmDialog
 
-class DialogSectionsPagerAdapter(private val context: FragmentDialog, fm: FragmentManager) :
-    FragmentPagerAdapter(fm) {
+class DialogSectionsPagerAdapter(private val context: FragmentDialog, fm: FragmentManager) : FragmentPagerAdapter(fm), DialogAdapterContract.View, DialogAdapterContract.Model {
     private var type: Int? = null
 
     override fun getItem(position: Int): Fragment {
@@ -45,5 +45,9 @@ class DialogSectionsPagerAdapter(private val context: FragmentDialog, fm: Fragme
 
     fun setCurType(type: Int) {
         this.type = type
+    }
+
+    override fun notifyAdapter() {
+        notifyDataSetChanged()
     }
 }

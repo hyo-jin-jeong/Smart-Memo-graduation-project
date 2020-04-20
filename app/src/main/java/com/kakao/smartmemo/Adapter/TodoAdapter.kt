@@ -1,4 +1,4 @@
-package com.kakao.smartmemo.com.kakao.smartmemo.Adapter
+package com.kakao.smartmemo.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,10 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.kakao.smartmemo.Contract.TodoAdapterContract
-import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.TodoListActivity
+import com.kakao.smartmemo.View.TodoListActivity
 import kotlinx.android.synthetic.main.todo_list_item.view.*
 
 
@@ -59,7 +58,7 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData
         return todoList.size
     }
 
-    override fun notifyAdpater() {
+    override fun notifyAdapter() {
         notifyDataSetChanged()
     }
 

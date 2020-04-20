@@ -1,10 +1,8 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.app.*
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -17,21 +15,22 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.Contract.TodoSettingContract
 import com.kakao.smartmemo.Data.DayData
 import com.kakao.smartmemo.Data.PlaceData
-import com.kakao.smartmemo.View.MainActivity
+import com.kakao.smartmemo.Presenter.TodoSettingPresenter
+import com.kakao.smartmemo.R
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.DayRepeatAdapter
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
 import kotlinx.android.synthetic.main.alarm_settings_place.*
 import kotlinx.android.synthetic.main.alarm_settings_time.*
 import kotlinx.android.synthetic.main.time_location_settings.*
-import java.lang.String.format
-import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 
-class TodoListActivity : AppCompatActivity() {
+class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
+
+    private lateinit var presenter : TodoSettingContract.Presenter
     private lateinit var myToolbar: Toolbar
     private lateinit var alarmswitch_time : Switch
     private lateinit var alarmswitch_location : Switch
@@ -51,7 +50,10 @@ class TodoListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.time_location_settings)
 
-        var ringingAdapter = ArrayAdapter.createFromResource(applicationContext, R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
+        presenter = TodoSettingPresenter(this)
+
+        var ringingAdapter = ArrayAdapter.createFromResource(applicationContext,
+            R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
         val todostub_time = stub_alarm_time
         val view_time = todostub_time.inflate()
         todostub_time.visibility = GONE
@@ -164,7 +166,10 @@ class TodoListActivity : AppCompatActivity() {
         }
 
         //요일반복 선택시 나오는 recyclerview 어댑터
-        daylistview.adapter = DayRepeatAdapter(this, dayList)
+        var dateAdapter = DayRepeatAdapter(this, dayList)
+        daylistview.adapter = dateAdapter
+        presenter.setTodoDateAdapterView(dateAdapter)
+        presenter.setTodoDateAdapterModel(dateAdapter)
         daylistview.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false) //가로 recyclerview
         daylistview.scrollToPosition(0)  //recyclerview position 맨앞으로
         
@@ -181,7 +186,10 @@ class TodoListActivity : AppCompatActivity() {
         }
 
         //장소선택시 나오는 listview 어댑터
-        placelistview.adapter = PlaceListAdapter(this, placeList)
+        var placeListAdapter = PlaceListAdapter(this, placeList)
+        placelistview.adapter = placeListAdapter
+        presenter.setTodoPlaceAdapterModel(placeListAdapter)
+        presenter.setTodoPlaceAdapterView(placeListAdapter)
 
         savebtn = this.findViewById(R.id.saveTodoAlarmButton)
         savebtn.setOnClickListener(View.OnClickListener {
@@ -246,7 +254,9 @@ class TodoListActivity : AppCompatActivity() {
             PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         //Bitmap IconNoti = BitmapFactory.decodeResource(getResources(), R.drawable.location_icon3);
-        val customNotification = NotificationCompat.Builder(this, CHANNEL_ID)
+        val customNotification = NotificationCompat.Builder(this,
+            CHANNEL_ID
+        )
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(pendingIntent) // 알림을 눌렀을때 실행할 작업 인텐트 설정
             .setWhen(System.currentTimeMillis()) //miliSecond단위로 넣어주면 내부적으로 파싱함.
@@ -258,7 +268,9 @@ class TodoListActivity : AppCompatActivity() {
             .setFullScreenIntent(pendingIntent,true) //헤드업알림
             .setNumber(999) //확인하지않은 알림 개수 설정
 
-        val contentview = RemoteViews(packageName, R.layout.location_notification)
+        val contentview = RemoteViews(packageName,
+            R.layout.location_notification
+        )
         contentview.setTextViewText(R.id.notification_Title, "notification")
         contentview.setOnClickPendingIntent(R.id.later_notification, pendingIntent)
         contentview.setOnClickPendingIntent(R.id.cancel_notification, pendingIntent)
@@ -275,7 +287,9 @@ class TodoListActivity : AppCompatActivity() {
                 CHANNEL_ID,
                 CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_HIGH
-            ).apply { description = CHANNEL_DESCRITION }
+            ).apply { description =
+                CHANNEL_DESCRITION
+            }
 
             notificationManager.createNotificationChannel(serviceChannel)
             return notificationManager

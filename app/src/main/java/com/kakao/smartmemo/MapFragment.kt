@@ -5,6 +5,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import com.kakao.smartmemo.View.FragmentDialog
 import com.kakao.smartmemo.View.MainActivity
 import kotlinx.android.synthetic.main.main_dialog.*
 import kotlinx.android.synthetic.main.map_fragment.view.*

@@ -15,7 +15,7 @@ import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Presenter.TodoPresenter
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.TodoAdapter
+import com.kakao.smartmemo.Adapter.TodoAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.todolist_fragment.*
 import kotlinx.android.synthetic.main.todolist_fragment.view.*
