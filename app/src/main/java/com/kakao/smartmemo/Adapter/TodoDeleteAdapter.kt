@@ -11,12 +11,13 @@ import android.view.View
 
 import android.view.ViewGroup
 import android.widget.*
+import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
 
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.todo_list_delete.view.*
 
-class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter() {
+class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter(), TodoDeleteAdapterContract.Model, TodoDeleteAdapterContract.View {
 
     @SuppressLint("ResourceType")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -58,6 +59,10 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
 
     override fun getCount(): Int {
         return todoList.size
+    }
+
+    override fun notifyAdapter() {
+        notifyDataSetChanged()
     }
 
 }

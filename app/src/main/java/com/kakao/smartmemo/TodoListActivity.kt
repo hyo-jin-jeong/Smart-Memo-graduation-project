@@ -1,8 +1,10 @@
 package com.kakao.smartmemo
 
 import android.app.*
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -40,7 +42,7 @@ class TodoListActivity : AppCompatActivity() {
     private lateinit var timeSpinner : Spinner
     private lateinit var placeSpinner : Spinner
     private lateinit var savebtn : Button
-    private var time  : String = ""
+    private val calendar = Calendar.getInstance()
 
     private var placeList = arrayListOf<PlaceData>(PlaceData("연세병원"))
     private var dayList = mutableListOf<DayData>(DayData("월"), DayData("화"), DayData("수"), DayData("목"), DayData("금"), DayData("토"), DayData("일"))
@@ -82,6 +84,9 @@ class TodoListActivity : AppCompatActivity() {
         dateSettingInTime.setOnClickListener {
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 dateTextInTime.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month)
+                calendar.set(Calendar.DATE, dayOfMonth)
             }
             val dateDia = DatePickerDialog(this,dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
             dateDia.show()
@@ -120,13 +125,11 @@ class TodoListActivity : AppCompatActivity() {
         alarmswitch_time.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
                 todostub_time.visibility = VISIBLE
-                //val cal = Calendar.getInstance()
+                calendar.timeInMillis
                 timebtn.setOnClickListener {
                     var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                         var hour = 0
                         var am_pm = "오전"
-                        //cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                        //cal.set(Calendar.MINUTE, minute)
                         var m = minute.toString()
                         if (hourOfDay == 0) {
                             am_pm = "오전"
@@ -147,8 +150,10 @@ class TodoListActivity : AppCompatActivity() {
                             m = "00"
                         }
                         textview_Time.text = "${am_pm} ${hour} : ${m} "
-                        //time = SimpleDateFormat("HH:mm").format(cal.time)
-                        //Log.v("seyuuuun", time)
+                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                        calendar.set(Calendar.MINUTE, minute)
+                        calendar.set(Calendar.SECOND, 0)
+                        //setTimeAlarm(calendar)
                     }
                     val dialog = TimePickerDialog(this,listener,12,0,false)
                     dialog.show()
@@ -180,7 +185,6 @@ class TodoListActivity : AppCompatActivity() {
 
         savebtn = this.findViewById(R.id.saveTodoAlarmButton)
         savebtn.setOnClickListener(View.OnClickListener {
-            time_alarm(it)
             finish()
         })
     }
@@ -202,19 +206,35 @@ class TodoListActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-    
-    private fun time_alarm(v: View) { //시간 알림
-        var date_now = LocalDate.now() //현재 시간받아오기.
-        val formatter = DateTimeFormatter.ISO_DATE_TIME
-        val now = date_now.format(formatter)
 
-        val time_now = "20:18"
-        var date_settings = time_now.format(formatter) //설정된 시간 받아오기.
-        if(date_now.toString() == date_settings) { //설정한 시간과 현재시간이 같을 경우
-            noti(v)
+    /*fun setTimeAlarm(calendar: Calendar) {
+        val notify_time = true //무조건 알람 사용
+
+        val pm = this.packageManager
+        val receiver = ComponentName(this, DeviceBootReceiver::class.java)
+        val alarmIntent = Intent(this, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
+        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        if(notify_time) { //알람을 허용했다면
+            if(alarmManager != null) {
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+                }
+
+                //부팅후 실행되는 리시버 사용가능하게 설정함.
+                pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP)
+            }
+            else { // 알람을 허용하지 않았다면
+                if(PendingIntent.getBroadcast(this, 0, alarmIntent, 0)!=null && alarmManager!=null) {
+                    alarmManager.cancel(pendingIntent)
+                }
+                pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
+            }
         }
-
-    }
+    }*/
 
     //알림 구현
     private fun noti(v: View) {

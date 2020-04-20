@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -11,19 +11,23 @@ import android.widget.*
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.kakao.smartmemo.Adapter.TodoDeleteAdapter
+import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Data.TodoData
-import com.kakao.smartmemo.View.MainActivity
+import com.kakao.smartmemo.Presenter.TodoPresenter
+import com.kakao.smartmemo.R
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.TodoAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.todolist_fragment.*
 import kotlinx.android.synthetic.main.todolist_fragment.view.*
 
-class TodoListFragment : Fragment() {
+class TodoListFragment : Fragment(), TodoContract.View {
 
+    private lateinit var presenter : TodoContract.Presenter
     private lateinit var todolist : ListView
     private lateinit var todoEditingbtn : ImageButton
     private lateinit var todoDeletebtn : ImageButton
     private var todoArrayList = arrayListOf<TodoData>(TodoData("약먹기"), TodoData("도서관 책 반납"))
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -35,18 +39,24 @@ class TodoListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
+
+        presenter = TodoPresenter(this)
+        var adapter = TodoAdapter(view.context, todoArrayList)
+
         todoEditingbtn = view.findViewById(R.id.imagebtn_save) as ImageButton
         todoDeletebtn = view.findViewById(R.id.imagebtn_delete) as ImageButton
 
         todolist = view.findViewById(R.id.todolist) as ListView
-        todolist.adapter = TodoAdapter(view.context, todoArrayList)
+        todolist.adapter = adapter
+        presenter.setTodoAdapterModel(adapter)
+        presenter.setTodoAdapterView(adapter)
       
         todoDeletebtn.setOnClickListener(View.OnClickListener {
+            var deleteAdapter = TodoDeleteAdapter(view.context, todoArrayList)
               todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-              todolist.adapter = TodoDeleteAdapter(
-                  view.context,
-                  todoArrayList
-              )
+              todolist.adapter = deleteAdapter
+              presenter.setTodoDeleteAdapterModel(deleteAdapter)
+              presenter.setTodoDeleteAdapterView(deleteAdapter)
               todoDeletebtn.visibility = GONE
               todoEditingbtn.visibility = VISIBLE
               todo_delete_cancel.visibility= VISIBLE
@@ -122,7 +132,8 @@ class TodoListFragment : Fragment() {
             val editDialogView: View = edit_inflater.inflate(R.layout.todolist_editing_dialog, null)
             builder.setTitle("TODO LIST 입력")
             val spinner: Spinner = editDialogView.findViewById(R.id.spinner)
-            val adapter = ArrayAdapter.createFromResource(context, R.array.group, android.R.layout.simple_spinner_item)
+            val adapter = ArrayAdapter.createFromResource(context,
+                R.array.group, android.R.layout.simple_spinner_item)
             spinner.adapter = adapter
 
             builder.setView(editDialogView).setPositiveButton("확인",

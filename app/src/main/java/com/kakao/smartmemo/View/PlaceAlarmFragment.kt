@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.os.Bundle
 import android.view.*
@@ -6,13 +6,16 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kakao.smartmemo.View.MainActivity
+import com.kakao.smartmemo.Contract.AlarmContract
+import com.kakao.smartmemo.Presenter.AlarmPresenter
+import com.kakao.smartmemo.R
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.AlarmAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
-class PlaceAlarmFragment : Fragment() {
+class PlaceAlarmFragment : Fragment(), AlarmContract.View {
 
     lateinit var Alarm : RecyclerView
+    lateinit var presenter : AlarmContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -25,10 +28,14 @@ class PlaceAlarmFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.place_alarm_fragment, container, false)
-
+        presenter = AlarmPresenter(this)
         Alarm = view.findViewById(R.id.alarm_settings_view) as RecyclerView
-        Alarm.adapter = AlarmAdapter()
+        var myAdapter = AlarmAdapter()
+        Alarm.adapter = myAdapter
         Alarm.layoutManager = LinearLayoutManager(activity)
+
+        presenter.setAlarmAdapterModel(myAdapter)
+        presenter.setAlarmAdapterView(myAdapter)
 
         return view
     }
@@ -65,5 +72,4 @@ class PlaceAlarmFragment : Fragment() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
 }
