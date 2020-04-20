@@ -4,11 +4,12 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.Contract.MemoAdapterContract
 import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_view.view.*
 
-class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>() { //memoList RecycleView
+class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), MemoAdapterContract.Model, MemoAdapterContract.View { //memoList RecycleView
 
     var items: MutableList<MemoData> = mutableListOf(MemoData("2020.3.2", "학교","기업조사"),
         MemoData("2020.3.12", "내메모","도서관 책반납"),MemoData("2020.2.20." , "여행","숙소예약"))
@@ -43,6 +44,10 @@ class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>() {
         val memoDate = itemView.memo_date
         val memoBackground = itemView.memo_list_view
 
+    }
+
+    override fun notifyAdapter() {
+        notifyDataSetChanged()
     }
 }
 

@@ -48,6 +48,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
         val viewPager: ViewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
+        presenter.setMainAdapterModel(sectionsPagerAdapter)
+        presenter.setMainAdapterView(sectionsPagerAdapter)
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
 

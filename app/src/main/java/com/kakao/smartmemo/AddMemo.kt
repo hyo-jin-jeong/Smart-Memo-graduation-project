@@ -29,7 +29,7 @@ class AddMemo : AppCompatActivity() {
         memoToolbar.title = resources.getString(R.string.write_memo)
         setSupportActionBar(memoToolbar)
 
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         spinner = select_group
         var groupAdapter = ArrayAdapter.createFromResource(applicationContext, R.array.group, android.R.layout.simple_spinner_dropdown_item)

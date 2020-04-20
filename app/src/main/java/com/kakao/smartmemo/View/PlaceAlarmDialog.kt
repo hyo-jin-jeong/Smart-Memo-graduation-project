@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.os.Bundle
 import android.view.*
@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Adapter.PlaceAlarmDialogAdapter
 import com.kakao.smartmemo.Contract.TodoDialogContract
 import com.kakao.smartmemo.Presenter.TodoDialogPresenter
+import com.kakao.smartmemo.R
 
 class PlaceAlarmDialog : Fragment(), TodoDialogContract.View {
 

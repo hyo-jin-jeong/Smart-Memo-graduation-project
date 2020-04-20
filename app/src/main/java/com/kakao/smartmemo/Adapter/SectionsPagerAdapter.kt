@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.kakao.smartmemo.*
+import com.kakao.smartmemo.Contract.MainAdapterContract
+import com.kakao.smartmemo.View.MemoListFragment
 import com.kakao.smartmemo.View.PlaceAlarmFragment
 import com.kakao.smartmemo.View.TodoListFragment
 
@@ -20,12 +22,13 @@ private val TAB_TITLES = arrayOf(
  * one of the sections/tabs/pages.
  */
 class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
-    FragmentPagerAdapter(fm) {
+    FragmentPagerAdapter(fm), MainAdapterContract.View, MainAdapterContract.Model {
 
     override fun getItem(position: Int): Fragment {
         when(position){
             0 -> {return MapFragment()}
-            1 ->  {return MemoListFragment()}
+            1 ->  {return MemoListFragment()
+            }
             2 -> {return TodoListFragment()
             }
             3 -> {return PlaceAlarmFragment()
@@ -41,5 +44,9 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
     override fun getCount(): Int {
         // Show 2 total pages.
         return 4
+    }
+
+    override fun notifyAdapter() {
+        notifyDataSetChanged()
     }
 }
