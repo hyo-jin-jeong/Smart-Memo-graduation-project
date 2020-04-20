@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -7,13 +7,20 @@ import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import com.kakao.smartmemo.Presenter.AddGroupPresenter
+import com.kakao.smartmemo.R
+import com.kakao.smartmemo.Contract.AddGroupContract
 import kotlinx.android.synthetic.main.content_add_group.*
 
 
-class AddGroup : AppCompatActivity(), ColorPickerDialogListener {
+class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
+
+    lateinit var presenter : AddGroupContract.Presenter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_bar_add_group)
+        presenter = AddGroupPresenter(this)
 
         val toolBar:Toolbar = findViewById(R.id.addGroupToolbar)
         toolBar.title = resources.getString(R.string.add_group)
@@ -33,6 +40,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener {
 
         var saveBtn = save_group
         saveBtn.setOnClickListener {
+            presenter.addGroup()
             finish()
         }
     }

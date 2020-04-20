@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.kakao.smartmemo.Adapter.MemoListAdapter
+import com.kakao.smartmemo.View.MainActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MemoListFragment : Fragment() {

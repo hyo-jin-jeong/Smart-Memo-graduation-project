@@ -1,20 +1,24 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.app.TimePickerDialog
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.OvalShape
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.kakao.smartmemo.R
+import com.kakao.smartmemo.Contract.MemberChangeContract
+import com.kakao.smartmemo.Presenter.MemberChangePresenter
 import kotlinx.android.synthetic.main.member_change_view.*
 
-class MemberDataChange :AppCompatActivity(){
+class MemberDataChange :AppCompatActivity(),MemberChangeContract.View{
+    lateinit var presenter : MemberChangeContract.Presenter
+
     lateinit var memberToolbar: Toolbar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.member_change_view)
+        presenter = MemberChangePresenter(this)
+
         memberToolbar = findViewById(R.id.member_toolbar)
         setSupportActionBar(memberToolbar)
         member_icon.setClipToOutline(true)
@@ -50,6 +54,9 @@ class MemberDataChange :AppCompatActivity(){
             val dialog = TimePickerDialog(this,listener,12,0,false)
 
             dialog.show()
+        }
+        button.setOnClickListener{
+            presenter.updateUser()
         }
     }
 

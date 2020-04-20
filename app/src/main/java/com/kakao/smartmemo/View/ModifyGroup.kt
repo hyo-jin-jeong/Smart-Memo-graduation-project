@@ -1,19 +1,25 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
-import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import com.kakao.smartmemo.R
+import com.kakao.smartmemo.Contract.ModifyGroupContract
+import com.kakao.smartmemo.Presenter.ModifyGroupPresenter
 import kotlinx.android.synthetic.main.content_add_group.*
 
 
-class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener {
+class ModifyGroup : AppCompatActivity(), ModifyGroupContract.View{
+
+    lateinit var presenter: ModifyGroupContract.Presenter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_bar_add_group)
+        presenter = ModifyGroupPresenter(this)
 
         val toolBar:Toolbar = findViewById(R.id.addGroupToolbar)
         toolBar.title = resources.getString(R.string.setting_group)
@@ -50,16 +56,22 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener {
             android.R.id.home -> {
                 finish()
                 return true
+
+            }
+            R.id.update_group -> {
+                presenter.updateGroup()
+
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onDialogDismissed(dialogId: Int) {  }
 
-    override fun onColorSelected(dialogId: Int, color: Int) {
-        val selectedColor = selected_color
-        selectedColor.setBackgroundColor(color)
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val menuInflater = menuInflater
+        menuInflater.inflate(R.menu.select_options_in_modifygroup, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
 }
