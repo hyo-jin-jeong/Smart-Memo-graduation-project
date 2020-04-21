@@ -1,8 +1,10 @@
 package com.kakao.smartmemo.View
 
 import android.app.*
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +14,6 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.TodoSettingContract
@@ -20,6 +21,8 @@ import com.kakao.smartmemo.Data.DayData
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Presenter.TodoSettingPresenter
 import com.kakao.smartmemo.R
+import com.kakao.smartmemo.Receiver.AlarmReceiver
+import com.kakao.smartmemo.Receiver.DeviceBootReceiver
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.DayRepeatAdapter
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
 import kotlinx.android.synthetic.main.alarm_settings_place.*
@@ -89,6 +92,9 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
                 calendar.set(Calendar.YEAR, year)
                 calendar.set(Calendar.MONTH, month)
                 calendar.set(Calendar.DATE, dayOfMonth)
+                Log.v("seyuuuun", calendar.get(Calendar.YEAR).toString())
+                Log.v("seyuuuun", calendar.get(Calendar.MONTH).toString())
+                Log.v("seyuuuun", calendar.get(Calendar.DATE).toString())
             }
             val dateDia = DatePickerDialog(this,dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
             dateDia.show()
@@ -155,7 +161,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
                         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                         calendar.set(Calendar.MINUTE, minute)
                         calendar.set(Calendar.SECOND, 0)
-                        //setTimeAlarm(calendar)
+                        setTimeAlarm(calendar)
                     }
                     val dialog = TimePickerDialog(this,listener,12,0,false)
                     dialog.show()
@@ -215,7 +221,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         return super.onOptionsItemSelected(item)
     }
 
-    /*fun setTimeAlarm(calendar: Calendar) {
+    fun setTimeAlarm(calendar: Calendar) {
         val notify_time = true //무조건 알람 사용
 
         val pm = this.packageManager
@@ -242,64 +248,5 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
                 pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
             }
         }
-    }*/
-
-    //알림 구현
-    private fun noti(v: View) {
-        val notificationManager = createNotificationChannel()
-
-        val resultIntent = Intent(this, MainActivity::class.java)
-        resultIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        val pendingIntent =
-            PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        //Bitmap IconNoti = BitmapFactory.decodeResource(getResources(), R.drawable.location_icon3);
-        val customNotification = NotificationCompat.Builder(this,
-            CHANNEL_ID
-        )
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentIntent(pendingIntent) // 알림을 눌렀을때 실행할 작업 인텐트 설정
-            .setWhen(System.currentTimeMillis()) //miliSecond단위로 넣어주면 내부적으로 파싱함.
-            .setDefaults(Notification.DEFAULT_VIBRATE)
-            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setAutoCancel(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            .setFullScreenIntent(pendingIntent,true) //헤드업알림
-            .setNumber(999) //확인하지않은 알림 개수 설정
-
-        val contentview = RemoteViews(packageName,
-            R.layout.location_notification
-        )
-        contentview.setTextViewText(R.id.notification_Title, "notification")
-        contentview.setOnClickPendingIntent(R.id.later_notification, pendingIntent)
-        contentview.setOnClickPendingIntent(R.id.cancel_notification, pendingIntent)
-        customNotification.setContent(contentview)
-
-        notificationManager?.notify(0, customNotification.build())
-
-    }
-
-    private fun createNotificationChannel() : NotificationManager {
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply { description =
-                CHANNEL_DESCRITION
-            }
-
-            notificationManager.createNotificationChannel(serviceChannel)
-            return notificationManager
-        }
-        return notificationManager
-    }
-
-    companion object {
-        val CHANNEL_ID = "테스트 "
-        val CHANNEL_NAME = "알림채널 이름"
-        val CHANNEL_DESCRITION = "알림채널 설명"
     }
 }
