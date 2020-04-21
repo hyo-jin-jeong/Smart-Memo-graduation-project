@@ -17,6 +17,14 @@ class TodoSettingPresenter : TodoSettingContract.Presenter {
         this.view =  view
     }
 
+    override fun addTimeAlarm() {
+
+    }
+
+    override fun addPlaceAlarm() {
+
+    }
+
     override fun setTodoDateAdapterModel(adapterModel: TodoDateAdapterContract.Model) {
         dateAdapterModel = adapterModel
     }

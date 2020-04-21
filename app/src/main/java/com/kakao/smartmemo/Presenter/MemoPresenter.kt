@@ -12,6 +12,9 @@ class MemoPresenter : MemoContract.Presenter {
         this.view = view
     }
 
+    override fun getGroup() {
+    }
+
     override fun setMemoAdapterModel(model: MemoAdapterContract.Model) {
         adapterModel = model
     }

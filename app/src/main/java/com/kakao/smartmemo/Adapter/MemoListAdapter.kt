@@ -49,6 +49,14 @@ class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), 
     override fun notifyAdapter() {
         notifyDataSetChanged()
     }
+
+    override fun getMemo() {
+
+    }
+
+    override fun deleteMemo() {
+
+    }
 }
 
 

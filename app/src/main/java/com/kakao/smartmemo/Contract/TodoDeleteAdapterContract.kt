@@ -6,6 +6,8 @@ interface TodoDeleteAdapterContract {
     }
 
     interface Model {
-        //DB작업
+        fun getTodoContent()
+        fun deleteTodo()
+        fun getGroup()
     }
 }

@@ -7,6 +7,8 @@ interface TodoAdapterContract {
     }
 
     interface Model {
-        //DB작업
+        fun getTodoContent()
+        //그룹의 색을 표시하기 위해
+        fun getGroup()
     }
 }

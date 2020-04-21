@@ -62,4 +62,8 @@ class MemoDialogAdapter: RecyclerView.Adapter<MemoDialogAdapter.DialogViewHolder
     override fun notifyAdapter() {
         notifyDataSetChanged()
     }
+
+    override fun getMemo() {
+
+    }
 }

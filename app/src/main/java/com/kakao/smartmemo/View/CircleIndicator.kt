@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.content.Context
 import android.util.AttributeSet

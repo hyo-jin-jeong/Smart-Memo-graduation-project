@@ -6,6 +6,7 @@ interface MemoContract {
      }
 
     interface  Presenter{
+        fun getGroup()
         fun setMemoAdapterModel(model: MemoAdapterContract.Model)
         fun setMemoAdapterView(view: MemoAdapterContract.View)
     }
