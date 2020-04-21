@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.TodoDateAdapterContract
 import com.kakao.smartmemo.Data.DayData
+import com.kakao.smartmemo.Model.TimeAlarmModel
 import com.kakao.smartmemo.R
 
 import kotlinx.android.synthetic.main.repeat_day_item.view.*
@@ -38,6 +39,10 @@ class DayRepeatAdapter(val context: Context, val dayList: MutableList<DayData>):
 
     override fun notifyAdapter() {
         notifyDataSetChanged()
+    }
+
+    override fun addRepeatDay() {
+
     }
 
 

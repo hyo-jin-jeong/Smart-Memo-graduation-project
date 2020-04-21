@@ -40,4 +40,12 @@ class PlaceListAdapter(val context: Context, val placeList: ArrayList<PlaceData>
         notifyDataSetChanged()
     }
 
+    override fun getTodoPlace() {
+
+    }
+
+    override fun deletePlace() {
+
+    }
+
 }

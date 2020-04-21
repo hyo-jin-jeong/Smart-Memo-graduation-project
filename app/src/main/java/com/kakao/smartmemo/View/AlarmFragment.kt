@@ -12,10 +12,11 @@ import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Adapter.AlarmAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
-class PlaceAlarmFragment : Fragment(), AlarmContract.View {
+class AlarmFragment : Fragment(), AlarmContract.View {
 
     lateinit var Alarm : RecyclerView
     lateinit var presenter : AlarmContract.Presenter
+    lateinit var myAdapter: AlarmAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -30,7 +31,9 @@ class PlaceAlarmFragment : Fragment(), AlarmContract.View {
         val view = inflater.inflate(R.layout.place_alarm_fragment, container, false)
         presenter = AlarmPresenter(this)
         Alarm = view.findViewById(R.id.alarm_settings_view) as RecyclerView
-        var myAdapter = AlarmAdapter()
+        myAdapter = AlarmAdapter()
+        myAdapter.setMode(0)
+        myAdapter.initData()
         Alarm.adapter = myAdapter
         Alarm.layoutManager = LinearLayoutManager(activity)
 
@@ -54,18 +57,18 @@ class PlaceAlarmFragment : Fragment(), AlarmContract.View {
                 (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
                 return true
             }
-            //시간알람관리를 눌렀을 때
-            R.id.action_time_alarm -> {
-                (activity as MainActivity).toolbar.title=item.title
-                //val timeIntent = Intent(context, TimeAlarmFragment::class.java)
-                //startActivity(timeIntent)
-                return true
-            }
             //장소알람관리를 눌렀을 때
             R.id.action_place_alarm -> {
                 (activity as MainActivity).toolbar.title=item.title
-                //val placeIntent = Intent(context, PlaceAlarmFragment::class.java)
-                //startActivity(placeIntent)
+                myAdapter.setMode(0)
+                myAdapter.notifyAdapter()
+                return true
+            }
+            //시간알람관리를 눌렀을 때
+            R.id.action_time_alarm -> {
+                (activity as MainActivity).toolbar.title=item.title
+                myAdapter.setMode(1)
+                myAdapter.notifyAdapter()
                 return true
             }
 

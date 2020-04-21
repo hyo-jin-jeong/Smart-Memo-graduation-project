@@ -22,7 +22,7 @@
         android:layout_below="@+id/toolbar"
         android:layout_above="@+id/circle_indicator"/>
 
-    <com.kakao.smartmemo.CircleIndicator
+    <com.kakao.smartmemo.View.CircleIndicator
         android:id="@+id/circle_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

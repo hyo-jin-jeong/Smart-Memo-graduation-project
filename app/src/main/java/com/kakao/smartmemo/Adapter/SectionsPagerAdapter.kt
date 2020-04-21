@@ -6,8 +6,9 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.kakao.smartmemo.*
 import com.kakao.smartmemo.Contract.MainAdapterContract
+import com.kakao.smartmemo.View.MapFragment
 import com.kakao.smartmemo.View.MemoListFragment
-import com.kakao.smartmemo.View.PlaceAlarmFragment
+import com.kakao.smartmemo.View.AlarmFragment
 import com.kakao.smartmemo.View.TodoListFragment
 
 private val TAB_TITLES = arrayOf(
@@ -26,12 +27,13 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
 
     override fun getItem(position: Int): Fragment {
         when(position){
-            0 -> {return MapFragment()}
+            0 -> {return MapFragment()
+            }
             1 ->  {return MemoListFragment()
             }
             2 -> {return TodoListFragment()
             }
-            3 -> {return PlaceAlarmFragment()
+            3 -> {return AlarmFragment()
             }
         }
         return MapFragment()
@@ -48,5 +50,13 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
 
     override fun notifyAdapter() {
         notifyDataSetChanged()
+    }
+
+    override fun getUser() {
+
+    }
+
+    override fun getGroup() {
+
     }
 }

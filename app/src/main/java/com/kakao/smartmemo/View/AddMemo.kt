@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,17 +7,23 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.kakao.smartmemo.Contract.AddMemoContract
+import com.kakao.smartmemo.Presenter.AddMemoPresenter
+import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_add_memo.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddMemo : AppCompatActivity() {
+class AddMemo : AppCompatActivity(), AddMemoContract.View {
+    lateinit var presenter: AddMemoPresenter
     lateinit var spinner:Spinner
     lateinit var memoTitle:String
     lateinit var memoContent:String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_memo)
+
+        presenter = AddMemoPresenter(this)
 
         val memoToolbar = findViewById<Toolbar>(R.id.addMemoToolbar)
         val date = Date(System.currentTimeMillis())
@@ -32,7 +38,8 @@ class AddMemo : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         spinner = select_group
-        var groupAdapter = ArrayAdapter.createFromResource(applicationContext, R.array.group, android.R.layout.simple_spinner_dropdown_item)
+        var groupAdapter = ArrayAdapter.createFromResource(applicationContext,
+            R.array.group, android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = groupAdapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(

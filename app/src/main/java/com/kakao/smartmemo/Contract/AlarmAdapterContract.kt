@@ -10,7 +10,11 @@ interface AlarmAdapterContract {
     }
 
     interface Model {
-        fun setTimeAlarmModel(model : TimeAlarmModel)
-        fun setPlaceAlarmModel(model: PlaceAlarmModel)
+        fun addTimeAlarm()
+        fun addPlaceAlarm()
+        fun updateTimeAlarm()
+        fun updatePlaceAlarm()
+        fun deleteTimeAlarm()
+        fun deletePlaceAlarm()
     }
 }

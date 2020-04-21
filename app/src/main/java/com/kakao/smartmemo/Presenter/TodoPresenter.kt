@@ -19,6 +19,10 @@ class TodoPresenter : TodoContract.Presenter {
         this.todoModel = TodoModel()
     }
 
+    override fun getGroup() {
+
+    }
+
     override fun setTodoAdapterModel(adapterModel: TodoAdapterContract.Model) {
         this.adapterModel = adapterModel
     }

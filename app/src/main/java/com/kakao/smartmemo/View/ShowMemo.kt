@@ -1,4 +1,4 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.os.Bundle
 import android.view.Menu
@@ -6,12 +6,19 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.kakao.smartmemo.Contract.ShowMemoContract
+import com.kakao.smartmemo.Presenter.ShowMemoPresenter
+import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_show_memo.*
 
-class ShowMemo : AppCompatActivity() {
+class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
+    private lateinit var presenter: ShowMemoPresenter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_memo)
+
+        presenter = ShowMemoPresenter(this)
 
         val memoToolbar = findViewById<Toolbar>(R.id.showMemoToolbar)
         memoToolbar.title = resources.getString(R.string.nav_my_memo)

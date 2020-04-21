@@ -1,12 +1,13 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import com.kakao.smartmemo.View.FragmentDialog
-import com.kakao.smartmemo.View.MainActivity
+import com.kakao.smartmemo.Contract.MapContract
+import com.kakao.smartmemo.Presenter.MapPresenter
+import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.main_dialog.*
 import kotlinx.android.synthetic.main.map_fragment.view.*
 import net.daum.mf.map.api.MapPOIItem
@@ -14,7 +15,8 @@ import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
 
-class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener {
+class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapContract.View {
+    private lateinit var presenter: MapPresenter
     lateinit var mapView :MapView
     lateinit var mapViewContainer :ViewGroup
     private var isLongTouch: Boolean = false
@@ -28,7 +30,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        presenter = MapPresenter(this)
         return inflater.inflate(R.layout.map_fragment, container, false)
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -125,7 +127,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         memoAndTodo.markerType = MapPOIItem.MarkerType.CustomImage // 마커타입을 커스텀 마커로 지정.
         //customMarker.markerType = MapPOIItem.MarkerType.BluePin   //기본 아이콘 사용
         //customMarker.selectedMarkerType = MapPOIItem.MarkerType.RedPin    //기본 아이콘 사용
-        memoAndTodo.customImageResourceId = R.drawable.memo_todo_icon // 마커 이미지.
+        memoAndTodo.customImageResourceId =
+            R.drawable.memo_todo_icon // 마커 이미지.
         memoAndTodo.isCustomImageAutoscale = false // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
         memoAndTodo.setCustomImageAnchor(
             0.5f,
@@ -190,7 +193,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         curLocationMarker.itemName = "이 곳에 추가"
         curLocationMarker.mapPoint = p1
         curLocationMarker.markerType = MapPOIItem.MarkerType.CustomImage
-        curLocationMarker.customImageResourceId = R.drawable.cur_location_icon
+        curLocationMarker.customImageResourceId =
+            R.drawable.cur_location_icon
         curLocationMarker.isCustomImageAutoscale = false
         curLocationMarker.setCustomImageAnchor(0.5f, 1.0f)
 

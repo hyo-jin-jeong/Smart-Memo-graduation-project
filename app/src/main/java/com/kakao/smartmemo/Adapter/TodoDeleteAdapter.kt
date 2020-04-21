@@ -14,6 +14,7 @@ import android.widget.*
 import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
 
 import com.kakao.smartmemo.Data.TodoData
+import com.kakao.smartmemo.Model.TodoModel
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.todo_list_delete.view.*
 
@@ -63,6 +64,18 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
 
     override fun notifyAdapter() {
         notifyDataSetChanged()
+    }
+
+    override fun getTodoContent() {
+
+    }
+
+    override fun deleteTodo() {
+
+    }
+
+    override fun getGroup() {
+
     }
 
 }

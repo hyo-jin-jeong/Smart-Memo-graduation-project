@@ -5,6 +5,8 @@ interface TodoSettingContract {
 
     }
     interface Presenter {
+        fun addTimeAlarm()
+        fun addPlaceAlarm()
         fun setTodoDateAdapterModel(adapterModel : TodoDateAdapterContract.Model)
         fun setTodoDateAdapterView(adapterView : TodoDateAdapterContract.View)
         fun setTodoPlaceAdapterModel(adapterModel : TodoPlaceAdapterContract.Model)

@@ -11,7 +11,7 @@ class AlarmPresenter : AlarmContract.Presenter{
     private var placeAlarmModel : PlaceAlarmModel
     private var timeAlarmModel : TimeAlarmModel
 
-    private lateinit var alarmaAapterView : AlarmAdapterContract.View
+    private lateinit var alarmAdapterView : AlarmAdapterContract.View
     private lateinit var alarmAdapterModel : AlarmAdapterContract.Model
 
     constructor(view : AlarmContract.View) {
@@ -25,7 +25,7 @@ class AlarmPresenter : AlarmContract.Presenter{
     }
 
     override fun setAlarmAdapterView(adapterView: AlarmAdapterContract.View) {
-        alarmaAapterView  = adapterView
+        alarmAdapterView  = adapterView
     }
 
 

@@ -1,9 +1,8 @@
-package com.kakao.smartmemo
+package com.kakao.smartmemo.View
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import com.kakao.smartmemo.View.LoginActivity
 
 
 class SplashActivity: Activity() {

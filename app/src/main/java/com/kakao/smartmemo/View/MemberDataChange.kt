@@ -24,8 +24,8 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View{
         member_icon.setClipToOutline(true)
 
         //앱 이름 없애는-
-        getSupportActionBar()?.setDisplayShowTitleEnabled(true)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         text7.setOnClickListener {
             var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                 var hour = 0

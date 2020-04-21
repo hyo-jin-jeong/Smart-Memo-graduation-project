@@ -48,4 +48,8 @@ class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.Dial
     override fun notifyAdapter() {
         notifyDataSetChanged()
     }
+
+    override fun getTodoPlaceAlarm() {
+
+    }
 }

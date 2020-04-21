@@ -7,7 +7,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.viewpager.widget.ViewPager
 import com.kakao.smartmemo.Adapter.DialogSectionsPagerAdapter
-import com.kakao.smartmemo.CircleIndicator
 import com.kakao.smartmemo.Contract.DialogContract
 import com.kakao.smartmemo.Presenter.DialogPresenter
 import com.kakao.smartmemo.R

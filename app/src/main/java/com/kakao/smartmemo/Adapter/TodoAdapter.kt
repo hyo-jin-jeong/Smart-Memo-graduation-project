@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.kakao.smartmemo.Contract.TodoAdapterContract
 import com.kakao.smartmemo.Data.TodoData
+import com.kakao.smartmemo.Model.TodoModel
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.View.TodoListActivity
 import kotlinx.android.synthetic.main.todo_list_item.view.*
@@ -60,6 +61,14 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData
 
     override fun notifyAdapter() {
         notifyDataSetChanged()
+    }
+
+    override fun getTodoContent() {
+
+    }
+
+    override fun getGroup() {
+
     }
 
 }
