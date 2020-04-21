@@ -53,8 +53,10 @@
                     android:layout_marginRight="10dp"
                     android:layout_gravity="center_vertical"
                     android:background="@null"
+                    android:text="gaya309@naver.com"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:inputType="textEmailAddress"/>
 
             </LinearLayout>
 
@@ -88,7 +90,9 @@
                     android:layout_gravity="center_vertical"
                     android:background="@null"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    android:text="jj1341"
+                    android:textStyle="bold"
+                    android:inputType="textPassword"/>
             </LinearLayout>
 
         </LinearLayout>

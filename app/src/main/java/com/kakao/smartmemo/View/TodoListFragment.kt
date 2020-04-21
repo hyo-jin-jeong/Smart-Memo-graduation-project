@@ -79,16 +79,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
               todoEditingbtn.visibility = GONE
               todo_delete_cancel.visibility= GONE
         })
-//        todoEditingbtn.setOnClickListener {
-//
-//            for(i in 0 until todolist.adapter.count-1) {
-//                Toast.makeText(context, "todoEditingBtn 클릭됨", Toast.LENGTH_SHORT).show()
-//                var listItem = todolist.adapter.getItem(i)
-//                var deleteImg = getResources().getDrawable(R.drawable.delete_todo)
-//                //listItem.btn_todo.background = deleteImg
-//
-//            }
-//        }
+
         return view
     }
 

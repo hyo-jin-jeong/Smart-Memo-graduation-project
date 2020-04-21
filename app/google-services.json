@@ -1,42 +1,34 @@
 {
   "project_info": {
-    "project_number": "608402763262",
-    "firebase_url": "https://smartmemo-42733.firebaseio.com",
-    "project_id": "smartmemo-42733",
-    "storage_bucket": "smartmemo-42733.appspot.com"
+    "project_number": "673743441847",
+    "firebase_url": "https://smartmemo-88f90.firebaseio.com",
+    "project_id": "smartmemo-88f90",
+    "storage_bucket": "smartmemo-88f90.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:608402763262:android:21df5cdd38ebc8db32a4af",
+        "mobilesdk_app_id": "1:673743441847:android:e655f37372bfba12186232",
         "android_client_info": {
           "package_name": "com.kakao.smartmemo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "608402763262-a7f0blveuqlgcoeot88acafs8a7sdt2l.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.kakao.smartmemo",
-            "certificate_hash": "db6f05cbcee1e49aab7f39ace0c66ddca644aac6"
-          }
-        },
-        {
-          "client_id": "608402763262-rssqc52k14colo6cnon4a8bed3feajmd.apps.googleusercontent.com",
+          "client_id": "673743441847-qll5thctr3n1ibq8ou9llq1mfnn98bs5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAZkcwaqdJoZsgHTi1XMh5pv6-FOFRhQ3k"
+          "current_key": "AIzaSyDrudfdilliHNJyWDZG4wmlCctX8H3kN80"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "608402763262-rssqc52k14colo6cnon4a8bed3feajmd.apps.googleusercontent.com",
+              "client_id": "673743441847-qll5thctr3n1ibq8ou9llq1mfnn98bs5.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

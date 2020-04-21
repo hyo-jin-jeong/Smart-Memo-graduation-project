@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.Presenter
 
-
 import com.kakao.smartmemo.Contract.MemberChangeContract
 import com.kakao.smartmemo.Model.UserModel
 
@@ -13,8 +12,8 @@ class MemberChangePresenter : MemberChangeContract.Presenter{
         this.userModel = UserModel()
     }
 
-    override fun getProfile() {
-        userModel.getProfile()
+    override fun getProfile(email:String) {
+        userModel.getProfile(email)
     }
 
     override fun updateUser() {
