@@ -3,7 +3,7 @@ package com.kakao.smartmemo.Contract
 interface TodoAdapterContract {
 
     interface View {
-        fun notifyAdpater()
+        fun notifyAdapter()
     }
 
     interface Model {

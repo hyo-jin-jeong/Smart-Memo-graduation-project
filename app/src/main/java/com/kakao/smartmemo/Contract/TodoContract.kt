@@ -7,7 +7,6 @@ interface TodoContract {
     }
 
     interface Presenter {
-
         fun setTodoAdapterModel(adapterModel : TodoAdapterContract.Model)
         fun setTodoAdapterView(adapterView : TodoAdapterContract.View)
         fun setTodoDeleteAdapterModel(deleteAdapterModel : TodoDeleteAdapterContract.Model)

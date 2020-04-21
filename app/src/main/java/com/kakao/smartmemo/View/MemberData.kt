@@ -113,14 +113,13 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
         with(UserObejct){
             email=""
             password=""
-            uid=""
             addr=""
             user_name=""
-            profile_id=""
-            profile_url=""
+            img_id=""
+            img_url=""
             kakao_conected=false
             kakaoAlarm_time=""
-            group_info = mutableMapOf("" to "")
+            //group_info = mutableMapOf("" to "")
         }
         var intent = Intent(this, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)

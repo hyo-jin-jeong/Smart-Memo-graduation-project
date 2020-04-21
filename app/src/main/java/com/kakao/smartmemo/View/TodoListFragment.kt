@@ -10,12 +10,12 @@ import android.view.View.VISIBLE
 import android.widget.*
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import com.kakao.smartmemo.Adapter.TodoAdapter
 import com.kakao.smartmemo.Adapter.TodoDeleteAdapter
 import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Presenter.TodoPresenter
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.TodoAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.todolist_fragment.*
 import kotlinx.android.synthetic.main.todolist_fragment.view.*
@@ -79,16 +79,6 @@ class TodoListFragment : Fragment(), TodoContract.View {
               todoEditingbtn.visibility = GONE
               todo_delete_cancel.visibility= GONE
         })
-//        todoEditingbtn.setOnClickListener {
-//
-//            for(i in 0 until todolist.adapter.count-1) {
-//                Toast.makeText(context, "todoEditingBtn 클릭됨", Toast.LENGTH_SHORT).show()
-//                var listItem = todolist.adapter.getItem(i)
-//                var deleteImg = getResources().getDrawable(R.drawable.delete_todo)
-//                //listItem.btn_todo.background = deleteImg
-//
-//            }
-//        }
         return view
     }
 

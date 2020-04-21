@@ -1,5 +1,8 @@
 package com.kakao.smartmemo.Presenter
 
+import android.app.Activity
+import android.content.Context
+import android.util.Log
 import com.kakao.smartmemo.Contract.SignInContract
 import com.kakao.smartmemo.Model.UserModel
 
@@ -13,9 +16,11 @@ class SignInPresenter : SignInContract.Presenter {
         this.userModel = UserModel()
     }
 
-    override fun addUser() {
-        userModel.addUser()
-
+    override fun addUser(context: Activity, email:String, pw:String, name:String, address:String) {
+        var authResult = userModel.addAuthUser(context, email, pw, name, address)
+        if (authResult) {
+            userModel.addFirestoreUser()
+        }
     }
 
 
