@@ -259,10 +259,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     }
 
-    override fun onPause() {
-        super.onPause()
-        mapView.onPause()
-    }
+    
     override fun onCurrentLocationUpdateFailed(p0: MapView?) {
 
     }
