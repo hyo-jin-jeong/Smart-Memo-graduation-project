@@ -1,4 +1,4 @@
-package com.kakao.smartmemo.com.kakao.smartmemo.Adapter
+package com.kakao.smartmemo.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,7 +15,6 @@ import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.TodoListActivity
 import kotlinx.android.synthetic.main.todo_list_item.view.*
-
 
 class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter(), TodoAdapterContract.Model, TodoAdapterContract.View {
 

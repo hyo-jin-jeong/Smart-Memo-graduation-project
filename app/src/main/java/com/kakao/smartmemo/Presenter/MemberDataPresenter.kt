@@ -13,8 +13,8 @@ class MemberDataPresenter : MemberDataContract.Presenter{
         this.userModel = UserModel()
     }
 
-    override fun getProfile() {
-        userModel.getProfile()
+    override fun getProfile(email:String) {
+        userModel.getProfile(email)
     }
 
     override fun updateUser() {
@@ -22,7 +22,6 @@ class MemberDataPresenter : MemberDataContract.Presenter{
     }
 
     override fun checkPassword(confirmPassword: EditText?) :Boolean{
-
         return userModel.checkPassword(confirmPassword)
     }
 

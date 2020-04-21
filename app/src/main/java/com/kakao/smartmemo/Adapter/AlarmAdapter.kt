@@ -1,11 +1,10 @@
-package com.kakao.smartmemo.com.kakao.smartmemo.Adapter
+package com.kakao.smartmemo.Adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.AlarmAdapterContract
 import com.kakao.smartmemo.Data.PlaceAlarmData
-import com.kakao.smartmemo.Presenter.AlarmAdapterPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.alarm_list_item.view.*
 

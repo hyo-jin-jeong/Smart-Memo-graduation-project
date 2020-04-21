@@ -83,7 +83,7 @@
                     android:layout_margin="1dp">
 
                     <EditText
-                        android:id="@+id/e-mail"
+                        android:id="@+id/e_mail"
                         android:layout_width="180dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
