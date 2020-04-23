@@ -146,27 +146,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 dialog.setCurType(2)
                 dialog.show(super.getChildFragmentManager(), "show dialog")
             }
-            else -> {
-                val items = arrayOf<CharSequence>("메모", "TODO 장소알람")
-                val listDialog: AlertDialog.Builder = AlertDialog.Builder(
-                    this.context,
-                    android.R.style.Theme_DeviceDefault_Light_Dialog_Alert
-                )
-                listDialog.setTitle("이 곳에 추가할 것을 선택하세요")
-                    .setItems(items, DialogInterface.OnClickListener { dialog, which ->
-                        when (which) {
-                            0 -> {
-                                var addMemoIntent = Intent(this.context, AddMemo::class.java)
-                                addMemoIntent.putExtra("Current Point", "나중에 좌표값 넣어")
-                                startActivity(addMemoIntent)
-                            }
-                            else -> {
-                                //투두 장소 알람 추가하는 액티비티 만들어서 인드텐
-                            }
-                        }
-                    })
-                    .show()
-            }
+            else -> { }
         }
     }
 
@@ -187,6 +167,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         memoAndTodo.customImageResourceId =
             R.drawable.memo_todo_icon // 마커 이미지.
         memoAndTodo.isCustomImageAutoscale = false // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
+        memoAndTodo.isShowCalloutBalloonOnTouch = false
         memoAndTodo.setCustomImageAnchor(
             0.5f,
             1.0f
@@ -202,6 +183,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         memo.markerType = MapPOIItem.MarkerType.CustomImage
         memo.customImageResourceId = R.drawable.memo_icon
         memo.isCustomImageAutoscale = false
+        memo.isShowCalloutBalloonOnTouch = false
         memo.setCustomImageAnchor(0.5f, 1.0f)
 
         mapView.addPOIItem(memo)
@@ -214,6 +196,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         todo.markerType = MapPOIItem.MarkerType.CustomImage
         todo.customImageResourceId = R.drawable.todo_icon
         todo.isCustomImageAutoscale = false
+        todo.isShowCalloutBalloonOnTouch = false
         todo.setCustomImageAnchor(0.5f, 1.0f)
 
         mapView.addPOIItem(todo)
@@ -253,9 +236,30 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         curLocationMarker.customImageResourceId =
             R.drawable.cur_location_icon
         curLocationMarker.isCustomImageAutoscale = false
+        curLocationMarker.isShowCalloutBalloonOnTouch = false
         curLocationMarker.setCustomImageAnchor(0.5f, 1.0f)
 
         mapView.addPOIItem(curLocationMarker)
+
+        val items = arrayOf<CharSequence>("메모", "TODO 장소알람")
+        val listDialog: AlertDialog.Builder = AlertDialog.Builder(
+            this.context,
+            android.R.style.Theme_DeviceDefault_Light_Dialog_Alert
+        )
+        listDialog.setTitle("이 곳에 추가할 것을 선택하세요")
+            .setItems(items, DialogInterface.OnClickListener { dialog, which ->
+                when (which) {
+                    0 -> {
+                        var addMemoIntent = Intent(this.context, AddMemo::class.java)
+                        addMemoIntent.putExtra("Current Point", "나중에 좌표값 넣어")
+                        startActivity(addMemoIntent)
+                    }
+                    else -> {
+                        //투두 장소 알람 추가하는 액티비티 만들어서 인드텐
+                    }
+                }
+            })
+            .show()
 
     }
 
