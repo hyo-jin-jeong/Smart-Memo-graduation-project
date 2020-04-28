@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.content_add_group.*
 class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
 
     lateinit var presenter : AddGroupContract.Presenter
-    var color : Int = 0
+    var color : Int = -13184
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_bar_add_group)
@@ -29,7 +29,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
         val group_name : EditText = findViewById(R.id.editGroupName)
         val theme_color : View = findViewById(R.id.selected_color)
         //val kakao_member
-
+        theme_color.setBackgroundColor(color)
         val toolBar:Toolbar = findViewById(R.id.addGroupToolbar)
         toolBar.title = resources.getString(R.string.add_group)
         setSupportActionBar(toolBar)
