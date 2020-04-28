@@ -1,7 +1,10 @@
 package com.kakao.smartmemo.View
 
+
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
@@ -13,20 +16,25 @@ import com.kakao.smartmemo.Contract.AddGroupContract
 import kotlinx.android.synthetic.main.content_add_group.*
 
 
+
 class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
 
     lateinit var presenter : AddGroupContract.Presenter
-
+    var color : Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_bar_add_group)
         presenter = AddGroupPresenter(this)
 
+        val group_name : EditText = findViewById(R.id.editGroupName)
+        val theme_color : View = findViewById(R.id.selected_color)
+        //val kakao_member
+
         val toolBar:Toolbar = findViewById(R.id.addGroupToolbar)
         toolBar.title = resources.getString(R.string.add_group)
         setSupportActionBar(toolBar)
 
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         var colorPicker = findViewById<ImageView>(R.id.color_picker)
         colorPicker.setOnClickListener {
@@ -40,7 +48,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
 
         var saveBtn = save_group
         saveBtn.setOnClickListener {
-            presenter.addGroup()
+            presenter.addGroup(group_name.text.toString(),color)
             finish()
         }
     }
@@ -61,6 +69,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
 
     override fun onColorSelected(dialogId: Int, color: Int) {
         val selectedColor = selected_color
+        this.color = color
         selectedColor.setBackgroundColor(color)
     }
 

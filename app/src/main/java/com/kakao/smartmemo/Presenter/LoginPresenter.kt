@@ -4,7 +4,7 @@ import android.app.Activity
 import com.kakao.smartmemo.Contract.LoginContract
 import com.kakao.smartmemo.Model.UserModel
 
-class LoginPresenter : LoginContract.Presenter, LoginContract.onLoginListener {
+class LoginPresenter : LoginContract.Presenter, LoginContract.OnLoginListener {
     var userModel:UserModel
     private var view : LoginContract.View
 

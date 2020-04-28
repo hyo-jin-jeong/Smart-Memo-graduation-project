@@ -4,13 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 import com.kakao.smartmemo.Contract.MemberDataContract
-import com.kakao.smartmemo.Object.UserObejct
+import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Presenter.MemberDataPresenter
 import kotlinx.android.synthetic.main.secession_popup.*
@@ -23,7 +22,7 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
         setContentView(R.layout.member_view)
         presenter = MemberDataPresenter(this)
 
-        presenter.getProfile(UserObejct.email)//User 정보가져오기
+        //presenter.getProfile(UserObejct.email)//User 정보가져오기
 
         memberToolbar = findViewById(R.id.member_toolbar)
         setSupportActionBar(memberToolbar)
@@ -93,13 +92,11 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
                     builder1.setNegativeButton(
                         "아니오",
                         DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
-                            Toast.makeText(applicationContext, "아니오를 선택했습니다.", Toast.LENGTH_LONG)
-                                .show()
+
                         })
                     builder1.show()
                 })
                 builder.setNegativeButton("아니오",DialogInterface.OnClickListener{ dialogInterface: DialogInterface, i: Int ->
-                    Toast.makeText(applicationContext,"아니오를 선택했습니다.",Toast.LENGTH_LONG).show()
                 })
 
                 builder.show()
@@ -109,15 +106,15 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
         }
     }
     fun initUserObject(){
-        with(UserObejct){
+        with(UserObject){
             email=""
             password=""
             addr=""
             user_name=""
             img_id=""
             img_url=""
-            kakao_conected=false
-            kakaoAlarm_time=""
+            kakao_connected=false
+            kakao_alarm_time=""
             //group_info = mutableMapOf("" to "")
         }
         var intent = Intent(this, LoginActivity::class.java)
