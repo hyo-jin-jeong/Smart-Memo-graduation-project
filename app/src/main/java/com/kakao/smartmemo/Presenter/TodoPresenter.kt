@@ -6,7 +6,6 @@ import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
 import com.kakao.smartmemo.Model.TodoModel
 
 class TodoPresenter : TodoContract.Presenter {
-
     private var view : TodoContract.View
     private var todoModel : TodoModel
     private lateinit var adapterView : TodoAdapterContract.View
