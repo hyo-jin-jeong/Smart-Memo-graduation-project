@@ -14,7 +14,7 @@ interface LoginContract {
         fun onLoginFailure(message: String)
     }
 
-    interface onLoginListener{
+    interface OnLoginListener{
         fun onSuccess(message:String)
         fun onFailure(message:String)
     }

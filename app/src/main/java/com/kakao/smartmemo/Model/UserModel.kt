@@ -6,17 +6,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kakao.smartmemo.Contract.LoginContract
 import com.kakao.smartmemo.Contract.SignUpContract
-import com.kakao.smartmemo.Object.UserObejct
+import com.kakao.smartmemo.Object.UserObject
 
 class UserModel {
-    private lateinit var onLoginListener:LoginContract.onLoginListener
+    private lateinit var onLoginListener:LoginContract.OnLoginListener
     private lateinit var onSignUpListener: SignUpContract.onSignUpListener
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     constructor() {  }
 
-    constructor(onLoginListener: LoginContract.onLoginListener) {
+    constructor(onLoginListener: LoginContract.OnLoginListener) {
         this.onLoginListener = onLoginListener
     }
 
@@ -25,17 +25,35 @@ class UserModel {
     }
 
     fun getProfile(email: String) { // user 정보 받아오는 함수
-        firestore.collection("User").document(email).get()
+        firestore.collection("User").document(email).addSnapshotListener { documentSnapshot, _ ->
+            if (documentSnapshot != null) {
+                if(documentSnapshot.exists()){
+                    with(UserObject){
+                        this.email = email
+                        this.addr = documentSnapshot["addr"].toString()
+                        this.img_id = documentSnapshot["img_id"].toString()
+                        this.img_url = documentSnapshot["img_url"].toString()
+                        this.kakao_alarm_time = documentSnapshot["kakao_alarm_time"].toString()
+                        this.kakao_connected = documentSnapshot["kakao_conected"] as Boolean
+                        this.password = documentSnapshot["password"].toString()
+                        this.user_name = documentSnapshot["user_name"].toString()
+
+                    }
+                }
+            }
+
+        }
+
     }
 
     fun addAuthUser(context: Activity,email: String,pw: String,name: String, address: String){ // user 추가하는 함수
         auth.createUserWithEmailAndPassword(email, pw).addOnCompleteListener(context) { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser
-                UserObejct.email = email
-                UserObejct.password = pw
-                UserObejct.user_name = name
-                UserObejct.addr = address
+                UserObject.email = email
+                UserObject.password = pw
+                UserObject.user_name = name
+                UserObject.addr = address
                 onSignUpListener.onSuccess(task.result.toString())
             } else {
                 onSignUpListener.onFailure(task.exception.toString())
@@ -45,7 +63,8 @@ class UserModel {
     }
 
     fun addFirestoreUser() {
-        firestore.collection("User").document(UserObejct.email).set(UserObejct)
+        firestore.collection("User").document(UserObject.email).set(UserObject)
+
     }
 
     fun updateUser() { // user 정보 수정하는 함수

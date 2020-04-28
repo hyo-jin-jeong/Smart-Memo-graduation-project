@@ -50,6 +50,7 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
     }
 
     override fun onLoginSuccess(message : String) {
+        presenter.getProfile(id.text.toString())
         startMainActivity()
     }
 

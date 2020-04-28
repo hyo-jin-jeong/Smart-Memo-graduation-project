@@ -3,6 +3,7 @@ package com.kakao.smartmemo.View
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -18,6 +19,7 @@ import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.*
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
+import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -99,6 +101,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         val memberIcon = naviHeaderView.findViewById<ImageView>(R.id.member_icon)
 
         memberIcon.setOnClickListener {
+            Log.e("userObejct", UserObject.img_id + UserObject.email + UserObject.img_id + UserObject.img_url + UserObject.kakao_alarm_time + UserObject.kakao_connected + UserObject.password + UserObject.user_name)
             val memberData = Intent(this, MemberData::class.java)
             startActivity(memberData)
         }
