@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.Model
 
 import android.app.Activity
+import android.util.Log
 import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,16 +35,14 @@ class UserModel {
                         this.img_id = documentSnapshot["img_id"].toString()
                         this.img_url = documentSnapshot["img_url"].toString()
                         this.kakao_alarm_time = documentSnapshot["kakao_alarm_time"].toString()
-                        this.kakao_connected = documentSnapshot["kakao_conected"] as Boolean
+                        this.kakao_connected = documentSnapshot["kakao_connected"] as Boolean
                         this.password = documentSnapshot["password"].toString()
                         this.user_name = documentSnapshot["user_name"].toString()
 
                     }
                 }
             }
-
         }
-
     }
 
     fun addAuthUser(context: Activity,email: String,pw: String,name: String, address: String){ // user 추가하는 함수
@@ -59,12 +58,10 @@ class UserModel {
                 onSignUpListener.onFailure(task.exception.toString())
             }
         }
-
     }
 
     fun addFirestoreUser() {
         firestore.collection("User").document(UserObject.email).set(UserObject)
-
     }
 
     fun updateUser() { // user 정보 수정하는 함수
@@ -77,6 +74,7 @@ class UserModel {
     fun checkUser(context: Activity, email:String, password:String) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context){task ->
                 if(task.isSuccessful){
+                    auth.currentUser
                     onLoginListener.onSuccess(task.result.toString())
                 } else {
                     onLoginListener.onFailure(task.exception.toString())
@@ -84,7 +82,25 @@ class UserModel {
         }
     }
 
-    fun checkPassword(confirmPassword: EditText?): Boolean { //
-            return true
+    fun signOutUser() {
+        if (auth.currentUser != null) {
+            with(UserObject) {
+                email=""
+                password=""
+                addr=""
+                user_name=""
+                img_id=""
+                img_url=""
+                kakao_connected=false
+                kakao_alarm_time=""
+            }
+            auth.signOut()
+        } else {
+            Log.e("memberData에서 부른 UserModel의 signOut함수", "로그아웃 실패")
+        }
+    }
+
+    fun checkPassword(confirmPassword: String): Boolean {
+        return confirmPassword == UserObject.password
     }
 }

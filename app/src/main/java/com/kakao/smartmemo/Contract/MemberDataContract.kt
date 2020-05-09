@@ -6,7 +6,8 @@ interface MemberDataContract {
     interface Presenter{
         fun getProfile(email:String){}
         fun updateUser(){}
-        fun checkPassword(confirmPassword: EditText?) :Boolean{return true}
+        fun signOutUser() {}
+        fun checkPassword(confirmPassword: String) :Boolean{return true}
         fun deleteUser(){}
     }
     interface  View{

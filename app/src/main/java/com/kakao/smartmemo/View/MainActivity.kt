@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         val memberIcon = naviHeaderView.findViewById<ImageView>(R.id.member_icon)
 
         memberIcon.setOnClickListener {
-            Log.e("userObejct", UserObject.img_id + UserObject.email + UserObject.img_id + UserObject.img_url + UserObject.kakao_alarm_time + UserObject.kakao_connected + UserObject.password + UserObject.user_name)
+
             val memberData = Intent(this, MemberData::class.java)
             startActivity(memberData)
         }

@@ -24,6 +24,9 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         val loginButton = findViewById<CardView>(R.id.login_button)
         id = findViewById(R.id.id)
         pw = findViewById(R.id.pw)
+
+        id.setText("wjdwldnjsa@naver.com")
+        pw.setText("12345678")
         loginButton.setOnClickListener {
             if (id.text.toString() != "" && pw.text.toString() != "") {
                 presenter.checkUser(this, id.text.toString(), pw.text.toString())

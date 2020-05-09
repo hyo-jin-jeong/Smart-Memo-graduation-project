@@ -21,7 +21,11 @@ class MemberDataPresenter : MemberDataContract.Presenter{
         userModel.updateUser()
     }
 
-    override fun checkPassword(confirmPassword: EditText?) :Boolean{
+    override fun signOutUser() {
+        userModel.signOutUser()
+    }
+
+    override fun checkPassword(confirmPassword: String) :Boolean{
         return userModel.checkPassword(confirmPassword)
     }
 
