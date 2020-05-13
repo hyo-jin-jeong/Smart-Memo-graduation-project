@@ -1,9 +1,10 @@
 package com.kakao.smartmemo.View
 
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -19,27 +20,29 @@ import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.*
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
-import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View {
     lateinit var presenter : MainContract.Presenter
     private lateinit var myToolbar: Toolbar
-    private lateinit var fab_rotate_start:Animation
-    private lateinit var fab_rotate_end:Animation
-    private lateinit var fab_open:Animation
-    private lateinit var fab_close:Animation
+    private lateinit var fabRotateStart:Animation
+    private lateinit var fabRotateEnd:Animation
+    private lateinit var fabOpen:Animation
+    private lateinit var fabClose:Animation
     lateinit var fab:FloatingActionButton
-    lateinit var fab_memo:FloatingActionButton
-    lateinit var fab_todo:FloatingActionButton
+    private lateinit var fabMemo:FloatingActionButton
+    private lateinit var fabTodo:FloatingActionButton
+    lateinit var navigationView: NavigationView
     lateinit var mDrawerLayout: DrawerLayout
     private val context: Context = this
+    private lateinit var groupList : MutableList<String>
+    private var REQUEST_CODE = 1234;
     var openFlag:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         presenter = MainPresenter(this)
 
         val sectionsPagerAdapter =
@@ -66,38 +69,32 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
         initGroup()//drawerlayout init func
 
-        val navigationView: NavigationView = findViewById<NavigationView>(R.id.nav_view)
-        mDrawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
+        navigationView = findViewById(R.id.nav_view)
+
+        mDrawerLayout = findViewById(R.id.drawer_layout)
         navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             mDrawerLayout!!.closeDrawers()
-            val id = menuItem.itemId
-            val title = menuItem.title.toString()
-            var groupSettingIntent = Intent(this, ModifyGroup::class.java)
-            when (id) {
+            when(val id = menuItem.itemId) {
+
                 R.id.nav_my_memo -> {
-                    groupSettingIntent.putExtra("groupName", resources.getString(R.string.nav_my_memo))
-                    startActivity(groupSettingIntent)
+
                 }
-                R.id.groupSchool -> {
-                    groupSettingIntent.putExtra("groupName", resources.getString(R.string.nav_school_memo))
-                    startActivity(groupSettingIntent)
-                }
-                R.id.groupTravel -> {
-                    groupSettingIntent.putExtra("groupName", resources.getString(R.string.nav_travel_memo))
-                    startActivity(groupSettingIntent)
-                }
-                R.id.addGroup -> {
+                R.id.nav_group_add -> {
                     val nextIntent = Intent(this, AddGroup::class.java)
                     startActivity(nextIntent)
                 }
-
+                else -> {
+                    var groupSettingIntent = Intent(this, ModifyGroup::class.java)
+                    groupSettingIntent.putExtra("groupName", groupList[id])
+                    startActivity(groupSettingIntent)
+                }
             }
             menuItem.isChecked=false
             true
         }
 
-        val naviHeaderView =nav_view.getHeaderView(0)
+        val naviHeaderView =navigationView.getHeaderView(0)
         val memberIcon = naviHeaderView.findViewById<ImageView>(R.id.member_icon)
 
         memberIcon.setOnClickListener {
@@ -108,36 +105,55 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
         setFloatingIcon()
         fab.setOnClickListener(this)
-        fab_memo.setOnClickListener(this)
-        fab_todo.setOnClickListener(this)
+        fabMemo.setOnClickListener(this)
+        fabTodo.setOnClickListener(this)
     }
-    fun initGroup(){
-        //drawerlayout 초기화 addItem()
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        when(requestCode){
+//            1234->{
+//                if(resultCode == Activity.RESULT_OK){
+//
+//                }
+//            }
+//        }
+//    }
+    override fun setNavigationView(name : MutableList<String>){ // call back func
+            groupList = name
+            for (i in 0 until groupList.size) {
+                //Log.e("navi",groupList[i])
+                navigationView.menu.add(groupList[i])
+            }
     }
 
-    fun setFloatingIcon() {
+    private fun initGroup(){ // group data setting
+        presenter.getGroupData()
+    }
+
+
+    private fun setFloatingIcon() {
         // FloatingActionButton
-        fab_rotate_start = AnimationUtils.loadAnimation(context,
+        fabRotateStart = AnimationUtils.loadAnimation(context,
             R.anim.fab_rotate_start
         )
-        fab_rotate_end = AnimationUtils.loadAnimation(context,
+        fabRotateEnd = AnimationUtils.loadAnimation(context,
             R.anim.fab_rotate_end
         )
-        fab_open = AnimationUtils.loadAnimation(context,
+        fabOpen = AnimationUtils.loadAnimation(context,
             R.anim.fab_open
         )
-        fab_close = AnimationUtils.loadAnimation(context,
+        fabClose = AnimationUtils.loadAnimation(context,
             R.anim.fab_close
         )
 
         fab = findViewById(R.id.fab)
-        fab_memo = findViewById(R.id.fab_memo)
-        fab_todo = findViewById(R.id.fab_todo)
+        fabMemo = findViewById(R.id.fab_memo)
+        fabTodo = findViewById(R.id.fab_todo)
 
-        fab_memo.startAnimation(fab_close)
-        fab_todo.startAnimation(fab_close)
-        fab_memo.isClickable = false
-        fab_todo.isClickable = false
+        fabMemo.startAnimation(fabClose)
+        fabTodo.startAnimation(fabClose)
+        fabMemo.isClickable = false
+        fabTodo.isClickable = false
 
     }
     override fun onClick(v: View?) {
@@ -160,19 +176,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private fun anim() {
         when {
             openFlag -> {
-                fab.startAnimation(fab_rotate_end)
-                fab_memo.startAnimation(fab_close)
-                fab_todo.startAnimation(fab_close)
-                fab_memo.isClickable = false
-                fab_todo.isClickable = false
+                fab.startAnimation(fabRotateEnd)
+                fabMemo.startAnimation(fabClose)
+                fabTodo.startAnimation(fabClose)
+                fabMemo.isClickable = false
+                fabTodo.isClickable = false
                 openFlag = false
             }
             else -> {
-                fab.startAnimation(fab_rotate_start)
-                fab_memo.startAnimation(fab_open)
-                fab_todo.startAnimation(fab_open)
-                fab_memo.isClickable = true
-                fab_memo.isClickable = true
+                fab.startAnimation(fabRotateStart)
+                fabMemo.startAnimation(fabOpen)
+                fabTodo.startAnimation(fabOpen)
+                fabMemo.isClickable = true
+                fabMemo.isClickable = true
                 openFlag = true
             }
         }

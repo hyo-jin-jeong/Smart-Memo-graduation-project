@@ -5,7 +5,7 @@ import android.app.Activity
 interface LoginContract {
     interface Presenter {
         fun checkUser(context: Activity, email:String, password:String)
-        fun getProfile(email:String)
+        fun getProfile()
     }
 
     interface View {

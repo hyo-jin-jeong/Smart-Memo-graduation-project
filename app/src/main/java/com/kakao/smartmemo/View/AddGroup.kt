@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.View
 
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -21,15 +22,16 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
 
     lateinit var presenter : AddGroupContract.Presenter
     var color : Int = -13184
+    lateinit var groupName : EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_bar_add_group)
         presenter = AddGroupPresenter(this)
 
-        val group_name : EditText = findViewById(R.id.editGroupName)
-        val theme_color : View = findViewById(R.id.selected_color)
+        groupName = findViewById(R.id.editGroupName)
+        val themeColor : View = findViewById(R.id.selected_color)
         //val kakao_member
-        theme_color.setBackgroundColor(color)
+        themeColor.setBackgroundColor(color)
         val toolBar:Toolbar = findViewById(R.id.addGroupToolbar)
         toolBar.title = resources.getString(R.string.add_group)
         setSupportActionBar(toolBar)
@@ -48,7 +50,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
 
         var saveBtn = save_group
         saveBtn.setOnClickListener {
-            presenter.addGroup(group_name.text.toString(),color)
+            presenter.addGroup(groupName.text.toString(),color)
             finish()
         }
     }
