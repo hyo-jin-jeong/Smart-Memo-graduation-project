@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.Model
 
 import android.app.Activity
+import android.util.Log
 import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,20 +25,18 @@ class UserModel {
         this.onSignUpListener = onSignUpListener
     }
 
-    fun getProfile(email: String) { // user 정보 받아오는 함수
-        firestore.collection("User").document(email).addSnapshotListener { documentSnapshot, _ ->
+    fun getProfile() { // user 정보 받아오는 함수
+        firestore.collection("User").document("${UserObject.email}").addSnapshotListener { documentSnapshot, _ ->
             if (documentSnapshot != null) {
                 if(documentSnapshot.exists()){
                     with(UserObject){
-                        this.email = email
                         this.addr = documentSnapshot["addr"].toString()
                         this.img_id = documentSnapshot["img_id"].toString()
                         this.img_url = documentSnapshot["img_url"].toString()
                         this.kakao_alarm_time = documentSnapshot["kakao_alarm_time"].toString()
-                        this.kakao_connected = documentSnapshot["kakao_conected"] as Boolean
+                        this.kakao_connected = documentSnapshot["kakao_connected"] as Boolean
                         this.password = documentSnapshot["password"].toString()
                         this.user_name = documentSnapshot["user_name"].toString()
-
                     }
                 }
             }
@@ -76,15 +75,19 @@ class UserModel {
     }
     fun checkUser(context: Activity, email:String, password:String) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context){task ->
-                if(task.isSuccessful){
-                    onLoginListener.onSuccess(task.result.toString())
-                } else {
-                    onLoginListener.onFailure(task.exception.toString())
-                }
+            if(task.isSuccessful){
+                auth.currentUser
+                UserObject.email = email
+                onLoginListener.onSuccess(task.result.toString())
+            } else {
+                onLoginListener.onFailure(task.exception.toString())
+            }
         }
     }
 
+
+
     fun checkPassword(confirmPassword: EditText?): Boolean { //
-            return true
+        return true
     }
 }

@@ -13,8 +13,8 @@ class MemberDataPresenter : MemberDataContract.Presenter{
         this.userModel = UserModel()
     }
 
-    override fun getProfile(email:String) {
-        userModel.getProfile(email)
+    override fun getProfile() {
+        userModel.getProfile()
     }
 
     override fun updateUser() {
