@@ -7,6 +7,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.content.DialogInterface
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.kakao.smartmemo.Contract.MemberDataContract
 import com.kakao.smartmemo.Object.UserObject
@@ -22,13 +24,13 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
         setContentView(R.layout.member_view)
         presenter = MemberDataPresenter(this)
 
-        //presenter.getProfile(UserObejct.email)//User 정보가져오기
+        presenter.getProfile(UserObject.email)//User 정보가져오기
 
         memberToolbar = findViewById(R.id.member_toolbar)
         setSupportActionBar(memberToolbar)
 
-        getSupportActionBar()?.setDisplayShowTitleEnabled(true)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     }
 
@@ -57,11 +59,15 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
                 return true
             }
 
-            R.id.action_settings2 -> {//로그아웃
-                initUserObject()
+            R.id.action_settings2 -> { //로그아웃
+                presenter.signOutUser()
+                var intent = Intent(this, LoginActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                Toast.makeText(this, "로그아웃에 성공! 이용해주셔서 감사합니다.", Toast.LENGTH_SHORT).show()
                 return true
             }
-            R.id.action_settings3 -> {//탈퇴
+            R.id.action_settings3 -> { //탈퇴
 
                 var builder = AlertDialog.Builder(this)
 
@@ -72,23 +78,18 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
                     var builder1 = AlertDialog.Builder(this)
                     builder1.setTitle("알림")
                     builder1.setView(R.layout.secession_popup)
-                    builder1.setPositiveButton(
-                        "예",
-                        DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
-                            if(presenter.checkPassword(confirm_password)){
-                                var builder2 = AlertDialog.Builder(this)
-                                builder2.setTitle("알림")
-                                builder2.setMessage("저희 서비스를 이용해 주셔서 감사합니다.")
-                                builder2.show()
-                                presenter.deleteUser()
-                                initUserObject()
+                    builder1.setPositiveButton("예") { dialogInterface: DialogInterface, i: Int ->
+                        if(presenter.checkPassword(confirm_password.text.toString())){
+                            var builder2 = AlertDialog.Builder(this)
+                            builder2.setTitle("알림")
+                            builder2.setMessage("저희 서비스를 이용해 주셔서 감사합니다.")
+                            builder2.show()
+                            presenter.deleteUser()
+                        } else{
+                            confirm_password.hint="비밀번호를 다시 입력하시오"
+                        }
 
-                            }
-                            else{
-                                confirm_password.hint="비밀번호를 다시 입력하시오"
-                            }
-
-                        })
+                    }
                     builder1.setNegativeButton(
                         "아니오",
                         DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
@@ -104,21 +105,5 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-    fun initUserObject(){
-        with(UserObject){
-            email=""
-            password=""
-            addr=""
-            user_name=""
-            img_id=""
-            img_url=""
-            kakao_connected=false
-            kakao_alarm_time=""
-            //group_info = mutableMapOf("" to "")
-        }
-        var intent = Intent(this, LoginActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
     }
 }
