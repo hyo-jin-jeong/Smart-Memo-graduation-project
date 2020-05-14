@@ -14,8 +14,8 @@ class MemberChangePresenter : MemberChangeContract.Presenter{
         this.userModel = UserModel()
     }
 
-    override fun getProfile(email:String) {
-        userModel.getProfile(email)
+    override fun getProfile() {
+        userModel.getProfile()
     }
 
     override fun updateUser(context: Activity, pw: String, name: String, addr: String, kakaoAlarmTime: String) {

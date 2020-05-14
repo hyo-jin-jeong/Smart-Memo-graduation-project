@@ -11,7 +11,7 @@ import com.kakao.smartmemo.Contract.DialogContract
 import com.kakao.smartmemo.Presenter.DialogPresenter
 import com.kakao.smartmemo.R
 
-class FragmentDialog : DialogFragment(), DialogContract.View {
+class DialogFragment : DialogFragment(), DialogContract.View {
     private lateinit var presenter : DialogPresenter
     private lateinit var adapter: DialogSectionsPagerAdapter
     private lateinit var viewPager: ViewPager

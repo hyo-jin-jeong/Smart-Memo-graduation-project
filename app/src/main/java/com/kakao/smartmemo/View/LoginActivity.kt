@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.kakao.smartmemo.Contract.LoginContract
+import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.LoginPresenter
 import com.kakao.smartmemo.R
 
@@ -45,8 +46,8 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         }
     }
     override fun startMainActivity() {
-        //presenter.getProfile(email) 나중에 건들 것
-        startActivity(Intent(this, MainActivity::class.java))
+        val intent = Intent(this,MainActivity::class.java)
+        startActivity(intent)
         finish()
     }
 

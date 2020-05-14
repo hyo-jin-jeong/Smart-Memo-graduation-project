@@ -1,6 +1,6 @@
 package com.kakao.smartmemo.Contract
 
-interface MapContract {
+interface     MapContract {
     interface View {
 
     }

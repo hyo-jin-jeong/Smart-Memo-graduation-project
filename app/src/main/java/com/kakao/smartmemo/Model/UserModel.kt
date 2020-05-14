@@ -32,7 +32,6 @@ class UserModel {
             if (documentSnapshot != null) {
                 if(documentSnapshot.exists()){
                     with(UserObject){
-                        this.email = email
                         this.addr = documentSnapshot["addr"].toString()
                         this.img_id = documentSnapshot["img_id"].toString()
                         this.img_url = documentSnapshot["img_url"].toString()

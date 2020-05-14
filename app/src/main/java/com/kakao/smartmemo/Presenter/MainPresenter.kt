@@ -2,15 +2,18 @@ package com.kakao.smartmemo.Presenter
 
 import com.kakao.smartmemo.Contract.MainAdapterContract
 import com.kakao.smartmemo.Contract.MainContract
+import com.kakao.smartmemo.Model.GroupModel
 
-class MainPresenter : MainContract.Presenter{
+class MainPresenter : MainContract.Presenter,MainContract.OnGetDataSuccessListener{
 
     private var view : MainContract.View
+    var groupModel: GroupModel
     private lateinit var adapterView: MainAdapterContract.View
     private lateinit var adapterModel: MainAdapterContract.Model
 
     constructor(view: MainContract.View){
         this.view = view
+        this.groupModel = GroupModel(this)
     }
 
     override fun setMainAdapterModel(model: MainAdapterContract.Model) {
@@ -19,6 +22,18 @@ class MainPresenter : MainContract.Presenter{
 
     override fun setMainAdapterView(view: MainAdapterContract.View) {
         adapterView = view
+    }
+
+    override fun getGroupData() {
+        groupModel.getGroupData()
+    }
+
+    override fun onSuccess(name: MutableList<String>) {
+        view.setNavigationView(name)
+    }
+
+    override fun onFailure() {
+
     }
 
 }

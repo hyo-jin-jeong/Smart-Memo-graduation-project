@@ -45,7 +45,7 @@ class AlarmFragment : Fragment(), AlarmContract.View {
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
-        (activity as MainActivity).toolbar.title="장소알람설정"
+        (activity as MainActivity).toolbar.title="장소 알람 관리"
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_alarm, menu)
     }
