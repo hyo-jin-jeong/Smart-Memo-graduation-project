@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.Model
 
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Object.UserObject

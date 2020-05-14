@@ -35,7 +35,7 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
         user_addr = findViewById(R.id.user_addr)
         kakao_alarm_time = findViewById(R.id.kakao_alarm_time)
 
-        presenter.getProfile(UserObject.email)//User 정보가져오기
+        presenter.getProfile()//User 정보가져오기
 
         if (UserObject != null) {
             user_email.text = UserObject.email

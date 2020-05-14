@@ -52,10 +52,9 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
     }
 
     override fun onLoginSuccess(message : String) {
-        presenter.getProfile(email.text.toString())
+        presenter.getProfile()
         startMainActivity()
     }
-
     override fun onLoginFailure(message: String) {
         Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
     }

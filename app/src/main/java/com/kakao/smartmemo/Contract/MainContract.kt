@@ -15,8 +15,6 @@ interface MainContract {
     interface OnGetDataSuccessListener {
         fun onSuccess(name: MutableList<String>)
         fun onFailure()
-
-
     }
 
 }

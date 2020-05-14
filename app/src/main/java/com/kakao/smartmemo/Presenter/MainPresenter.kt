@@ -1,5 +1,6 @@
 package com.kakao.smartmemo.Presenter
 
+import android.util.Log
 import com.kakao.smartmemo.Contract.MainAdapterContract
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Model.GroupModel
@@ -33,7 +34,7 @@ class MainPresenter : MainContract.Presenter,MainContract.OnGetDataSuccessListen
     }
 
     override fun onFailure() {
-
+        Log.e("groupdate 받아오기 실패", "실패!!!")
     }
 
 }

@@ -4,6 +4,7 @@ package com.kakao.smartmemo.View
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 
 import android.view.View
 import android.view.animation.Animation
@@ -21,6 +22,7 @@ import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.*
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
+import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View {

@@ -27,8 +27,8 @@ class UserModel {
         this.onSignUpListener = onSignUpListener
     }
 
-    fun getProfile(email: String) { // user 정보 받아오는 함수 : LoginSuccess일 때 사용
-        firestore.collection("User").document(email).addSnapshotListener { documentSnapshot, _ ->
+    fun getProfile() { // user 정보 받아오는 함수
+        firestore.collection("User").document("${UserObject.email}").addSnapshotListener { documentSnapshot, _ ->
             if (documentSnapshot != null) {
                 if(documentSnapshot.exists()){
                     with(UserObject){
@@ -45,13 +45,11 @@ class UserModel {
         }
     }
 
+
     fun addAuthUser(context: Activity,email: String,pw: String,name: String, address: String){ // user 추가하는 함수
         auth.createUserWithEmailAndPassword(email, pw).addOnCompleteListener(context) { task ->
             if (task.isSuccessful) {
                 UserObject.email = email
-                UserObject.password = pw
-                UserObject.user_name = name
-                UserObject.addr = address
                 onSignUpListener.onSuccess(task.result.toString())
             } else {
                 onSignUpListener.onFailure(task.exception.toString())
@@ -90,6 +88,8 @@ class UserModel {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context){task ->
                 if(task.isSuccessful){
                     auth.currentUser
+                    UserObject.email = email
+                    UserObject.password = password
                     onLoginListener.onSuccess(task.result.toString())
                 } else {
                     onLoginListener.onFailure(task.exception.toString())
