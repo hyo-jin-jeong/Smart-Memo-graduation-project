@@ -1,9 +1,6 @@
 package com.kakao.smartmemo.Receiver
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -11,7 +8,6 @@ import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import com.google.common.reflect.Reflection.getPackageName
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.View.MainActivity
 

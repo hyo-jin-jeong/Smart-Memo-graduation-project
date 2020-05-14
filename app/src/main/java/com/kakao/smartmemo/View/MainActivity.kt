@@ -19,7 +19,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import com.kakao.smartmemo.*
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Object.UserObject
@@ -42,11 +41,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private var REQUEST_CODE = 1234;
     var openFlag:Boolean = false
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         presenter = MainPresenter(this)
+
 
         val sectionsPagerAdapter =
             SectionsPagerAdapter(

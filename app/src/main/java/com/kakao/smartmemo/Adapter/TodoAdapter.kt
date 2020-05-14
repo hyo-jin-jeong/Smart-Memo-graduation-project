@@ -9,12 +9,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.FragmentTransaction
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kakao.smartmemo.Contract.TodoAdapterContract
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Model.TodoModel
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.View.TodoListActivity
 import kotlinx.android.synthetic.main.todo_list_item.view.*
+import kotlinx.android.synthetic.main.todolist_fragment.view.*
 
 class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter(), TodoAdapterContract.Model, TodoAdapterContract.View {
 
@@ -26,7 +30,7 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData
         var checkedTodo = false
         view.textView_todo.text = todo.todoContent
         view.group_color.setBackgroundColor(Color.parseColor("#B2CCFF"))
-        view.textView_todo.setOnClickListener() { // 취소선 ( 성 공 )
+        /*view.textView_todo.setOnClickListener() { // 취소선 ( 성 공 )
             if (checkedTodo) { // todolist에 취소선이 그어져 있으면 true
                 view.textView_todo.paintFlags = 0
                 checkedTodo = false
@@ -35,14 +39,15 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData
                 checkedTodo = true
             }
 
-        }
+        }*/
 
-        view.btn_todo.setOnClickListener() { // 종모양 누르면 알람 설정 페이지로 이동 ( 성공 )
-            view.btn_todo.setBackgroundResource(R.drawable.bell_icon_on)
-
+        view.textView_todo.setOnClickListener(View.OnClickListener { //todolist클릭했을시 설정 페이지(time_location_settings)로 넘어감.
             val alarmSettingsIntent = Intent(it.context, TodoListActivity::class.java)
             it.context.startActivity(alarmSettingsIntent)
-        }
+        })
+
+
+
         return view
     }
 
@@ -51,7 +56,7 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData
     }
 
     override fun getItemId(position: Int): Long {
-        return 0
+        return position.toLong()
     }
 
     override fun getCount(): Int {
