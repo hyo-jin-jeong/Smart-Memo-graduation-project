@@ -1,13 +1,17 @@
 package com.kakao.smartmemo.View
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Settings
 import android.util.Log
 import android.view.*
@@ -54,6 +58,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mapView = MapView(view.context)
+
+        var lacationManager: LocationManager = this.context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        var location: Location = lacationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        var longitude = location.longitude
+        var latitude = location.latitude
+
+        //중심점 설정하는
+        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), false)
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
 
@@ -198,7 +210,40 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
+        val handler = Handler()
+        var then: Long = 0
+        Log.i("jieun", "LongPress 시작")
+
+        p0!!.setOnTouchListener(object : View.OnTouchListener {
+            private val longClickDuration = 1500L
+
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+//                if (event?.action == MotionEvent.ACTION_DOWN) {
+//                    then = System.currentTimeMillis()
+//                    Log.i("jieun", "down then = $then")
+//                }
+                if (event?.action == MotionEvent.ACTION_UP) {
+                    if ((System.currentTimeMillis() - then) > longClickDuration){
+                        Log.i("jieun", "클릭을 뗌!")
+                        startLongPress(p1!!)
+                    }
+                }
+                return true
+            }
+        })
+
+
+        handler.postDelayed({
+            p0!!.setOnTouchListener(null)
+            Log.i("jieun", "삭제 ㅠ")
+        }, 2000L)
+
+    }
+
+
+    fun startLongPress(p1: MapPoint) {
         when {
             !isLongTouch -> isLongTouch = true
             else -> mapView.removePOIItem(curLocationMarker)
@@ -218,9 +263,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         var addMemoIntent = Intent(this.context, AddMemo::class.java)
                         addMemoIntent.putExtra("Current Point", "나중에 좌표값 넣어")
                         startActivity(addMemoIntent)
+                        this.onDestroyView()
                     }
                     else -> {
                         //투두 장소 알람 추가하는 액티비티 만들어서 인텐드
+                        this.onDestroyView()
                     }
                 }
             })
