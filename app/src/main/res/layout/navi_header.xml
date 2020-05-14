@@ -25,6 +25,7 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/nav_name"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:textColor="@color/font_default_color"

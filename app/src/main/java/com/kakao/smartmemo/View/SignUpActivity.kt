@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Contract.SignUpContract
 import com.kakao.smartmemo.Presenter.SignUpPresenter
-import kotlinx.android.synthetic.main.sign_in_page.*
+import kotlinx.android.synthetic.main.sign_up_page.*
 
 class SignUpActivity: AppCompatActivity(), SignUpContract.View {
 
@@ -16,7 +16,7 @@ class SignUpActivity: AppCompatActivity(), SignUpContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.sign_in_page)
+        setContentView(R.layout.sign_up_page)
         presenter = SignUpPresenter(this)
 
         val donebtn = findViewById<Button>(R.id.done)
