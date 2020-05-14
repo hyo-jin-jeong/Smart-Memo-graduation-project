@@ -38,70 +38,54 @@
         </RelativeLayout>
 
         <LinearLayout
-                android:id="@+id/text1"
+            android:id="@+id/idView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="20dp"
+            android:layout_below="@+id/image_layout"
+            tools:ignore="NotSibling,UnknownId">
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="20dp"
-                android:layout_below="@+id/image_layout"
-                tools:ignore="NotSibling,UnknownId">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="아이디"
-                    android:layout_weight="3"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="hong123" />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/text2"
+                android:text="아이디"
+                android:layout_weight="3"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/user_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="20dp"
-                android:layout_below="@id/text1">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="이름"
-                    android:layout_weight="3"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="홍길동" />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/text3"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nameView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="20dp"
+            android:layout_below="@id/idView">
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="20dp"
-                android:layout_below="@+id/text2">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="이메일"
-                    android:layout_weight="3"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="hong123@gmail.com" />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/text4"
+                android:text="이름"
+                android:layout_weight="3"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="20dp"
-                android:layout_below="@+id/text3">
+                android:layout_weight="1"
+                android:text="홍길동" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/addrView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="20dp"
+            android:layout_below="@+id/nameView">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,55 +93,54 @@
                 android:layout_weight="3"
                 android:textStyle="bold"/>
             <TextView
+                android:id="@+id/user_addr"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="서울시 동선동4가 123" />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/text5"
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/kakaoLinkView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="20dp"
+            android:layout_below="@+id/addrView">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="카카오톡연동하기"
+                android:layout_gravity="center"
+                android:textStyle="bold"/>
+            <ImageView
+                android:id="@+id/kakao_connected"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="left"
+                android:enabled="false"
+                app:srcCompat="@drawable/kakaotalk"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/todoAlarmView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/kakaoLinkView">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TODO LIST 알림 시간 "
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/kakao_alarm_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="20dp"
-                android:layout_below="@+id/text4">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="카카오톡연동하기"
-                    android:layout_gravity="center"
-                    android:textStyle="bold"/>
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_gravity="left"
-                    android:enabled="false"
-                    app:srcCompat="@drawable/kakaotalk"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/text6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/text5">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TODO LIST 알림 시간 "
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="오전 8:00" />
-            </LinearLayout>
-
-
-
+                android:gravity="right"
+                android:text="오전 8:00" />
+        </LinearLayout>
     </RelativeLayout>
-
-
-
 </RelativeLayout>

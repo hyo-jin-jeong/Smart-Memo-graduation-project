@@ -9,6 +9,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.Toast
 
 import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
@@ -66,7 +67,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.menu)
 
-
         initGroup()//drawerlayout init func
 
         navigationView = findViewById(R.id.nav_view)
@@ -98,9 +98,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         val memberIcon = naviHeaderView.findViewById<ImageView>(R.id.member_icon)
 
         memberIcon.setOnClickListener {
-
-            val memberData = Intent(this, MemberData::class.java)
-            startActivity(memberData)
+            if (UserObject == null) {
+                Toast.makeText(this, "회원정보를 가져오지 못했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                Log.e("GetProfile Error", "UserObject is null")
+            } else {
+                val memberData = Intent(this, MemberData::class.java)
+                startActivity(memberData)
+            }
         }
 
         setFloatingIcon()
