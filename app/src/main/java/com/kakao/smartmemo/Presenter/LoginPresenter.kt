@@ -4,7 +4,7 @@ import android.app.Activity
 import com.kakao.smartmemo.Contract.LoginContract
 import com.kakao.smartmemo.Model.UserModel
 
-class LoginPresenter : LoginContract.Presenter, LoginContract.onLoginListener {
+class LoginPresenter : LoginContract.Presenter, LoginContract.OnLoginListener {
     var userModel:UserModel
     private var view : LoginContract.View
 
@@ -16,8 +16,8 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.onLoginListener {
     override fun checkUser(context: Activity, email:String, password:String) {
         userModel.checkUser(context, email, password)
     }
-    override fun getProfile(email:String) {
-        userModel.getProfile(email)
+    override fun getProfile() {
+        userModel.getProfile()
     }
 
     override fun onSuccess(message: String) {

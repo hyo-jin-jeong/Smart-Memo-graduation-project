@@ -6,18 +6,11 @@
             android:id="@+id/nav_my_memo"
             android:title="@string/nav_my_memo"/>
     </item>
-    <item android:title="@string/nav_group_memo">
-        <menu>
-            <item
-                android:id="@+id/groupSchool"
-                android:title="@string/nav_school_memo"/>
-            <item
-                android:id="@+id/groupTravel"
-                android:title="@string/nav_travel_memo"/>
-            <item
-                android:id="@+id/addGroup"
-                android:icon="@drawable/plus_group"
-                android:title="@string/add_group"/>
-        </menu>
+    <item android:checkableBehavior="single"
+        android:title="@string/nav_group_memo">
+        <item
+            android:id="@+id/nav_group_add"
+            android:title="@string/add_group"
+            android:icon ="@drawable/plus_group" />
     </item>
 </menu>

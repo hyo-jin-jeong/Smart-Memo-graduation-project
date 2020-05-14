@@ -15,9 +15,9 @@ class AddGroupPresenter : AddGroupContract.Presenter{
         this.groupModel = GroupModel()
     }
 
-    override fun addGroup() {
-        //GroupObject에 데이터 세팅후,UserObject의 group_info수정
-       groupModel.addGroup()
+    override fun addGroup(group_name: String, color: Int) {
+        //GroupObject에 데이터 세팅
+       groupModel.addGroup(group_name, color)
     }
 
 

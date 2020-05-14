@@ -51,7 +51,7 @@
                     </FrameLayout>
 
                     <LinearLayout
-                        android:id="@+id/text1"
+                        android:id="@+id/emailView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -60,123 +60,148 @@
                         android:layout_below="@id/image_icon"
                         tools:ignore="NotSibling">
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="아이디"
                             android:layout_weight="2"
                             android:textStyle="bold"/>
-                        <EditText
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/emailText"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="hong123" />
+                            android:layout_weight="5"
+                            android:lines="1"
+                            android:textSize="15dp"
+                            android:inputType="textEmailAddress"/>
                     </LinearLayout>
                     <LinearLayout
-                        android:id="@+id/text2"
+                        android:id="@+id/passwordView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_margin="20dp"
                         android:layout_marginTop="10dp"
-                        android:layout_below="@id/text1">
+                        android:layout_below="@id/emailView">
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="비밀번호"
                             android:layout_weight="2"
                             android:textStyle="bold"/>
                         <EditText
-                            android:layout_width="match_parent"
+                            android:id="@+id/passwordText"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="10"
+                            android:lines="1"
+                            android:inputType="textPassword"/>
+                        <ImageView
+                            android:id="@+id/showPassword"
+                            android:layout_width="20dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/showpassword"
+                            android:visibility="visible"
+                            android:scaleType="centerCrop"
+                            android:layout_weight="1"/>
+                        <ImageView
+                            android:id="@+id/hidePassword"
+                            android:layout_width="20dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/hidepassword"
+                            android:visibility="gone"
+                            android:scaleType="centerCrop"
                             android:layout_weight="1"/>
                     </LinearLayout>
                     <LinearLayout
-                        android:id="@+id/text3"
+                        android:id="@+id/retype_passwordView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_margin="20dp"
                         android:layout_marginTop="10dp"
-                        android:layout_below="@id/text2">
+                        android:layout_below="@id/passwordView">
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="비밀번호 확인"
-                            android:layout_weight="2"
+                            android:layout_weight="1"
                             android:textStyle="bold"/>
                         <EditText
-                            android:layout_width="match_parent"
+                            android:id="@+id/retype_passwordText"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="13"
+                            android:lines="1"
+                            android:inputType="textPassword"/>
+                        <ImageView
+                            android:id="@+id/showRetypePassword"
+                            android:layout_width="20dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/showpassword"
+                            android:visibility="visible"
+                            android:scaleType="centerCrop"
+                            android:layout_weight="1"/>
+                        <ImageView
+                            android:id="@+id/hideRetypePassword"
+                            android:layout_width="20dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/hidepassword"
+                            android:visibility="gone"
+                            android:scaleType="centerCrop"
                             android:layout_weight="1"/>
                     </LinearLayout>
                     <LinearLayout
-                        android:id="@+id/text4"
+                        android:id="@+id/nameView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_margin="20dp"
                         android:layout_marginTop="10dp"
-                        android:layout_below="@id/text3">
+                        android:layout_below="@id/retype_passwordView">
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="이름"
                             android:layout_weight="2"
                             android:textStyle="bold"/>
                         <EditText
-                            android:layout_width="match_parent"
+                            android:id="@+id/nameText"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="홍길동" />
+                            android:layout_weight="9"
+                            android:lines="1"
+                            android:inputType="text"/>
                     </LinearLayout>
                     <LinearLayout
-                        android:id="@+id/text5"
+                        android:id="@+id/addrView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_margin="20dp"
                         android:layout_marginTop="10dp"
-                        android:layout_below="@id/text4">
+                        android:layout_below="@id/nameView">
                         <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="이메일"
-                            android:layout_weight="2"
-                            android:textStyle="bold"/>
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="hong123@gmail.com"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/text6"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_margin="20dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_below="@id/text5">
-                        <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="주소"
                             android:layout_weight="2"
                             android:textStyle="bold"/>
                         <EditText
-                            android:layout_width="match_parent"
+                            android:id="@+id/addrText"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_weight="9"
+                            android:inputType="text"
                             android:text="서울시 동선동4가 123" />
                     </LinearLayout>
                     <LinearLayout
-                        android:id="@+id/text7"
+                        android:id="@+id/kakao_alarm_timeView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
                         android:layout_marginTop="10dp"
                         android:orientation="horizontal"
-                        android:layout_below="@id/text6">
+                        android:layout_below="@id/addrView">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -185,13 +210,11 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/time_text"
+                            android:id="@+id/kakao_alarm_time"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:text="오전 8:00" />
+                            android:gravity="right" />
                     </LinearLayout>
-
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
     <Button

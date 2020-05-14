@@ -5,7 +5,7 @@ import android.app.Activity
 interface LoginContract {
     interface Presenter {
         fun checkUser(context: Activity, email:String, password:String)
-        fun getProfile(email:String)
+        fun getProfile()
     }
 
     interface View {
@@ -14,7 +14,7 @@ interface LoginContract {
         fun onLoginFailure(message: String)
     }
 
-    interface onLoginListener{
+    interface OnLoginListener{
         fun onSuccess(message:String)
         fun onFailure(message:String)
     }

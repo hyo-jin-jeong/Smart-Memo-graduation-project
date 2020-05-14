@@ -12,7 +12,7 @@ import com.kakao.smartmemo.Presenter.LoginPresenter
 import com.kakao.smartmemo.R
 
 class LoginActivity: AppCompatActivity(), LoginContract.View {
-    private lateinit var id: EditText
+    private lateinit var email: EditText
     private lateinit var pw: EditText
     lateinit var presenter : LoginContract.Presenter
 
@@ -22,11 +22,12 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         presenter = LoginPresenter(this)
 
         val loginButton = findViewById<CardView>(R.id.login_button)
-        id = findViewById(R.id.id)
+        email = findViewById(R.id.email)
         pw = findViewById(R.id.pw)
+
         loginButton.setOnClickListener {
-            if (id.text.toString() != "" && pw.text.toString() != "") {
-                presenter.checkUser(this, id.text.toString(), pw.text.toString())
+            if (email.text.toString() != "" && pw.text.toString() != "") {
+                presenter.checkUser(this, email.text.toString(), pw.text.toString())
             }
             else {
                 Toast.makeText(this, "다시 입력해주세요.", Toast.LENGTH_SHORT).show()
@@ -36,10 +37,10 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
 
         val searchInfoButton = findViewById<Button>(R.id.search_id_pw)
         searchInfoButton.setOnClickListener {
-            Toast.makeText(applicationContext, "찾기 클릭", Toast.LENGTH_SHORT)
+            Toast.makeText(applicationContext, "찾기 클릭", Toast.LENGTH_SHORT).show()
         }
-        val signInButton = findViewById<Button>(R.id.sign_in_button)
-        signInButton.setOnClickListener {
+        val signUpButton = findViewById<Button>(R.id.sign_up_button)
+        signUpButton.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
     }
@@ -50,9 +51,9 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
     }
 
     override fun onLoginSuccess(message : String) {
+        presenter.getProfile()
         startMainActivity()
     }
-
     override fun onLoginFailure(message: String) {
         Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
     }

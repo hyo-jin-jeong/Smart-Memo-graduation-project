@@ -1,7 +1,11 @@
 package com.kakao.smartmemo.View
 
+
+import android.app.Activity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
@@ -13,20 +17,26 @@ import com.kakao.smartmemo.Contract.AddGroupContract
 import kotlinx.android.synthetic.main.content_add_group.*
 
 
+
 class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
 
     lateinit var presenter : AddGroupContract.Presenter
-
+    var color : Int = -13184
+    lateinit var groupName : EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_bar_add_group)
         presenter = AddGroupPresenter(this)
 
+        groupName = findViewById(R.id.editGroupName)
+        val themeColor : View = findViewById(R.id.selected_color)
+        //val kakao_member
+        themeColor.setBackgroundColor(color)
         val toolBar:Toolbar = findViewById(R.id.addGroupToolbar)
         toolBar.title = resources.getString(R.string.add_group)
         setSupportActionBar(toolBar)
 
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         var colorPicker = findViewById<ImageView>(R.id.color_picker)
         colorPicker.setOnClickListener {
@@ -40,7 +50,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
 
         var saveBtn = save_group
         saveBtn.setOnClickListener {
-            presenter.addGroup()
+            presenter.addGroup(groupName.text.toString(),color)
             finish()
         }
     }
@@ -61,6 +71,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
 
     override fun onColorSelected(dialogId: Int, color: Int) {
         val selectedColor = selected_color
+        this.color = color
         selectedColor.setBackgroundColor(color)
     }
 

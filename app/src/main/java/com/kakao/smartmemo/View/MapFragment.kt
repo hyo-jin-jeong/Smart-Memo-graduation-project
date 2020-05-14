@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.*
+import android.widget.Switch
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -33,12 +34,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     lateinit var mapView :MapView
     lateinit var mapViewContainer :ViewGroup
     private var isLongTouch: Boolean = false
-    private val curLocationMarker: MapPOIItem = MapPOIItem()
+    private var curLocationMarker: MapPOIItem = MapPOIItem()
 
     private val GPS_ENABLE_REQUEST_CODE: Int = 2001
     private val PERMISSIONS_REQUEST_CODE: Int = 100
-    var REQUIRED_PERMISSIONS =
-        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    var REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -61,9 +61,15 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapView.setMapViewEventListener(this)
         mapView.setCurrentLocationEventListener(this)
 
+        var memoSwitch: Switch = view.findViewById(R.id.memo_switch)
+        var todoSwitch: Switch = view.findViewById(R.id.place_alarm_switch)
+
+
+
+
         when {
             !checkLocationServicesStatus() -> {
-                showDialogForLocationServiceSetting();
+                showDialogForLocationServiceSetting()
             }
             else -> {
                 checkRunTimePermission();
@@ -131,7 +137,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     //marker 선택 시
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
-        var dialog = FragmentDialog()
+        var dialog = DialogFragment()
         //type은 memo만이면 0, todo만이면 1, 둘다면 2
         when (p1?.customImageResourceId) {
             R.drawable.memo_icon -> {
@@ -157,48 +163,15 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onMapViewInitialized(p0: MapView?) {
         val mapPoint1 = MapPoint.mapPointWithGeoCoord(37.565841, 126.976825)
-        val memoAndTodo = MapPOIItem()
-        memoAndTodo.itemName = "Memo And Todo"
-        memoAndTodo.tag = 1
-        memoAndTodo.mapPoint = mapPoint1
-        memoAndTodo.markerType = MapPOIItem.MarkerType.CustomImage // 마커타입을 커스텀 마커로 지정.
-        //customMarker.markerType = MapPOIItem.MarkerType.BluePin   //기본 아이콘 사용
-        //customMarker.selectedMarkerType = MapPOIItem.MarkerType.RedPin    //기본 아이콘 사용
-        memoAndTodo.customImageResourceId =
-            R.drawable.memo_todo_icon // 마커 이미지.
-        memoAndTodo.isCustomImageAutoscale = false // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
-        memoAndTodo.isShowCalloutBalloonOnTouch = false
-        memoAndTodo.setCustomImageAnchor(
-            0.5f,
-            1.0f
-        ) // 마커 이미지중 기준이 되는 위치(앵커포인트) 지정 - 마커 이미지 좌측 상단 기준 x(0.0f ~ 1.0f), y(0.0f ~ 1.0f) 값.
-
+        val memoAndTodo = createMarker("Memo And Todo", mapPoint1, R.drawable.memo_todo_icon)
         mapView.addPOIItem(memoAndTodo)
 
         val mapPoint2 = MapPoint.mapPointWithGeoCoord(37.565799, 126.975183)
-        val memo = MapPOIItem()
-        memo.itemName = "Memo"
-        memo.tag = 2
-        memo.mapPoint = mapPoint2
-        memo.markerType = MapPOIItem.MarkerType.CustomImage
-        memo.customImageResourceId = R.drawable.memo_icon
-        memo.isCustomImageAutoscale = false
-        memo.isShowCalloutBalloonOnTouch = false
-        memo.setCustomImageAnchor(0.5f, 1.0f)
-
+        val memo = createMarker("Memo", mapPoint2, R.drawable.memo_icon)
         mapView.addPOIItem(memo)
 
         val mapPoint3 = MapPoint.mapPointWithGeoCoord(37.564170, 126.978471)
-        val todo = MapPOIItem()
-        todo.itemName = "Todo"
-        todo.tag = 3
-        todo.mapPoint = mapPoint3
-        todo.markerType = MapPOIItem.MarkerType.CustomImage
-        todo.customImageResourceId = R.drawable.todo_icon
-        todo.isCustomImageAutoscale = false
-        todo.isShowCalloutBalloonOnTouch = false
-        todo.setCustomImageAnchor(0.5f, 1.0f)
-
+        val todo = createMarker("Todo", mapPoint3, R.drawable.todo_icon)
         mapView.addPOIItem(todo)
     }
 
@@ -230,15 +203,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             !isLongTouch -> isLongTouch = true
             else -> mapView.removePOIItem(curLocationMarker)
         }
-        curLocationMarker.itemName = "이 곳에 추가"
-        curLocationMarker.mapPoint = p1
-        curLocationMarker.markerType = MapPOIItem.MarkerType.CustomImage
-        curLocationMarker.customImageResourceId =
-            R.drawable.cur_location_icon
-        curLocationMarker.isCustomImageAutoscale = false
-        curLocationMarker.isShowCalloutBalloonOnTouch = false
-        curLocationMarker.setCustomImageAnchor(0.5f, 1.0f)
-
+        curLocationMarker = createMarker("current marker", p1!!, R.drawable.cur_location_icon)
         mapView.addPOIItem(curLocationMarker)
 
         val items = arrayOf<CharSequence>("메모", "TODO 장소알람")
@@ -255,7 +220,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         startActivity(addMemoIntent)
                     }
                     else -> {
-                        //투두 장소 알람 추가하는 액티비티 만들어서 인드텐
+                        //투두 장소 알람 추가하는 액티비티 만들어서 인텐드
                     }
                 }
             })
@@ -310,7 +275,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             if (check_result) {
                 Log.d("@@@", "start")
                 //위치 값을 가져올 수 있음
-                mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+                mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
                 mapView.setShowCurrentLocationMarker(true)
             } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
@@ -335,6 +300,19 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         }
     }
 
+    private fun createMarker(name: String, point: MapPoint, imageResourceId: Int): MapPOIItem {
+        var marker = MapPOIItem()
+        marker.itemName = name
+        marker.mapPoint = point
+        marker.markerType = MapPOIItem.MarkerType.CustomImage
+        marker.customImageResourceId = imageResourceId
+        marker.isCustomImageAutoscale = false
+        marker.isShowCalloutBalloonOnTouch = false
+        marker.setCustomImageAnchor(0.5f, 1.0f)
+
+        return marker
+    }
+
     private fun checkRunTimePermission() {
 
         //런타임 퍼미션 처리
@@ -350,7 +328,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
 
             // 3.  위치 값을 가져올 수 있음
-            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
             mapView.setShowCurrentLocationMarker(true)
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
 
