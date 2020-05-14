@@ -32,6 +32,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var todoDeletebtn : ImageButton
     private lateinit var bottomnavigationview : BottomNavigationView
     private lateinit var textView_todolist : TextView
+    private lateinit var relative_todolist: RelativeLayout
     private var todoArrayList = arrayListOf<TodoData>(TodoData("약먹기"), TodoData("도서관 책 반납"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +48,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
         bottomnavigationview = view.findViewById(R.id.navigationview_bottom)
         textView_todolist = view.findViewById(R.id.textView_todolist)
+        relative_todolist = view.findViewById(R.id.relative_todolist)
 
         presenter = TodoPresenter(this)
         var adapter = TodoAdapter(view.context, todoArrayList)
@@ -61,7 +63,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.setTodoAdapterView(adapter)
 
         //todolist textview 롱클릭 했을시 삭제어댑터 연결
-        textView_todolist.setOnLongClickListener (View.OnLongClickListener {
+        relative_todolist.setOnLongClickListener (View.OnLongClickListener {
             todolist.adapter = deleteAdapter
             presenter.setTodoDeleteAdapterModel(deleteAdapter)
             presenter.setTodoDeleteAdapterView(deleteAdapter)
