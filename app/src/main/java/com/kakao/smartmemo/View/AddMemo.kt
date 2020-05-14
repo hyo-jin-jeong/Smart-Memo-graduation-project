@@ -68,9 +68,6 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
                 intent.putExtra("title", memoTitle)
                 intent.putExtra("content", memoContent)
                 startActivity(intent)
-//            }
-
-
         }
 
     }

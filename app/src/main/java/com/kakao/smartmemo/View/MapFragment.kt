@@ -31,7 +31,6 @@ import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
 
-
 class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapContract.View,
     MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
     private lateinit var presenter: MapPresenter
@@ -75,9 +74,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         var memoSwitch: Switch = view.findViewById(R.id.memo_switch)
         var todoSwitch: Switch = view.findViewById(R.id.place_alarm_switch)
-
-
-
 
         when {
             !checkLocationServicesStatus() -> {
