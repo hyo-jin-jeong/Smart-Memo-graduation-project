@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/removeItem"
+        android:icon="@drawable/trash"
+        app:showAsAction="always"
+        android:enabled="true"
+        android:title="Remove"/>
+
+    <item android:id="@+id/cancelItem"
+        android:icon="@drawable/cancel"
+        app:showAsAction="always"
+        android:enabled="true"
+        android:title="Cancel"/>
+</menu>

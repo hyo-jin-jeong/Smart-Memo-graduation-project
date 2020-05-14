@@ -45,6 +45,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
     private lateinit var placeSpinner : Spinner
     private lateinit var savebtn : Button
     private val calendar = Calendar.getInstance()
+    var notify_time = false;
 
     private var placeList = arrayListOf<PlaceData>(PlaceData("연세병원"))
     private var dayList = mutableListOf<DayData>(DayData("월"), DayData("화"), DayData("수"), DayData("목"), DayData("금"), DayData("토"), DayData("일"))
@@ -132,6 +133,8 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
 
         alarmswitch_time.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
+                notify_time = true // 알람 켬.
+                Toast.makeText(applicationContext, notify_time.toString(), Toast.LENGTH_SHORT).show()
                 todostub_time.visibility = VISIBLE
                 calendar.timeInMillis
                 timebtn.setOnClickListener {
@@ -168,6 +171,8 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
                 }
             } else {
                 todostub_time.visibility = GONE
+                notify_time = false
+                Toast.makeText(applicationContext, notify_time.toString(), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -209,21 +214,13 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         when (id) {
             android.R.id.home -> {
                 finish()
-                //뒤로가기 클릭시 종 off ->실행이안되 고쳐야함.
-                val view = LayoutInflater.from(this).inflate(R.layout.todo_list_item, null)
-                Log.v("seyuuuun", "종 꺼짐")
-                val btn_todo = view.findViewById(R.id.btn_todo) as Button
-                btn_todo.setBackgroundResource(R.drawable.bell_icon)
-                Log.v("seyuuuun", "종 꺼짐22")
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    fun setTimeAlarm(calendar: Calendar) {
-        val notify_time = true //무조건 알람 사용
-
+    private fun setTimeAlarm(calendar: Calendar) {
         val pm = this.packageManager
         val receiver = ComponentName(this, DeviceBootReceiver::class.java)
         val alarmIntent = Intent(this, AlarmReceiver::class.java)
