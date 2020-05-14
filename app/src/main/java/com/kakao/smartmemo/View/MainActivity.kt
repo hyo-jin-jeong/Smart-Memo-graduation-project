@@ -15,10 +15,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import com.kakao.smartmemo.*
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Presenter.MainPresenter
+import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View {
@@ -35,10 +35,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private val context: Context = this
     var openFlag:Boolean = false
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         presenter = MainPresenter(this)
+
 
         val sectionsPagerAdapter =
             SectionsPagerAdapter(
