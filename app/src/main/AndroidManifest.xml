@@ -4,7 +4,6 @@
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"></uses-permission>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 
     <application
         android:allowBackup="true"
@@ -22,7 +21,6 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data android:scheme="@string/kakao_scheme" android:host="@string/kakaolink_host" />
             </intent-filter>
         </activity>
         <activity
@@ -76,6 +74,9 @@
             android:name=".View.AddGroup"
             android:label="@string/add_group"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <data android:scheme="@string/kakao_scheme" android:host="@string/kakaolink_host" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".View.AddMemo"

@@ -24,6 +24,8 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = LayoutInflater.from(context).inflate(R.layout.todo_list_delete, null)
         val todo = todoList[position]
+        var pos = arrayListOf<Int>()
+        val checkbox_todo = view.findViewById(R.id.checkDelete) as CheckBox
         view.textView_todo.text = todo.todoContent
 
         var checkedTodo = false
@@ -39,13 +41,9 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
             }
         }
 
-        view.setOnLongClickListener(View.OnLongClickListener {
-            val count = getCount()
-            for(i in 0.. count) {
-
-            }
-            return@OnLongClickListener false
-        })
+        if(checkbox_todo.isChecked) {
+            pos.add(position)
+        }
 
         return view
     }

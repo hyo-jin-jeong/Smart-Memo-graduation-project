@@ -1,15 +1,21 @@
 package com.kakao.smartmemo.View
 
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.Toast
 
 import com.google.android.material.tabs.TabLayout
@@ -23,6 +29,7 @@ import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
+import com.kakao.smartmemo.R
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View {
     lateinit var presenter : MainContract.Presenter
@@ -41,13 +48,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private var REQUEST_CODE = 1234;
     var openFlag:Boolean = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         presenter = MainPresenter(this)
-
 
         val sectionsPagerAdapter =
             SectionsPagerAdapter(
@@ -175,6 +180,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             }
             R.id.fab_todo -> {
                 anim()
+                onCreateDialog()
             }
 
         }
@@ -200,5 +206,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             }
         }
     }
+    fun onCreateDialog() : Dialog {
+        return let {
+            val builder = AlertDialog.Builder(context)
+            val edit_inflater: LayoutInflater = LayoutInflater.from(context)
+            val editDialogView: View = edit_inflater.inflate(R.layout.todolist_editing_dialog, null)
+            builder.setTitle("TODO LIST 입력")
+            val spinner: Spinner = editDialogView.findViewById(R.id.spinner)
+            val adapter = ArrayAdapter.createFromResource(context,
+                R.array.group, android.R.layout.simple_spinner_item)
+            spinner.adapter = adapter
 
+            builder.setView(editDialogView).setPositiveButton("확인",
+                DialogInterface.OnClickListener { dialog, id ->
+                    dialog.dismiss()
+                })
+                .setNegativeButton("취소", DialogInterface.OnClickListener {
+                        dialog, which ->
+                    dialog.dismiss()
+                })
+            builder.create()
+            builder.show()
+        }
+    }
 }
