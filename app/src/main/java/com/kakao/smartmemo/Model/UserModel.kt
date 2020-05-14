@@ -32,6 +32,7 @@ class UserModel {
             if (documentSnapshot != null) {
                 if(documentSnapshot.exists()){
                     with(UserObject){
+                        this.email = email
                         this.addr = documentSnapshot["addr"].toString()
                         this.img_id = documentSnapshot["img_id"].toString()
                         this.img_url = documentSnapshot["img_url"].toString()
@@ -88,12 +89,12 @@ class UserModel {
 
     fun checkUser(context: Activity, email:String, password:String) { // 유효한 사용자인지 FirebaseAuth를 사용하여 확인
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context){task ->
-                if(task.isSuccessful){
-                    auth.currentUser
-                    onLoginListener.onSuccess(task.result.toString())
-                } else {
-                    onLoginListener.onFailure(task.exception.toString())
-                }
+            if(task.isSuccessful){
+                auth.currentUser
+                onLoginListener.onSuccess(task.result.toString())
+            } else {
+                onLoginListener.onFailure(task.exception.toString())
+            }
         }
     }
 
