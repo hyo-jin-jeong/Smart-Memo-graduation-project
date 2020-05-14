@@ -13,12 +13,8 @@ class MemberDataPresenter : MemberDataContract.Presenter{
         this.userModel = UserModel()
     }
 
-    override fun getProfile() {
-        userModel.getProfile()
-    }
-
-    override fun updateUser() {
-        userModel.updateUser()
+    override fun getProfile(email:String) {
+        userModel.getProfile(email)
     }
 
     override fun signOutUser() {
@@ -31,6 +27,7 @@ class MemberDataPresenter : MemberDataContract.Presenter{
 
     override fun deleteUser() {
         userModel.deleteUser()
+        userModel.deleteAuth()
     }
 
 }

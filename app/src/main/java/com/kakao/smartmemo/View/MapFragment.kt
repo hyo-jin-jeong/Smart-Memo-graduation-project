@@ -220,7 +220,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         startActivity(addMemoIntent)
                     }
                     else -> {
-                        //투두 장소 알람 추가하는 액티비티 만들어서 인드텐
+                        //투두 장소 알람 추가하는 액티비티 만들어서 인텐드
                     }
                 }
             })
@@ -275,7 +275,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             if (check_result) {
                 Log.d("@@@", "start")
                 //위치 값을 가져올 수 있음
-                mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+                mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
                 mapView.setShowCurrentLocationMarker(true)
             } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
@@ -328,7 +328,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
 
             // 3.  위치 값을 가져올 수 있음
-            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
             mapView.setShowCurrentLocationMarker(true)
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
 

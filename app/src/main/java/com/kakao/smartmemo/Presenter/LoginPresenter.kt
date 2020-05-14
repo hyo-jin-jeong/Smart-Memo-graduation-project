@@ -16,8 +16,8 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.OnLoginListener {
     override fun checkUser(context: Activity, email:String, password:String) {
         userModel.checkUser(context, email, password)
     }
-    override fun getProfile() {
-        userModel.getProfile()
+    override fun getProfile(email:String) {
+        userModel.getProfile(email)
     }
 
     override fun onSuccess(message: String) {
