@@ -25,6 +25,9 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         email = findViewById(R.id.email)
         pw = findViewById(R.id.pw)
 
+        email.setText("gaya309@naver.com")
+        pw.setText("jj1341")
+
         loginButton.setOnClickListener {
             if (email.text.toString() != "" && pw.text.toString() != "") {
                 presenter.checkUser(this, email.text.toString(), pw.text.toString())
@@ -44,8 +47,16 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
     }
+//    졸작 최종 완성되면 주석해제하기
+//    override fun onResume() {
+//        super.onResume()
+//        if (UserObject.email != null && UserObject.password != null) {
+//            email.setText(UserObject.email)
+//            pw.setText(UserObject.password)
+//        }
+//    }
+
     override fun startMainActivity() {
-        //presenter.getProfile(email) 나중에 건들 것
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

@@ -2,18 +2,17 @@ package com.kakao.smartmemo.Model
 
 import android.app.Activity
 import android.util.Log
-import android.widget.EditText
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.auth.User
 import com.kakao.smartmemo.Contract.LoginContract
+import com.kakao.smartmemo.Contract.MemberChangeContract
 import com.kakao.smartmemo.Contract.SignUpContract
 import com.kakao.smartmemo.Object.UserObject
 
 class UserModel {
     private lateinit var onLoginListener:LoginContract.OnLoginListener
     private lateinit var onSignUpListener: SignUpContract.onSignUpListener
+    private lateinit var onPasswordChangeListener: MemberChangeContract.OnPasswordChangeSuccessListener
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
@@ -25,6 +24,10 @@ class UserModel {
 
     constructor(onSignUpListener: SignUpContract.onSignUpListener) {
         this.onSignUpListener = onSignUpListener
+    }
+
+    constructor(onPasswordChangeListener: MemberChangeContract.OnPasswordChangeSuccessListener) {
+        this.onPasswordChangeListener = onPasswordChangeListener
     }
 
     fun getProfile() { // user 정보 받아오는 함수
@@ -47,10 +50,13 @@ class UserModel {
     }
 
 
-    fun addAuthUser(context: Activity,email: String,pw: String,name: String, address: String){ // user 추가하는 함수
+    fun addAuthUser(context: Activity,email: String,pw: String, name: String, address: String){ // user 추가하는 함수
         auth.createUserWithEmailAndPassword(email, pw).addOnCompleteListener(context) { task ->
             if (task.isSuccessful) {
                 UserObject.email = email
+                UserObject.password = pw
+                UserObject.user_name = name
+                UserObject.addr = address
                 onSignUpListener.onSuccess(task.result.toString())
             } else {
                 onSignUpListener.onFailure(task.exception.toString())
@@ -59,7 +65,7 @@ class UserModel {
     }
 
     fun addFirestoreUser() {
-        firestore.collection("User").document(UserObject.email).set(UserObject)
+        firestore.collection("User").document("${UserObject.email}").set(UserObject)
     }
 
     fun addFirestoreUser(pw:String, name:String, addr:String, kakaoAlarmTime:String) {
@@ -67,20 +73,31 @@ class UserModel {
         UserObject.user_name = name
         UserObject.addr = addr
         UserObject.kakao_alarm_time = kakaoAlarmTime
-        firestore.collection("User").document(UserObject.email).set(UserObject)
+        firestore.collection("User").document("${UserObject.email}").set(UserObject)
     }
 
-    fun deleteUser() { // user 삭제하는 함수
-        firestore.collection("User").document(UserObject.email).delete()
+    fun deleteUser() { // collection에서 user 삭제하는 함수
+        firestore.collection("User").document("${UserObject.email}").delete()
     }
 
-    fun deleteAuth() {
+    fun deleteAuth() { // authentication에서 사용자 삭제하는 함수
         val user = auth.currentUser
         user?.delete()?.continueWith { task-> {
             if (task.isCanceled) {
                 Log.e("auth delete Result", task.exception.toString())
+            } else {
+                with(UserObject) {
+                    email = ""
+                    password = ""
+                    addr = ""
+                    user_name = ""
+                    img_id = ""
+                    img_url = ""
+                    kakao_connected = false
+                    kakao_alarm_time = ""
+                }
+                Log.d("auth deleted Result", task.result.toString())
             }
-            Log.d("auth deleted Result", task.result.toString())
         }
         }
     }
@@ -101,18 +118,18 @@ class UserModel {
     fun signOutUser() {
         if (auth.currentUser != null) {
             with(UserObject) {
-                email=""
-                password=""
-                addr=""
-                user_name=""
-                img_id=""
-                img_url=""
-                kakao_connected=false
-                kakao_alarm_time=""
+                email = ""
+                password = ""
+                addr = ""
+                user_name = ""
+                img_id = ""
+                img_url = ""
+                kakao_connected = false
+                kakao_alarm_time = ""
             }
             auth.signOut()
         } else {
-            Log.e("memberData에서 부른 UserModel의 signOut함수", "로그아웃 실패")
+            Log.e("Logout", "logout failed")
         }
     }
 
@@ -121,12 +138,16 @@ class UserModel {
     }
 
     fun updateUserPassword(pw:String) {
-        auth.currentUser!!.updatePassword(pw).addOnCompleteListener {
+        var user = auth.currentUser
+
+        user?.updatePassword(pw)?.addOnCompleteListener {
             if (it.isSuccessful) {
-                //Toast.makeText(context, "비밀번호 변경 성공", Toast.LENGTH_SHORT).show()
-                Log.e("auth password changed", "successful")
-            } else
+                Log.i("auth password changed", "successful")
+                onPasswordChangeListener.onSuccess()
+            } else {
                 Log.e("auth password changed", "failed")
+                onPasswordChangeListener.onFailure()
+            }
         }
     }
 }

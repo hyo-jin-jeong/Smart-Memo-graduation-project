@@ -25,6 +25,14 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
     lateinit var user_name : TextView
     lateinit var user_addr : TextView
     lateinit var kakao_alarm_time : TextView
+
+    override fun onResume() {
+        super.onResume()
+        user_email.text = UserObject.email
+        user_name.text = UserObject.user_name
+        user_addr.text = UserObject.addr
+        kakao_alarm_time.text = UserObject.kakao_alarm_time
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.member_view)
@@ -51,7 +59,6 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
 
         supportActionBar?.setDisplayShowTitleEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

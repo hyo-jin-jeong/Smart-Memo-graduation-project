@@ -34,7 +34,7 @@ class MainPresenter : MainContract.Presenter,MainContract.OnGetDataSuccessListen
     }
 
     override fun onFailure() {
-        Log.e("groupdate 받아오기 실패", "실패!!!")
+        Log.e("groupdata 받아오기 실패", "실패!!!")
     }
 
 }

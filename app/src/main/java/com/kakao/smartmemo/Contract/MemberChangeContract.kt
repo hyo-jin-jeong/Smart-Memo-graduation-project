@@ -9,8 +9,13 @@ interface MemberChangeContract {
         fun updatePassword(pw:String)
     }
     interface  View{
-
+        fun onSuccess()
+        fun onFailure()
     }
 
+    interface OnPasswordChangeSuccessListener {
+        fun onSuccess()
+        fun onFailure()
+    }
 
 }

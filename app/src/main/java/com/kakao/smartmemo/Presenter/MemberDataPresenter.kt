@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.Presenter
 
-import android.widget.EditText
 import com.kakao.smartmemo.Contract.MemberDataContract
 import com.kakao.smartmemo.Model.UserModel
 

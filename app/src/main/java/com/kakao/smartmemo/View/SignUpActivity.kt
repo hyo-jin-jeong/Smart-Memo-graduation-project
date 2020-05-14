@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Contract.SignUpContract
 import com.kakao.smartmemo.Presenter.SignUpPresenter
-import kotlinx.android.synthetic.main.sign_up_page.*
 
 class SignUpActivity: AppCompatActivity(), SignUpContract.View {
 
@@ -31,7 +30,7 @@ class SignUpActivity: AppCompatActivity(), SignUpContract.View {
             if (email.text.isEmpty() || pw.text.isEmpty() || name.text.isEmpty() || address.text.isEmpty()) {
                 Toast.makeText(this, "모든 빈 칸을 채워주세요.", Toast.LENGTH_SHORT).show() // 애니메이션 넣기
             } else if(!(email.text.isEmpty() && pw.text.isEmpty() && name.text.isEmpty() && address.text.isEmpty())) {
-                var email = e_mail.text.toString()
+                var email = email.text.toString()
                 var pw = pw.text.toString()
                 var name = name.text.toString()
                 var address = address.text.toString()
@@ -49,6 +48,6 @@ class SignUpActivity: AppCompatActivity(), SignUpContract.View {
     }
 
     override fun onSignUpFailure(message: String) {
-        Toast.makeText(this, "회원가입 실패!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "회원가입 실패", Toast.LENGTH_SHORT).show()
     }
 }

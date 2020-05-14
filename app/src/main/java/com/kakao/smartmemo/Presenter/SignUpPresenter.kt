@@ -8,7 +8,6 @@ class SignUpPresenter : SignUpContract.Presenter, SignUpContract.onSignUpListene
     var userModel:UserModel
     private var view : SignUpContract.View
 
-
     constructor(view: SignUpContract.View){
         this.view = view
         this.userModel = UserModel(this)
@@ -28,6 +27,4 @@ class SignUpPresenter : SignUpContract.Presenter, SignUpContract.onSignUpListene
     override fun onFailure(message: String) {
         view.onSignUpFailure(message)
     }
-
-
 }

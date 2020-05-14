@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.View
 
-
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,7 +8,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 
 import com.google.android.material.tabs.TabLayout
@@ -32,11 +31,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private lateinit var fabRotateEnd:Animation
     private lateinit var fabOpen:Animation
     private lateinit var fabClose:Animation
-    lateinit var fab:FloatingActionButton
+    private lateinit var fab:FloatingActionButton
     private lateinit var fabMemo:FloatingActionButton
     private lateinit var fabTodo:FloatingActionButton
     lateinit var navigationView: NavigationView
     lateinit var mDrawerLayout: DrawerLayout
+    lateinit var memberName: TextView
     private val context: Context = this
     private lateinit var groupList : MutableList<String>
     private var REQUEST_CODE = 1234;
@@ -58,6 +58,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         viewPager.adapter = sectionsPagerAdapter
         presenter.setMainAdapterModel(sectionsPagerAdapter)
         presenter.setMainAdapterView(sectionsPagerAdapter)
+        navigationView = findViewById(R.id.nav_view)
+        mDrawerLayout = findViewById(R.id.drawer_layout)
+
+        val naviHeaderView = navigationView.getHeaderView(0)
+        memberName = naviHeaderView.findViewById(R.id.nav_name)
+
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
 
@@ -71,9 +77,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
         initGroup()//drawerlayout init func
 
-        navigationView = findViewById(R.id.nav_view)
-
-        mDrawerLayout = findViewById(R.id.drawer_layout)
         navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             mDrawerLayout!!.closeDrawers()
@@ -95,11 +98,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             menuItem.isChecked=false
             true
         }
-
-        val naviHeaderView =navigationView.getHeaderView(0)
-        val memberIcon = naviHeaderView.findViewById<ImageView>(R.id.member_icon)
-
-        memberIcon.setOnClickListener {
+        naviHeaderView.setOnClickListener {
             if (UserObject == null) {
                 Toast.makeText(this, "회원정보를 가져오지 못했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                 Log.e("GetProfile Error", "UserObject is null")
@@ -136,6 +135,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         presenter.getGroupData()
     }
 
+    override fun onResume() {
+        super.onResume()
+        memberName.text = UserObject.user_name
+    }
 
     private fun setFloatingIcon() {
         // FloatingActionButton
