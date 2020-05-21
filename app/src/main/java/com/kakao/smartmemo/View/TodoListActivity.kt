@@ -22,13 +22,17 @@ import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Presenter.TodoSettingPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.AlarmReceiver
-import com.kakao.smartmemo.Receiver.DeviceBootReceiver
+import com.kakao.smartmemo.Receiver.DeviceBootAlarmReceiver
+import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
+import com.kakao.smartmemo.Receiver.TodoReceiver
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.DayRepeatAdapter
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
 import kotlinx.android.synthetic.main.alarm_settings_place.*
 import kotlinx.android.synthetic.main.alarm_settings_time.*
 import kotlinx.android.synthetic.main.time_location_settings.*
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
@@ -45,7 +49,8 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
     private lateinit var placeSpinner : Spinner
     private lateinit var savebtn : Button
     private val calendar = Calendar.getInstance()
-    var notify_time = false;
+    var notify_time = false
+    val date = LocalDateTime.now()
 
     private var placeList = arrayListOf<PlaceData>(PlaceData("연세병원"))
     private var dayList = mutableListOf<DayData>(DayData("월"), DayData("화"), DayData("수"), DayData("목"), DayData("금"), DayData("토"), DayData("일"))
@@ -66,6 +71,12 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         val view_location = todostub_location.inflate()
         todostub_location.visibility = GONE
         val textview_Time = textView_time_show
+
+        //현재시간 가져오기
+        val date_formatter = DateTimeFormatter.ISO_DATE
+        val time_formatter = DateTimeFormatter.ISO_TIME
+        val date_formatted = date.format(date_formatter) //현재 날짜
+        val tieme_formatted = date.format(time_formatter) //현재 시간
 
         var dateSettingInTime = view_time.findViewById(R.id.date_layout) as ConstraintLayout
         var dateSettingInPlace = view_location.findViewById(R.id.date_layout) as ConstraintLayout
@@ -165,6 +176,9 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
                         calendar.set(Calendar.MINUTE, minute)
                         calendar.set(Calendar.SECOND, 0)
                         setTimeAlarm(calendar)
+                        Log.v("seyuuuun", calendar.get(Calendar.HOUR_OF_DAY).toString())
+                        Log.v("seyuuuun", calendar.get(Calendar.MINUTE).toString())
+                        Log.v("seyuuuun", calendar.get(Calendar.SECOND).toString())
                     }
                     val dialog = TimePickerDialog(this,listener,12,0,false)
                     dialog.show()
@@ -222,7 +236,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
 
     private fun setTimeAlarm(calendar: Calendar) {
         val pm = this.packageManager
-        val receiver = ComponentName(this, DeviceBootReceiver::class.java)
+        val receiver = ComponentName(this, DeviceBootAlarmReceiver::class.java)
         val alarmIntent = Intent(this, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager

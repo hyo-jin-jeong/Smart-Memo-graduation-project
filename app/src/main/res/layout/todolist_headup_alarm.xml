@@ -18,23 +18,34 @@
             android:layout_marginTop="15dp"
             android:layout_marginRight="30dp"
             android:background="@drawable/layout_circle"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="TODO LIST"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="TODO  LIST"
             android:textAlignment="center"
             android:textColor="#403E3E"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/todolist_view"
+        <TextView
+            android:id="@+id/todolist_textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
             android:ems="10"
             android:gravity="start|top"
             android:inputType="textMultiLine"
             android:layout_marginTop="15dp"
             android:layout_below="@id/textView6"/>
+
+        <TextView
+            android:id="@+id/todolist_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/todolist_textView"/>
 
     </RelativeLayout>
 </RelativeLayout>
