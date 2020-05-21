@@ -18,7 +18,7 @@ class MemberChangePresenter : MemberChangeContract.Presenter, MemberChangeContra
     }
 
     override fun updateUser(context: Activity, pw: String, name: String, addr: String, kakaoAlarmTime: String) {
-        userModel.addFirestoreUser(pw, name, addr, kakaoAlarmTime)
+        userModel.updateFirestoreUser(pw, name, addr, kakaoAlarmTime)
     }
 
     override fun updatePassword(pw: String) {
