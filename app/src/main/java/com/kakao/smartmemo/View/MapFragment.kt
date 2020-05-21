@@ -7,8 +7,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
@@ -31,14 +31,21 @@ import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
 
-class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener, MapContract.View,
+class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener,
+    MapContract.View,
     MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
     private lateinit var presenter: MapPresenter
-    lateinit var mapView :MapView
-    lateinit var mapViewContainer :ViewGroup
+
+    lateinit var mapView: MapView
+    lateinit var mapViewContainer: ViewGroup
+
     private var isLongTouch: Boolean = false
     private var curLocationMarker: MapPOIItem = MapPOIItem()
 
+    private var isGPSEnabled = false
+    private var isNetworkEnabled = false
+    private var canGetLocation = false
+    private lateinit var locationManager: LocationManager
     private val GPS_ENABLE_REQUEST_CODE: Int = 2001
     private val PERMISSIONS_REQUEST_CODE: Int = 100
     var REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -47,6 +54,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,14 +62,15 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         presenter = MapPresenter(this)
         return inflater.inflate(R.layout.map_fragment, container, false)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mapView = MapView(view.context)
 
-        var lacationManager: LocationManager = this.context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        var location: Location = lacationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        var location: Location = getLocation()!!
         var longitude = location.longitude
         var latitude = location.latitude
+
 
         //중심점 설정하는
         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), false)
@@ -91,7 +100,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapView.setShowCurrentLocationMarker(false)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, menuInflater:MenuInflater) {
+    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);
         (activity as MainActivity).toolbar.title = resources.getString(R.string.tab_text_1)
 
@@ -109,7 +118,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             //학교를 눌렀을 때
             R.id.action_settings1 -> {
                 item.isChecked = !item.isChecked
-                when(item.isChecked) {
+                when (item.isChecked) {
                     true -> Toast.makeText(view?.context, item.title, Toast.LENGTH_SHORT).show()
                 }
                 true
@@ -117,7 +126,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             //가족을 눌렀을 때
             R.id.action_settings2 -> {
                 item.isChecked = !item.isChecked
-                when(item.isChecked) {
+                when (item.isChecked) {
                     true -> Toast.makeText(view?.context, item.title, Toast.LENGTH_SHORT).show()
                 }
                 true
@@ -160,7 +169,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 dialog.setCurType(2)
                 dialog.show(super.getChildFragmentManager(), "show dialog")
             }
-            else -> { }
+            else -> {
+            }
         }
     }
 
@@ -221,7 +231,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 //                    Log.i("jieun", "down then = $then")
 //                }
                 if (event?.action == MotionEvent.ACTION_UP) {
-                    if ((System.currentTimeMillis() - then) > longClickDuration){
+                    if ((System.currentTimeMillis() - then) > longClickDuration) {
                         Log.i("jieun", "클릭을 뗌!")
                         startLongPress(p1!!)
                     }
@@ -262,7 +272,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         this.onDestroyView()
                     }
                     else -> {
-                        //투두 장소 알람 추가하는 액티비티 만들어서 인텐드
+                        var addTodoIntent = Intent(this.context, AllTodoSettingActivity::class.java)
+                        addTodoIntent.putExtra("Current Point", "나중에 좌표값 넣어")
+                        startActivity(addTodoIntent)
                         this.onDestroyView()
                     }
                 }
@@ -271,14 +283,22 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     }
 
-    
+
     override fun onCurrentLocationUpdateFailed(p0: MapView?) {
 
     }
 
     override fun onCurrentLocationUpdate(p0: MapView?, p1: MapPoint?, p2: Float) {
         val mapPointGeo: MapPoint.GeoCoordinate = p1!!.mapPointGeoCoord
-        Log.i("check", String.format("MapView onCurrentLocationUpdate(%f, %f) accuracy (%f)", mapPointGeo.latitude, mapPointGeo.longitude, p2))
+        Log.i(
+            "check",
+            String.format(
+                "MapView onCurrentLocationUpdate(%f, %f) accuracy (%f)",
+                mapPointGeo.latitude,
+                mapPointGeo.longitude,
+                p2
+            )
+        )
     }
 
     override fun onCurrentLocationUpdateCancelled(p0: MapView?) {
@@ -318,7 +338,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             if (check_result) {
                 Log.d("@@@", "start")
                 //위치 값을 가져올 수 있음
-                mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
+                mapView.currentLocationTrackingMode =
+                    MapView.CurrentLocationTrackingMode.TrackingModeOff
                 mapView.setShowCurrentLocationMarker(true)
             } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
@@ -371,7 +392,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
 
             // 3.  위치 값을 가져올 수 있음
-            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
+            mapView.currentLocationTrackingMode =
+                MapView.CurrentLocationTrackingMode.TrackingModeOff
             mapView.setShowCurrentLocationMarker(true)
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
 
@@ -383,7 +405,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             ) {
 
                 // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
-                Toast.makeText(this@MapFragment.context, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG)
+                Toast.makeText(
+                        this@MapFragment.context,
+                        "이 앱을 실행하려면 위치 접근 권한이 필요합니다.",
+                        Toast.LENGTH_LONG
+                    )
                     .show()
                 // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                 ActivityCompat.requestPermissions(
@@ -451,6 +477,102 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         ) as LocationManager?
         return (locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+    }
+
+    //map 현 위치 찾는 메소
+    @SuppressLint("MissingPermission")
+    fun getLocation(): Location? {
+        val MIN_TIME_BW_UPDATES = 10000L
+        val MIN_DISTANCE_CHANGE_FOR_UPDATES = 10000F
+        var location: Location? = null
+        val listener: LocationListener = object : LocationListener {
+            //provider의 상태가 변경되때마다 호출
+            override fun onStatusChanged(provider: String?, tatus: Int, extras: Bundle?) {
+
+            }
+
+            //provider가 사용 가능한 상태가 되는 순간 호출
+            override fun onProviderEnabled(provider: String?) {
+
+            }
+
+            //provider가 사용 불가능 상황이 되는 순간 호출
+            override fun onProviderDisabled(provider: String?) {
+
+            }
+
+            //위치 정보 전달 목적으로 호출
+            override fun onLocationChanged(location: Location?) {
+
+            }
+        }
+        try {
+            locationManager =
+                this.context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val isGPSEnabled = locationManager
+                .isProviderEnabled(LocationManager.GPS_PROVIDER)
+            val isPassiveEnabled = locationManager
+                .isProviderEnabled(LocationManager.PASSIVE_PROVIDER)
+            val isNetworkEnabled = locationManager
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            if (isGPSEnabled || isNetworkEnabled || isPassiveEnabled) {
+                canGetLocation = true
+                // if GPS Enabled get lat/long using GPS Services
+                if (checkPermissions()) {
+                    if (isGPSEnabled && location == null) {
+                        locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            MIN_TIME_BW_UPDATES,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, listener
+                        )
+                        Log.d("GPS", "GPS Enabled")
+                        if (locationManager != null) {
+                            location =
+                                locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                        }
+                    }
+                    if (isPassiveEnabled && location == null) {
+                        locationManager.requestLocationUpdates(
+                            LocationManager.PASSIVE_PROVIDER,
+                            MIN_TIME_BW_UPDATES,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, listener
+                        )
+                        Log.d("Network", "Network Enabled")
+                        if (locationManager != null) {
+                            location =
+                                locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
+
+                            return location
+                        }
+                    }
+                    if (isNetworkEnabled && location == null) {
+                        locationManager.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER,
+                            MIN_TIME_BW_UPDATES,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, listener
+                        )
+                        Log.d("Network", "Network Enabled")
+                        if (locationManager != null) {
+                            location = locationManager
+                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                        }
+                    }
+                } else {
+                    return null
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return location
+    }
+
+    private fun checkPermissions(): Boolean {
+        if (ActivityCompat.checkSelfPermission( this.context!!, Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission( this.context!!, Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED) {
+            return true
+        }
+        return false
     }
 
 }
