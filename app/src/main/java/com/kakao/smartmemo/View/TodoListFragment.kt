@@ -78,7 +78,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
 
-        setTodoAlarm(todoCalendar)
+        //setTodoAlarm(todoCalendar)
 
         //todolist textview 롱클릭 했을시 삭제어댑터 연결
         relative_todolist.setOnLongClickListener (View.OnLongClickListener {
