@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.kakao.smartmemo.Contract.LoginContract
 import com.kakao.smartmemo.Contract.MemberChangeContract
 import com.kakao.smartmemo.Contract.SignUpContract
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
 
 class UserModel {
@@ -31,11 +32,11 @@ class UserModel {
     }
 
     fun getProfile() { // user 정보 받아오는 함수
-        firestore.collection("User").document("${UserObject.email}").addSnapshotListener { documentSnapshot, _ ->
+        val fireStoreUser = firestore.collection("User").document("${UserObject.email}")
+        fireStoreUser.addSnapshotListener { documentSnapshot, _ ->
             if (documentSnapshot != null) {
                 if(documentSnapshot.exists()){
                     with(UserObject){
-                        this.email = email
                         this.addr = documentSnapshot["addr"].toString()
                         this.img_id = documentSnapshot["img_id"].toString()
                         this.img_url = documentSnapshot["img_url"].toString()
@@ -47,6 +48,8 @@ class UserModel {
                 }
             }
         }
+
+
     }
 
 
@@ -55,8 +58,6 @@ class UserModel {
             if (task.isSuccessful) {
                 UserObject.email = email
                 UserObject.password = pw
-                UserObject.user_name = name
-                UserObject.addr = address
                 onSignUpListener.onSuccess(task.result.toString())
             } else {
                 onSignUpListener.onFailure(task.exception.toString())
@@ -68,7 +69,7 @@ class UserModel {
         firestore.collection("User").document("${UserObject.email}").set(UserObject)
     }
 
-    fun addFirestoreUser(pw:String, name:String, addr:String, kakaoAlarmTime:String) {
+    fun updateFirestoreUser(pw:String, name:String, addr:String, kakaoAlarmTime:String) {
         UserObject.password = pw
         UserObject.user_name = name
         UserObject.addr = addr
@@ -107,7 +108,12 @@ class UserModel {
                 if(task.isSuccessful){
                     auth.currentUser
                     UserObject.email = email
-                    UserObject.password = password
+                    firestore.collection("User").document("${UserObject.email}")
+                        .collection("GroupInfo").document("GroupId").addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+                            documentSnapshot?.data?.forEach {
+                                GroupObject.groupInfo.add(it.key)
+                            }
+                        }
                     onLoginListener.onSuccess(task.result.toString())
                 } else {
                     onLoginListener.onFailure(task.exception.toString())
