@@ -63,13 +63,21 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <receiver android:name=".Receiver.DeviceBootReceiver"
+        <receiver android:name=".Receiver.DeviceBootAlarmReceiver"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".Receiver.DeviceBootTodoReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.REBOOT"/>
+            </intent-filter>
+        </receiver>
         <receiver android:name=".Receiver.AlarmReceiver">
+        </receiver>
+        <receiver android:name=".Receiver.TodoReceiver">
         </receiver>
         <activity
             android:name=".View.AddGroup"

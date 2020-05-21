@@ -1,9 +1,16 @@
 package com.kakao.smartmemo.View
 
+import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.PendingIntent
+import android.content.ComponentName
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.Intent.getIntent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -20,9 +27,16 @@ import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Presenter.TodoPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Adapter.TodoAdapter
+import com.kakao.smartmemo.Receiver.AlarmReceiver
+import com.kakao.smartmemo.Receiver.DeviceBootAlarmReceiver
+import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
+import com.kakao.smartmemo.Receiver.TodoReceiver
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.todolist_fragment.*
 import kotlinx.android.synthetic.main.todolist_fragment.view.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class TodoListFragment : Fragment(), TodoContract.View {
 
@@ -34,6 +48,8 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var textView_todolist : TextView
     private lateinit var relative_todolist: RelativeLayout
     private var todoArrayList = arrayListOf<TodoData>(TodoData("약먹기"), TodoData("도서관 책 반납"))
+    val date = LocalDateTime.now()
+    val todoCalendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -61,6 +77,8 @@ class TodoListFragment : Fragment(), TodoContract.View {
         todolist.adapter = adapter
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
+
+        setTodoAlarm(todoCalendar)
 
         //todolist textview 롱클릭 했을시 삭제어댑터 연결
         relative_todolist.setOnLongClickListener (View.OnLongClickListener {
@@ -157,6 +175,32 @@ class TodoListFragment : Fragment(), TodoContract.View {
                 })
             builder.create()
             builder.show()
+
+        }
+    }
+
+    private fun setTodoAlarm(calendar: Calendar) {
+        val pm = context!!.packageManager
+        val receiver = ComponentName(context, DeviceBootTodoReceiver::class.java)
+        val alarmIntent = Intent(context, TodoReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
+        val alarmManager = context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        if(alarmManager != null) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+            }
+
+            //부팅후 실행되는 리시버 사용가능하게 설정함.
+            pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP)
+        }
+        else { // 알람을 허용하지 않았다면
+            if(PendingIntent.getBroadcast(context, 0, alarmIntent, 0)!=null && alarmManager!=null) {
+                alarmManager.cancel(pendingIntent)
+            }
+            pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
         }
     }
 }

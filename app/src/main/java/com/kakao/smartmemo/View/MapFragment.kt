@@ -58,13 +58,13 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         super.onViewCreated(view, savedInstanceState)
         mapView = MapView(view.context)
 
-        var lacationManager: LocationManager = this.context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        /*var lacationManager: LocationManager = this.context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         var location: Location = lacationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         var longitude = location.longitude
         var latitude = location.latitude
 
         //중심점 설정하는
-        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), false)
+        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), false)*/
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
 
