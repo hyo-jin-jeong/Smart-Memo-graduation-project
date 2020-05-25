@@ -73,11 +73,11 @@ class TodoListFragment : Fragment(), TodoContract.View {
         //setTodoAlarm(todoCalendar)
 
         todolist.isClickable = true
-//        todolist.setOnItemClickListener { parent, view, position, id ->
-//            var intent = Intent(view.context, AllTodoSettingActivity::class.java)
-//            intent.putExtra("todo_id", view.id)
-//            startActivity(intent)
-//        }
+        todolist.setOnItemClickListener { parent, view, position, id ->
+            var intent = Intent(view.context, AllTodoSettingActivity::class.java)
+            intent.putExtra("todo_id", view.id)
+            startActivity(intent)
+        }
 
 
         //하단 메뉴
