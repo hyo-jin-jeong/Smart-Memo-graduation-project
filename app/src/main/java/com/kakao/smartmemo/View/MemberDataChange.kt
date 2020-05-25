@@ -87,7 +87,6 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
             dialog.show()
         }
 
-
         button.setOnClickListener{
             if (passwordText.text.toString() != UserObject.password) {
                 if (passwordText.text.toString() != retypePasswordtext.text.toString())

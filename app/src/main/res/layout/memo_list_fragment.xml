@@ -7,47 +7,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <RadioGroup
-            android:id="@+id/radio"
-            android:layout_width="wrap_content"
+    <RadioGroup
+        android:id="@+id/radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
+        <RadioButton
+            android:id="@+id/title_select"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints">
-            <RadioButton
-                android:id="@+id/title_select"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:text="제목" />
-
-            <RadioButton
-                android:id="@+id/date_select"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:text="날짜" />
-        </RadioGroup>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Group Select"
-            android:layout_margin="15dp"
-            app:layout_constraintRight_toLeftOf="@id/group_color"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
-        <View
-            android:id="@+id/group_color"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_weight="1"
             android:layout_margin="10dp"
-            android:background="@android:color/black"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:ignore="MissingConstraints" />
+            android:text="제목" />
+
+        <RadioButton
+            android:id="@+id/date_select"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:text="날짜" />
+    </RadioGroup>
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -59,6 +41,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/group_color" />
+        app:layout_constraintTop_toBottomOf="@+id/radio"
+        android:splitMotionEvents="false"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigationview_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?android:attr/windowBackground"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:menu="@menu/menu_bottomnavigationview"
+        app:itemIconTint="@drawable/color_selector"
+        app:itemTextColor="@drawable/color_selector"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
