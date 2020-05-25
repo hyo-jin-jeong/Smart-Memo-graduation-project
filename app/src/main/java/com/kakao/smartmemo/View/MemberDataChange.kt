@@ -23,17 +23,16 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
     lateinit var memberToolbar: Toolbar
     lateinit var emailText : TextView
     lateinit var passwordText : EditText
-    lateinit var retype_passwordText : EditText
-    lateinit var nameText : EditText
-    lateinit var addrText : EditText
-    lateinit var kakao_alarm_time : TextView
-    lateinit var showPassword : ImageView
-    lateinit var hidePassword : ImageView
-    lateinit var showRetypePassword : ImageView
-    lateinit var hideRetypePassword : ImageView
+    private lateinit var retypePasswordtext : EditText
+    private lateinit var nameText : EditText
+    private lateinit var addrText : EditText
+    private lateinit var kakaoAlarmTime1 : TextView
+    private lateinit var showPassword : ImageView
+    private lateinit var hidePassword : ImageView
+    private lateinit var showRetypePassword : ImageView
+    private lateinit var hideRetypePassword : ImageView
+    private val calendarTodo = Calendar.getInstance()
     lateinit var button: Button
-    private val calendar_todo = Calendar.getInstance()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.member_change_view)
@@ -41,10 +40,10 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
 
         emailText = findViewById(R.id.emailText)
         passwordText = findViewById(R.id.passwordText)
-        retype_passwordText = findViewById(R.id.retype_passwordText)
+        retypePasswordtext = findViewById(R.id.retype_passwordText)
         nameText = findViewById(R.id.nameText)
         addrText = findViewById(R.id.addrText)
-        kakao_alarm_time = findViewById(R.id.kakao_alarm_time)
+        kakaoAlarmTime1 = findViewById(R.id.kakao_alarm_time)
         showPassword = findViewById(R.id.showPassword)
         hidePassword = findViewById(R.id.hidePassword)
         showRetypePassword = findViewById(R.id.showRetypePassword)
@@ -56,7 +55,7 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
             passwordText.setText(UserObject.password)
             nameText.setText(UserObject.user_name)
             addrText.setText(UserObject.addr)
-            kakao_alarm_time.text = UserObject.kakao_alarm_time
+            kakaoAlarmTime1.text = UserObject.kakao_alarm_time
         }
 
         memberToolbar = findViewById(R.id.member_toolbar)
@@ -70,7 +69,7 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
                 var hour: Int
                 var am_pm = "오전"
                 var m = minute.toString()
-                calendar_todo.timeInMillis
+                calendarTodo.timeInMillis
                 if (hourOfDay == 0) { am_pm = "오전" }
                 if (hourOfDay >= 12) {
                     am_pm = "오후"
@@ -78,10 +77,10 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
                     if (hour == 0) { hour = 12 }
                 } else { hour = hourOfDay }
                 if (minute == 0) { m = "00" }
-                calendar_todo.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar_todo.set(Calendar.MINUTE, minute)
-                calendar_todo.set(Calendar.SECOND, 0)
-                kakao_alarm_time.text = "${am_pm} ${hour} : ${m} "
+                calendarTodo.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                calendarTodo.set(Calendar.MINUTE, minute)
+                calendarTodo.set(Calendar.SECOND, 0)
+                kakaoAlarmTime1.text = "${am_pm} ${hour} : ${m} "
             }
             val dialog = TimePickerDialog(this, listener, 12, 0, false)
 
@@ -90,13 +89,13 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
 
         button.setOnClickListener{
             if (passwordText.text.toString() != UserObject.password) {
-                if (passwordText.text.toString() != retype_passwordText.text.toString())
+                if (passwordText.text.toString() != retypePasswordtext.text.toString())
                     Toast.makeText(applicationContext, "비밀번호와 비밀번호 확인이 다릅니다.\n재입력해주십시오.", Toast.LENGTH_SHORT).show()
                 else {
                     var pw = passwordText.text.toString()
                     var name = nameText.text.toString()
                     var address = addrText.text.toString()
-                    var kakaoAlarmTime = kakao_alarm_time.text.toString()
+                    var kakaoAlarmTime = kakaoAlarmTime1.text.toString()
                     Log.e("save 터치", "터치 성공")
                     presenter.updateUser(this, pw, name, address, kakaoAlarmTime)
                     Log.e("순서3", "저장하고 view로 돌아옴")
@@ -106,7 +105,7 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
                 var pw = passwordText.text.toString()
                 var name = nameText.text.toString()
                 var address = addrText.text.toString()
-                var kakaoAlarmTime = kakao_alarm_time.text.toString()
+                var kakaoAlarmTime = kakaoAlarmTime1.text.toString()
                 Log.e("save 터치", "터치 성공")
                 presenter.updateUser(this, pw, name, address, kakaoAlarmTime)
                 finish()
@@ -124,12 +123,12 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
             showPassword.visibility = View.VISIBLE
         }
         showRetypePassword.setOnClickListener {
-            retype_passwordText.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            retypePasswordtext.transformationMethod = HideReturnsTransformationMethod.getInstance()
             showRetypePassword.visibility = View.GONE
             hideRetypePassword.visibility = View.VISIBLE
         }
         hideRetypePassword.setOnClickListener {
-            retype_passwordText.transformationMethod = PasswordTransformationMethod.getInstance()
+            retypePasswordtext.transformationMethod = PasswordTransformationMethod.getInstance()
             hideRetypePassword.visibility = View.GONE
             showRetypePassword.visibility = View.VISIBLE
         }
