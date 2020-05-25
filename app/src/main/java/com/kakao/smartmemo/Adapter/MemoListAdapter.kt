@@ -24,14 +24,16 @@ class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), 
                 memoTitle.text = item.title
                 memoContent.text = item.content
                 memoDate.text =item.date
-                if(item.title=="학교"){
-                    memoBackground.setBackgroundColor(Color.parseColor("#FCE3FF"))
-                }
-                else if(item.title=="내메모"){
-                    memoBackground.setBackgroundColor(Color.parseColor("#FCECC0"))
-                }
-                else if(item.title=="여행"){
-                    memoBackground.setBackgroundColor(Color.parseColor("#AEC0F2"))
+                when (item.title) {
+                    "학교" -> {
+                        memoBackground.setBackgroundColor(Color.parseColor("#FCE3FF"))
+                    }
+                    "내메모" -> {
+                        memoBackground.setBackgroundColor(Color.parseColor("#FCECC0"))
+                    }
+                    "여행" -> {
+                        memoBackground.setBackgroundColor(Color.parseColor("#AEC0F2"))
+                    }
                 }
             }
         }

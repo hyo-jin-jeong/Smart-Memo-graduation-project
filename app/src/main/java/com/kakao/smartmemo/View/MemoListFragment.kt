@@ -35,6 +35,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
         presenter.setMemoAdapterView(memoAdapter)
         recyclerView1.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
+
         return view
     }
 
@@ -43,7 +44,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
         (activity as MainActivity).toolbar.title="Memo List"
 
         val menuInflater = menuInflater
-        menuInflater.inflate(R.menu.select_group_in_memolist, menu)
+        menuInflater.inflate(R.menu.select_group_in_list, menu)
         //menu?.getItem(1)?.setIcon(context?.let { ContextCompat.getDrawable(it, R.drawable.camera) })
         //menu.add("여행").setIcon(R.drawable.group_color) 메모 동적 생성시 참고
     }

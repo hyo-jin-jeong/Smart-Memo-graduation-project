@@ -30,21 +30,12 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData
         var checkedTodo = false
         view.textView_todo.text = todo.todoContent
         view.group_color.setBackgroundColor(Color.parseColor("#B2CCFF"))
-        /*view.textView_todo.setOnClickListener() { // 취소선 ( 성 공 )
-            if (checkedTodo) { // todolist에 취소선이 그어져 있으면 true
-                view.textView_todo.paintFlags = 0
-                checkedTodo = false
-            } else { // todolist에 취소선이 그어져 있지 않으면 false
-                view.textView_todo.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG //취소선 설정
-                checkedTodo = true
-            }
 
-        }*/
 
-        view.textView_todo.setOnClickListener(View.OnClickListener { //todolist클릭했을시 설정 페이지(time_location_settings)로 넘어감.
-            val alarmSettingsIntent = Intent(it.context, TodoListActivity::class.java)
-            it.context.startActivity(alarmSettingsIntent)
-        })
+//        view.textView_todo.setOnClickListener(View.OnClickListener { //todolist클릭했을시 설정 페이지(time_location_settings)로 넘어감.
+//            val alarmSettingsIntent = Intent(it.context, TodoListActivity::class.java)
+//            it.context.startActivity(alarmSettingsIntent)
+//        })
 
 
 

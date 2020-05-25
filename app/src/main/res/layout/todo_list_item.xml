@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:clickable="true"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,14 +49,8 @@
             android:layout_height="30dp"
             android:layout_weight="2"
             android:background="@drawable/bell_icon_on"
-            android:visibility="invisible"/>
-        <Button
-            android:id="@+id/btn_todo_delete"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_weight="2"
-            android:background="@drawable/delete_todo"
-            android:visibility="invisible"/>
+            android:visibility="visible"/>
+
         </FrameLayout>
     </LinearLayout>
 

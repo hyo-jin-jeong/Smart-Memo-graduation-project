@@ -74,7 +74,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
 
         //중심점 설정하는
-        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), false)*/
+        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), false)
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
 

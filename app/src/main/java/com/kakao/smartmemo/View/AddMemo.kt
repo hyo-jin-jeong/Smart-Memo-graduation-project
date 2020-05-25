@@ -38,8 +38,10 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         spinner = select_group
-        var groupAdapter = ArrayAdapter.createFromResource(applicationContext,
+        var groupAdapter =
+            ArrayAdapter.createFromResource(applicationContext,
             R.array.group, android.R.layout.simple_spinner_dropdown_item)
+
         spinner.adapter = groupAdapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(

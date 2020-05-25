@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/search"
+        android:title="search_bar"
+        android:icon="@drawable/search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always" />
+    <!-- Settings, should always be in the overflow -->
+    <item
+        android:id="@+id/select_group"
+        android:orderInCategory="100"
+        android:title="그룹선택"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/delete_memo"
+        android:orderInCategory="100"
+        android:title="삭제하기"
+        app:showAsAction="never" />
+
+</menu>
