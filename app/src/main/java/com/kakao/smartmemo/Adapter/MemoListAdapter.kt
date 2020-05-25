@@ -27,6 +27,7 @@ class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), 
                 memoTitle.text = item.title
                 memoContent.text = item.content
                 memoDate.text =item.date
+                memoBackground.isClickable = true
                 memoBackground.setOnClickListener {
                     onClickFunc?.invoke(position)
                 }
