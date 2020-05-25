@@ -67,8 +67,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         super.onViewCreated(view, savedInstanceState)
         mapView = MapView(view.context)
 
-
-        var location: Location = getLocation()!!
+        /*var location: Location = getLocation()!!
         var longitude = location.longitude
         var latitude = location.latitude
 
@@ -559,7 +558,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         }
                     }
                 } else {
-                    return null
+                    location = locationManager
+                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    return location
                 }
             }
         } catch (e: Exception) {

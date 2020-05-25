@@ -14,7 +14,6 @@ import android.widget.*
 import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
 
 import com.kakao.smartmemo.Data.TodoData
-import com.kakao.smartmemo.Model.TodoModel
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.todo_list_delete.view.*
 
@@ -28,22 +27,11 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
         val checkbox_todo = view.findViewById(R.id.checkDelete) as CheckBox
         view.textView_todo.text = todo.todoContent
 
-        var checkedTodo = false
-
-        view.group_color.setBackgroundColor(Color.parseColor("#B2CCFF"))
-        view.textView_todo.setOnClickListener() { // 취소선 ( 성 공 )
-            if (checkedTodo) { // todolist에 취소선이 그어져 있으면 true
-                view.textView_todo.paintFlags = 0
-                checkedTodo = false
-            } else { // todolist에 취소선이 그어져 있지 않으면 false
-                view.textView_todo.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-                checkedTodo = true
-            }
-        }
-
         if(checkbox_todo.isChecked) {
             pos.add(position)
         }
+
+        view.group_color.setBackgroundColor(Color.parseColor("#B2CCFF"))
 
         return view
     }
@@ -68,12 +56,11 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
 
     }
 
-    override fun deleteTodo() {
-
+    override fun deleteTodo(position : Int) {
+            todoList.removeAt(position)
     }
 
     override fun getGroup() {
 
     }
-
 }

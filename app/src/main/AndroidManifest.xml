@@ -55,7 +55,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".View.TodoListActivity"
-            android:label="@string/alarm_setings"
+            android:label="@string/alarm_settings"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
@@ -113,7 +113,7 @@
         </activity>
         <activity
             android:name=".View.AllTodoSettingActivity"
-            android:label="TODO 장소 알람 설정"
+            android:label="@string/todo_settings"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 

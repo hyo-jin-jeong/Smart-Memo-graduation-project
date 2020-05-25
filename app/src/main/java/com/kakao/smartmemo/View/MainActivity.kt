@@ -184,7 +184,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             }
             R.id.fab_todo -> {
                 anim()
-                onCreateDialog()
+                val todoIntent = Intent(this, AllTodoSettingActivity::class.java)
+                startActivity(todoIntent)
             }
 
         }

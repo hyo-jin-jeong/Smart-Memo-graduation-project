@@ -32,7 +32,6 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
     lateinit var showRetypePassword : ImageView
     lateinit var hideRetypePassword : ImageView
     lateinit var button: Button
-    private val calendar_todo = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +69,6 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
                 var hour: Int
                 var am_pm = "오전"
                 var m = minute.toString()
-                calendar_todo.timeInMillis
                 if (hourOfDay == 0) { am_pm = "오전" }
                 if (hourOfDay >= 12) {
                     am_pm = "오후"
@@ -78,19 +76,12 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
                     if (hour == 0) { hour = 12 }
                 } else { hour = hourOfDay }
                 if (minute == 0) { m = "00" }
-                calendar_todo.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar_todo.set(Calendar.MINUTE, minute)
-                calendar_todo.set(Calendar.SECOND, 0)
                 kakao_alarm_time.text = "${am_pm} ${hour} : ${m} "
             }
             val dialog = TimePickerDialog(this, listener, 12, 0, false)
 
             dialog.show()
         }
-
-        var todoIntent = Intent(this, TodoListFragment::class.java)
-        todoIntent.putExtra("todo", calendar_todo)
-        startActivityForResult(todoIntent, 1234)
 
         button.setOnClickListener{
             if (passwordText.text.toString() != UserObject.password) {

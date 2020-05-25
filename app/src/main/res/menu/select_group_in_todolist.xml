@@ -3,29 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_settings_select"
+        android:id="@+id/action_todolist_modified"
         android:orderInCategory="100"
-        android:title="그룹선택"
+        android:title="수정"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_settings_total"
+        android:id="@+id/action_todolist_remove"
         android:orderInCategory="100"
-        android:title="전체 TODOLIST"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings_my"
-        android:orderInCategory="100"
-        android:title="내 TODOLIST"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings_group1"
-        android:orderInCategory="100"
-        android:title="그룹1"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings_group2"
-        android:orderInCategory="100"
-        android:title="그룹2"
+        android:title="삭제"
         app:showAsAction="never" />
 
 

@@ -13,6 +13,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.SparseBooleanArray
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -43,13 +44,14 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var presenter : TodoContract.Presenter
     private lateinit var todolist : ListView
     private lateinit var todoEditingbtn : ImageButton
-    private lateinit var todoDeletebtn : ImageButton
     private lateinit var bottomnavigationview : BottomNavigationView
     private lateinit var textView_todolist : TextView
     private lateinit var relative_todolist: RelativeLayout
-    private var todoArrayList = arrayListOf<TodoData>(TodoData("약먹기"), TodoData("도서관 책 반납"))
+    private var todoArrayList = arrayListOf<TodoData>(TodoData("약먹기"), TodoData("도서관 책 반납"),  TodoData("졸프 모임"),  TodoData("학교"))
     val date = LocalDateTime.now()
     val todoCalendar = Calendar.getInstance()
+    private lateinit var adapter : TodoAdapter
+    private lateinit var deleteAdapter : TodoDeleteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -66,9 +68,11 @@ class TodoListFragment : Fragment(), TodoContract.View {
         textView_todolist = view.findViewById(R.id.textView_todolist)
         relative_todolist = view.findViewById(R.id.relative_todolist)
 
+        adapter = TodoAdapter(view.context, todoArrayList)
+        deleteAdapter = TodoDeleteAdapter(view.context, todoArrayList)
+
         presenter = TodoPresenter(this)
-        var adapter = TodoAdapter(view.context, todoArrayList)
-        var deleteAdapter = TodoDeleteAdapter(view.context, todoArrayList)
+
 
         todoEditingbtn = view.findViewById(R.id.imagebtn_save) as ImageButton
 
@@ -80,16 +84,6 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
         //setTodoAlarm(todoCalendar)
 
-        //todolist textview 롱클릭 했을시 삭제어댑터 연결
-        relative_todolist.setOnLongClickListener (View.OnLongClickListener {
-            todolist.adapter = deleteAdapter
-            presenter.setTodoDeleteAdapterModel(deleteAdapter)
-            presenter.setTodoDeleteAdapterView(deleteAdapter)
-            bottomnavigationview.visibility = VISIBLE //하단메뉴 보이게
-            //Toast.makeText(context, "longclick", Toast.LENGTH_SHORT).show()
-            false
-        })
-
         todoEditingbtn.setOnClickListener ( View.OnClickListener {
             onCreateDialog()
         })
@@ -98,11 +92,20 @@ class TodoListFragment : Fragment(), TodoContract.View {
         bottomnavigationview.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.removeItem -> {
-                    var position = todolist.checkedItemPosition
-                    todoArrayList.removeAt(position+1)
+                    var count = deleteAdapter.count
+
+                    var checkedItems = todolist.checkedItemPositions
+
+                    for(i in count-1 downTo 0 ) {
+                        if (checkedItems.get(i)) {
+                            deleteAdapter.deleteTodo(i)
+                            Log.v("seyuuuun", checkedItems.get(i).toString())
+                        }
+                    }
+                    //모든 선택 상태 초기화
+                    deleteAdapter.notifyAdapter()
                     todolist.clearChoices()
-                    adapter.notifyAdapter()
-                    Log.v("seyuuuun", position.toString())
+
                     bottomnavigationview.visibility = GONE //하단메뉴 안보이게
                     todolist.adapter = TodoAdapter(view.context, todoArrayList)
                     true
@@ -134,19 +137,17 @@ class TodoListFragment : Fragment(), TodoContract.View {
                 (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
                 return true
             }
-            R.id.action_settings_select -> { //그룹선택
+            R.id.action_todolist_modified-> { //수정
+                val todoIntent = Intent(context, AllTodoSettingActivity::class.java)
+                startActivity(todoIntent)
                 return true
             }
-            R.id.action_settings_total -> { //전체 TODOLIST
-                return true
-            }
-            R.id.action_settings_my -> { // 내 TODOLIST
-                return true
-            }
-            R.id.action_settings_group1 -> { //그룹1
-                return true
-            }
-            R.id.action_settings_group2 -> { //그룹2
+            R.id.action_todolist_remove -> { //삭제
+                //deleteAdpater연결
+                todolist.adapter = deleteAdapter
+                presenter.setTodoDeleteAdapterModel(deleteAdapter)
+                presenter.setTodoDeleteAdapterView(deleteAdapter)
+                bottomnavigationview.visibility = VISIBLE //하단메뉴 보이게
                 return true
             }
             else ->

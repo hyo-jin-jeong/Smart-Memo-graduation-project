@@ -36,14 +36,22 @@ class TodoReceiver : BroadcastReceiver(){
             .setFullScreenIntent(pendingIntent,true) //헤드업알림
             .setNumber(999) //확인하지않은 알림 개수 설정
 
+        //notificaton에 한줄한줄씩 띄어서 넣기
+        val inboxstyle = NotificationCompat.InboxStyle(notificationbuilder)
+        inboxstyle.addLine("1.영양제 먹기")
+        inboxstyle.addLine("편의점에서 물 사오기")
+        inboxstyle.addLine("약국 가기")
+
         //헤드업알림
         val contentview = RemoteViews(context.packageName, R.layout.todolist_headup_alarm)
+        val todolistIntent = Intent(context, TodoListActivity::class.java)
         Log.v("seyuuuun", context.packageName.toString())
         contentview.setTextViewText(R.id.notification_Title, "Todolist")
         contentview.setTextViewText(R.id.todolist_textView, "1. 영양제 먹기")
         contentview.setTextViewText(R.id.todolist_location, "● 삼성약국/녹십자약국/온누리약국")
-        contentview.setOnClickPendingIntent(R.id.later_notification, pendingIntent)
-        contentview.setOnClickPendingIntent(R.id.cancel_notification, pendingIntent)
+        contentview.setOnClickPendingIntent(R.id.later_notification, PendingIntent.getBroadcast(context, 0, todolistIntent, 0))
+        contentview.setOnClickPendingIntent(R.id.later_notification, pendingIntent) //다시알림 버튼
+        contentview.setOnClickPendingIntent(R.id.cancel_notification, pendingIntent)//알림해제 버튼
         notificationbuilder.setContent(contentview)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { //Oreo 버전 이후부터 channel설정해줘야함.

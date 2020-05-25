@@ -48,7 +48,8 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
     private lateinit var timeSpinner : Spinner
     private lateinit var placeSpinner : Spinner
     private lateinit var savebtn : Button
-    private val calendar = Calendar.getInstance()
+    private val timeCalendar = Calendar.getInstance()
+    private val locationCalendar = Calendar.getInstance()
     var notify_time = false
     val date = LocalDateTime.now()
 
@@ -75,8 +76,6 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         //현재시간 가져오기
         val date_formatter = DateTimeFormatter.ISO_DATE
         val time_formatter = DateTimeFormatter.ISO_TIME
-        val date_formatted = date.format(date_formatter) //현재 날짜
-        val tieme_formatted = date.format(time_formatter) //현재 시간
 
         var dateSettingInTime = view_time.findViewById(R.id.date_layout) as ConstraintLayout
         var dateSettingInPlace = view_location.findViewById(R.id.date_layout) as ConstraintLayout
@@ -101,12 +100,12 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         dateSettingInTime.setOnClickListener {
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 dateTextInTime.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
-                calendar.set(Calendar.YEAR, year)
-                calendar.set(Calendar.MONTH, month)
-                calendar.set(Calendar.DATE, dayOfMonth)
-                Log.v("seyuuuun", calendar.get(Calendar.YEAR).toString())
-                Log.v("seyuuuun", calendar.get(Calendar.MONTH).toString())
-                Log.v("seyuuuun", calendar.get(Calendar.DATE).toString())
+                timeCalendar.set(Calendar.YEAR, year)
+                timeCalendar.set(Calendar.MONTH, month+1)
+                timeCalendar.set(Calendar.DATE, dayOfMonth)
+                Log.v("seyuuuun", "timeCalendar : " + timeCalendar.get(Calendar.YEAR).toString())
+                Log.v("seyuuuun", "timeCalendar : " +timeCalendar.get(Calendar.MONTH).toString())
+                Log.v("seyuuuun", "timeCalendar : " +timeCalendar.get(Calendar.DATE).toString())
             }
             val dateDia = DatePickerDialog(this,dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
             dateDia.show()
@@ -115,6 +114,12 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         dateSettingInPlace.setOnClickListener {
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 dateTextInPlace.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
+                locationCalendar.set(Calendar.YEAR, year)
+                locationCalendar.set(Calendar.MONTH, month+1)
+                locationCalendar.set(Calendar.DATE, dayOfMonth)
+                Log.v("seyuuuun", "locationCalendar : " + locationCalendar.get(Calendar.YEAR).toString())
+                Log.v("seyuuuun", "locationCalendar : " + locationCalendar.get(Calendar.MONTH).toString())
+                Log.v("seyuuuun", "locationCalendar : " + locationCalendar.get(Calendar.DATE).toString())
             }
             val dateDia = DatePickerDialog(this,dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
             dateDia.show()
@@ -147,7 +152,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
                 notify_time = true // 알람 켬.
                 Toast.makeText(applicationContext, notify_time.toString(), Toast.LENGTH_SHORT).show()
                 todostub_time.visibility = VISIBLE
-                calendar.timeInMillis
+                timeCalendar.timeInMillis
                 timebtn.setOnClickListener {
                     var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                         var hour = 0
@@ -172,13 +177,13 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
                             m = "00"
                         }
                         textview_Time.text = "${am_pm} ${hour} : ${m} "
-                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                        calendar.set(Calendar.MINUTE, minute)
-                        calendar.set(Calendar.SECOND, 0)
-                        setTimeAlarm(calendar)
-                        Log.v("seyuuuun", calendar.get(Calendar.HOUR_OF_DAY).toString())
-                        Log.v("seyuuuun", calendar.get(Calendar.MINUTE).toString())
-                        Log.v("seyuuuun", calendar.get(Calendar.SECOND).toString())
+                        timeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                        timeCalendar.set(Calendar.MINUTE, minute)
+                        timeCalendar.set(Calendar.SECOND, 0)
+                        setTimeAlarm(timeCalendar)
+                        Log.v("seyuuuun", timeCalendar.get(Calendar.HOUR_OF_DAY).toString())
+                        Log.v("seyuuuun", timeCalendar.get(Calendar.MINUTE).toString())
+                        Log.v("seyuuuun", timeCalendar.get(Calendar.SECOND).toString())
                     }
                     val dialog = TimePickerDialog(this,listener,12,0,false)
                     dialog.show()

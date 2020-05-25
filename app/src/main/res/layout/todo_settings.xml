@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/settings_toolbar"
+        android:id="@+id/todosettings_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
@@ -76,7 +76,7 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
                     <Switch
-                        android:id="@+id/switch_time"
+                        android:id="@+id/switch_time_settings"
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_marginRight="20dp"
@@ -87,7 +87,7 @@
 
                     <ViewStub
                         android:layout_marginTop="20dp"
-                        android:id="@+id/stub_alarm_time"
+                        android:id="@+id/stub_alarm_time_settings"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout="@layout/alarm_settings_time"
@@ -120,7 +120,7 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
                     <Switch
-                        android:id="@+id/switch_location"
+                        android:id="@+id/switch_location_settings"
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_marginRight="20dp"
@@ -131,18 +131,18 @@
 
                     <ViewStub
                         android:layout_marginTop="20dp"
-                        android:id="@+id/stub_alarm_location"
+                        android:id="@+id/stub_alarm_location_settings"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout="@layout/alarm_settings_place"
-                        android:layout_below="@id/switch_location"
+                        android:layout_below="@id/switch_location_settings"
                         android:layout_alignParentLeft="true"/>
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
     <Button
-        android:id="@+id/saveTodoAlarmButton"
+        android:id="@+id/saveTodoAlarmButtonSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/save_button"
