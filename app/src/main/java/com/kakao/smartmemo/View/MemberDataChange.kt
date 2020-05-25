@@ -88,9 +88,7 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
             dialog.show()
         }
 
-        var todoIntent = Intent(this, TodoListFragment::class.java)
-        todoIntent.putExtra("todo", calendar_todo)
-        startActivityForResult(todoIntent, 1234)
+
 
         button.setOnClickListener{
             if (passwordText.text.toString() != UserObject.password) {
