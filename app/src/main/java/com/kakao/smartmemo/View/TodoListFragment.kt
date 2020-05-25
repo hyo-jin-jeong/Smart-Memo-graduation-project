@@ -10,7 +10,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -37,7 +36,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var presenter : TodoContract.Presenter
     private lateinit var todolist : ListView
     private lateinit var bottomnavigationview : BottomNavigationView
-    private lateinit var textviewTodolist : TextView
+    private lateinit var textViewTodoList : TextView
     private var todoArrayList = arrayListOf<TodoData>(TodoData("약먹기"), TodoData("도서관 책 반납"))
     private lateinit var adapter : TodoAdapter
     private lateinit var deleteAdapter : TodoDeleteAdapter
@@ -56,7 +55,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
 
         bottomnavigationview = view.findViewById(R.id.navigationview_bottom)
-        textviewTodolist = view.findViewById(R.id.textView_todolist)
+        textViewTodoList = view.findViewById(R.id.textView_todolist)
 
         presenter = TodoPresenter(this)
         adapter = TodoAdapter(view.context, todoArrayList)
