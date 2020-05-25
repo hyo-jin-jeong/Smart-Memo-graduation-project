@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import com.kakao.smartmemo.Contract.TodoDateAdapterContract
 import com.kakao.smartmemo.Contract.TodoPlaceAdapterContract
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.R
