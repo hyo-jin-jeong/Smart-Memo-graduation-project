@@ -26,17 +26,9 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = LayoutInflater.from(context).inflate(R.layout.todo_list_item, null)
         val todo = todoList[position]
-
         var checkedTodo = false
         view.textView_todo.text = todo.todoContent
         view.group_color.setBackgroundColor(Color.parseColor("#B2CCFF"))
-
-
-//        view.textView_todo.setOnClickListener(View.OnClickListener { //todolist클릭했을시 설정 페이지(time_location_settings)로 넘어감.
-//            val alarmSettingsIntent = Intent(it.context, TodoListActivity::class.java)
-//            it.context.startActivity(alarmSettingsIntent)
-//        })
-
 
 
         return view

@@ -4,13 +4,13 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import com.kakao.smartmemo.Contract.MemoAdapterContract
 import com.kakao.smartmemo.Contract.MemoDeleteAdapterContract
 import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_delete.view.*
-import kotlinx.android.synthetic.main.memo_list_view.view.*
 import kotlinx.android.synthetic.main.memo_list_view.view.memo_content
 import kotlinx.android.synthetic.main.memo_list_view.view.memo_date
 import kotlinx.android.synthetic.main.memo_list_view.view.memo_title
@@ -30,14 +30,16 @@ class MemoListDeleteAdapter : RecyclerView.Adapter<MemoListDeleteAdapter.MainVie
                 memoTitle.text = item.title
                 memoContent.text = item.content
                 memoDate.text =item.date
-                if(item.title=="학교"){
-                    memoBackground.setBackgroundColor(Color.parseColor("#FCE3FF"))
-                }
-                else if(item.title=="내메모"){
-                    memoBackground.setBackgroundColor(Color.parseColor("#FCECC0"))
-                }
-                else if(item.title=="여행"){
-                    memoBackground.setBackgroundColor(Color.parseColor("#AEC0F2"))
+                when (item.title) {
+                    "학교" -> {
+                        memoBackground.setBackgroundColor(Color.parseColor("#FCE3FF"))
+                    }
+                    "내메모" -> {
+                        memoBackground.setBackgroundColor(Color.parseColor("#FCECC0"))
+                    }
+                    "여행" -> {
+                        memoBackground.setBackgroundColor(Color.parseColor("#AEC0F2"))
+                    }
                 }
             }
         }
@@ -45,10 +47,10 @@ class MemoListDeleteAdapter : RecyclerView.Adapter<MemoListDeleteAdapter.MainVie
 
     inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.memo_list_delete, parent, false)) {
-        val memoTitle = itemView.memo_title
-        val memoContent = itemView.memo_content
-        val memoDate = itemView.memo_date
-        val memoBackground = itemView.memo_list_delete
+        val memoTitle: TextView = itemView.memo_title
+        val memoContent: TextView = itemView.memo_content
+        val memoDate: TextView = itemView.memo_date
+        val memoBackground: CardView = itemView.memo_list_delete
         var pos = arrayListOf<Int>()
         var checkbox_todo = itemView.findViewById(R.id.checkMemoDelete) as CheckBox
 

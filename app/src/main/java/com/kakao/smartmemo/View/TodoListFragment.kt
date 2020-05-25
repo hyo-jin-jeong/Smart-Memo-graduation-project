@@ -62,8 +62,6 @@ class TodoListFragment : Fragment(), TodoContract.View {
         adapter = TodoAdapter(view.context, todoArrayList)
         deleteAdapter = TodoDeleteAdapter(view.context, todoArrayList)
 
-
-
         todolist = view.findViewById(R.id.todolist) as ListView
         todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
         todolist.adapter = adapter
@@ -88,7 +86,6 @@ class TodoListFragment : Fragment(), TodoContract.View {
                     todoArrayList.removeAt(position+1)
                     todolist.clearChoices()
                     adapter.notifyAdapter()
-                    Log.v("seyuuuun", position.toString())
                     bottomnavigationview.visibility = GONE //하단메뉴 안보이게
                     todolist.adapter = TodoAdapter(view.context, todoArrayList)
                     true

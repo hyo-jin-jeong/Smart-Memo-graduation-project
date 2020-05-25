@@ -2,8 +2,8 @@ package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -13,6 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kakao.smartmemo.Adapter.MemoListAdapter
 import com.kakao.smartmemo.Adapter.MemoListDeleteAdapter
 import com.kakao.smartmemo.Contract.MemoContract
+import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.Presenter.MemoPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -37,14 +38,17 @@ class MemoListFragment : Fragment(), MemoContract.View {
         val view = inflater.inflate(R.layout.memo_list_fragment, container, false)
         presenter = MemoPresenter(this)
         recyclerView1 = view.findViewById(R.id.rv_memo_list!!)as RecyclerView
+        bottomnavigationview = view.findViewById(R.id.navigationview_bottom)
         memoAdapter =  MemoListAdapter()
         memoDeleteAdapter = MemoListDeleteAdapter()
-        bottomnavigationview = view.findViewById(R.id.navigationview_bottom)
 
         recyclerView1.adapter = memoAdapter
+
         presenter.setMemoAdapterModel(memoAdapter)
         presenter.setMemoAdapterView(memoAdapter)
         recyclerView1.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
+
 
         //하단 메뉴
         bottomnavigationview.setOnNavigationItemSelectedListener {
@@ -62,10 +66,14 @@ class MemoListFragment : Fragment(), MemoContract.View {
         }
 
         bottomnavigationview.visibility = View.GONE; //하단메뉴 안보이게
-
         return view
     }
+    override fun showMemoItem(memoData: MemoData) {
 
+        var intent = Intent(view?.context, ShowMemo::class.java)
+        intent.putExtra("todo_id",memoData.title)
+        startActivity(intent)
+    }
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
         (activity as MainActivity).toolbar.title="Memo List"
@@ -114,5 +122,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
         presenter.setMemoDeleteAdapterView(memoDeleteAdapter)
         bottomnavigationview.visibility = View.VISIBLE
     }
+
+
 
 }

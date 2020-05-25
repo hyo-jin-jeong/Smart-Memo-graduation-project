@@ -3,6 +3,8 @@ package com.kakao.smartmemo.Adapter
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.MemoAdapterContract
 import com.kakao.smartmemo.Data.MemoData
@@ -13,6 +15,7 @@ class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), 
 
     var items: MutableList<MemoData> = mutableListOf(MemoData("2020.3.2", "학교","기업조사"),
         MemoData("2020.3.12", "내메모","도서관 책반납"),MemoData("2020.2.20." , "여행","숙소예약"))
+    override var onClickFunc: ((Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 
@@ -24,6 +27,9 @@ class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), 
                 memoTitle.text = item.title
                 memoContent.text = item.content
                 memoDate.text =item.date
+                memoBackground.setOnClickListener {
+                    onClickFunc?.invoke(position)
+                }
                 when (item.title) {
                     "학교" -> {
                         memoBackground.setBackgroundColor(Color.parseColor("#FCE3FF"))
@@ -41,20 +47,18 @@ class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), 
 
     inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.memo_list_view, parent, false)) {
-        val memoTitle = itemView.memo_title
-        val memoContent = itemView.memo_content
-        val memoDate = itemView.memo_date
-        val memoBackground = itemView.memo_list_view
-
+        val memoTitle: TextView = itemView.memo_title
+        val memoContent: TextView = itemView.memo_content
+        val memoDate: TextView = itemView.memo_date
+        val memoBackground: CardView = itemView.memo_list_view
     }
+
 
     override fun notifyAdapter() {
         notifyDataSetChanged()
     }
 
-    override fun getMemo() {
-
-    }
+    override fun getMemo(position: Int)= items[position]
 
     override fun deleteMemo() {
 

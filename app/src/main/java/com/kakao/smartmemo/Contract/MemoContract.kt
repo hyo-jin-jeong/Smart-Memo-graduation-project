@@ -1,8 +1,11 @@
 package com.kakao.smartmemo.Contract
 
-interface MemoContract {
-     interface View {
+import com.kakao.smartmemo.Data.MemoData
 
+
+interface MemoContract {
+     interface View  {
+        fun showMemoItem(memoData: MemoData)
      }
 
     interface  Presenter{
