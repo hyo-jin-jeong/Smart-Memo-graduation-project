@@ -7,8 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:clickable="false"
-    android:gravity="center_vertical"
-    android:descendantFocusability="blocksDescendants">
+    android:gravity="center_vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
