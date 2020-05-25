@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 import androidx.core.view.GravityCompat
@@ -32,7 +33,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 
-class TodoListFragment : Fragment(), TodoContract.View {
+class TodoListFragment : Fragment(), TodoContract.View  {
 
     private lateinit var presenter : TodoContract.Presenter
     private lateinit var todolist : ListView
@@ -72,12 +73,13 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
         //setTodoAlarm(todoCalendar)
 
-        todolist.isClickable = true
-//        todolist.setOnItemClickListener { parent, view, position, id ->
-//            var intent = Intent(view.context, AllTodoSettingActivity::class.java)
-//            intent.putExtra("todo_id", view.id)
-//            startActivity(intent)
-//        }
+
+        todolist.setOnItemClickListener { parent, view, position, id ->
+            var intent = Intent(view.context, AllTodoSettingActivity::class.java)
+            intent.putExtra("todo_id", view.id)
+            startActivity(intent)
+        }
+
 
 
         //하단 메뉴
