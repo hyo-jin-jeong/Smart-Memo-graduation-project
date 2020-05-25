@@ -56,8 +56,8 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
 
     }
 
-    override fun deleteTodo() {
-
+    override fun deleteTodo(position: Int) {
+        todoList.removeAt(position)
     }
 
     override fun getGroup() {
