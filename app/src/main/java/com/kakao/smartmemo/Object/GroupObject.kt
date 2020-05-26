@@ -1,5 +1,5 @@
 package com.kakao.smartmemo.Object
 
 object GroupObject{
-    var groupInfo: MutableList<String> = arrayListOf()
+    var groupInfo = mutableMapOf<String,String>()
 }

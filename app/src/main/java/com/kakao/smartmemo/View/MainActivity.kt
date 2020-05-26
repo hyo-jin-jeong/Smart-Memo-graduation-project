@@ -19,7 +19,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
-import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
@@ -118,16 +117,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     }
     override fun setNavigationView(groupInfoList: HashMap<String, Long>){ // call back func
             groupList = groupInfoList
-            var i = 0
+            var i = 1
             navigationView.menu.clear()
-            navigationView.menu.add(-1,0,0,"내메모")
             groupInfoList.forEach {
-                navigationView.menu.add(0,i,i,it.key)
-                i++
-            }
+                if(it.key == "내메모"){
+                    navigationView.menu.add(0,0,0,it.key)
+                }
+                else{
+                    navigationView.menu.add(1,i,i,it.key)
+                    i++
+                }
 
-            navigationView.menu.add(1,groupInfoList.size,groupInfoList.size,"그룹추가").setIcon(R.drawable.plus_group)
-        Log.e("groupId", GroupObject.groupInfo.size.toString())
+            }
+            navigationView.menu.add(2,groupInfoList.size,groupInfoList.size,"그룹추가").setIcon(R.drawable.plus_group)
     }
 
 

@@ -81,11 +81,13 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             var curLongitude = curLocation.longitude
             var curLatitude = curLocation.latitude
 
+
             //중심점 설정하는
             mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(curLatitude, curLongitude), false)
             mapViewContainer = view.map_view as ViewGroup
             mapViewContainer.addView(mapView)
         }
+
         mapView.setPOIItemEventListener(this)
         mapView.setMapViewEventListener(this)
         mapView.setCurrentLocationEventListener(this)

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.kakao.smartmemo.Contract.LoginContract
 import com.kakao.smartmemo.Contract.MemberChangeContract
 import com.kakao.smartmemo.Contract.SignUpContract
@@ -66,7 +67,13 @@ class UserModel {
     }
 
     fun addFirestoreUser() {
+        var groupId = UserObject.email + System.currentTimeMillis()
         firestore.collection("User").document("${UserObject.email}").set(UserObject)
+        firestore.collection("User").document("${UserObject.email}")
+            .collection("GroupInfo").document("GroupId").set(hashMapOf((groupId) to "내메모"))
+        firestore.collection("Group").document("$groupId").set(hashMapOf("group_name" to "내메모","group_color" to 0))
+        firestore.collection("Group").document("$groupId").collection("MemberInfo").document("MemberEmail").set(
+            hashMapOf(UserObject.email to UserObject.email), SetOptions.merge())
     }
 
     fun updateFirestoreUser(pw:String, name:String, addr:String, kakaoAlarmTime:String) {
@@ -97,7 +104,6 @@ class UserModel {
                     kakao_connected = false
                     kakao_alarm_time = ""
                 }
-                Log.d("auth deleted Result", task.result.toString())
             }
         }
         }
@@ -108,10 +114,11 @@ class UserModel {
                 if(task.isSuccessful){
                     auth.currentUser
                     UserObject.email = email
+
                     firestore.collection("User").document("${UserObject.email}")
-                        .collection("GroupInfo").document("GroupId").addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+                        .collection("GroupInfo").document("GroupId").addSnapshotListener { documentSnapshot, _ ->
                             documentSnapshot?.data?.forEach {
-                                GroupObject.groupInfo.add(it.key)
+                                   GroupObject.groupInfo[it.key] = it.value.toString()
                             }
                         }
                     onLoginListener.onSuccess(task.result.toString())
