@@ -99,7 +99,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         placelistview = view_location.findViewById(R.id.listview_place) //장소선택시 나오는 listview
         
 
-        dateSettingInTime.setOnClickListener {
+        dateSettingInTime.setOnClickListener { //시간 날짜 설정
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 dateTextInTime.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
                 calendar.set(Calendar.YEAR, year)
@@ -110,7 +110,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
             dateDia.show()
         }
 
-        dateSettingInPlace.setOnClickListener {
+        dateSettingInPlace.setOnClickListener { //장소 날짜 설정
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 dateTextInPlace.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
             }

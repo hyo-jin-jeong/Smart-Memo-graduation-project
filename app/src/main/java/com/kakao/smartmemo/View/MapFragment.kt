@@ -273,7 +273,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         this.onDestroyView()
                     }
                     else -> {
-                        var addTodoIntent = Intent(this.context, AllTodoSettingActivity::class.java)
+                        var addTodoIntent = Intent(this.context, TodoListActivity::class.java)
                         addTodoIntent.putExtra("Current Point", "나중에 좌표값 넣어")
                         startActivity(addTodoIntent)
                         this.onDestroyView()
