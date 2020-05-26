@@ -25,10 +25,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
+            android:textSize="@dimen/font_size"
             android:hint="@string/group_name"
             android:importantForAutofill="no"
             android:singleLine="true"
             tools:targetApi="O" />
+        <TextView
+            android:id="@+id/textGroupName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
+            android:textSize="@dimen/font_size"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout
@@ -88,11 +98,13 @@
             android:orientation="horizontal"
             android:layout_margin="@dimen/marginLeftRight">
             <ImageView
+                android:id="@+id/kakao_icon"
                 android:layout_width="@dimen/color_palatte"
                 android:layout_height="@dimen/color_palatte"
                 android:scaleType="centerInside"
                 android:src="@drawable/kakaotalk"/>
             <TextView
+                android:id="@+id/kakao_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Kakao Talk로 멤버 초대하기"

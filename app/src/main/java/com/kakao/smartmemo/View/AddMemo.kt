@@ -3,72 +3,56 @@ package com.kakao.smartmemo.View
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.kakao.smartmemo.Contract.AddMemoContract
+import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.Presenter.AddMemoPresenter
 import com.kakao.smartmemo.R
-import kotlinx.android.synthetic.main.activity_add_memo.*
+import kotlinx.android.synthetic.main.time_location_settings.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AddMemo : AppCompatActivity(), AddMemoContract.View {
+    lateinit var memoToolbar: Toolbar
     lateinit var presenter: AddMemoPresenter
-    lateinit var spinner:Spinner
-    lateinit var memoTitle:String
-    lateinit var memoContent:String
+    lateinit var saveBtn :Button
+    lateinit var titleEdit : EditText
+    lateinit var dateText : TextView
+    lateinit var contentEdit:EditText
+    lateinit var groupName : String
+    lateinit var placeNameText : TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_memo)
 
-        presenter = AddMemoPresenter(this)
+        //Toolbar 달기
+        memoToolbar = findViewById<Toolbar>(R.id.addMemoToolbar)
+        setSupportActionBar(memoToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        memoToolbar.title = resources.getString(R.string.write_memo)
 
-        val memoToolbar = findViewById<Toolbar>(R.id.addMemoToolbar)
+        //presenter 초기화
+        presenter = AddMemoPresenter(this)
+        saveBtn = findViewById(R.id.save_button)
+        titleEdit = findViewById(R.id.memo_title)
+        dateText = findViewById<TextView>(R.id.memo_date)
+        contentEdit = findViewById(R.id.memo_content)
+        //groupName = findViewById(R.id.) ->그룹 이름 초기화
+        placeNameText = findViewById(R.id.place_name)
+
+
         val date = Date(System.currentTimeMillis())
         val formatDate = SimpleDateFormat("yyyy.MM.dd")
         var today = formatDate.format(date)
 
-        val dateText = findViewById<TextView>(R.id.memo_date)
         dateText.text = today
-        memoToolbar.title = resources.getString(R.string.write_memo)
-        setSupportActionBar(memoToolbar)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        spinner = select_group
-        var groupAdapter =
-            ArrayAdapter.createFromResource(applicationContext,
-            R.array.group, android.R.layout.simple_spinner_dropdown_item)
-
-        spinner.adapter = groupAdapter
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                if(position != 0) {
-                    memo_group.text = "[그룹] " + spinner.getItemAtPosition(position) as String
-                } else {
-                    memo_group.text = "[그룹 선택]"
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {   }
-        }
-
-        val saveBtn = save_button
-        memoTitle = memo_title.text.toString()
-        memoContent = memo_content.text.toString()
-
         saveBtn.setOnClickListener {
+                val memoData = MemoData(titleEdit.text.toString(),today,contentEdit.text.toString(),"",placeNameText.text.toString(),0.0,0.0)
+                presenter.addMemo(memoData)
                 val intent = Intent(applicationContext, ShowMemo::class.java)
-                intent.putExtra("date", today)
-                intent.putExtra("title", memoTitle)
-                intent.putExtra("content", memoContent)
                 startActivity(intent)
         }
 

@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -14,9 +15,12 @@ import com.kakao.smartmemo.Adapter.MemoListAdapter
 import com.kakao.smartmemo.Adapter.MemoListDeleteAdapter
 import com.kakao.smartmemo.Contract.MemoContract
 import com.kakao.smartmemo.Data.MemoData
+import com.kakao.smartmemo.Object.GroupObject
+
 import com.kakao.smartmemo.Presenter.MemoPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
+import java.security.acl.Group
 
 class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var presenter: MemoPresenter
@@ -24,7 +28,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var memoAdapter: MemoListAdapter
     private lateinit var memoDeleteAdapter: MemoListDeleteAdapter
     private lateinit var bottomnavigationview : BottomNavigationView
-
+    private var count = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -48,8 +52,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
         presenter.setMemoAdapterView(memoAdapter)
         recyclerView1.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
-
-
         //하단 메뉴
         bottomnavigationview.setOnNavigationItemSelectedListener {
             when (it.itemId) {
@@ -69,7 +71,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
         return view
     }
     override fun showMemoItem(memoData: MemoData) {
-
         var intent = Intent(view?.context, ShowMemo::class.java)
         intent.putExtra("todo_id",memoData.title)
         startActivity(intent)
@@ -80,8 +81,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
 
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_group_in_list, menu)
-        //menu?.getItem(1)?.setIcon(context?.let { ContextCompat.getDrawable(it, R.drawable.camera) })
-        //menu.add("여행").setIcon(R.drawable.group_color) 메모 동적 생성시 참고
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -95,7 +94,14 @@ class MemoListFragment : Fragment(), MemoContract.View {
                 return true
             }
             R.id.delete_memo ->{
-                deleteTodo()
+                count++
+                if(count%2 == 0 ) {
+                    showMemo()
+                } else {
+                    deleteMemo()
+                }
+
+
                 return true
             }
             else ->
@@ -104,19 +110,32 @@ class MemoListFragment : Fragment(), MemoContract.View {
     }
 
     private fun selectGroup(){
-        val items = arrayOf<CharSequence>("메모", "TODO 장소알람")
+        var i = 1
+        val items:Array<CharSequence> = Array(GroupObject.groupInfo.size+1) {""}
+        items[0] = "전체메모"
+        GroupObject.groupInfo.forEach {
+            items[i] = it.value
+            i++
+        }
+
         val listDialog: AlertDialog.Builder = AlertDialog.Builder(
             this.context,
             android.R.style.Theme_DeviceDefault_Light_Dialog_Alert
         )
+
         listDialog.setTitle("그룹 선택")
             .setItems(items, DialogInterface.OnClickListener { _, which ->
                 //그룹선택 구현
             })
             .show()
     }
-
-    private fun deleteTodo() {
+    private fun showMemo() {
+        recyclerView1.adapter = memoAdapter
+        presenter.setMemoAdapterModel(memoAdapter)
+        presenter.setMemoAdapterView(memoAdapter)
+        bottomnavigationview.visibility = View.GONE; //하단메뉴 안보이게
+    }
+    private fun deleteMemo(){
         recyclerView1.adapter = memoDeleteAdapter
         presenter.setMemoDeleteAdapterModel(memoDeleteAdapter)
         presenter.setMemoDeleteAdapterView(memoDeleteAdapter)

@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.widget.*
@@ -23,8 +22,6 @@ import com.kakao.smartmemo.Presenter.TodoSettingPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.AlarmReceiver
 import com.kakao.smartmemo.Receiver.DeviceBootAlarmReceiver
-import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
-import com.kakao.smartmemo.Receiver.TodoReceiver
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.DayRepeatAdapter
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
 import kotlinx.android.synthetic.main.alarm_settings_place.*
@@ -39,19 +36,19 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
 
     private lateinit var presenter : TodoSettingContract.Presenter
     private lateinit var myToolbar: Toolbar
-    private lateinit var alarmswitch_time : Switch
-    private lateinit var alarmswitch_location : Switch
+    private lateinit var alarmSwitchTime : Switch
+    private lateinit var alarmSwitchLocation : Switch
     private lateinit var timebtn: ImageButton
     private lateinit var placebtn: ImageButton
     private lateinit var placelistview : ListView
     private lateinit var daylistview: RecyclerView
     private lateinit var timeSpinner : Spinner
     private lateinit var placeSpinner : Spinner
-    private lateinit var textview_Time: TextView
+    private lateinit var textViewTime: TextView
     private lateinit var savebtn : Button
     private val calendar = Calendar.getInstance()
-    var notify_time = false
-    val date = LocalDateTime.now()
+    private var notifyTime = false
+    val date: LocalDateTime = LocalDateTime.now()
 
     private var placeList = arrayListOf<PlaceData>(PlaceData("연세병원"))
     private var dayList = mutableListOf<DayData>(DayData("월"), DayData("화"), DayData("수"), DayData("목"), DayData("금"), DayData("토"), DayData("일"))
@@ -64,39 +61,39 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
 
         var ringingAdapter = ArrayAdapter.createFromResource(applicationContext,
             R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
-        val todostub_time = stub_alarm_time
-        val view_time = todostub_time.inflate()
-        todostub_time.visibility = GONE
+        val todoStubTime = stub_alarm_time
+        val viewTime = todoStubTime.inflate()
+        todoStubTime.visibility = GONE
 
-        val todostub_location = stub_alarm_location
-        val view_location = todostub_location.inflate()
-        todostub_location.visibility = GONE
-        textview_Time = textView_time_show
+        val todoStubLocation = stub_alarm_location
+        val viewLocation = todoStubLocation.inflate()
+        todoStubLocation.visibility = GONE
+        textViewTime = textView_time_show
 
         //현재시간 가져오기
-        val date_formatter = DateTimeFormatter.ISO_DATE
-        val time_formatter = DateTimeFormatter.ISO_TIME
-        val date_formatted = date.format(date_formatter) //현재 날짜
-        val tieme_formatted = date.format(time_formatter) //현재 시간
+        val dateFormatter = DateTimeFormatter.ISO_DATE
+        val timeFormatter = DateTimeFormatter.ISO_TIME
+        val currentDate = date.format(dateFormatter) //현재 날짜
+        val currentTime = date.format(timeFormatter) //현재 시간
 
-        var dateSettingInTime = view_time.findViewById(R.id.date_layout) as ConstraintLayout
-        var dateSettingInPlace = view_location.findViewById(R.id.date_layout) as ConstraintLayout
-        var dateTextInTime = view_time.findViewById<TextView>(R.id.textView4)
-        var dateTextInPlace = view_location.findViewById<TextView>(R.id.textView4)
+        var dateSettingInTime = viewTime.findViewById(R.id.date_layout) as ConstraintLayout
+        var dateSettingInPlace = viewLocation.findViewById(R.id.date_layout) as ConstraintLayout
+        var dateTextInTime = viewTime.findViewById<TextView>(R.id.textView4)
+        var dateTextInPlace = viewLocation.findViewById<TextView>(R.id.textView4)
 
         // Toolbar달기
         myToolbar = findViewById(R.id.settings_toolbar)
         setSupportActionBar(myToolbar)
 
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        alarmswitch_time = switch_time
-        alarmswitch_location = switch_location
-        timebtn = view_time.findViewById(R.id.btn_time_settings) //시간설정버튼
-        daylistview = view_time.findViewById(R.id.listview_day_repeat)  //요일반복 나오는 recyclerview
+        alarmSwitchTime = switch_time
+        alarmSwitchLocation = switch_location
+        timebtn = viewTime.findViewById(R.id.btn_time_settings) //시간설정버튼
+        daylistview = viewTime.findViewById(R.id.listview_day_repeat)  //요일반복 나오는 recyclerview
 
-        placebtn = view_location.findViewById(R.id.btn_place_choice) //장소선택 버튼
-        placelistview = view_location.findViewById(R.id.listview_place) //장소선택시 나오는 listview
+        placebtn = viewLocation.findViewById(R.id.btn_place_choice) //장소선택 버튼
+        placelistview = viewLocation.findViewById(R.id.listview_place) //장소선택시 나오는 listview
         
 
         dateSettingInTime.setOnClickListener { //시간 날짜 설정
@@ -140,17 +137,17 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
             override fun onNothingSelected(parent: AdapterView<*>?) {   }
         }
 
-        alarmswitch_time.setOnCheckedChangeListener { compoundButton, isChecked->
+        alarmSwitchTime.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
-                notify_time = true // 알람 켬.
-                Toast.makeText(applicationContext, notify_time.toString(), Toast.LENGTH_SHORT).show()
-                todostub_time.visibility = VISIBLE
+                notifyTime = true // 알람 켬.
+                Toast.makeText(applicationContext, notifyTime.toString(), Toast.LENGTH_SHORT).show()
+                todoStubTime.visibility = VISIBLE
                 calendar.timeInMillis
                 timebtn.setOnClickListener(timeDialogClickListener)
             } else {
-                todostub_time.visibility = GONE
-                notify_time = false
-                Toast.makeText(applicationContext, notify_time.toString(), Toast.LENGTH_SHORT).show()
+                todoStubTime.visibility = GONE
+                notifyTime = false
+                Toast.makeText(applicationContext, notifyTime.toString(), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -162,15 +159,15 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         daylistview.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false) //가로 recyclerview
         daylistview.scrollToPosition(0)  //recyclerview position 맨앞으로
         
-        alarmswitch_location.setOnCheckedChangeListener { compoundButton, isChecked->
+        alarmSwitchLocation.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
-                todostub_location.visibility = VISIBLE
+                todoStubLocation.visibility = VISIBLE
                 placebtn.setOnClickListener(View.OnClickListener {
                     val placechoiceIntent = Intent(it.context, MainActivity::class.java)
                     this.startActivity(placechoiceIntent)
                 })
             } else {
-                todostub_location.visibility = GONE
+                todoStubLocation.visibility = GONE
             }
         }
 
@@ -181,15 +178,14 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         presenter.setTodoPlaceAdapterView(placeListAdapter)
 
         savebtn = this.findViewById(R.id.saveTodoAlarmButton)
-        savebtn.setOnClickListener(View.OnClickListener {
+        savebtn.setOnClickListener{
             finish()
-        })
+        }
     }
 
     //툴바의 뒤로가기 버튼
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        when (id) {
+        when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true
@@ -198,7 +194,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         return super.onOptionsItemSelected(item)
     }
 
-    var timeDialogClickListener = View.OnClickListener { view ->
+    private var timeDialogClickListener = View.OnClickListener { view ->
         var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
             var hour = 0
             var am_pm = "오전"
@@ -221,7 +217,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
             if (minute == 0) {
                 m = "00"
             }
-            textview_Time.text = "${am_pm} ${hour} : ${m} "
+            textViewTime.text = "${am_pm} ${hour} : ${m} "
             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
             calendar.set(Calendar.MINUTE, minute)
             calendar.set(Calendar.SECOND, 0)
@@ -238,7 +234,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        if(notify_time) { //알람을 허용했다면
+        if(notifyTime) { //알람을 허용했다면
             if(alarmManager != null) {
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
 

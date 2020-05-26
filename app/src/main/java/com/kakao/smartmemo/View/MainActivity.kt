@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     lateinit var mDrawerLayout: DrawerLayout
     lateinit var memberName: TextView
     private val context: Context = this
-    private lateinit var groupList : HashMap<String, Long>
+    private lateinit var groupMap : HashMap<String, Long>
     var openFlag:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,17 +79,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             menuItem.isChecked = true
             mDrawerLayout!!.closeDrawers()
             when(val id = menuItem.itemId) {
-
                 -1 -> {
-
                 }
-                groupList.size -> {
+                groupMap.size+1 -> {
                     val nextIntent = Intent(this, AddGroup::class.java)
                     startActivity(nextIntent)
                 }
                 else -> {
                     var groupSettingIntent = Intent(this, ModifyGroup::class.java)
                     groupSettingIntent.putExtra("groupName", menuItem.title)
+                    groupSettingIntent.putExtra("groupColor",groupMap[menuItem.title].toString())
                     startActivity(groupSettingIntent)
                 }
             }
@@ -116,20 +115,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         presenter.getGroupInfo()
     }
     override fun setNavigationView(groupInfoList: HashMap<String, Long>){ // call back func
-            groupList = groupInfoList
+            groupMap = groupInfoList
             var i = 1
             navigationView.menu.clear()
+
             groupInfoList.forEach {
                 if(it.key == "내메모"){
-                    navigationView.menu.add(0,0,0,it.key)
+                    navigationView.menu.add(0,-1,0,it.key).setIcon(R.drawable.setting_icon)
                 }
                 else{
-                    navigationView.menu.add(1,i,i,it.key)
+                    navigationView.menu.add(1,i,i,it.key).setIcon(R.drawable.setting_icon)
                     i++
                 }
 
             }
-            navigationView.menu.add(2,groupInfoList.size,groupInfoList.size,"그룹추가").setIcon(R.drawable.plus_group)
+            navigationView.menu.add(2,groupInfoList.size+1,groupInfoList.size+1,"그룹추가").setIcon(R.drawable.plus_group)
     }
 
 
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             }
             R.id.fab_todo -> {
                 anim()
-                var addTodoIntent = Intent(this.context, TodoListActivity::class.java)
+                val addTodoIntent = Intent(this, TodoListActivity::class.java)
                 startActivity(addTodoIntent)
             }
 

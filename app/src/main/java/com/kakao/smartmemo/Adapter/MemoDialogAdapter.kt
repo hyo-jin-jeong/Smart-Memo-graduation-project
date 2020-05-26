@@ -2,6 +2,8 @@ package com.kakao.smartmemo.Adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.MemoDialogAdapterContract
 import com.kakao.smartmemo.Data.MemoData
@@ -10,9 +12,8 @@ import kotlinx.android.synthetic.main.memo_list_view.view.*
 
 class MemoDialogAdapter: RecyclerView.Adapter<MemoDialogAdapter.DialogViewHolder>(), MemoDialogAdapterContract.View, MemoDialogAdapterContract.Model {
 
-    var datas: MutableList<MemoData> = mutableListOf(
-        MemoData("2020.3.2", "학교","기업조사"),
-        MemoData("2020.3.12", "내메모","도서관 책반납"), MemoData("2020.2.20." , "여행","숙소예약")
+    private var datas: MutableList<MemoData> = mutableListOf(
+        MemoData("","","","","",0.0,0.0)
     )
     //View Holder생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = DialogViewHolder(parent)
@@ -52,10 +53,10 @@ class MemoDialogAdapter: RecyclerView.Adapter<MemoDialogAdapter.DialogViewHolder
     inner class DialogViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.memo_list_view, parent, false)) {
 
-        val memoTitle = itemView.memo_title
-        val memoContent = itemView.memo_content
-        val memoDate = itemView.memo_date
-        val memoBackground = itemView.memo_list_view
+        val memoTitle: TextView = itemView.memo_title
+        val memoContent: TextView = itemView.memo_content
+        val memoDate: TextView = itemView.memo_date
+        val memoBackground: CardView = itemView.memo_list_view
 
     }
 
