@@ -47,6 +47,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
     private lateinit var daylistview: RecyclerView
     private lateinit var timeSpinner : Spinner
     private lateinit var placeSpinner : Spinner
+    private lateinit var textview_Time: TextView
     private lateinit var savebtn : Button
     private val calendar = Calendar.getInstance()
     var notify_time = false
@@ -70,7 +71,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         val todostub_location = stub_alarm_location
         val view_location = todostub_location.inflate()
         todostub_location.visibility = GONE
-        val textview_Time = textView_time_show
+        textview_Time = textView_time_show
 
         //현재시간 가져오기
         val date_formatter = DateTimeFormatter.ISO_DATE
@@ -98,21 +99,18 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         placelistview = view_location.findViewById(R.id.listview_place) //장소선택시 나오는 listview
         
 
-        dateSettingInTime.setOnClickListener {
+        dateSettingInTime.setOnClickListener { //시간 날짜 설정
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 dateTextInTime.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
                 calendar.set(Calendar.YEAR, year)
                 calendar.set(Calendar.MONTH, month)
                 calendar.set(Calendar.DATE, dayOfMonth)
-                Log.v("seyuuuun", calendar.get(Calendar.YEAR).toString())
-                Log.v("seyuuuun", calendar.get(Calendar.MONTH).toString())
-                Log.v("seyuuuun", calendar.get(Calendar.DATE).toString())
             }
             val dateDia = DatePickerDialog(this,dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
             dateDia.show()
         }
 
-        dateSettingInPlace.setOnClickListener {
+        dateSettingInPlace.setOnClickListener { //장소 날짜 설정
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 dateTextInPlace.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
             }
@@ -148,41 +146,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
                 Toast.makeText(applicationContext, notify_time.toString(), Toast.LENGTH_SHORT).show()
                 todostub_time.visibility = VISIBLE
                 calendar.timeInMillis
-                timebtn.setOnClickListener {
-                    var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                        var hour = 0
-                        var am_pm = "오전"
-                        var m = minute.toString()
-                        if (hourOfDay == 0) {
-                            am_pm = "오전"
-                            hour = 12
-                        }
-                        if (hourOfDay >= 12) {
-                            am_pm = "오후"
-                            hour = hourOfDay % 12
-                            if (hour == 0) {
-                                hour = 12
-                            }
-
-                        }
-                        else{
-                            hour = hourOfDay
-                        }
-                        if (minute == 0) {
-                            m = "00"
-                        }
-                        textview_Time.text = "${am_pm} ${hour} : ${m} "
-                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                        calendar.set(Calendar.MINUTE, minute)
-                        calendar.set(Calendar.SECOND, 0)
-                        setTimeAlarm(calendar)
-                        Log.v("seyuuuun", calendar.get(Calendar.HOUR_OF_DAY).toString())
-                        Log.v("seyuuuun", calendar.get(Calendar.MINUTE).toString())
-                        Log.v("seyuuuun", calendar.get(Calendar.SECOND).toString())
-                    }
-                    val dialog = TimePickerDialog(this,listener,12,0,false)
-                    dialog.show()
-                }
+                timebtn.setOnClickListener(timeDialogClickListener)
             } else {
                 todostub_time.visibility = GONE
                 notify_time = false
@@ -232,6 +196,39 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    var timeDialogClickListener = View.OnClickListener { view ->
+        var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+            var hour = 0
+            var am_pm = "오전"
+            var m = minute.toString()
+            if (hourOfDay == 0) {
+                am_pm = "오전"
+                hour = 12
+            }
+            if (hourOfDay >= 12) {
+                am_pm = "오후"
+                hour = hourOfDay % 12
+                if (hour == 0) {
+                    hour = 12
+                }
+
+            }
+            else{
+                hour = hourOfDay
+            }
+            if (minute == 0) {
+                m = "00"
+            }
+            textview_Time.text = "${am_pm} ${hour} : ${m} "
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            calendar.set(Calendar.MINUTE, minute)
+            calendar.set(Calendar.SECOND, 0)
+            setTimeAlarm(calendar)
+        }
+        val dialog = TimePickerDialog(this,listener,12,0,false)
+        dialog.show()
     }
 
     private fun setTimeAlarm(calendar: Calendar) {

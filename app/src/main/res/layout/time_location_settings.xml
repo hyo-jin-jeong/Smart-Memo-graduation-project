@@ -37,6 +37,18 @@
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
+            <EditText
+                android:id="@+id/edit_todolist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textView"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:ems="10"
+                android:hint="TODO를 입력하세요"
+                android:inputType="textPersonName"
+                android:textColor="#817F7F" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/time_alarm_layout"
                 android:layout_width="match_parent"
@@ -45,7 +57,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
                 app:cardBackgroundColor="#bfd1ff"
-                android:layout_below="@id/textView"
+                android:layout_below="@id/edit_todolist"
                 app:cardElevation="10dp"
                 app:cardCornerRadius="10dp">
 

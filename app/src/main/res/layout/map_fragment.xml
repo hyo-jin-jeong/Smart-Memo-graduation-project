@@ -17,30 +17,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:orientation="horizontal">
 
-        <Switch
-            android:id="@+id/memo_switch"
-            android:layout_width="110dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="@dimen/switch_margin"
-            android:background="@drawable/on_off_background"
-            android:checked="true"
-            android:text="메    모"
-            android:textAlignment="center"
-            android:textOff="OFF"
-            android:textOn="ON" />
-
-        <Switch
-            android:id="@+id/place_alarm_switch"
-            android:layout_width="110dp"
-            android:layout_height="50dp"
-            android:layout_toRightOf="@+id/memo_switch"
-            android:layout_marginLeft="@dimen/switch_margin"
-            android:background="@drawable/on_off_background"
-            android:checked="true"
-            android:text="장소 알림"
-            android:textAlignment="center"
-            android:textOff="OFF"
-            android:textOn="ON" />
     </RelativeLayout>
 
 

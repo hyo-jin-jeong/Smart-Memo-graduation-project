@@ -37,11 +37,12 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var todolist : ListView
     private lateinit var bottomnavigationview : BottomNavigationView
     private lateinit var textViewTodoList : TextView
-    private var todoArrayList = arrayListOf<TodoData>(TodoData("약먹기"), TodoData("도서관 책 반납"))
+    private var todoArrayList = arrayListOf<TodoData>(TodoData("약먹기"), TodoData("도서관 책 반납"), TodoData("졸작 회의하기"))
     private lateinit var adapter : TodoAdapter
     private lateinit var deleteAdapter : TodoDeleteAdapter
     val date: LocalDateTime = LocalDateTime.now()
     val todoCalendar = Calendar.getInstance()
+    private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -71,7 +72,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
         todolist.isClickable = true
         todolist.setOnItemClickListener { parent, view, position, id ->
-            var intent = Intent(view.context, AllTodoSettingActivity::class.java)
+            var intent = Intent(view.context, TodoListActivity::class.java)
             intent.putExtra("todo_id", view.id)
             startActivity(intent)
         }
@@ -81,8 +82,11 @@ class TodoListFragment : Fragment(), TodoContract.View {
         bottomnavigationview.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.removeItem -> {
-                    var position = todolist.checkedItemPosition
-                    todoArrayList.removeAt(position+1)
+                    var count = deleteAdapter.count
+                    var checkedItems = todolist.checkedItemPositions
+                    for( i in count-1 downTo 0) {
+                        deleteAdapter.deleteTodo(i)
+                    }
                     todolist.clearChoices()
                     adapter.notifyAdapter()
                     bottomnavigationview.visibility = GONE //하단메뉴 안보이게
@@ -121,7 +125,13 @@ class TodoListFragment : Fragment(), TodoContract.View {
                 return true
             }
             R.id.delete_memo ->{
-                deleteTodo()
+                count++
+                if(count%2 == 0 ) {
+                    Todo()
+                } else {
+                    deleteTodo()
+                }
+
                 return true
             }
             else ->
@@ -140,6 +150,13 @@ class TodoListFragment : Fragment(), TodoContract.View {
                //그룹선택 구현
             })
             .show()
+    }
+
+    private fun Todo() {
+        todolist.adapter = adapter
+        presenter.setTodoAdapterModel(adapter)
+        presenter.setTodoAdapterView(adapter)
+        bottomnavigationview.visibility = GONE; //하단메뉴 안보이게
     }
     private fun deleteTodo(){
         todolist.adapter = deleteAdapter
