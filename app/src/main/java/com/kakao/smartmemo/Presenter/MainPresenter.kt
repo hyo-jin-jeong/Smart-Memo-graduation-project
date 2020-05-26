@@ -5,7 +5,7 @@ import com.kakao.smartmemo.Contract.MainAdapterContract
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Model.GroupModel
 
-class MainPresenter : MainContract.Presenter,MainContract.OnGetDataSuccessListener{
+class MainPresenter : MainContract.Presenter,MainContract.onGetGroupInfoListener{
 
     private var view : MainContract.View
     var groupModel: GroupModel
@@ -25,12 +25,13 @@ class MainPresenter : MainContract.Presenter,MainContract.OnGetDataSuccessListen
         adapterView = view
     }
 
-    override fun getGroupData() {
-        groupModel.getGroupData()
+    override fun getGroupInfo() {
+        groupModel.getGroupInfo()
     }
 
-    override fun onSuccess(name: MutableList<String>) {
-        view.setNavigationView(name)
+
+    override fun onSuccess(groupInfoList: HashMap<String, Long>) {
+        view.setNavigationView(groupInfoList)
     }
 
     override fun onFailure() {

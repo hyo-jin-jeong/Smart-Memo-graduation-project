@@ -1,21 +1,13 @@
 package com.kakao.smartmemo.View
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Spinner
 import android.widget.Toast
 
 import com.google.android.material.tabs.TabLayout
@@ -27,6 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
@@ -45,8 +38,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     lateinit var mDrawerLayout: DrawerLayout
     lateinit var memberName: TextView
     private val context: Context = this
-    private lateinit var groupList : MutableList<String>
-    private var REQUEST_CODE = 1234;
+    private lateinit var groupList : HashMap<String, Long>
     var openFlag:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,23 +74,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.menu)
 
-        initGroup()//drawerlayout init func
+        getGroupInfo()
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             mDrawerLayout!!.closeDrawers()
             when(val id = menuItem.itemId) {
 
-                R.id.nav_my_memo -> {
+                -1 -> {
 
                 }
-                R.id.nav_group_add -> {
+                groupList.size -> {
                     val nextIntent = Intent(this, AddGroup::class.java)
                     startActivity(nextIntent)
                 }
                 else -> {
                     var groupSettingIntent = Intent(this, ModifyGroup::class.java)
-                    groupSettingIntent.putExtra("groupName", groupList[id])
+                    groupSettingIntent.putExtra("groupName", menuItem.title)
                     startActivity(groupSettingIntent)
                 }
             }
@@ -120,27 +112,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         fabMemo.setOnClickListener(this)
         fabTodo.setOnClickListener(this)
     }
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        when(requestCode){
-//            1234->{
-//                if(resultCode == Activity.RESULT_OK){
-//
-//                }
-//            }
-//        }
-//    }
-    override fun setNavigationView(name : MutableList<String>){ // call back func
-            groupList = name
-            for (i in 0 until groupList.size) {
-                //Log.e("navi",groupList[i])
-                navigationView.menu.add(groupList[i])
+
+    private fun getGroupInfo(){
+        presenter.getGroupInfo()
+    }
+    override fun setNavigationView(groupInfoList: HashMap<String, Long>){ // call back func
+            groupList = groupInfoList
+            var i = 0
+            navigationView.menu.clear()
+            navigationView.menu.add(-1,0,0,"내메모")
+            groupInfoList.forEach {
+                navigationView.menu.add(0,i,i,it.key)
+                i++
             }
+
+            navigationView.menu.add(1,groupInfoList.size,groupInfoList.size,"그룹추가").setIcon(R.drawable.plus_group)
+        Log.e("groupId", GroupObject.groupInfo.size.toString())
     }
 
-    private fun initGroup(){ // group data setting
-        presenter.getGroupData()
-    }
+
 
     override fun onResume() {
         super.onResume()
@@ -184,7 +174,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             }
             R.id.fab_todo -> {
                 anim()
-                onCreateDialog()
+                var addTodoIntent = Intent(this.context, TodoListActivity::class.java)
+                startActivity(addTodoIntent)
             }
 
         }
@@ -210,27 +201,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             }
         }
     }
-    fun onCreateDialog() : Dialog {
-        return let {
-            val builder = AlertDialog.Builder(context)
-            val edit_inflater: LayoutInflater = LayoutInflater.from(context)
-            val editDialogView: View = edit_inflater.inflate(R.layout.todolist_editing_dialog, null)
-            builder.setTitle("TODO LIST 입력")
-            val spinner: Spinner = editDialogView.findViewById(R.id.spinner)
-            val adapter = ArrayAdapter.createFromResource(context,
-                R.array.group, android.R.layout.simple_spinner_item)
-            spinner.adapter = adapter
 
-            builder.setView(editDialogView).setPositiveButton("확인",
-                DialogInterface.OnClickListener { dialog, id ->
-                    dialog.dismiss()
-                })
-                .setNegativeButton("취소", DialogInterface.OnClickListener {
-                        dialog, which ->
-                    dialog.dismiss()
-                })
-            builder.create()
-            builder.show()
-        }
-    }
 }

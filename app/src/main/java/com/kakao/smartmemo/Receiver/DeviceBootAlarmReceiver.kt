@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import java.util.*
 
-class DeviceBootReceiver : BroadcastReceiver() { //재부팅후에도 알림이 동작하도록
+class DeviceBootAlarmReceiver : BroadcastReceiver() { //재부팅후에도 알림이 동작하도록
     // 부팅이 끝나면 alarm reset
     override fun onReceive(context: Context?, intent: Intent?) {
         val alarmIntent = Intent(context, AlarmReceiver::class.java)

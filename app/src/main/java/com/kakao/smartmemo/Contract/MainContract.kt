@@ -4,16 +4,17 @@ interface MainContract {
     interface Presenter {
         fun setMainAdapterModel(model: MainAdapterContract.Model)
         fun setMainAdapterView(view: MainAdapterContract.View)
-        fun getGroupData()
+        fun getGroupInfo()
+
     }
     interface View {
-        fun setNavigationView(name: MutableList<String>)
+        fun setNavigationView(groupInfoList: HashMap<String, Long>)
 
 
     }
 
-    interface OnGetDataSuccessListener {
-        fun onSuccess(name: MutableList<String>)
+    interface onGetGroupInfoListener {
+        fun onSuccess(groupInfoList: HashMap<String, Long>)
         fun onFailure()
     }
 

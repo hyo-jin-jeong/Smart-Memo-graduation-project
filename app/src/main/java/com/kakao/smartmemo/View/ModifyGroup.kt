@@ -25,7 +25,7 @@ class ModifyGroup : AppCompatActivity(), ModifyGroupContract.View{
         toolBar.title = resources.getString(R.string.setting_group)
         setSupportActionBar(toolBar)
 
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if (intent.hasExtra("groupName")) {
             editGroupName.setText(intent.getStringExtra("groupName"))

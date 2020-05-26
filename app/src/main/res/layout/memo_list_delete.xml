@@ -6,8 +6,7 @@
     android:layout_margin="10dp"
     android:layout_marginRight="20dp"
     android:layout_marginLeft="20dp"
-    android:id="@+id/memo_list_view"
-    android:clickable="false"
+    android:id="@+id/memo_list_delete"
     app:cardElevation="10dp">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,6 +17,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+        <CheckBox
+            android:id="@+id/checkMemoDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:checked="false"/>
         <TextView
             android:id="@+id/memo_title"
             android:layout_width="wrap_content"

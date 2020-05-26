@@ -1,70 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="350dp"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/layout_todo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:orientation="horizontal">
+        android:layout_marginLeft="30dp">
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="17dp"
             android:layout_height="20dp"
             android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
             app:srcCompat="@drawable/todolist_icon" />
 
         <TextView
             android:id="@+id/notification_Title"
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:text="todolist"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/imageView"
+            android:text="TODOLIST"
             android:textSize="15sp" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textView_alarm"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
+        android:layout_below="@id/layout_todo"
         android:layout_weight="1"
         android:text="비상용 약 사기"
         android:textAlignment="center"
         android:textSize="25sp" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:orientation="horizontal">
+        android:layout_below="@id/textView_alarm">
 
         <Button
             android:id="@+id/later_notification"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:layout_weight="1"
-            android:background="@drawable/notification_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/notification_btn_shape"
+            android:layout_marginRight="10dp"
             android:text="다시알림" />
 
         <Button
             android:id="@+id/cancel_notification"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:layout_weight="1"
-            android:background="@drawable/notification_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/notification_btn_shape"
+            android:layout_toRightOf="@id/later_notification"
             android:text="알림해제" />
-    </LinearLayout>
+    </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>
