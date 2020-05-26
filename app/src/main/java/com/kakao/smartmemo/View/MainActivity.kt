@@ -174,7 +174,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             }
             R.id.fab_todo -> {
                 anim()
-                var addTodoIntent = Intent(this.context, AllTodoSettingActivity::class.java)
+                var addTodoIntent = Intent(this.context, TodoListActivity::class.java)
                 startActivity(addTodoIntent)
             }
 
