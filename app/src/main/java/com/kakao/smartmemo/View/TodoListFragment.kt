@@ -81,8 +81,11 @@ class TodoListFragment : Fragment(), TodoContract.View {
         bottomnavigationview.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.removeItem -> {
-                    var position = todolist.checkedItemPosition
-                    todoArrayList.removeAt(position+1)
+                    var count = deleteAdapter.count
+                    var checkedItems = todolist.checkedItemPositions
+                    for( i in count-1 downTo 0) {
+                        deleteAdapter.deleteTodo(i)
+                    }
                     todolist.clearChoices()
                     adapter.notifyAdapter()
                     bottomnavigationview.visibility = GONE //하단메뉴 안보이게
