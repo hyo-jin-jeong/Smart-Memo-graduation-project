@@ -47,6 +47,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     lateinit var mapView: MapView
     lateinit var mapViewContainer: ViewGroup
+    private var usingMapView = false
 
     private var isLongTouch: Boolean = false
     private var curLocationMarker: MapPOIItem = MapPOIItem()
@@ -75,6 +76,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mapView = MapView(view.context)
+        usingMapView = true
 
         var curLocation: Location? = getLocation()
         if (curLocation != null) {
@@ -100,6 +102,20 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             else -> {
                 checkRunTimePermission();
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(!usingMapView) {
+            Log.i("jieun", "이거시 실행되었다.")
+            mapView = MapView(view!!.context)
+            mapViewContainer.addView(mapView)
+
+            mapView.setPOIItemEventListener(this)
+            mapView.setMapViewEventListener(this)
+            mapView.setCurrentLocationEventListener(this)
+            mapView.setOpenAPIKeyAuthenticationResultListener(this)
         }
     }
 
@@ -171,8 +187,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         (activity as MainActivity).toolbar.title = resources.getString(R.string.tab_text_1)
 
         val menuInflater = menuInflater
-        menuInflater.inflate(R.menu.select_group_in_map, menu)
-        menu.getItem(1)?.isChecked = true
+        menuInflater.inflate(R.menu.search_view_in_map, menu)
 
         val searchItem: MenuItem? = menu.findItem(R.id.search)
         var searchView = searchItem!!.actionView as SearchView
@@ -232,22 +247,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
                 return true
             }
-            //학교를 눌렀을 때
-            R.id.action_settings1 -> {
-                item.isChecked = !item.isChecked
-                when (item.isChecked) {
-                    true -> Toast.makeText(view?.context, item.title, Toast.LENGTH_SHORT).show()
-                }
-                true
-            }
-            //가족을 눌렀을 때
-            R.id.action_settings2 -> {
-                item.isChecked = !item.isChecked
-                when (item.isChecked) {
-                    true -> Toast.makeText(view?.context, item.title, Toast.LENGTH_SHORT).show()
-                }
-                true
-            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -367,6 +367,10 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
 
     fun startLongPress(p1: MapPoint) {
+        var curPoint = p1.mapPointGeoCoord
+        var longitude = curPoint.longitude
+        var latitude = curPoint.latitude
+        //주소 정보도 포함하기
         when {
             !isLongTouch -> isLongTouch = true
             else -> mapView.removePOIItem(curLocationMarker)
@@ -389,10 +393,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         this.onDestroyView()
                     }
                     else -> {
-                        var addTodoIntent = Intent(this.context, TodoListActivity::class.java)
-                        addTodoIntent.putExtra("Current Point", "나중에 좌표값 넣어")
+                        var addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
+                        addTodoIntent.putExtra("longitude", longitude)
+                        addTodoIntent.putExtra("latitude", latitude)
                         startActivity(addTodoIntent)
                         this.onDestroyView()
+                        usingMapView = false
+                        mapView.onPause()
+                        mapViewContainer.removeAllViews()
                     }
                 }
             })

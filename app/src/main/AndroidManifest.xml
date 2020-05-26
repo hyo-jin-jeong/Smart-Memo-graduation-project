@@ -113,11 +113,10 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".View.AllTodoSettingActivity"
+            android:name=".View.PlaceAlarmDetailActivity"
             android:label="TODO 장소 알람 설정"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-
     </application>
 
 </manifest>
