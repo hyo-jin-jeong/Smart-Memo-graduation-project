@@ -48,4 +48,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation group: KAKAO_SDK_GROUP ,name:'kakaolink', version:project.KAKAO_SDK_PLUS_VERSION
     implementation 'com.google.android.material:material:1.2.0-alpha01'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
 }
