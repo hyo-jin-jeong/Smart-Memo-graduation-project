@@ -1,5 +1,7 @@
 package com.kakao.smartmemo.View
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -8,21 +10,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.kakao.smartmemo.Contract.AddMemoContract
 import com.kakao.smartmemo.Data.MemoData
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Presenter.AddMemoPresenter
 import com.kakao.smartmemo.R
-import kotlinx.android.synthetic.main.time_location_settings.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AddMemo : AppCompatActivity(), AddMemoContract.View {
-    lateinit var memoToolbar: Toolbar
     lateinit var presenter: AddMemoPresenter
-    lateinit var saveBtn :Button
-    lateinit var titleEdit : EditText
-    lateinit var dateText : TextView
-    lateinit var contentEdit:EditText
-    lateinit var groupName : String
-    lateinit var placeNameText : TextView
+    private lateinit var memoToolbar: Toolbar
+    private lateinit var saveBtn :Button
+    private lateinit var titleEdit : EditText
+    private lateinit var dateText : TextView
+    private lateinit var contentEdit:EditText
+    private lateinit var selectGroupBtn : Button
+    private lateinit var groupName : TextView
+    private lateinit var placeNameText : TextView
+
+    private var groupId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +45,8 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         titleEdit = findViewById(R.id.memo_title)
         dateText = findViewById<TextView>(R.id.memo_date)
         contentEdit = findViewById(R.id.memo_content)
-        //groupName = findViewById(R.id.) ->그룹 이름 초기화
+        selectGroupBtn = findViewById(R.id.select_group)
+        groupName = findViewById(R.id.memo_group)
         placeNameText = findViewById(R.id.place_name)
 
 
@@ -50,23 +56,47 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
 
         dateText.text = today
         saveBtn.setOnClickListener {
-                val memoData = MemoData(titleEdit.text.toString(),today,contentEdit.text.toString(),"",placeNameText.text.toString(),0.0,0.0)
+                val memoData = MemoData(titleEdit.text.toString(),today,contentEdit.text.toString(),groupName.text.toString(),groupId,placeNameText.text.toString(),0.0,0.0)
                 presenter.addMemo(memoData)
                 val intent = Intent(applicationContext, ShowMemo::class.java)
                 startActivity(intent)
         }
-
+        selectGroupBtn.setOnClickListener {
+            selectGroup()
+        }
     }
 
     // 뒤로가기 버튼 누르면 이전 액티비티로 돌아가는 것을 판단해주는 함수
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        when (id) {
+        when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+    private fun selectGroup(){
+        var i = 0
+        val items:Array<CharSequence> = Array(GroupObject.groupInfo.size) {""}
+        var groupIdList = Array(GroupObject.groupInfo.size){""}
+
+        GroupObject.groupInfo.forEach {
+            groupIdList[i] = it.key
+            items[i] = it.value
+            i++
+        }
+
+        val listDialog: AlertDialog.Builder = AlertDialog.Builder(
+            this,
+            android.R.style.Theme_DeviceDefault_Light_Dialog_Alert
+        )
+
+        listDialog.setTitle("그룹 선택")
+            .setItems(items, DialogInterface.OnClickListener { _, which ->
+                groupName.text = items[which].toString()
+                groupId = groupIdList[which]
+            })
+            .show()
     }
 }

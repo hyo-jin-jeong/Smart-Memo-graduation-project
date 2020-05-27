@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.memo_list_view.view.*
 
 class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), MemoAdapterContract.Model, MemoAdapterContract.View { //memoList RecycleView
 
-    var items: MutableList<MemoData> = mutableListOf(MemoData("","","","","",0.0,0.0))
+    var items: MutableList<MemoData> = mutableListOf(MemoData("","","","","","",0.0,0.0))
     override var onClickFunc: ((Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)

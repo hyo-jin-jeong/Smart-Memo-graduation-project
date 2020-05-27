@@ -38,9 +38,11 @@ class MemoListFragment : Fragment(), MemoContract.View {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
         val view = inflater.inflate(R.layout.memo_list_fragment, container, false)
+
         presenter = MemoPresenter(this)
+        presenter.getMemo()
+
         recyclerView1 = view.findViewById(R.id.rv_memo_list!!)as RecyclerView
         bottomnavigationview = view.findViewById(R.id.navigationview_bottom)
         memoAdapter =  MemoListAdapter()
@@ -100,8 +102,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
                 } else {
                     deleteMemo()
                 }
-
-
                 return true
             }
             else ->

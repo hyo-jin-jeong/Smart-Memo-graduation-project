@@ -6,9 +6,4 @@
         android:id="@+id/update_group"
         android:title="수정하기"
         app:showAsAction="never"/>
-    <item
-        android:id="@+id/exit_group"
-        android:title="그룹 탈퇴하기"
-        app:showAsAction="never"/>
-
 </menu>
