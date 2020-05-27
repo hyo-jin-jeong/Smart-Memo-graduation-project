@@ -68,7 +68,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
     private var placeList = arrayListOf<PlaceData>(PlaceData("연세병원"))
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.time_location_settings)
@@ -109,7 +108,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             selectGroup()
         }
 
-
         var ringingAdapter = ArrayAdapter.createFromResource(applicationContext,
             R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
 
@@ -147,20 +145,14 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         //시간알림 반복시간 설정
         timeSpinner.adapter = ringingAdapter
         timeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-
-            }
-
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {  }
             override fun onNothingSelected(parent: AdapterView<*>?) {   }
         }
 
         //장소 알림 반복시간 설정
         placeSpinner.adapter = ringingAdapter
         placeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-
-            }
-
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {  }
             override fun onNothingSelected(parent: AdapterView<*>?) {   }
         }
 
@@ -240,7 +232,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 if (hour == 0) {
                     hour = 12
                 }
-
             }
             else{
                 hour = hourOfDay
@@ -294,7 +285,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
                 }
-
                 //부팅후 실행되는 리시버 사용가능하게 설정함.
                 pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP)
             }

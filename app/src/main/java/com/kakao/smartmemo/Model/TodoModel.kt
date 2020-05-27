@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.Model
 
-import android.util.Log
 import com.google.firebase.firestore.*
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.GroupObject
@@ -23,7 +22,6 @@ class TodoModel {
                                 todoPath.document("${it.key}").addSnapshotListener { documentSnapshot: DocumentSnapshot?, _: FirebaseFirestoreException? ->
                                     if (documentSnapshot != null) {
                                         todoData.add(TodoData(documentSnapshot.get("title").toString(), documentSnapshot.get("groupName").toString(), it.key))
-//                                        Log.e("todoData", todoData.toString())
                                     }
 
                                 }
@@ -35,6 +33,7 @@ class TodoModel {
             }
         }
     }
+
     fun addTodo(todoData: TodoData) {
         var todoId = todoData.title+System.currentTimeMillis()
         todoPath.document("${todoId}").set(hashMapOf("title" to todoData.title, "groupName" to todoData.groupName), SetOptions.merge())

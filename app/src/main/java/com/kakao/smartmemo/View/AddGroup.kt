@@ -25,6 +25,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
     lateinit var themeColor : View
     lateinit var colorPicker: ImageView
     lateinit var saveBtn:Button
+    lateinit var groupExitBtn : Button
     var color : Int = -13184
     @SuppressLint("ShowToast")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +42,8 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
         themeColor = findViewById(R.id.selected_color)
         colorPicker = findViewById(R.id.color_picker)
         saveBtn = findViewById(R.id.save_group)
+        groupExitBtn = findViewById(R.id.group_member_exit)
+        groupExitBtn.visibility = View.GONE
         //val kakao_member
 
         themeColor.setBackgroundColor(color)
