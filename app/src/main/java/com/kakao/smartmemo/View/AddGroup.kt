@@ -46,8 +46,6 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
 
         themeColor.setBackgroundColor(color)
 
-
-
         colorPicker.setOnClickListener {
             var builder = ColorPickerDialog.newBuilder()
             builder.setDialogType(ColorPickerDialog.TYPE_PRESETS)

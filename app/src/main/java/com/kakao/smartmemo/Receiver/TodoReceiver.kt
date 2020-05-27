@@ -12,14 +12,13 @@ import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.View.TodoListActivity
-import com.kakao.smartmemo.View.TodoListFragment
+import com.kakao.smartmemo.View.AddTodo
 
 class TodoReceiver : BroadcastReceiver(){
     override fun onReceive(context: Context?, intent: Intent?) {
         val notificationManager: NotificationManager = context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val notificationIntent = Intent(context, TodoListActivity::class.java)
+        val notificationIntent = Intent(context, AddTodo::class.java)
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
         val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)

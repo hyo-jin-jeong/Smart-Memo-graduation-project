@@ -62,6 +62,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter = TodoPresenter(this)
         adapter = TodoAdapter(view.context, todoArrayList)
         deleteAdapter = TodoDeleteAdapter(view.context, todoArrayList)
+        presenter.getTodo()
 
         todolist = view.findViewById(R.id.todolist) as ListView
         todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
@@ -73,7 +74,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
         todolist.isClickable = true
         todolist.setOnItemClickListener { parent, view, position, id ->
-            var intent = Intent(view.context, TodoListActivity::class.java)
+            var intent = Intent(view.context, AddTodo::class.java)
             intent.putExtra("todo_id", view.id)
             startActivity(intent)
         }

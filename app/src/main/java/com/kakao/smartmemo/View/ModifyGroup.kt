@@ -41,6 +41,7 @@ class ModifyGroup : AppCompatActivity(), ModifyGroupContract.View{
         toolbar= findViewById(R.id.addGroupToolbar)
         toolbar.title = resources.getString(R.string.setting_group)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         groupNameEdit = findViewById(R.id.editGroupName)
@@ -89,7 +90,6 @@ class ModifyGroup : AppCompatActivity(), ModifyGroupContract.View{
             android.R.id.home -> {
                 finish()
                 return true
-
             }
             R.id.update_group -> {
                 groupModify()
@@ -106,6 +106,7 @@ class ModifyGroup : AppCompatActivity(), ModifyGroupContract.View{
         return super.onCreateOptionsMenu(menu)
     }
     private fun groupSetting(){
+        toolbar.title = resources.getString(R.string.setting_group)
         groupNameEdit.visibility = View.GONE
         groupNameText.visibility = View.VISIBLE
         colorPicker.visibility = View.GONE
@@ -115,6 +116,7 @@ class ModifyGroup : AppCompatActivity(), ModifyGroupContract.View{
         groupMemberSet.visibility = View.VISIBLE
     }
     private  fun groupModify(){
+        toolbar.title = resources.getString(R.string.update_group)
         groupNameEdit.visibility = View.VISIBLE
         groupNameText.visibility = View.GONE
         colorPicker.visibility = View.VISIBLE

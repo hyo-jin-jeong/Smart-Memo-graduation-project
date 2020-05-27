@@ -12,5 +12,6 @@ interface TodoContract {
         fun setTodoAdapterView(adapterView : TodoAdapterContract.View)
         fun setTodoDeleteAdapterModel(deleteAdapterModel : TodoDeleteAdapterContract.Model)
         fun setTodoDeleteAdapterView(deleteAdapterView : TodoDeleteAdapterContract.View)
+        fun getTodo()
     }
 }
