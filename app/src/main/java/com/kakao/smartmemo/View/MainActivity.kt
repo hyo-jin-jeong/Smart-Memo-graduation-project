@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             }
             R.id.fab_todo -> {
                 anim()
-                val addTodoIntent = Intent(this, TodoListActivity::class.java)
+                val addTodoIntent = Intent(this, AddTodo::class.java)
                 startActivity(addTodoIntent)
             }
 
@@ -198,7 +198,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 fabMemo.startAnimation(fabOpen)
                 fabTodo.startAnimation(fabOpen)
                 fabMemo.isClickable = true
-                fabMemo.isClickable = true
+                fabTodo.isClickable = true
                 openFlag = true
             }
         }

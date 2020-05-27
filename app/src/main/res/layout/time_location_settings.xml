@@ -25,19 +25,31 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <EditText
-                android:id="@+id/edit_todolist"
+            <LinearLayout
+                android:id="@+id/edit_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
-                android:ems="10"
-                android:hint="TODO를 입력하세요"
-                android:inputType="textPersonName"
-                android:textColor="#817F7F" />
-
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/edit_todolist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:ems="10"
+                    android:hint="TODO를 입력하세요"
+                    android:inputType="textPersonName"
+                    android:textColor="#817F7F" />
+                <Button
+                    android:id="@+id/todo_select_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="그룹 선택"
+                    android:layout_alignRight="@+id/edit_todolist"/>
+            </LinearLayout>
             <androidx.cardview.widget.CardView
                 android:id="@+id/time_alarm_layout"
                 android:layout_width="match_parent"
@@ -46,7 +58,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
                 app:cardBackgroundColor="#bfd1ff"
-                android:layout_below="@id/edit_todolist"
+                android:layout_below="@id/edit_layout"
                 app:cardElevation="10dp"
                 app:cardCornerRadius="10dp">
 

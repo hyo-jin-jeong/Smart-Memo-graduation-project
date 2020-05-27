@@ -3,6 +3,7 @@ package com.kakao.smartmemo.View
 import android.app.*
 import android.content.ComponentName
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -15,30 +16,30 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kakao.smartmemo.Contract.TodoSettingContract
+import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Data.DayData
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
-import com.kakao.smartmemo.Presenter.TodoSettingPresenter
+import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Presenter.AddTodoPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.AlarmReceiver
 import com.kakao.smartmemo.Receiver.DeviceBootAlarmReceiver
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.DayRepeatAdapter
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
-import kotlinx.android.synthetic.main.alarm_settings_place.*
-import kotlinx.android.synthetic.main.alarm_settings_time.*
-import kotlinx.android.synthetic.main.time_location_settings.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
+class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
     private lateinit var todoToolBar: Toolbar
-    private lateinit var presenter : TodoSettingContract.Presenter
+    private lateinit var presenter : AddTodoContract.Presenter
     private lateinit var titleEdit: EditText
+    private lateinit var selectGroup : Button
     private lateinit var groupName: String
+    private lateinit var groupId: String
     private lateinit var todoStubTime: ViewStub
     private lateinit var todoStubLocation: ViewStub
     private lateinit var viewTime : View
@@ -79,8 +80,9 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // presenter 초기화
-        presenter = TodoSettingPresenter(this)
+        presenter = AddTodoPresenter(this)
         titleEdit = findViewById(R.id.edit_todolist)
+        selectGroup = findViewById(R.id.todo_select_group)
         timeSwitch = findViewById(R.id.switch_time)
         todoStubTime = findViewById<ViewStub>(R.id.stub_alarm_time)
         todoStubLocation = findViewById<ViewStub>(R.id.stub_alarm_location)
@@ -102,6 +104,11 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         placeDateText = viewLocation.findViewById<TextView>(R.id.place_date_text)
 
         dayList = mutableListOf<DayData>(DayData("월"), DayData("화"), DayData("수"), DayData("목"), DayData("금"), DayData("토"), DayData("일"))
+
+        selectGroup.setOnClickListener {
+            selectGroup()
+        }
+
 
         var ringingAdapter = ArrayAdapter.createFromResource(applicationContext,
             R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
@@ -200,8 +207,8 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         savebtn = findViewById(R.id.saveTodoAlarmButton)
         savebtn.setOnClickListener {
             var todoData
-                    = TodoData(titleEdit.text.toString(), "", "time"+System.currentTimeMillis(), timeSwitch.isChecked, "", timeDateText.text.toString(), timeText.text.toString(), "",
-            "place"+System.currentTimeMillis(), placeSwitch.isChecked, placeDateText.text.toString(), "", "", 0.0, 0.0)
+                    = TodoData(titleEdit.text.toString(), groupName, groupId, "time"+System.currentTimeMillis(), timeSwitch.isChecked, "", timeDateText.text.toString(), timeText.text.toString(), "",
+            "place"+System.currentTimeMillis(), placeSwitch.isChecked, placeDateText.text.toString(), "", "한성대학교", 0.0, 0.0)
             presenter.addTodo(todoData)
             finish()
         }
@@ -249,6 +256,28 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         }
         val dialog = TimePickerDialog(this,listener,12,0,false)
         dialog.show()
+    }
+
+    fun selectGroup() {
+        var i = 0
+        val items:Array<CharSequence> = Array(GroupObject.groupInfo.size) {""}
+        val groupIds:Array<CharSequence> = Array(GroupObject.groupInfo.size) {""}
+
+        GroupObject.groupInfo.forEach {
+            groupIds[i] = it.key
+            items[i] = it.value
+            i++
+        }
+        val listDialog: AlertDialog.Builder = AlertDialog.Builder(this,
+            android.R.style.Theme_DeviceDefault_Light_Dialog_Alert
+        )
+        listDialog.setTitle("그룹 선택")
+            .setItems(items, DialogInterface.OnClickListener() { _, which ->
+                selectGroup.text = items[which]
+                groupName = items[which].toString()
+                groupId = groupIds[which].toString()
+            })
+            .show()
     }
 
     private fun setTimeAlarm(calendar: Calendar) {

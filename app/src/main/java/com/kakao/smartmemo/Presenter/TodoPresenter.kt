@@ -22,6 +22,10 @@ class TodoPresenter : TodoContract.Presenter {
 
     }
 
+    override fun getTodo() {
+        todoModel.getTodo()
+    }
+
     override fun setTodoAdapterModel(adapterModel: TodoAdapterContract.Model) {
         this.adapterModel = adapterModel
     }
@@ -37,4 +41,5 @@ class TodoPresenter : TodoContract.Presenter {
     override fun setTodoDeleteAdapterView(deleteAdapterView: TodoDeleteAdapterContract.View) {
         this.deleteAdapterView = deleteAdapterView
     }
+
 }
