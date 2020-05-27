@@ -22,7 +22,7 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
         val todo = todoList[position]
         var pos = arrayListOf<Int>()
         val checkbox_todo = view.findViewById(R.id.checkDelete) as CheckBox
-        view.textView_todo.text = todo.todoContent
+        view.textView_todo.text = todo.title
 
         var checkedTodo = false
 

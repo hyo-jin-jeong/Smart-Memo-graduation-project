@@ -49,8 +49,6 @@ class UserModel {
                 }
             }
         }
-
-
     }
 
 
@@ -59,6 +57,8 @@ class UserModel {
             if (task.isSuccessful) {
                 UserObject.email = email
                 UserObject.password = pw
+                UserObject.user_name = name
+                UserObject.addr = address
                 onSignUpListener.onSuccess(task.result.toString())
             } else {
                 onSignUpListener.onFailure(task.exception.toString())
@@ -114,7 +114,6 @@ class UserModel {
                 if(task.isSuccessful){
                     auth.currentUser
                     UserObject.email = email
-
                     firestore.collection("User").document("${UserObject.email}")
                         .collection("GroupInfo").document("GroupId").addSnapshotListener { documentSnapshot, _ ->
                             documentSnapshot?.data?.forEach {
@@ -139,6 +138,9 @@ class UserModel {
                 img_url = ""
                 kakao_connected = false
                 kakao_alarm_time = ""
+            }
+            with(GroupObject) {
+                this.groupInfo.clear()
             }
             auth.signOut()
         } else {

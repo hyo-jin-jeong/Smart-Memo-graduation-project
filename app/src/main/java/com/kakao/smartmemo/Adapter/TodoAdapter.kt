@@ -27,7 +27,7 @@ class TodoAdapter(val context: Context, private val todoList: ArrayList<TodoData
         val view = LayoutInflater.from(context).inflate(R.layout.todo_list_item, null)
         val todo = todoList[position]
         var checkedTodo = false
-        view.textView_todo.text = todo.todoContent
+        view.textView_todo.text = todo.title
         view.group_color.setBackgroundColor(Color.parseColor("#B2CCFF"))
 
 

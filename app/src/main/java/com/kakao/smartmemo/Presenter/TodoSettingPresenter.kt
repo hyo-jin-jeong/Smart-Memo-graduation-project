@@ -3,10 +3,13 @@ package com.kakao.smartmemo.Presenter
 import com.kakao.smartmemo.Contract.TodoDateAdapterContract
 import com.kakao.smartmemo.Contract.TodoPlaceAdapterContract
 import com.kakao.smartmemo.Contract.TodoSettingContract
+import com.kakao.smartmemo.Data.TodoData
+import com.kakao.smartmemo.Model.TodoModel
 
 class TodoSettingPresenter : TodoSettingContract.Presenter {
 
     var view : TodoSettingContract.View
+    var model : TodoModel
     lateinit var dateAdapterView : TodoDateAdapterContract.View
     lateinit var dateAdapterModel : TodoDateAdapterContract.Model
     lateinit var placeAdapterView : TodoPlaceAdapterContract.View
@@ -15,14 +18,11 @@ class TodoSettingPresenter : TodoSettingContract.Presenter {
 
     constructor(view: TodoSettingContract.View) {
         this.view =  view
+        this.model = TodoModel()
     }
 
-    override fun addTimeAlarm() {
-
-    }
-
-    override fun addPlaceAlarm() {
-
+    override fun addTodo(todoData: TodoData) {
+        model.addTodo(todoData)
     }
 
     override fun setTodoDateAdapterModel(adapterModel: TodoDateAdapterContract.Model) {

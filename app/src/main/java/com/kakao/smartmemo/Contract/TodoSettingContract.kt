@@ -1,12 +1,13 @@
 package com.kakao.smartmemo.Contract
 
+import com.kakao.smartmemo.Data.TodoData
+
 interface TodoSettingContract {
     interface View {
 
     }
     interface Presenter {
-        fun addTimeAlarm()
-        fun addPlaceAlarm()
+        fun addTodo(todoData: TodoData)
         fun setTodoDateAdapterModel(adapterModel : TodoDateAdapterContract.Model)
         fun setTodoDateAdapterView(adapterView : TodoDateAdapterContract.View)
         fun setTodoPlaceAdapterModel(adapterModel : TodoPlaceAdapterContract.Model)
