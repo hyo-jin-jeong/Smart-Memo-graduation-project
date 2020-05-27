@@ -90,12 +90,15 @@
                 android:layout_weight="3"
                 android:layout_gravity="center_vertical"
                 android:textColorHighlight="@android:color/black"/>
-            <Spinner
+            <Button
                 android:id="@+id/select_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:gravity="right"/>
+                android:gravity="right"
+                android:text="click"
+                android:textAlignment="center"
+                layout:ignore="RtlCompat" />
         </LinearLayout>
     </LinearLayout>
     <Button

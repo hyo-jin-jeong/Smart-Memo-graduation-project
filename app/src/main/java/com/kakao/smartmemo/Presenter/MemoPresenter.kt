@@ -3,9 +3,11 @@ package com.kakao.smartmemo.Presenter
 import com.kakao.smartmemo.Contract.MemoAdapterContract
 import com.kakao.smartmemo.Contract.MemoContract
 import com.kakao.smartmemo.Contract.MemoDeleteAdapterContract
+import com.kakao.smartmemo.Model.MemoModel
 
 class MemoPresenter : MemoContract.Presenter{
     var view: MemoContract.View
+    var model: MemoModel
     private lateinit var adapterView : MemoAdapterContract.View
     private lateinit var adapterModel : MemoAdapterContract.Model
     private lateinit var deleteAdapterView : MemoDeleteAdapterContract.View
@@ -13,9 +15,13 @@ class MemoPresenter : MemoContract.Presenter{
 
     constructor(view: MemoContract.View) {
         this.view = view
+        this.model = MemoModel()
     }
-
+    override fun getMemo(){
+        model.getMemo()
+    }
     override fun getGroup() {
+
     }
 
     override fun setMemoAdapterModel(model: MemoAdapterContract.Model) {

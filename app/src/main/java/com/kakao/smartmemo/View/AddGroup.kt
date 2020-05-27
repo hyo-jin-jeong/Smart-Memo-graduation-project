@@ -21,7 +21,6 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
 
     lateinit var presenter : AddGroupContract.Presenter
     lateinit var toolbar: Toolbar
-
     lateinit var groupName : EditText
     lateinit var themeColor : View
     lateinit var colorPicker: ImageView
@@ -83,9 +82,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
     override fun onDialogDismissed(dialogId: Int) {  }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
-        val selectedColor = selected_color
-        this.color = color
-        selectedColor.setBackgroundColor(color)
+        themeColor.setBackgroundColor(color)
     }
 
 }

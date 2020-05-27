@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.memo_list_view.view.memo_title
 
 class MemoListDeleteAdapter : RecyclerView.Adapter<MemoListDeleteAdapter.MainViewHolder>(), MemoDeleteAdapterContract.Model, MemoDeleteAdapterContract.View { //memoList RecycleView
 
-    var items: MutableList<MemoData> = mutableListOf(MemoData("","","","","",0.0,0.0))
+    var items: MutableList<MemoData> = mutableListOf(MemoData("","","","","","",0.0,0.0))
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 

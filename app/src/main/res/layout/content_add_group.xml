@@ -125,4 +125,15 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:background="@drawable/save_button"/>
+    <Button
+        android:id="@+id/group_member_exit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="그룹 탈퇴"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@color/colorWhite"/>
 </LinearLayout>

@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.memo_list_view.view.*
 class MemoDialogAdapter: RecyclerView.Adapter<MemoDialogAdapter.DialogViewHolder>(), MemoDialogAdapterContract.View, MemoDialogAdapterContract.Model {
 
     private var datas: MutableList<MemoData> = mutableListOf(
-        MemoData("","","","","",0.0,0.0)
+        MemoData("","","","","","",0.0,0.0)
     )
     //View Holder생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = DialogViewHolder(parent)
