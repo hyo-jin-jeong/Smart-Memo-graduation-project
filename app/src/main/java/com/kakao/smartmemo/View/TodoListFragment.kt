@@ -31,7 +31,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDateTime
 import java.util.*
 
-
 class TodoListFragment : Fragment(), TodoContract.View {
 
     private lateinit var presenter : TodoContract.Presenter
@@ -146,10 +145,9 @@ class TodoListFragment : Fragment(), TodoContract.View {
         val items:Array<CharSequence> = Array(GroupObject.groupInfo.size+1) {""}
         items[0] = "전체메모"
         GroupObject.groupInfo.forEach {
-                items[i] = it.value
+            items[i] = it.value
             i++
         }
-
 
         val listDialog: AlertDialog.Builder = AlertDialog.Builder(
             this.context,
@@ -168,6 +166,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.setTodoAdapterView(adapter)
         bottomnavigationview.visibility = GONE; //하단메뉴 안보이게
     }
+
     private fun deleteTodo(){
         todolist.adapter = deleteAdapter
         presenter.setTodoDeleteAdapterModel(deleteAdapter)
@@ -184,15 +183,12 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
         if(alarmManager != null) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
             }
-
             //부팅후 실행되는 리시버 사용가능하게 설정함.
             pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP)
-        }
-        else { // 알람을 허용하지 않았다면
+        } else { // 알람을 허용하지 않았다면
             if(PendingIntent.getBroadcast(context, 0, alarmIntent, 0)!=null && alarmManager!=null) {
                 alarmManager.cancel(pendingIntent)
             }

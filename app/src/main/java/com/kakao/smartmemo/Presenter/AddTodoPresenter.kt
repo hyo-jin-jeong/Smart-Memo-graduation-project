@@ -15,7 +15,6 @@ class AddTodoPresenter : AddTodoContract.Presenter {
     lateinit var placeAdapterView : TodoPlaceAdapterContract.View
     lateinit var placeAdapterModel : TodoPlaceAdapterContract.Model
 
-
     constructor(view: AddTodoContract.View) {
         this.view =  view
         this.model = TodoModel()

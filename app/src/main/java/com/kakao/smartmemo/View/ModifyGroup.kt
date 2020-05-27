@@ -1,7 +1,6 @@
 package com.kakao.smartmemo.View
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -16,7 +15,6 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Contract.ModifyGroupContract
 import com.kakao.smartmemo.Presenter.ModifyGroupPresenter
-
 
 class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupContract.View{
 
@@ -38,7 +36,6 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_bar_add_group)
 
-
         presenter = ModifyGroupPresenter(this)
 
         toolbar= findViewById(R.id.addGroupToolbar)
@@ -57,19 +54,15 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         kakaoImg = findViewById(R.id.kakao_icon)
         kakaoText = findViewById(R.id.kakao_text)
 
-
         if (intent.hasExtra("groupName")&&intent.hasExtra("groupColor")) {
             groupNameEdit.setText(intent.getStringExtra("groupName"))
             groupNameText.text = intent.getStringExtra("groupName")
-            Log.e("groupColor",intent.getStringExtra("groupColor"))
             themeColor.setBackgroundColor(intent.getStringExtra("groupColor").toInt())
         }
-
 
         groupMemberSet.text = resources.getString(R.string.group_member)
 
         groupSetting()
-
 
         colorPicker.setOnClickListener {
             var builder = ColorPickerDialog.newBuilder()
@@ -79,7 +72,6 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
                 .setAllowPresets(true)
                 .show(this)
         }
-
 
         saveBtn.setOnClickListener {
             count = 0
@@ -92,7 +84,7 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                if(count==1){
+                if(count%2 == 1){
                     groupSetting()
                 }
                 else{
@@ -101,7 +93,7 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
             }
             R.id.update_group -> {
                 count++
-                if(count==2){
+                if(count%2 == 0){
                     count = 0
                     groupSetting()
                     presenter.updateGroup()
@@ -114,13 +106,12 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         return super.onOptionsItemSelected(item)
     }
 
-
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_options_in_modifygroup, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
     private fun groupSetting(){
         toolbar.title = resources.getString(R.string.setting_group)
         groupNameEdit.visibility = View.GONE
@@ -132,6 +123,7 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         groupExitBtn.visibility = View.VISIBLE
         groupMemberSet.visibility = View.VISIBLE
     }
+
     private  fun groupModify(){
         toolbar.title = resources.getString(R.string.update_group)
         groupNameEdit.visibility = View.VISIBLE
@@ -140,7 +132,7 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         kakaoImg.visibility = View.INVISIBLE
         kakaoText.visibility = View.INVISIBLE
         saveBtn.visibility = View.VISIBLE
-        groupExitBtn.visibility = View.INVISIBLE
+        groupExitBtn.visibility = View.GONE
         groupMemberSet.visibility = View.INVISIBLE
     }
 
