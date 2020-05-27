@@ -37,7 +37,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var todolist : ListView
     private lateinit var bottomnavigationview : BottomNavigationView
     private lateinit var textViewTodoList : TextView
-    private var todoArrayList = arrayListOf<TodoData>(TodoData("약먹기"), TodoData("도서관 책 반납"), TodoData("졸작 회의하기"))
+    private var todoArrayList = arrayListOf<TodoData>()
     private lateinit var adapter : TodoAdapter
     private lateinit var deleteAdapter : TodoDeleteAdapter
     val date: LocalDateTime = LocalDateTime.now()
