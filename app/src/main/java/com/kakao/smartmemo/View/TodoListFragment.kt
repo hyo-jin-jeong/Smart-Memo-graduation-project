@@ -22,6 +22,7 @@ import com.kakao.smartmemo.Adapter.TodoAdapter
 import com.kakao.smartmemo.Adapter.TodoDeleteAdapter
 import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Data.TodoData
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Presenter.TodoPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
@@ -127,7 +128,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
             R.id.delete_memo ->{
                 count++
                 if(count%2 == 0 ) {
-                    Todo()
+                    showTodo()
                 } else {
                     deleteTodo()
                 }
@@ -140,7 +141,15 @@ class TodoListFragment : Fragment(), TodoContract.View {
     }
 
     private fun selectGroup(){
-        val items = arrayOf<CharSequence>("메모", "TODO 장소알람")//데베에서 가져오기
+        var i = 1
+        val items:Array<CharSequence> = Array(GroupObject.groupInfo.size+1) {""}
+        items[0] = "전체메모"
+        GroupObject.groupInfo.forEach {
+                items[i] = it.value
+            i++
+        }
+
+
         val listDialog: AlertDialog.Builder = AlertDialog.Builder(
             this.context,
             android.R.style.Theme_DeviceDefault_Light_Dialog_Alert
@@ -152,7 +161,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
             .show()
     }
 
-    private fun Todo() {
+    private fun showTodo() {
         todolist.adapter = adapter
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)

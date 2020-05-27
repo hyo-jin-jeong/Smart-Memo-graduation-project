@@ -60,7 +60,6 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
 
     private lateinit var placelistview : ListView
     private lateinit var daylistview: RecyclerView
-
     private lateinit var savebtn : Button
     private val calendar = Calendar.getInstance()
     private var notifyTime = false
@@ -79,17 +78,14 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         setSupportActionBar(todoToolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
         // presenter 초기화
         presenter = TodoSettingPresenter(this)
-
         titleEdit = findViewById(R.id.edit_todolist)
         timeSwitch = findViewById(R.id.switch_time)
         todoStubTime = findViewById<ViewStub>(R.id.stub_alarm_time)
         todoStubLocation = findViewById<ViewStub>(R.id.stub_alarm_location)
 
         placeSwitch = findViewById(R.id.switch_location)
-
 
         viewTime = todoStubTime.inflate()
         todoStubTime.visibility = GONE
@@ -99,7 +95,6 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         timeText = viewTime.findViewById(R.id.time_text)
         timeSpinner = viewTime.findViewById(R.id.repeat_time_spinner)
 
-
         viewLocation = todoStubLocation.inflate()
         todoStubLocation.visibility = GONE
         placeSpinner = viewLocation.findViewById(R.id.repeat_place_spinner)
@@ -107,7 +102,6 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         placeDateText = viewLocation.findViewById<TextView>(R.id.place_date_text)
 
         dayList = mutableListOf<DayData>(DayData("월"), DayData("화"), DayData("수"), DayData("목"), DayData("금"), DayData("토"), DayData("일"))
-
 
         var ringingAdapter = ArrayAdapter.createFromResource(applicationContext,
             R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
@@ -123,7 +117,6 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
 
         placebtn = viewLocation.findViewById(R.id.btn_place_choice) //장소선택 버튼
         placelistview = viewLocation.findViewById(R.id.listview_place) //장소선택시 나오는 listview
-
 
         timeDateLayout.setOnClickListener { //시간 날짜 설정
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
@@ -216,8 +209,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
 
     //툴바의 뒤로가기 버튼
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        when (id) {
+        when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true
@@ -226,7 +218,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         return super.onOptionsItemSelected(item)
     }
 
-    var timeDialogClickListener = View.OnClickListener { view ->
+    private var timeDialogClickListener = View.OnClickListener { view ->
         var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
             var hour = 0
             var am_pm = "오전"
