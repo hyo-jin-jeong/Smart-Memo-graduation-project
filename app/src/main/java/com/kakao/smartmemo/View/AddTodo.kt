@@ -64,7 +64,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     private lateinit var placelistview : ListView
     private lateinit var daylistview: RecyclerView
     private lateinit var savebtn : Button
-    private val calendar = Calendar.getInstance()
+    private val timeCalendar = Calendar.getInstance()
+    private var settingsTimeMinutes = timeCalendar.get(Calendar.MINUTE) //원래 알람 설정시간
+    private val placeCalendar = Calendar.getInstance()
+    private var settingsPlaceMinute = placeCalendar.get(Calendar.MINUTE) //원래 알람 설정 시간
     private var notifyTime = false
     val date: LocalDateTime = LocalDateTime.now()
     private lateinit var data : TodoData
@@ -128,9 +131,9 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         timeDateLayout.setOnClickListener { //시간 날짜 설정
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 timeDateText.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
-                calendar.set(Calendar.YEAR, year)
-                calendar.set(Calendar.MONTH, month)
-                calendar.set(Calendar.DATE, dayOfMonth)
+                timeCalendar.set(Calendar.YEAR, year)
+                timeCalendar.set(Calendar.MONTH, month)
+                timeCalendar.set(Calendar.DATE, dayOfMonth)
             }
             val dateDia = DatePickerDialog(this,dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
             dateDia.show()
@@ -147,14 +150,34 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         //시간알림 반복시간 설정
         timeSpinner.adapter = ringingAdapter
         timeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) { }
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position == 1) {
+                    timeCalendar.set(Calendar.MINUTE, settingsTimeMinutes+1)
+                } else if( position == 2) {
+                    timeCalendar.set(Calendar.MINUTE, settingsTimeMinutes+3)
+                } else if( position == 3) {
+                    timeCalendar.set(Calendar.MINUTE, settingsTimeMinutes+5)
+                } else if( position == 4) {
+                    timeCalendar.set(Calendar.MINUTE, settingsTimeMinutes+10)
+                }
+            }
             override fun onNothingSelected(parent: AdapterView<*>?) {   }
         }
 
         //장소 알림 반복시간 설정
         placeSpinner.adapter = ringingAdapter
         placeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {  }
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position == 1) {
+                    placeCalendar.set(Calendar.MINUTE, settingsPlaceMinute+1)
+                } else if( position == 2) {
+                    placeCalendar.set(Calendar.MINUTE, settingsPlaceMinute+3)
+                } else if( position == 3) {
+                    placeCalendar.set(Calendar.MINUTE, settingsPlaceMinute+5)
+                } else if( position == 4) {
+                    placeCalendar.set(Calendar.MINUTE, settingsPlaceMinute+10)
+                }
+            }
             override fun onNothingSelected(parent: AdapterView<*>?) {   }
         }
 
@@ -163,7 +186,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 notifyTime = true // 알람 켬.
                 Toast.makeText(applicationContext, notifyTime.toString(), Toast.LENGTH_SHORT).show()
                 todoStubTime.visibility = VISIBLE
-                calendar.timeInMillis
+                timeCalendar.timeInMillis
                 timeLayout.setOnClickListener(timeDialogClickListener)
             } else {
                 todoStubTime.visibility = GONE
@@ -179,6 +202,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         presenter.setTodoDateAdapterModel(dateAdapter)
         daylistview.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false) //가로 recyclerview
         daylistview.scrollToPosition(0)  //recyclerview position 맨앞으로
+        //val DateList = dateAdapter.selectDate()
+
+        /* for (i in 0.. DateList.size) { //size=0인 오류남.
+             Log.v("seyuuuun", "DateList:" + DateList.get(i).toString())
+         }*/
 
         placeSwitch.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
@@ -200,7 +228,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
         if (intent.hasExtra("todoData")) {
             data = intent.getParcelableExtra("todoData")
-            Log.e("todoData", data.toString())
             titleEdit.setText(data.title)
             timeSwitch.isChecked = data.setTimeAlarm
             placeSwitch.isChecked = data.setPlaceAlarm
@@ -213,9 +240,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         } else {
             savebtn.setOnClickListener {
                 var todoData
-                        = TodoData(titleEdit.text.toString(), groupName, groupId, 0,"time"+System.currentTimeMillis(), timeSwitch.isChecked, "", timeDateText.text.toString(), timeText.text.toString(), timeSpinner.selectedItem.toString(),
-                    "place"+System.currentTimeMillis(), placeSwitch.isChecked, placeDateText.text.toString(), placeSpinner.selectedItem.toString(), "한성대학교", 0.0, 0.0)
+                        = TodoData(titleEdit.text.toString(), groupName, groupId, 0,"time"+System.currentTimeMillis(), timeSwitch.isChecked, "", timeDateText.text.toString(), timeText.text.toString(), settingsTimeMinutes,
+                    "place"+System.currentTimeMillis(), placeSwitch.isChecked, placeDateText.text.toString(), settingsPlaceMinute, "한성대학교", 0.0, 0.0)
                 presenter.addTodo(todoData)
+                setTimeAlarm(timeCalendar)
                 finish()
             }
         }
@@ -258,11 +286,18 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             if (minute == 0) {
                 m = "00"
             }
-            timeText.text = "${am_pm} ${hour} : ${m} "
-            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-            calendar.set(Calendar.MINUTE, minute)
-            calendar.set(Calendar.SECOND, 0)
-            setTimeAlarm(calendar)
+            timeText.text = "${am_pm} ${hour} : ${m}"
+            timeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            timeCalendar.set(Calendar.MINUTE, minute)
+            timeCalendar.set(Calendar.SECOND, 0)
+            var settingTime = timeCalendar.timeInMillis
+            val currentTime = System.currentTimeMillis()
+            val interval = AlarmManager.INTERVAL_DAY
+
+            if (currentTime > settingTime) {
+                timeCalendar.timeInMillis += interval
+            }
+            setTimeAlarm(timeCalendar)
         }
         val dialog = TimePickerDialog(this,listener,12,0,false)
         dialog.show()

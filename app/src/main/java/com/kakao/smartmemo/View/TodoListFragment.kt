@@ -50,6 +50,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         setHasOptionsMenu(true)
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,9 +74,13 @@ class TodoListFragment : Fragment(), TodoContract.View {
             when (it.itemId) {
                 R.id.removeItem -> { // 세윤이 고치는 중이니까 건들지 말기
                     var count = deleteAdapter.count
-                    var checkedItems = todolist.checkedItemPositions
+                    var checkedItems = deleteAdapter.selectedTodo()
                     for( i in count-1 downTo 0) {
-                        deleteAdapter.deleteTodo(i)
+                        for (j in checkedItems) {
+                            if(i == j) {
+                                todoArrayList.removeAt(i)
+                            }
+                        }
                     }
                     todolist.clearChoices()
                     adapter.notifyAdapter()
@@ -100,6 +105,10 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.getTodo()
         adapter = TodoAdapter(cont, todoArrayList)
         todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        todoCalendar.set(Calendar.HOUR_OF_DAY, 0)
+        todoCalendar.set(Calendar.MINUTE, 39)
+        todoCalendar.set(Calendar.SECOND, 0)
+        setTodoAlarm(todoCalendar)
         todolist.isClickable = true
     }
 

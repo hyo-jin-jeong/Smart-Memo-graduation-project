@@ -8,62 +8,59 @@
         android:id="@+id/layout_todo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="17dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="10dp"
-            app:srcCompat="@drawable/todolist_icon" />
+        android:layout_marginTop="10dp">
 
         <TextView
             android:id="@+id/notification_Title"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="30dp"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/imageView"
-            android:text="TODOLIST"
-            android:textSize="15sp" />
+            android:layout_marginRight="30dp"
+            android:text="T O D O L I S T"
+            android:textAlignment="viewStart"
+            android:textColor="#3C3A3A"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
     <TextView
         android:id="@+id/textView_alarm"
-        android:layout_width="250dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:layout_marginBottom="10dp"
         android:layout_below="@id/layout_todo"
-        android:layout_weight="1"
         android:text="비상용 약 사기"
         android:textAlignment="center"
         android:textSize="25sp" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_below="@id/textView_alarm">
-
         <Button
             android:id="@+id/later_notification"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/notification_btn_shape"
-            android:layout_marginRight="10dp"
-            android:text="다시알림" />
+            android:text="다시알림"
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/cancel_notification"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginLeft="5dp"
             android:background="@drawable/notification_btn_shape"
             android:layout_toRightOf="@id/later_notification"
-            android:text="알림해제" />
-    </RelativeLayout>
+            android:text="알림해제"
+            android:layout_weight="1"/>
+    </LinearLayout>
 
 </RelativeLayout>

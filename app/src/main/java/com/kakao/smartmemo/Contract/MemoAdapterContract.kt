@@ -5,7 +5,7 @@ import com.kakao.smartmemo.Data.MemoData
 
 interface MemoAdapterContract {
     interface Model {
-        fun getMemo(position :Int) : MemoData
+        fun getMemo(position :Int) :Int
         fun deleteMemo()
     }
 

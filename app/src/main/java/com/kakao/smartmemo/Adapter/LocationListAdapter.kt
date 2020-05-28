@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import com.kakao.smartmemo.Contract.LocaionListAdapterContract
+import com.kakao.smartmemo.Contract.LocationListAdapterContract
 import com.kakao.smartmemo.R
 
-class LocationListAdapter(val context: Context, private val placeList: ArrayList<String>): BaseAdapter(), LocaionListAdapterContract.Model, LocaionListAdapterContract.View {
+class LocationListAdapter(val context: Context, private val placeList: ArrayList<String>): BaseAdapter(), LocationListAdapterContract.Model, LocationListAdapterContract.View {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view: View = LayoutInflater.from(context).inflate(R.layout.locaion_list_item, null)
         val textView_place = view.findViewById<TextView>(R.id.textView_alarm_place_list)

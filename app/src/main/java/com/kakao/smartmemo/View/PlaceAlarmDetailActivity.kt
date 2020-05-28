@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
-import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.kakao.smartmemo.Adapter.LocationListAdapter
@@ -42,9 +41,8 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
     private lateinit var addButton: Button
     private lateinit var locationTextView: TextView
     private val locations = ArrayList<String>()
-    private var isAdded: Boolean = false
     private var mapPOIItem: MapPOIItem? = null
-    private var locaionItems = ArrayList<MapPOIItem>()
+    private var locationItems = ArrayList<MapPOIItem>()
 
     private var isUp: Boolean = false
     private lateinit var translateUp: Animation
@@ -87,10 +85,25 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
 
         var mapPoint: MapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
         mapView.setMapCenterPoint(mapPoint, false)
+
+//        비동기 방식에서 진행할 듯
+//        var listener: ReverseGeoCodingResultListener = object : ReverseGeoCodingResultListener {
+//            override fun onReverseGeoCoderFailedToFindAddress(p0: MapReverseGeoCoder?) {
+//                Log.i("jieun", "주소 찾기 실패 ㅠㅠ")
+//            }
+//
+//            override fun onReverseGeoCoderFoundAddress(p0: MapReverseGeoCoder?, p1: String?) {
+//                Log.i("jieun", "주소 찾기 성공!!")
+//            }
+//
+//        }
+//        var mapReverseGeoCoder = MapReverseGeoCoder("a74a781e501d031236f6ee1960b4d00e", mapPoint, listener, this)
+//        mapReverseGeoCoder.startFindingAddress()
+//        var address = mapReverseGeoCoder.findAddressForMapPointSync("a74a781e501d031236f6ee1960b4d00e", mapPoint, MapReverseGeoCoder.AddressType.ShortAddress)
+//        Log.i("jieun", address)
+
         var mapPOIItem = createMarker("한성대학교(여기 주소값이 들어가)", mapPoint, R.drawable.cur_location_icon)
-        locaionItems.add(mapPOIItem)
-        allMapItemShow()
-        //mapView.addPOIItem(mapPOIItem)
+        mapView.addPOIItem(mapPOIItem)
 
         listAdapter = LocationListAdapter(context, locations)
         listView.adapter = listAdapter
@@ -205,25 +218,17 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
         allMapItemShow()
         if (isUp) {
+            saveButton.visibility = Button.VISIBLE
             listLayout.visibility = View.INVISIBLE
             listLayout.startAnimation(translateDown)
             isUp = false
         }
-//        if (mapPOIItem != null && !isAdded) {
-//            mapView.removePOIItem(mapPOIItem)
-//            isAdded = false
-//        }
-
     }
 
     override fun onMapViewZoomLevelChanged(p0: MapView?, p1: Int) {
     }
 
     override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
-//        if(mapPOIItem != null && !isAdded) {
-//            mapView.removePOIItem(mapPOIItem)
-//            isAdded = false
-//        }
         allMapItemShow()
         var curPoint = p1!!.mapPointGeoCoord
         var longitude = curPoint.longitude
@@ -231,6 +236,7 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         mapPOIItem = createMarker("longitude=$longitude latitude=$latitude", p1!!, R.drawable.cur_location_icon)
         mapView.addPOIItem(mapPOIItem)
         if(!isUp) {
+            saveButton.visibility = Button.INVISIBLE
             listLayout.visibility = View.VISIBLE
             listLayout.startAnimation(translateUp)
             isUp = true
@@ -239,10 +245,9 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
 
         addButton.setOnClickListener {
             if(!locations.contains(mapPOIItem!!.itemName)) {
-                isAdded = true
                 locations.add(mapPOIItem!!.itemName)
                 listAdapter.notifyDataSetChanged()
-                locaionItems.add(mapPOIItem!!)
+                locationItems.add(mapPOIItem!!)
             }
         }
     }
@@ -278,6 +283,7 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
 
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
         if(!isUp) {
+            saveButton.visibility = Button.INVISIBLE
             listLayout.visibility = View.VISIBLE
             listLayout.startAnimation(translateUp)
             isUp = true
@@ -287,13 +293,14 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
             if(!locations.contains(p1!!.itemName)) {
                 locations.add(p1!!.itemName)
                 listAdapter.notifyDataSetChanged()
+                locationItems.add(p1!!)
             }
         }
     }
 
-    fun allMapItemShow() {
+    private fun allMapItemShow() {
         mapView.removeAllPOIItems()
-        for (mapItem in locaionItems) {
+        for (mapItem in locationItems) {
             mapView.addPOIItem(mapItem)
         }
     }
