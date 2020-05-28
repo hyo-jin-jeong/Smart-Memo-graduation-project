@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/showMemoToolbar"
+        android:id="@+id/show_memo_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintTop_toTopOf="parent"
@@ -16,9 +16,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:padding="10dp"
         android:orientation="horizontal"
         android:background="@drawable/show_memo"
         android:elevation="5dp"
+        android:layout_marginTop="15dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="15dp">
@@ -32,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="작성 위치"
+            android:text="위치"
             android:textSize="@dimen/font_size"
             android:layout_marginLeft="5dp" />
         <TextView
@@ -45,18 +47,13 @@
             android:textColor="@android:color/black"
             android:layout_marginLeft="5dp"
             android:layout_weight="1"/>
-        <TextView
-            android:id="@+id/memo_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:textSize="15dp" />
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="10dp"
         android:orientation="vertical"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
@@ -73,26 +70,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="작성날짜 | "/>
+                android:text="작성날짜   |  "
+                android:textSize="18dp"/>
             <TextView
-                android:id="@+id/writing_location"
+                android:id="@+id/memo_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:textSize="15dp"
-                android:textColor="@android:color/black"/>
+                android:layout_marginLeft="5dp"
+                android:textSize="18dp" />
         </LinearLayout>
         <TextView
             android:id="@+id/show_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="15dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:textSize="25dp"
+            android:textColor="#A9A9A9"
+            android:textStyle="bold"
             android:layout_marginBottom="20dp"
             />
         <TextView
             android:id="@+id/show_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12dp"/>
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:textSize="17dp"
+            android:textColor="#000000"/>
     </LinearLayout>
 </LinearLayout>

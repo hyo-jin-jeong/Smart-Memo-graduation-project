@@ -15,31 +15,19 @@ import kotlinx.android.synthetic.main.memo_list_view.view.memo_content
 import kotlinx.android.synthetic.main.memo_list_view.view.memo_date
 import kotlinx.android.synthetic.main.memo_list_view.view.memo_title
 
-class MemoListDeleteAdapter : RecyclerView.Adapter<MemoListDeleteAdapter.MainViewHolder>(), MemoDeleteAdapterContract.Model, MemoDeleteAdapterContract.View { //memoList RecycleView
-
-    var items: MutableList<MemoData> = mutableListOf(MemoData("","","","","","",0.0,0.0))
+class MemoListDeleteAdapter(private var memoList: MutableList<MemoData>) : RecyclerView.Adapter<MemoListDeleteAdapter.MainViewHolder>(), MemoDeleteAdapterContract.Model, MemoDeleteAdapterContract.View { //memoList RecycleView
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = memoList.size
 
     override fun onBindViewHolder(holer: MainViewHolder, position: Int) {
-        items[position].let { item ->
+        memoList[position].let { item ->
             with(holer) {
                 memoTitle.text = item.title
                 memoContent.text = item.content
                 memoDate.text =item.date
-                when (item.title) {
-                    "학교" -> {
-                        memoBackground.setBackgroundColor(Color.parseColor("#FCE3FF"))
-                    }
-                    "내메모" -> {
-                        memoBackground.setBackgroundColor(Color.parseColor("#FCECC0"))
-                    }
-                    "여행" -> {
-                        memoBackground.setBackgroundColor(Color.parseColor("#AEC0F2"))
-                    }
-                }
+                memoBackground.setBackgroundColor(item.groupColor.toInt())
             }
         }
     }

@@ -1,6 +1,8 @@
 package com.kakao.smartmemo.Adapter
 
+import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -11,37 +13,27 @@ import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_view.view.*
 
-class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), MemoAdapterContract.Model, MemoAdapterContract.View { //memoList RecycleView
+class MemoListAdapter(private val memoList: MutableList<MemoData>) : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), MemoAdapterContract.Model, MemoAdapterContract.View { //memoList RecycleView
 
-    var items: MutableList<MemoData> = mutableListOf(MemoData("","","","","","",0.0,0.0))
     override var onClickFunc: ((Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = memoList.size
 
     override fun onBindViewHolder(holer: MainViewHolder, position: Int) {
-        items[position].let { item ->
+        memoList[position].let { item ->
             with(holer) {
                 memoTitle.text = item.title
                 memoContent.text = item.content
-                memoDate.text =item.date
+                memoDate.text = item.date
                 memoBackground.isClickable = true
+                memoBackground.setBackgroundColor(item.groupColor.toInt())
                 memoBackground.setOnClickListener {
                     onClickFunc?.invoke(position)
                 }
-                when (item.title) {
-                    "학교" -> {
-                        memoBackground.setBackgroundColor(Color.parseColor("#FCE3FF"))
-                    }
-                    "내메모" -> {
-                        memoBackground.setBackgroundColor(Color.parseColor("#FCECC0"))
-                    }
-                    "여행" -> {
-                        memoBackground.setBackgroundColor(Color.parseColor("#AEC0F2"))
-                    }
-                }
             }
+
         }
     }
 
@@ -58,7 +50,7 @@ class MemoListAdapter : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), 
         notifyDataSetChanged()
     }
 
-    override fun getMemo(position: Int)= items[position]
+    override fun getMemo(position: Int)= position
 
     override fun deleteMemo() {
 

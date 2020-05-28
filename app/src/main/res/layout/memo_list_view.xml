@@ -32,7 +32,8 @@
             android:layout_marginTop="10dp"
             android:layout_below="@id/memo_title"
             android:textStyle="bold"
-            android:textSize="20dp"/>
+            android:textSize="20dp"
+            android:maxLines="6"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
