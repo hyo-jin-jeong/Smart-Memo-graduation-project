@@ -11,7 +11,7 @@ class DeviceBootAlarmReceiver : BroadcastReceiver() { //재부팅후에도 알�
     // 부팅이 끝나면 alarm reset
     override fun onReceive(context: Context?, intent: Intent?) {
         val alarmIntent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(context, 2, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val manager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 

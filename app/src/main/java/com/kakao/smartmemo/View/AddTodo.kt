@@ -145,14 +145,36 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         //시간알림 반복시간 설정
         timeSpinner.adapter = ringingAdapter
         timeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {  }
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                var settingsMinute = calendar.get(Calendar.MINUTE) //원래 알람 설정시간
+                if(position == 1) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+1)
+                } else if( position == 2) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+3)
+                } else if( position == 3) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+5)
+                } else if( position == 4) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+10)
+                }
+            }
             override fun onNothingSelected(parent: AdapterView<*>?) {   }
         }
 
         //장소 알림 반복시간 설정
         placeSpinner.adapter = ringingAdapter
         placeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {  }
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                var settingsMinute = calendar.get(Calendar.MINUTE) //원래 알람 설정시간
+                if(position == 1) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+1)
+                } else if( position == 2) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+3)
+                } else if( position == 3) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+5)
+                } else if( position == 4) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+10)
+                }
+            }
             override fun onNothingSelected(parent: AdapterView<*>?) {   }
         }
 
@@ -202,6 +224,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                     = TodoData(titleEdit.text.toString(), groupName, groupId, "time"+System.currentTimeMillis(), timeSwitch.isChecked, "", timeDateText.text.toString(), timeText.text.toString(), "",
             "place"+System.currentTimeMillis(), placeSwitch.isChecked, placeDateText.text.toString(), "", "한성대학교", 0.0, 0.0)
             presenter.addTodo(todoData)
+            setTimeAlarm(calendar)
             finish()
         }
     }
