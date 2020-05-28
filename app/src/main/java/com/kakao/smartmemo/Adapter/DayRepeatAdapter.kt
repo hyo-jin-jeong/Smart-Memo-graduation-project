@@ -1,6 +1,9 @@
 package com.kakao.smartmemo.com.kakao.smartmemo.Adapter
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +18,7 @@ import kotlinx.android.synthetic.main.repeat_day_item.view.*
 
 class DayRepeatAdapter(val context: Context, val dayList: MutableList<DayData>): RecyclerView.Adapter<DayRepeatAdapter.ViewHolder>(), TodoDateAdapterContract.View, TodoDateAdapterContract.Model{
 
+    var DateList = arrayListOf<CharSequence>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
 
     override fun getItemCount(): Int = dayList.size
@@ -27,7 +31,7 @@ class DayRepeatAdapter(val context: Context, val dayList: MutableList<DayData>):
         }
 
         holder.day_btn.setOnClickListener(View.OnClickListener {
-            //it.btn_day_repeat
+            DateList.add(it.btn_day_repeat.text)
             Toast.makeText(context, holder.day_btn.text, Toast.LENGTH_SHORT).show()
 
         })
@@ -45,6 +49,8 @@ class DayRepeatAdapter(val context: Context, val dayList: MutableList<DayData>):
     override fun addRepeatDay() {
 
     }
-
+    fun selectDate() : ArrayList<CharSequence>{
+        return DateList
+    }
 
 }
