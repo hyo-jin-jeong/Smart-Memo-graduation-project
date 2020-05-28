@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -26,13 +27,11 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
     private lateinit var selectGroupBtn : Button
     private lateinit var groupName : TextView
     private lateinit var placeNameText : TextView
-
     private var groupId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_memo)
-
         //Toolbar 달기
         memoToolbar = findViewById<Toolbar>(R.id.addMemoToolbar)
         setSupportActionBar(memoToolbar)
@@ -53,13 +52,13 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         val date = Date(System.currentTimeMillis())
         val formatDate = SimpleDateFormat("yyyy.MM.dd")
         var today = formatDate.format(date)
-
+        var memoData :MemoData
         dateText.text = today
         saveBtn.setOnClickListener {
-                val memoData = MemoData(titleEdit.text.toString(),today,contentEdit.text.toString(),groupName.text.toString(),groupId,placeNameText.text.toString(),0.0,0.0)
+            memoData = MemoData(titleEdit.text.toString(),today,contentEdit.text.toString(),groupName.text.toString(),
+                groupId,0,placeNameText.text.toString(),0.0,0.0)
                 presenter.addMemo(memoData)
-                val intent = Intent(applicationContext, ShowMemo::class.java)
-                startActivity(intent)
+                finish()
         }
         selectGroupBtn.setOnClickListener {
             selectGroup()

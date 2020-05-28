@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.Model
 
 import android.app.Activity
+import android.graphics.Color
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -67,12 +68,12 @@ class UserModel {
     }
 
     fun addFirestoreUser() {
-        var groupId = UserObject.email + System.currentTimeMillis()
+        val groupId = UserObject.email + System.currentTimeMillis()
         firestore.collection("User").document("${UserObject.email}").set(UserObject)
         firestore.collection("User").document("${UserObject.email}")
-            .collection("GroupInfo").document("GroupId").set(hashMapOf((groupId) to "내메모"))
-        firestore.collection("Group").document("$groupId").set(hashMapOf("group_name" to "내메모","group_color" to 0))
-        firestore.collection("Group").document("$groupId").collection("MemberInfo").document("MemberEmail").set(
+            .collection("GroupInfo").document("GroupId").set(hashMapOf(groupId to "내메모"))
+        firestore.collection("Group").document(groupId).set(hashMapOf("group_name" to "내메모","group_color" to -1234))
+        firestore.collection("Group").document(groupId).collection("MemberInfo").document("MemberEmail").set(
             hashMapOf(UserObject.email to UserObject.email), SetOptions.merge())
     }
 

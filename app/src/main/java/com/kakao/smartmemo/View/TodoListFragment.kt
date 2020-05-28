@@ -49,6 +49,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         setHasOptionsMenu(true)
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

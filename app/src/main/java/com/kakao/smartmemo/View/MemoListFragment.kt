@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -20,7 +21,7 @@ import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Presenter.MemoPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
-import java.security.acl.Group
+import java.text.FieldPosition
 
 class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var presenter: MemoPresenter
@@ -28,10 +29,16 @@ class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var memoAdapter: MemoListAdapter
     private lateinit var memoDeleteAdapter: MemoListDeleteAdapter
     private lateinit var bottomnavigationview : BottomNavigationView
+    private lateinit var memoList:MutableList<MemoData>
     private var count = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+    }
+    override fun onStart() {
+        super.onStart()
+        presenter.getMemo()
+
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,19 +48,10 @@ class MemoListFragment : Fragment(), MemoContract.View {
         val view = inflater.inflate(R.layout.memo_list_fragment, container, false)
 
         presenter = MemoPresenter(this)
-        presenter.getMemo()
 
         recyclerView1 = view.findViewById(R.id.rv_memo_list!!)as RecyclerView
         bottomnavigationview = view.findViewById(R.id.navigationview_bottom)
-        memoAdapter =  MemoListAdapter()
-        memoDeleteAdapter = MemoListDeleteAdapter()
-
-        recyclerView1.adapter = memoAdapter
-
-        presenter.setMemoAdapterModel(memoAdapter)
-        presenter.setMemoAdapterView(memoAdapter)
-        recyclerView1.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-
+        presenter.getMemo()
         //하단 메뉴
         bottomnavigationview.setOnNavigationItemSelectedListener {
             when (it.itemId) {
@@ -61,26 +59,18 @@ class MemoListFragment : Fragment(), MemoContract.View {
                     true
                 }
                 R.id.cancelItem -> {
-                    bottomnavigationview.visibility = View.GONE //하단메뉴 안보이게
-                    recyclerView1.adapter = memoAdapter
+                    showAllMemo(memoList)
                     true
                 }
             }
             true
         }
 
-        bottomnavigationview.visibility = View.GONE; //하단메뉴 안보이게
         return view
-    }
-    override fun showMemoItem(memoData: MemoData) {
-        var intent = Intent(view?.context, ShowMemo::class.java)
-        intent.putExtra("todo_id",memoData.title)
-        startActivity(intent)
     }
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
         (activity as MainActivity).toolbar.title="Memo List"
-
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_group_in_list, menu)
     }
@@ -98,7 +88,8 @@ class MemoListFragment : Fragment(), MemoContract.View {
             R.id.delete_memo ->{
                 count++
                 if(count%2 == 0 ) {
-                    showMemo()
+                    showAllMemo(memoList)
+                    count = 0
                 } else {
                     deleteMemo()
                 }
@@ -107,6 +98,34 @@ class MemoListFragment : Fragment(), MemoContract.View {
             else ->
                 super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun showMemoItem(position: Int) {
+        var intent = Intent(view?.context, ShowMemo::class.java)
+        intent.putExtra("memoData",memoList[position])
+        startActivity(intent)
+    }
+
+    override fun showAllMemo(memoList:MutableList<MemoData>) {
+        count =0
+        this.memoList = memoList
+        memoAdapter =  MemoListAdapter(memoList)
+        recyclerView1.adapter = memoAdapter
+        presenter.setMemoAdapterModel(memoAdapter)
+        presenter.setMemoAdapterView(memoAdapter)
+        recyclerView1.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        bottomnavigationview.visibility = View.INVISIBLE
+        memoAdapter.notifyAdapter()
+
+    }
+
+    private fun deleteMemo(){
+        memoDeleteAdapter = MemoListDeleteAdapter(memoList)
+        recyclerView1.adapter = memoDeleteAdapter
+        presenter.setMemoDeleteAdapterModel(memoDeleteAdapter)
+        presenter.setMemoDeleteAdapterView(memoDeleteAdapter)
+        recyclerView1.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        bottomnavigationview.visibility = View.VISIBLE
     }
 
     private fun selectGroup(){
@@ -129,18 +148,8 @@ class MemoListFragment : Fragment(), MemoContract.View {
             })
             .show()
     }
-    private fun showMemo() {
-        recyclerView1.adapter = memoAdapter
-        presenter.setMemoAdapterModel(memoAdapter)
-        presenter.setMemoAdapterView(memoAdapter)
-        bottomnavigationview.visibility = View.GONE; //하단메뉴 안보이게
-    }
-    private fun deleteMemo(){
-        recyclerView1.adapter = memoDeleteAdapter
-        presenter.setMemoDeleteAdapterModel(memoDeleteAdapter)
-        presenter.setMemoDeleteAdapterView(memoDeleteAdapter)
-        bottomnavigationview.visibility = View.VISIBLE
-    }
+
+
 
 
 

@@ -83,6 +83,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
     override fun onDialogDismissed(dialogId: Int) {  }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
+        this.color = color
         themeColor.setBackgroundColor(color)
     }
 

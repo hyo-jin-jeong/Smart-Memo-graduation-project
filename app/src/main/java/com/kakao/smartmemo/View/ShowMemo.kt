@@ -3,31 +3,48 @@ package com.kakao.smartmemo.View
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.kakao.smartmemo.Contract.ShowMemoContract
+import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.Presenter.ShowMemoPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_show_memo.*
 
 class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
     private lateinit var presenter: ShowMemoPresenter
-
+    private lateinit var memoToolbar : Toolbar
+    private lateinit var titleText : TextView
+    private lateinit var contentText : TextView
+    private lateinit var placeText : TextView
+    private lateinit var dateText : TextView
+    private lateinit var memoData : MemoData
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_memo)
 
         presenter = ShowMemoPresenter(this)
+        memoToolbar = findViewById(R.id.show_memo_toolbar)
+        titleText = findViewById(R.id.show_title)
+        contentText = findViewById(R.id.show_content)
+        placeText = findViewById(R.id.location_name)
+        dateText = findViewById(R.id.memo_date)
+        if(intent.hasExtra("memoData")){
+            memoData = intent.getParcelableExtra("memoData")
+            memoToolbar.title = memoData.groupName
+            titleText.text = memoData.title
+            contentText.text = memoData.content
+            placeText.text = memoData.placeName
+            dateText.text = memoData.date
+        }
 
-        val memoToolbar = findViewById<Toolbar>(R.id.showMemoToolbar)
-        memoToolbar.title = resources.getString(R.string.nav_my_memo)
+
+
         setSupportActionBar(memoToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        writing_location.text = intent.getStringExtra("date")
-        show_title.text = intent.getStringExtra("title")
-        show_content.text = intent.getStringExtra("content")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
