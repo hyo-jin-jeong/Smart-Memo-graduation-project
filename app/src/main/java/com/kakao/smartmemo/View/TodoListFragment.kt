@@ -69,7 +69,10 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
 
-        //setTodoAlarm(todoCalendar)
+        todoCalendar.set(Calendar.HOUR_OF_DAY, 0)
+        todoCalendar.set(Calendar.MINUTE, 39)
+        todoCalendar.set(Calendar.SECOND, 0)
+        setTodoAlarm(todoCalendar)
 
         todolist.isClickable = true
         todolist.setOnItemClickListener { parent, view, position, id ->
@@ -84,9 +87,13 @@ class TodoListFragment : Fragment(), TodoContract.View {
             when (it.itemId) {
                 R.id.removeItem -> {
                     var count = deleteAdapter.count
-                    var checkedItems = todolist.checkedItemPositions
+                    var checkedItems = deleteAdapter.selectedTodo()
                     for( i in count-1 downTo 0) {
-                        deleteAdapter.deleteTodo(i)
+                        for (j in checkedItems) {
+                            if(i == j) {
+                                todoArrayList.removeAt(i)
+                            }
+                        }
                     }
                     todolist.clearChoices()
                     adapter.notifyAdapter()
