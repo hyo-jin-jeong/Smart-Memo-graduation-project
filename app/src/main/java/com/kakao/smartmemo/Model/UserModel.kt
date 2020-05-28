@@ -104,6 +104,10 @@ class UserModel {
                     kakao_connected = false
                     kakao_alarm_time = ""
                 }
+                with(GroupObject) {
+                    this.groupInfo.clear()
+                }
+                auth.signOut()
             }
         }
         }
@@ -111,19 +115,19 @@ class UserModel {
 
     fun checkUser(context: Activity, email:String, password:String) { // 유효한 사용자인지 FirebaseAuth를 사용하여 확인
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context){task ->
-                if(task.isSuccessful){
-                    auth.currentUser
-                    UserObject.email = email
-                    firestore.collection("User").document("${UserObject.email}")
-                        .collection("GroupInfo").document("GroupId").addSnapshotListener { documentSnapshot, _ ->
-                            documentSnapshot?.data?.forEach {
-                                   GroupObject.groupInfo[it.key] = it.value.toString()
-                            }
+            if(task.isSuccessful){
+                auth.currentUser
+                UserObject.email = email
+                firestore.collection("User").document("${UserObject.email}")
+                    .collection("GroupInfo").document("GroupId").addSnapshotListener { documentSnapshot, _ ->
+                        documentSnapshot?.data?.forEach {
+                            GroupObject.groupInfo[it.key] = it.value.toString()
                         }
-                    onLoginListener.onSuccess(task.result.toString())
-                } else {
-                    onLoginListener.onFailure(task.exception.toString())
-                }
+                    }
+                onLoginListener.onSuccess(task.result.toString())
+            } else {
+                onLoginListener.onFailure(task.exception.toString())
+            }
         }
     }
 
