@@ -1,5 +1,6 @@
 package com.kakao.smartmemo.View
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -55,14 +56,15 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
 
     // 뒤로가기 버튼 누르면 이전 액티비티로 돌아가는 것을 판단해주는 함수
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        when (id) {
+        when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true
             }
             R.id.action_modification -> {
-                Toast.makeText(applicationContext, "수정하기", Toast.LENGTH_SHORT).show()
+                var intent = Intent(this,AddGroup::class.java)
+                intent.putExtra("memoData",memoData)
+                startActivity(intent)
                 return true
             }
             R.id.action_deletion -> {

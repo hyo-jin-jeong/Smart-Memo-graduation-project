@@ -15,7 +15,6 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.kakao.smartmemo.Presenter.AddGroupPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Contract.AddGroupContract
-import kotlinx.android.synthetic.main.content_add_group.*
 
 class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
 

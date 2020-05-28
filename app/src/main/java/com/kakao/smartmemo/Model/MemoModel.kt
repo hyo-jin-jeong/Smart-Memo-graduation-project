@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.Model
 
-import android.graphics.Color
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.kakao.smartmemo.Contract.MemoContract
