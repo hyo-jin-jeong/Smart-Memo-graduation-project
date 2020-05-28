@@ -26,7 +26,6 @@ class TodoModel {
                         snapShot.reference.collection("TodoInfo").document("todoId").addSnapshotListener { documentSnapshot, _ ->
                             documentSnapshot?.data?.forEach { data ->
                                 todoPath.document(data.key).addSnapshotListener { todoSnapshot, _ ->
-
                                     todoSnapshot?.reference?.collection("TimeAlarm")?.addSnapshotListener{ timeAlarmIdSnapshot, _ ->
                                         var title = todoSnapshot?.get("title").toString()
                                         timeAlarmIdSnapshot?.forEach { timeSnapshot ->
@@ -39,11 +38,11 @@ class TodoModel {
                                                             timeSnapshot?.get("timeDay").toString(),
                                                             timeSnapshot?.get("timeDate").toString(),
                                                             timeSnapshot?.get("timeTime").toString(),
-                                                            timeSnapshot?.get("timeAgain").toString(),
+                                                            timeSnapshot?.get("timeAgain").toString().toInt(),
                                                             placeSnapshot.id,
                                                             placeSnapshot.get("setPlaceAlarm").toString().toBoolean(),
                                                             placeSnapshot.get("placeDate").toString(),
-                                                            placeSnapshot.get("placeAgain").toString(),
+                                                            placeSnapshot.get("placeAgain").toString().toInt(),
                                                             placeInfoSnapshot?.get("placeName").toString(),
                                                             placeInfoSnapshot?.get("latitude").toString().toDouble(),
                                                             placeInfoSnapshot?.get("longitude").toString().toDouble()
@@ -68,7 +67,7 @@ class TodoModel {
         todoPath.document("${todoId}").set(hashMapOf("title" to todoData.title, "groupName" to todoData.groupName), SetOptions.merge())
         todoPath.document("${todoId}").collection("TimeAlarm").document("${todoData.timeAlarmId}")
             .set(hashMapOf("setTimeAlarm" to todoData.setTimeAlarm, "timeDay" to todoData.timeDay, "timeDate" to todoData.timeDate, "timeTime" to todoData.timeTime
-            , "timeAgain" to todoData.timeAgain), SetOptions.merge())
+                , "timeAgain" to todoData.timeAgain), SetOptions.merge())
         todoPath.document("${todoId}").collection("PlaceAlarm").document("${todoData.placeAlarmId}")
             .set(hashMapOf("setPlaceAlarm" to todoData.setPlaceAlarm, "placeDate" to todoData.placeDate, "placeAgain" to todoData.placeAgain), SetOptions.merge())
         todoPath.document("${todoId}").collection("PlaceAlarm").document("${todoData.placeAlarmId}")
