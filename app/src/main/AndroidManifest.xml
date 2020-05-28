@@ -73,7 +73,7 @@
         <receiver android:name=".Receiver.DeviceBootTodoReceiver"
             android:enabled="false">
             <intent-filter>
-                <action android:name="android.intent.action.REBOOT"/>
+                <action android:name="android.intent.action.BATTERY_CHANGED"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".Receiver.AlarmReceiver">
@@ -112,12 +112,6 @@
             android:label="그룹 설정"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity
-            android:name=".View.AllTodoSettingActivity"
-            android:label="TODO 장소 알람 설정"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
     </application>
 
 </manifest>

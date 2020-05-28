@@ -22,7 +22,7 @@ class TodoReceiver : BroadcastReceiver(){
         val notificationIntent = Intent(context, TodoListActivity::class.java)
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
-        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(context, 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val notificationbuilder  = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
@@ -38,7 +38,6 @@ class TodoReceiver : BroadcastReceiver(){
 
         //헤드업알림
         val contentview = RemoteViews(context.packageName, R.layout.todolist_headup_alarm)
-        Log.v("seyuuuun", context.packageName.toString())
         contentview.setTextViewText(R.id.notification_Title, "Todolist")
         contentview.setTextViewText(R.id.todolist_textView, "1. 영양제 먹기")
         contentview.setTextViewText(R.id.todolist_location, "● 삼성약국/녹십자약국/온누리약국")
@@ -56,7 +55,8 @@ class TodoReceiver : BroadcastReceiver(){
             notificationManager.createNotificationChannel(serviceChannel)
         }
 
-        notificationManager?.notify(0, notificationbuilder.build())
+        notificationManager?.notify(9999, notificationbuilder.build())
+        Log.v("seyuuuun", "Receivcer동작!!!! in TodoReceiver")
     }
 
     companion object {

@@ -27,7 +27,7 @@ class DayRepeatAdapter(val context: Context, val dayList: MutableList<DayData>):
         }
 
         holder.day_btn.setOnClickListener(View.OnClickListener {
-            Toast.makeText(context, holder.day_btn.text, Toast.LENGTH_SHORT).show()
+            it.btn_day_repeat
 
         })
     }

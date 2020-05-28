@@ -31,7 +31,7 @@ class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(), AlarmAdapt
     fun initData() {
         //여기다 임의로 data 넣어줬습니다. 이것을 수정해서 DB 연결해주세용
         placeData = mutableListOf(PlaceAlarmData("한성대학교", "2020.03.14", "도서관 책 "), PlaceAlarmData("녹십자약국", "2020.03.15", "마스크 사기"))
-        timeData = mutableListOf(TimeAlarmData("오전 9:00", "월요일 마다", "약 먹기"))
+        timeData = mutableListOf(TimeAlarmData("오전 9:00", "월요일", "약 먹기"), TimeAlarmData("오후 2:00", "목요일", "학교 가기"))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

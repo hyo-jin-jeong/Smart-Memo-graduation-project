@@ -49,9 +49,12 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
     private lateinit var placeSpinner : Spinner
     private lateinit var textview_Time: TextView
     private lateinit var savebtn : Button
+    private lateinit var editTextTodo : EditText
     private val calendar = Calendar.getInstance()
     var notify_time = false
     val date = LocalDateTime.now()
+    private var currentTime = System.currentTimeMillis() //현재시간
+    private var settingTime : Long = 0
 
     private var placeList = arrayListOf<PlaceData>(PlaceData("연세병원"))
     private var dayList = mutableListOf<DayData>(DayData("월"), DayData("화"), DayData("수"), DayData("목"), DayData("금"), DayData("토"), DayData("일"))
@@ -64,6 +67,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
 
         var ringingAdapter = ArrayAdapter.createFromResource(applicationContext,
             R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
+        editTextTodo = edit_todolist
         val todostub_time = stub_alarm_time
         val view_time = todostub_time.inflate()
         todostub_time.visibility = GONE
@@ -97,7 +101,6 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
 
         placebtn = view_location.findViewById(R.id.btn_place_choice) //장소선택 버튼
         placelistview = view_location.findViewById(R.id.listview_place) //장소선택시 나오는 listview
-        
 
         dateSettingInTime.setOnClickListener { //시간 날짜 설정
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
@@ -123,7 +126,16 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         timeSpinner.adapter = ringingAdapter
         timeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-
+                var settingsMinute = calendar.get(Calendar.MINUTE) //원래 알람 설정시간
+                if(position == 1) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+1)
+                } else if( position == 2) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+3)
+                } else if( position == 3) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+5)
+                } else if( position == 4) {
+                    calendar.set(Calendar.MINUTE, settingsMinute+10)
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {   }
@@ -182,6 +194,8 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
 
         savebtn = this.findViewById(R.id.saveTodoAlarmButton)
         savebtn.setOnClickListener(View.OnClickListener {
+            editTextTodo.text // editText값 Todo컬랙션에 값 저장해야함.
+            setTimeAlarm(calendar)
             finish()
         })
     }
@@ -225,7 +239,11 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
             calendar.set(Calendar.MINUTE, minute)
             calendar.set(Calendar.SECOND, 0)
-            setTimeAlarm(calendar)
+            settingTime = calendar.timeInMillis //설정한 시간
+            val interval = 1000*60*60*24 //하루 시간을 나타냄.
+
+            if(currentTime>settingTime) //설정한 시간이 현재시간 보다 작다면
+                settingTime += interval
         }
         val dialog = TimePickerDialog(this,listener,12,0,false)
         dialog.show()
@@ -235,12 +253,12 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
         val pm = this.packageManager
         val receiver = ComponentName(this, DeviceBootAlarmReceiver::class.java)
         val alarmIntent = Intent(this, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(this, 2, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         if(notify_time) { //알람을 허용했다면
             if(alarmManager != null) {
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, settingTime, AlarmManager.INTERVAL_DAY, pendingIntent)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
@@ -250,7 +268,7 @@ class TodoListActivity : AppCompatActivity(), TodoSettingContract.View {
                 pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP)
             }
             else { // 알람을 허용하지 않았다면
-                if(PendingIntent.getBroadcast(this, 0, alarmIntent, 0)!=null && alarmManager!=null) {
+                if(PendingIntent.getBroadcast(this, 2, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {
                     alarmManager.cancel(pendingIntent)
                 }
                 pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
