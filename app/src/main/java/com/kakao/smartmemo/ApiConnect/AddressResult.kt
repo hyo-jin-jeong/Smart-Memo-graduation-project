@@ -4,17 +4,16 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import java.util.*
+import java.util.ArrayList
 
-
-class CategoryResult : Parcelable {
+class AddressResult : Parcelable {
     @SerializedName("meta")
     @Expose
     private var meta: Meta? = null
 
     @SerializedName("documents")
     @Expose
-    private var documents: List<Document?>? = null
+    private var documents: List<DocumentAddress?>? = null
     fun getMeta(): Meta? {
         return meta
     }
@@ -23,11 +22,11 @@ class CategoryResult : Parcelable {
         this.meta = meta
     }
 
-    fun getDocuments(): List<Document?>? {
+    fun getDocuments(): List<DocumentAddress?>? {
         return documents
     }
 
-    fun setDocuments(documents: List<Document?>?) {
+    fun setDocuments(documents: List<DocumentAddress?>?) {
         this.documents = documents
     }
 
@@ -42,18 +41,18 @@ class CategoryResult : Parcelable {
 
     constructor(parcel: Parcel) {
         meta = parcel.readParcelable(Meta::class.java.classLoader)
-        documents = ArrayList<Document?>()
-        parcel.readList(documents, Document::class.java.classLoader)
+        documents = ArrayList<DocumentAddress?>()
+        parcel.readList(documents, DocumentAddress::class.java.classLoader)
     }
 
     companion object {
-        val CREATOR: Parcelable.Creator<CategoryResult?> =
-            object : Parcelable.Creator<CategoryResult?> {
-                override fun createFromParcel(source: Parcel): CategoryResult? {
-                    return CategoryResult(source)
+        val CREATOR: Parcelable.Creator<AddressResult?> =
+            object : Parcelable.Creator<AddressResult?> {
+                override fun createFromParcel(source: Parcel): AddressResult? {
+                    return AddressResult(source)
                 }
 
-                override fun newArray(size: Int): Array<CategoryResult?> {
+                override fun newArray(size: Int): Array<AddressResult?> {
                     return arrayOfNulls(size)
                 }
             }
