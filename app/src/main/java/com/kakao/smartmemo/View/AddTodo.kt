@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.widget.*
@@ -63,6 +64,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     private lateinit var daylistview: RecyclerView
     private lateinit var savebtn : Button
     private val calendar = Calendar.getInstance()
+    private val placeCalendar = Calendar.getInstance()
     private var notifyTime = false
     val date: LocalDateTime = LocalDateTime.now()
 
@@ -164,15 +166,15 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         placeSpinner.adapter = ringingAdapter
         placeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                var settingsMinute = calendar.get(Calendar.MINUTE) //원래 알람 설정시간
+                var settingsMinute = placeCalendar.get(Calendar.MINUTE) //원래 알람 설정 시간
                 if(position == 1) {
-                    calendar.set(Calendar.MINUTE, settingsMinute+1)
+                    placeCalendar.set(Calendar.MINUTE, settingsMinute+1)
                 } else if( position == 2) {
-                    calendar.set(Calendar.MINUTE, settingsMinute+3)
+                    placeCalendar.set(Calendar.MINUTE, settingsMinute+3)
                 } else if( position == 3) {
-                    calendar.set(Calendar.MINUTE, settingsMinute+5)
+                    placeCalendar.set(Calendar.MINUTE, settingsMinute+5)
                 } else if( position == 4) {
-                    calendar.set(Calendar.MINUTE, settingsMinute+10)
+                    placeCalendar.set(Calendar.MINUTE, settingsMinute+10)
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {   }
@@ -199,6 +201,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         presenter.setTodoDateAdapterModel(dateAdapter)
         daylistview.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false) //가로 recyclerview
         daylistview.scrollToPosition(0)  //recyclerview position 맨앞으로
+        val DateList = dateAdapter.selectDate()
+
+       /* for (i in 0.. DateList.size) { //size=0인 오류남.
+            Log.v("seyuuuun", "DateList:" + DateList.get(i).toString())
+        }*/
 
         placeSwitch.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
@@ -266,6 +273,13 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
             calendar.set(Calendar.MINUTE, minute)
             calendar.set(Calendar.SECOND, 0)
+            var settingTime = calendar.timeInMillis
+            val currentTime = System.currentTimeMillis()
+            val interval = AlarmManager.INTERVAL_DAY
+
+            if(currentTime > settingTime) {
+                calendar.timeInMillis += interval
+            }
             setTimeAlarm(calendar)
         }
         val dialog = TimePickerDialog(this,listener,12,0,false)
@@ -295,6 +309,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     }
 
     private fun setTimeAlarm(calendar: Calendar) {
+
+
         val pm = this.packageManager
         val receiver = ComponentName(this, DeviceBootAlarmReceiver::class.java)
         val alarmIntent = Intent(this, AlarmReceiver::class.java)
