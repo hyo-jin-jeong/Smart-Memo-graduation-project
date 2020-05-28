@@ -1,5 +1,6 @@
 package com.kakao.smartmemo.View
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
+import kotlinx.android.synthetic.main.todo_list_item.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View {
     lateinit var presenter : MainContract.Presenter
@@ -129,6 +131,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private fun getGroupInfo(){
         presenter.getGroupInfo()
     }
+    @SuppressLint("ResourceType")
     override fun setNavigationView(groupInfoList: HashMap<String, Long>){ // call back func
             groupMap = groupInfoList
             var i = 1

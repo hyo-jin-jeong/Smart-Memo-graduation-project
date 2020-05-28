@@ -93,6 +93,7 @@
             android:layout_height="match_parent"
             android:background="@null"
             android:scaleType="fitCenter"
+            android:clickable="false"
             app:layout_constraintRight_toRightOf="parent"
             app:srcCompat="@drawable/triangle"
             tools:ignore="MissingConstraints" />

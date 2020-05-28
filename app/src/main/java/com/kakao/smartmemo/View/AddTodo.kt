@@ -60,7 +60,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     // private lateinit var placeNames : String -> 선택한 장소 이름
     private lateinit var timebtn: ImageButton
     private lateinit var placebtn: ImageButton
-    private lateinit var placelistview : ListView
+    private lateinit var placeLayout : ConstraintLayout
+    private lateinit var placeListView : ListView
     private lateinit var daylistview: RecyclerView
     private lateinit var savebtn : Button
     private val timeCalendar = Calendar.getInstance()
@@ -105,9 +106,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
         viewLocation = todoStubLocation.inflate()
         todoStubLocation.visibility = GONE
-        placeSpinner = viewLocation.findViewById(R.id.repeat_place_spinner)
         placeDateLayout = viewLocation.findViewById(R.id.place_date_layout) as ConstraintLayout
+        placeLayout = viewLocation.findViewById(R.id.place_layout)
         placeDateText = viewLocation.findViewById<TextView>(R.id.place_date_text)
+        placeSpinner = viewLocation.findViewById(R.id.repeat_place_spinner)
         placeAgainText = viewLocation.findViewById(R.id.ring_again_place)
 
         dayList = mutableListOf(DayData("월"), DayData("화"), DayData("수"), DayData("목"), DayData("금"), DayData("토"), DayData("일"))
@@ -125,7 +127,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         daylistview = viewTime.findViewById(R.id.listview_day_repeat)  //요일반복 나오는 recyclerview
 
         placebtn = viewLocation.findViewById(R.id.btn_place_choice) //장소선택 버튼
-        placelistview = viewLocation.findViewById(R.id.listview_place) //장소선택시 나오는 listview
+        placeListView = viewLocation.findViewById(R.id.listview_place) //장소선택시 나오는 listview
 
         timeDateLayout.setOnClickListener { //시간 날짜 설정
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
@@ -210,7 +212,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         placeSwitch.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
                 todoStubLocation.visibility = VISIBLE
-                placebtn.setOnClickListener(View.OnClickListener {
+                placeLayout.setOnClickListener(View.OnClickListener {
                     val placechoiceIntent = Intent(it.context, MainActivity::class.java)
                     this.startActivity(placechoiceIntent)
                 })
@@ -221,7 +223,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
         //장소선택시 나오는 listview 어댑터
         var placeListAdapter = PlaceListAdapter(this, placeList)
-        placelistview.adapter = placeListAdapter
+        placeListView.adapter = placeListAdapter
         presenter.setTodoPlaceAdapterModel(placeListAdapter)
         presenter.setTodoPlaceAdapterView(placeListAdapter)
 
@@ -238,6 +240,15 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             placeAgainText.text = placeSpinner.selectedItem.toString()
         } else {
             savebtn.setOnClickListener {
+                if(!timeSwitch.isChecked){
+                    timeDateText.text = ""
+                    timeText.text = ""
+                    settingsTimeMinutes = 0
+                }
+                else if(!placeSwitch.isChecked){
+                    placeDateText.text = ""
+                    settingsPlaceMinute = 0
+                }
                 var todoData
                         = TodoData(titleEdit.text.toString(), groupName, groupId, 0,"time"+System.currentTimeMillis(), timeSwitch.isChecked, "", timeDateText.text.toString(), timeText.text.toString(), settingsTimeMinutes,
                     "place"+System.currentTimeMillis(), placeSwitch.isChecked, placeDateText.text.toString(), settingsPlaceMinute, "한성대학교", 0.0, 0.0)

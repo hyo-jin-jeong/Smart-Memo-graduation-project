@@ -1,8 +1,5 @@
 package com.kakao.smartmemo.Adapter
 
-import android.content.Context
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -24,6 +21,7 @@ class MemoListAdapter(private val memoList: MutableList<MemoData>) : RecyclerVie
     override fun onBindViewHolder(holer: MainViewHolder, position: Int) {
         memoList[position].let { item ->
             with(holer) {
+                groupName.text = item.groupName
                 memoTitle.text = item.title
                 memoContent.text = item.content
                 memoDate.text = item.date
@@ -43,6 +41,7 @@ class MemoListAdapter(private val memoList: MutableList<MemoData>) : RecyclerVie
         val memoContent: TextView = itemView.memo_content
         val memoDate: TextView = itemView.memo_date
         val memoBackground: CardView = itemView.memo_list_view
+        val groupName : TextView = itemView.group_name
     }
 
 
