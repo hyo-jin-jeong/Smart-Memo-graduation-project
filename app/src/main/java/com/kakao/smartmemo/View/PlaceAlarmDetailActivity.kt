@@ -218,6 +218,7 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
         allMapItemShow()
         if (isUp) {
+            saveButton.visibility = Button.VISIBLE
             listLayout.visibility = View.INVISIBLE
             listLayout.startAnimation(translateDown)
             isUp = false
@@ -235,6 +236,7 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         mapPOIItem = createMarker("longitude=$longitude latitude=$latitude", p1!!, R.drawable.cur_location_icon)
         mapView.addPOIItem(mapPOIItem)
         if(!isUp) {
+            saveButton.visibility = Button.INVISIBLE
             listLayout.visibility = View.VISIBLE
             listLayout.startAnimation(translateUp)
             isUp = true
@@ -281,6 +283,7 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
 
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
         if(!isUp) {
+            saveButton.visibility = Button.INVISIBLE
             listLayout.visibility = View.VISIBLE
             listLayout.startAnimation(translateUp)
             isUp = true

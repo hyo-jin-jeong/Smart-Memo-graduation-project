@@ -1,6 +1,6 @@
 package com.kakao.smartmemo.Contract
 
-interface LocaionListAdapterContract {
+interface LocationListAdapterContract {
     interface Model {
 
     }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.ApiConnect.BusProvider
 import com.kakao.smartmemo.ApiConnect.Document
 import com.kakao.smartmemo.R
 
@@ -62,7 +63,7 @@ class LocationAdapter(
             //searchView의 text는 바꾸되 query를 전송하지는 X
             searchView.setQuery(model.placeName, false)
             recyclerView.visibility = View.GONE
-            //BusProvider.getInstance().post(model)
+            BusProvider().getInstance().post(model)
         }
     }
 
