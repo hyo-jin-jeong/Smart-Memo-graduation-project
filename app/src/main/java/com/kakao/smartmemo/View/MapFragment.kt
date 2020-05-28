@@ -22,6 +22,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.Adapter.LocationAdapter
 import com.kakao.smartmemo.ApiConnect.*
 import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Presenter.MapPresenter
@@ -32,7 +36,6 @@ import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapReverseGeoCoder
 import net.daum.mf.map.api.MapView
-import org.jetbrains.annotations.NotNull
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -43,11 +46,15 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     MapView.OpenAPIKeyAuthenticationResultListener {
     private lateinit var presenter: MapPresenter
 
-    lateinit var mapView: MapView
-    lateinit var mapViewContainer: ViewGroup
+    private lateinit var mapView: MapView
+    private lateinit var mapViewContainer: ViewGroup
     private var usingMapView = false
 
-    private var documentArrayList: ArrayList<Document> = ArrayList()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var locationAdapter: LocationAdapter
+
+    private var documentList: ArrayList<Document> = ArrayList()
+    private var bus = BusProvider().getInstance()
 
     private var isLongTouch: Boolean = false
     private var curLocationMarker: MapPOIItem = MapPOIItem()
@@ -58,10 +65,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     private val PERMISSIONS_REQUEST_CODE: Int = 100
     var REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
 
-    //private lateinit var searchQuery: String?
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        bus.register(this)
         setHasOptionsMenu(true)
     }
 
@@ -83,9 +89,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             val curLongitude = curLocation.longitude
             val curLatitude = curLocation.latitude
 
-
             //중심점 설정하는
-            mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(curLatitude, curLongitude), false)
+            mapView.setMapCenterPoint(
+                MapPoint.mapPointWithGeoCoord(curLatitude, curLongitude),
+                false
+            )
             mapViewContainer = view.map_view as ViewGroup
             mapViewContainer.addView(mapView)
         }
@@ -94,6 +102,20 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapView.setMapViewEventListener(this)
         mapView.setCurrentLocationEventListener(this)
         mapView.setOpenAPIKeyAuthenticationResultListener(this)
+
+        recyclerView = view.findViewById(R.id.map_recyclerview)
+        val layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) //레이아웃매니저 생성
+
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+        ) //아래구분선 세팅
+
+        recyclerView.layoutManager = layoutManager
+
 
         when {
             !checkLocationServicesStatus() -> {
@@ -107,7 +129,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onResume() {
         super.onResume()
-        if(!usingMapView) {
+        if (!usingMapView) {
             Log.i("jieun", "이거시 실행되었다.")
             mapView = MapView(view!!.context)
             mapViewContainer.addView(mapView)
@@ -125,6 +147,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapView.setShowCurrentLocationMarker(false)
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
         (activity as MainActivity).toolbar.title = resources.getString(R.string.tab_text_1)
@@ -134,47 +157,110 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         val searchItem: MenuItem? = menu.findItem(R.id.search)
         val searchView = searchItem!!.actionView as SearchView
-        searchView.setOnCloseListener { false }
 
+        locationAdapter = LocationAdapter(documentList, context!!, searchView, recyclerView)
+        recyclerView.adapter = locationAdapter
+
+        searchView.setOnCloseListener { false }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean { // do your logic here
-                //locationAdapter.clear()
-                //locationAdapter.notifyDataSetChanged()
-                val apiClient: ApiClient =
-                    ApiClient()
-                val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(
-                    ApiInterface::class.java)
-                val call: Call<CategoryResult?>? = apiInterface.getSearchLocation(
-                    getString(R.string.kakao_app_key),
-                    query,
-                    15
-                )
-                call!!.enqueue(object : Callback<CategoryResult?> {
-                    override fun onResponse(
-                        @NotNull call: Call<CategoryResult?>?,
-                        @NotNull response: Response<CategoryResult?>
-                    ) {
-                        if (response.isSuccessful) {
-                            assert(response.body() != null)
-                            for (document in response.body()?.getDocuments()!!) {
-                                //값을 넣는 부분임. locationAdapter가 리스트를 나타내는데 필요한 adapter 같음.
-                                //locationAdapter.addItem(document)
-                            }
-                            //locationAdapter.notifyDataSetChanged()
-                        }
-                    }
+//                documentList.clear()
+//                keywordLocationAdapter.clear()
+//                keywordLocationAdapter.notifyDataSetChanged()
+//                val apiClient: ApiClient =
+//                    ApiClient()
+//                val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(
+//                    ApiInterface::class.java
+//                )
+//                val call: Call<CategoryResult?>? = apiInterface.getSearchLocation(
+//                    getString(R.string.kakao_restapi_key),
+//                    query,
+//                    15
+//                )
+//                Log.i("jieun", "apiInterface와 call은 만들어졌음.")
+//                val callback: Callback<CategoryResult?> = object : Callback<CategoryResult?> {
+//                    //리스폰 시, 대응할 구현체
+//                    override fun onResponse(
+//                        call: Call<CategoryResult?>,
+//                        response: Response<CategoryResult?>
+//                    ) {
+//                        if (response.isSuccessful) { //check for Response status
+//                            //val result: CategoryResult? = response.body() //리스폰의 바디를 Result객체로 담아쥼.
+//                            Log.i("jieun", "여기 들어왔다능")
+//                            assert(response.body() != null)
+//                            for (document in response.body()?.getDocuments()!!) {
+//                                keywordLocationAdapter.addItem(document!!)
+//                            }
+//                            keywordLocationAdapter.notifyDataSetChanged()
+//                        } else {
+//                            val statusCode = response.code()
+//                            Log.i("jieun", "여기 들어왔다능 실패1 $statusCode")
+//                        }
+//                    }
+//
+//                    override fun onFailure(
+//                        call: Call<CategoryResult?>,
+//                        t: Throwable
+//                    ) {
+//                        Log.i("jieun", "여기 들어왔다능 실패2")
+//                    }
+//                }
+//                call!!.enqueue(callback)
 
-                    override fun onFailure(
-                        @NotNull call: Call<CategoryResult?>?,
-                        @NotNull t: Throwable?
-                    ) {
-                    }
-                })
+                recyclerView.visibility = View.GONE
                 Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText!!.isNotEmpty()) {
+                    documentList.clear()
+                    locationAdapter.clear()
+                    locationAdapter.notifyDataSetChanged()
+                    val apiClient: ApiClient =
+                        ApiClient()
+                    val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(
+                        ApiInterface::class.java
+                    )
+                    val callKeyword: Call<CategoryResult?>? = apiInterface.getSearchLocation(
+                        getString(R.string.kakao_restapi_key),
+                        newText,
+                        15
+                    )
+                    Log.i("jieun", "apiInterface와 call은 만들어졌음.")
+                    val callbackKeyword: Callback<CategoryResult?> = object : Callback<CategoryResult?> {
+                        //리스폰 시, 대응할 구현체
+                        override fun onResponse(
+                            call: Call<CategoryResult?>,
+                            response: Response<CategoryResult?>
+                        ) {
+                            if (response.isSuccessful) { //check for Response status
+                                //val result: CategoryResult? = response.body() //리스폰의 바디를 Result객체로 담아쥼.
+                                Log.i("jieun", "여기 들어왔다능")
+                                assert(response.body() != null)
+                                for (document in response.body()?.getDocuments()!!) {
+                                    locationAdapter.addItem(document!!)
+                                }
+                                locationAdapter.notifyDataSetChanged()
+                            } else {
+                                val statusCode = response.code()
+                                Log.i("jieun", "여기 들어왔다능 실패1 $statusCode")
+                            }
+                        }
+
+                        override fun onFailure(
+                            call: Call<CategoryResult?>,
+                            t: Throwable
+                        ) {
+                            Log.i("jieun", "여기 들어왔다능 실패2")
+                        }
+                    }
+                    callKeyword!!.enqueue(callbackKeyword)
+
+                    recyclerView.visibility = View.VISIBLE
+                } else {
+                    recyclerView.visibility = View.GONE
+                }
                 return false
             }
         })
@@ -269,7 +355,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
-
+        recyclerView.visibility = View.GONE
     }
 
     override fun onMapViewZoomLevelChanged(p0: MapView?, p1: Int) {
@@ -336,7 +422,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         this.onDestroyView()
                     }
                     else -> {
-                        val addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
+                        val addTodoIntent =
+                            Intent(this.context, PlaceAlarmDetailActivity::class.java)
                         addTodoIntent.putExtra("longitude", longitude)
                         addTodoIntent.putExtra("latitude", latitude)
                         startActivity(addTodoIntent)
@@ -630,8 +717,15 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     private fun checkPermissions(): Boolean {
-        if (ActivityCompat.checkSelfPermission( this@MapFragment.requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission( this@MapFragment.requireContext(), Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                this@MapFragment.requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                this@MapFragment.requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             return true
         }
         return false
@@ -640,6 +734,29 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     override fun onDaumMapOpenAPIKeyAuthenticationResult(p0: MapView?, p1: Int, p2: String?) {
 
     }
+
+//    @Subscribe //검색예시 클릭시 이벤트 오토버스
+//    fun search(document: Document) { //public항상 붙여줘야함
+//        Toast.makeText(
+//            context,
+//            document.placeName.toString() + " 검색",
+//            Toast.LENGTH_SHORT
+//        ).show()
+//        mSearchName = document.getPlaceName()
+//        mSearchLng = document.getX().toDouble()
+//        mSearchLat = document.getY().toDouble()
+//        mMapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(mSearchLat, mSearchLng), true)
+//        mMapView.removePOIItem(searchMarker)
+//        searchMarker.setItemName(mSearchName)
+//        searchMarker.setTag(10000)
+//        val mapPoint = MapPoint.mapPointWithGeoCoord(mSearchLat, mSearchLng)
+//        searchMarker.setMapPoint(mapPoint)
+//        searchMarker.setMarkerType(MapPOIItem.MarkerType.BluePin) // 기본으로 제공하는 BluePin 마커 모양.
+//        searchMarker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin) // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+//        //마커 드래그 가능하게 설정
+//        searchMarker.setDraggable(true)
+//        mMapView.addPOIItem(searchMarker)
+//    }
 
 }
 
