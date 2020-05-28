@@ -65,6 +65,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
 
+//        tabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+//            override fun onTabReselected(tab: TabLayout.Tab?) {
+//
+//            }
+//
+//            override fun onTabUnselected(tab: TabLayout.Tab?) {
+//
+//            }
+//
+//            override fun onTabSelected(tab: TabLayout.Tab?) {
+//
+//            }
+//
+//        })
+
         // Toolbar
         myToolbar = findViewById(R.id.toolbar)
         setSupportActionBar(myToolbar)

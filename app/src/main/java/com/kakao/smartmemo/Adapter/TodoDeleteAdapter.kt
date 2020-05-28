@@ -14,7 +14,7 @@ import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.todo_list_delete.view.*
 
-class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter(), TodoDeleteAdapterContract.Model, TodoDeleteAdapterContract.View {
+class TodoDeleteAdapter(val context: Context, private val todoList: MutableList<TodoData>) : BaseAdapter(), TodoDeleteAdapterContract.Model, TodoDeleteAdapterContract.View {
 
     @SuppressLint("ResourceType")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -26,7 +26,7 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
 
         var checkedTodo = false
 
-        view.group_color.setBackgroundColor(Color.parseColor("#B2CCFF"))
+        view.group_color.setBackgroundColor(todo.groupColor.toInt())
 
 
         if(checkbox_todo.isChecked) {
