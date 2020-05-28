@@ -43,7 +43,7 @@ class Meta : Parcelable {
     }
 
     constructor(parcel: Parcel) {
-        sameName = parcel.readParcelable(SameName::class.java.getClassLoader())
+        sameName = parcel.readParcelable(SameName::class.java.classLoader)
         pageableCount = parcel.readValue(Int::class.java.classLoader) as Int
         totalCount = parcel.readValue(Int::class.java.classLoader) as Int
         isEnd = parcel.readValue(Boolean::class.java.classLoader) as Boolean

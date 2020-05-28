@@ -22,9 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import com.kakao.smartmemo.ApiConnect.ApiClient
-import com.kakao.smartmemo.ApiConnect.ApiInterface
-import com.kakao.smartmemo.ApiConnect.CategoryResult
+import com.kakao.smartmemo.ApiConnect.*
 import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Presenter.MapPresenter
 import com.kakao.smartmemo.R
@@ -48,6 +46,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     lateinit var mapView: MapView
     lateinit var mapViewContainer: ViewGroup
     private var usingMapView = false
+
+    private var documentArrayList: ArrayList<Document> = ArrayList()
 
     private var isLongTouch: Boolean = false
     private var curLocationMarker: MapPOIItem = MapPOIItem()
@@ -78,10 +78,10 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapView = MapView(view.context)
         usingMapView = true
 
-        var curLocation: Location? = getLocation()
+        val curLocation: Location? = getLocation()
         if (curLocation != null) {
-            var curLongitude = curLocation.longitude
-            var curLatitude = curLocation.latitude
+            val curLongitude = curLocation.longitude
+            val curLatitude = curLocation.latitude
 
 
             //중심점 설정하는
@@ -100,7 +100,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 showDialogForLocationServiceSetting()
             }
             else -> {
-                checkRunTimePermission();
+                checkRunTimePermission()
             }
         }
     }
@@ -119,63 +119,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         }
     }
 
-//    fun searchLocation() {
-//        try {
-//            if (searchQuery != null) {
-//                var query = searchQuery
-//                val radius = 10000; // 중심 좌표부터의 반경거리. 특정 지역을 중심으로 검색하려고 할 경우 사용. meter 단위 (0 ~ 10000)
-//                val page = 1; // 페이지 번호 (1 ~ 3). 한페이지에 15개
-//                var geoCoordinate: MapPoint.GeoCoordinate = mapView.mapCenterPoint.mapPointGeoCoord; //좌표 정보 지오코딩.
-//                var latitude = geoCoordinate.latitude; // 위도
-//                var longitude = geoCoordinate.longitude; // 경도
-//
-//                val searcher = SearchModel()
-//                var apiKey = searcher.myApiKey
-//
-//                searcher.searchKeyword(context, query, latitude, longitude, radius, page, apiKey,
-//                    object : OnFinishSearchListener {
-//                        override fun onSuccess(itemList: List<LocationData>) {
-//                            mapView.removeAllPOIItems(); // 기존 검색 결과 삭제.
-//                            showResult(itemList) // 검색 결과 보여줌.
-//                        }
-//
-//                        override fun onFail() {
-//                            Log.w("오류: ", "오류")
-//                        }
-//                    })
-//            }
-//        } catch (e: Exception){
-//            e.printStackTrace()
-//        }
-//
-//    }
-//
-//    private fun showResult(itemList: List<LocationData>) {
-//        //화면에 보여질 영역 설정을 위한 객체.
-//        val mapPointBounds = MapPointBounds()
-//        //검색 api를 통해 호출받은 List의 크기만큼 반복.
-//        for (i in 0 until itemList.count()) {
-//            //마커와 CalloutBallon을 설정하기 위한 옵션들.
-//            val item: LocationData = itemList[i]
-//            val poiItem = MapPOIItem()
-//            poiItem.tag = i
-//            //길 찾기 기능 설정을 위해 해당 POI(관심지점) 객체에 mapPoint(경위도 좌표 값)를 등록.
-//            val mapPoint = MapPoint.mapPointWithGeoCoord(item.latitude, item.longitude)
-//            poiItem.mapPoint = mapPoint
-//            //...중략
-//            mapView.addPOIItem(poiItem)
-//            mTagItemMap.put(poiItem.tag, item)
-//        }
-//        //화면 이동.
-//        mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds))
-//        //트랙킹모드 실행.
-//        mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
-//        val poiItems: Array<MapPOIItem> = mapView.getPOIItems()
-//        if (poiItems.isNotEmpty()) {
-//            mapView.selectPOIItem(poiItems[0], false)
-//        }
-//    }
-
     override fun onDestroy() {
         super.onDestroy()
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
@@ -190,14 +133,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         menuInflater.inflate(R.menu.search_view_in_map, menu)
 
         val searchItem: MenuItem? = menu.findItem(R.id.search)
-        var searchView = searchItem!!.actionView as SearchView
+        val searchView = searchItem!!.actionView as SearchView
         searchView.setOnCloseListener { false }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean { // do your logic here
                 //locationAdapter.clear()
                 //locationAdapter.notifyDataSetChanged()
-                var apiClient: ApiClient =
+                val apiClient: ApiClient =
                     ApiClient()
                 val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(
                     ApiInterface::class.java)
@@ -271,7 +214,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     //marker 선택 시
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
-        var dialog = DialogFragment()
+        val dialog = DialogFragment()
         //type은 memo만이면 0, todo만이면 1, 둘다면 2
         when (p1?.customImageResourceId) {
             R.drawable.memo_icon -> {
@@ -336,7 +279,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     @SuppressLint("ClickableViewAccessibility")
     override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
         val handler = Handler()
-        var then: Long = 0
+        val then: Long = 0
         Log.i("jieun", "LongPress 시작")
 
         p0!!.setOnTouchListener(object : View.OnTouchListener {
@@ -367,9 +310,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
 
     fun startLongPress(p1: MapPoint) {
-        var curPoint = p1.mapPointGeoCoord
-        var longitude = curPoint.longitude
-        var latitude = curPoint.latitude
+        val curPoint = p1.mapPointGeoCoord
+        val longitude = curPoint.longitude
+        val latitude = curPoint.latitude
         //주소 정보도 포함하기
         when {
             !isLongTouch -> isLongTouch = true
@@ -387,13 +330,13 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             .setItems(items, DialogInterface.OnClickListener { dialog, which ->
                 when (which) {
                     0 -> {
-                        var addMemoIntent = Intent(this.context, AddMemo::class.java)
+                        val addMemoIntent = Intent(this.context, AddMemo::class.java)
                         addMemoIntent.putExtra("Current Point", "나중에 좌표값 넣어")
                         startActivity(addMemoIntent)
                         this.onDestroyView()
                     }
                     else -> {
-                        var addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
+                        val addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
                         addTodoIntent.putExtra("longitude", longitude)
                         addTodoIntent.putExtra("latitude", latitude)
                         startActivity(addTodoIntent)
@@ -490,7 +433,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     private fun createMarker(name: String, point: MapPoint, imageResourceId: Int): MapPOIItem {
-        var marker = MapPOIItem()
+        val marker = MapPOIItem()
         marker.itemName = name
         marker.mapPoint = point
         marker.markerType = MapPOIItem.MarkerType.CustomImage
@@ -651,10 +594,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, listener
                         )
                         Log.d("GPS", "GPS Enabled")
-                        if (locationManager != null) {
-                            location =
-                                locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                        }
+                        location =
+                            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
                     }
                     if (isPassiveEnabled && location == null) {
                         locationManager.requestLocationUpdates(
@@ -663,12 +604,10 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, listener
                         )
                         Log.d("Network", "Network Enabled")
-                        if (locationManager != null) {
-                            location =
-                                locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
+                        location =
+                            locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
 
-                            return location
-                        }
+                        return location
                     }
                     if (isNetworkEnabled && location == null) {
                         locationManager.requestLocationUpdates(
@@ -677,10 +616,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, listener
                         )
                         Log.d("Network", "Network Enabled")
-                        if (locationManager != null) {
-                            location = locationManager
-                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                        }
+                        location = locationManager
+                            .getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                     }
                 } else {
                     return null

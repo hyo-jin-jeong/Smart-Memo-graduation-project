@@ -4,6 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/map_recyclerview"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"/>
 
     <RelativeLayout
         android:id="@+id/map_view"
