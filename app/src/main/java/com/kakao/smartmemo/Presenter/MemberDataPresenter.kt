@@ -3,13 +3,13 @@ package com.kakao.smartmemo.Presenter
 import com.kakao.smartmemo.Contract.MemberDataContract
 import com.kakao.smartmemo.Model.UserModel
 
-class MemberDataPresenter : MemberDataContract.Presenter{
+class MemberDataPresenter : MemberDataContract.Presenter, MemberDataContract.OnDeleteUserListener{
     private var view : MemberDataContract.View
     var userModel: UserModel
 
     constructor(view:MemberDataContract.View){
         this.view= view
-        this.userModel = UserModel()
+        this.userModel = UserModel(this)
     }
 
     override fun getProfile() {
@@ -27,6 +27,14 @@ class MemberDataPresenter : MemberDataContract.Presenter{
     override fun deleteUser() {
         userModel.deleteUser()
         userModel.deleteAuth()
+    }
+
+    override fun onSuccess() {
+
+    }
+
+    override fun onFailure() {
+
     }
 
 }

@@ -7,18 +7,21 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.kakao.smartmemo.Contract.LoginContract
 import com.kakao.smartmemo.Contract.MemberChangeContract
+import com.kakao.smartmemo.Contract.MemberDataContract
 import com.kakao.smartmemo.Contract.SignUpContract
 import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
+
 
 class UserModel {
     private lateinit var onLoginListener:LoginContract.OnLoginListener
     private lateinit var onSignUpListener: SignUpContract.onSignUpListener
     private lateinit var onPasswordChangeListener: MemberChangeContract.OnPasswordChangeSuccessListener
+    private lateinit var  onDeleteUserListener:MemberDataContract.OnDeleteUserListener
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    constructor() {  }
+    constructor()
 
     constructor(onLoginListener: LoginContract.OnLoginListener) {
         this.onLoginListener = onLoginListener
@@ -30,6 +33,9 @@ class UserModel {
 
     constructor(onPasswordChangeListener: MemberChangeContract.OnPasswordChangeSuccessListener) {
         this.onPasswordChangeListener = onPasswordChangeListener
+    }
+    constructor(onDeleteUserListener: MemberDataContract.OnDeleteUserListener){
+        this.onDeleteUserListener = onDeleteUserListener
     }
 
     fun getProfile() { // user 정보 받아오는 함수
@@ -49,6 +55,7 @@ class UserModel {
                 }
             }
         }
+
     }
 
 
@@ -70,8 +77,8 @@ class UserModel {
         val groupId = UserObject.email + System.currentTimeMillis()
         firestore.collection("User").document("${UserObject.email}").set(UserObject)
         firestore.collection("User").document("${UserObject.email}")
-            .collection("GroupInfo").document("GroupId").set(hashMapOf(groupId to "내메모"))
-        firestore.collection("Group").document(groupId).set(hashMapOf("group_name" to "내메모","group_color" to -1234))
+            .collection("GroupInfo").document("GroupId").set(hashMapOf(groupId to "내 폴더"))
+        firestore.collection("Group").document(groupId).set(hashMapOf("group_name" to "내 폴더","group_color" to -1234))
         firestore.collection("Group").document(groupId).collection("MemberInfo").document("MemberEmail").set(
             hashMapOf(UserObject.email to UserObject.email), SetOptions.merge())
     }
@@ -81,22 +88,74 @@ class UserModel {
         UserObject.user_name = name
         UserObject.addr = addr
         UserObject.kakao_alarm_time = kakaoAlarmTime
-        firestore.collection("User").document("${UserObject.email}").set(UserObject)
+        firestore.collection("User").document(UserObject.email).set(UserObject)
     }
 
     fun deleteUser() { // collection에서 user 삭제하는 함수
-        firestore.collection("User").document("${UserObject.email}").delete()
+        firestore.collection("User").document(UserObject.email).collection("GroupInfo").document("GroupId").delete()
+        firestore.collection("User").document(UserObject.email).delete()
+        GroupObject.groupInfo.forEach{group->
+            firestore.collection("Group").document(group.key).collection("MemberInfo").document("MemberEmail").addSnapshotListener { memberSnapshot, _ ->
+                if (memberSnapshot?.data?.count() == 1) {
+                    firestore.collection("Group").document(group.key).collection("MemoInfo")
+                        .document("MemoId").addSnapshotListener { memoSnapshot, _ ->
+                            firestore.collection("Group").document(group.key).collection("TodoInfo")
+                                .document("todoId").addSnapshotListener { todoSnapshot, _ ->
+
+                                    memoSnapshot?.data?.forEach { memoDeleteSnapshot ->
+                                        firestore.collection("Memo")
+                                            .document(memoDeleteSnapshot.value as String).collection("Place")
+                                            .document("PlaceInfo").delete()
+                                        firestore.collection("Memo")
+                                            .document(memoDeleteSnapshot.value as String).delete()
+                                    }
+                                    todoSnapshot?.data?.forEach { todoDeleteSnapshot ->
+                                        firestore.collection("Todo")
+                                            .document(todoDeleteSnapshot.value as String)
+                                            .collection("PlaceAlarm").document().collection("Place")
+                                            .document("PlaceInfo").delete()
+                                        firestore.collection("Todo")
+                                            .document(todoDeleteSnapshot.value as String)
+                                            .collection("TimeAlarm").document().delete()
+                                        firestore.collection("Todo")
+                                            .document(todoDeleteSnapshot.value as String).delete()
+                                    }
+                                    firestore.collection("Group").document(group.key).collection("TodoInfo").document("TodoId").delete()
+                                    firestore.collection("Group").document(group.key).collection("MemoInfo").document("MemoId").delete()
+                                    firestore.collection("Group").document(group.key).collection("MemberInfo").document("MemberEmail").delete()
+                                    firestore.collection("Group").document(group.key).delete()
+                                }
+                        }
+
+                } else {
+                    memberSnapshot?.reference?.delete()
+                }
+            }
+        }
     }
 
     fun deleteAuth() { // authentication에서 사용자 삭제하는 함수
         val user = auth.currentUser
-        user?.delete()?.continueWith { task-> {
-            if (task.isCanceled) {
-                Log.e("auth delete Result", task.exception.toString())
+        user?.delete()?.continueWith  { task->
+            if (task.isSuccessful) {
+
+
+                auth.signOut()
+
             } else {
+                Log.e("auth delete Result", task.exception.toString())
+                //onDeleteUserListener.onSuccess()
+            }
+
+        }
+    }
+
+    fun checkUser(context: Activity, email:String, password:String) { // 유효한 사용자인지 FirebaseAuth를 사용하여 확인
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context){task ->
+            if(task.isSuccessful){
                 with(UserObject) {
-                    email = ""
-                    password = ""
+                    UserObject.email = ""
+                    UserObject.password = ""
                     addr = ""
                     user_name = ""
                     img_id = ""
@@ -104,26 +163,18 @@ class UserModel {
                     kakao_connected = false
                     kakao_alarm_time = ""
                 }
-            }
-        }
-        }
-    }
-
-    fun checkUser(context: Activity, email:String, password:String) { // 유효한 사용자인지 FirebaseAuth를 사용하여 확인
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context){task ->
-                if(task.isSuccessful){
-                    auth.currentUser
-                    UserObject.email = email
-                    firestore.collection("User").document("${UserObject.email}")
-                        .collection("GroupInfo").document("GroupId").addSnapshotListener { documentSnapshot, _ ->
-                            documentSnapshot?.data?.forEach {
-                                   GroupObject.groupInfo[it.key] = it.value.toString()
-                            }
-                        }
-                    onLoginListener.onSuccess(task.result.toString())
-                } else {
-                    onLoginListener.onFailure(task.exception.toString())
+                GroupObject.groupInfo.clear()
+                auth.currentUser
+                UserObject.email = email
+                firestore.collection("User").document("${UserObject.email}").collection("GroupInfo").document("GroupId").addSnapshotListener { groupSnapshot, firebaseFirestoreException ->
+                    groupSnapshot?.data?.forEach {
+                        GroupObject.groupInfo[it.key] = it.value as String
+                    }
                 }
+                onLoginListener.onSuccess(task.result.toString())
+            } else {
+                onLoginListener.onFailure(task.exception.toString())
+            }
         }
     }
 

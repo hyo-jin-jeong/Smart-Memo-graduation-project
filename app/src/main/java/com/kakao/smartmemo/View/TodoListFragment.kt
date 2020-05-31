@@ -27,7 +27,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
     private lateinit var presenter : TodoContract.Presenter
     private lateinit var todolist : ListView
-    private lateinit var bottomnavigationview : BottomNavigationView
+    private lateinit var bottomNavigationView : BottomNavigationView
     private lateinit var textViewTodoList : TextView
     private lateinit var adapter : TodoAdapter
     private lateinit var deleteAdapter : TodoDeleteAdapter
@@ -47,7 +47,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     ): View? {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
         cont = view.context // view의 컨텍스트
-        bottomnavigationview = view.findViewById(R.id.navigationview_bottom)
+        bottomNavigationView = view.findViewById(R.id.navigationview_bottom)
         textViewTodoList = view.findViewById(R.id.textView_todolist)
 
         presenter = TodoPresenter(this)
@@ -59,7 +59,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         }
 
         //하단 메뉴
-        bottomnavigationview.setOnNavigationItemSelectedListener {
+        bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.removeItem -> { // 세윤이 고치는 중이니까 건들지 말기
                     var count = deleteAdapter.count
@@ -73,7 +73,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
                     }
                     todolist.clearChoices()
                     adapter.notifyAdapter()
-                    bottomnavigationview.visibility = GONE //하단메뉴 안보이게
+                    bottomNavigationView.visibility = GONE //하단메뉴 안보이게
                     todolist.adapter = TodoAdapter(cont, todoArrayList)
                     true
                 }
@@ -84,7 +84,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
             }
             true
         }
-        bottomnavigationview.visibility = GONE; //하단메뉴 안보이게
+        bottomNavigationView.visibility = GONE; //하단메뉴 안보이게
 
         return view
     }
@@ -144,7 +144,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         )
         listDialog.setTitle("그룹 선택")
             .setItems(items, DialogInterface.OnClickListener { _, which ->
-               //그룹선택 구현
+                //그룹선택 구현
             })
             .show()
     }
@@ -156,7 +156,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         todolist.adapter = adapter
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
-        bottomnavigationview.visibility = GONE
+        bottomNavigationView.visibility = GONE
         adapter.notifyAdapter()
     }
 
@@ -165,7 +165,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         todolist.adapter = deleteAdapter
         presenter.setTodoDeleteAdapterModel(deleteAdapter)
         presenter.setTodoDeleteAdapterView(deleteAdapter)
-        bottomnavigationview.visibility = VISIBLE //하단메뉴 보이게
+        bottomNavigationView.visibility = VISIBLE //하단메뉴 보이게
         deleteAdapter.notifyAdapter()
     }
 }

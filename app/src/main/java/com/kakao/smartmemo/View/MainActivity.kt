@@ -1,5 +1,6 @@
 package com.kakao.smartmemo.View
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -19,9 +20,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
+import kotlinx.android.synthetic.main.todo_list_item.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View {
     lateinit var presenter : MainContract.Presenter
@@ -129,13 +132,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private fun getGroupInfo(){
         presenter.getGroupInfo()
     }
+    @SuppressLint("ResourceType")
     override fun setNavigationView(groupInfoList: HashMap<String, Long>){ // call back func
             groupMap = groupInfoList
             var i = 1
             navigationView.menu.clear()
 
             groupInfoList.forEach {
-                if(it.key == "내메모"){
+                if(it.key == "내 폴더"){
                     navigationView.menu.add(0,-1,0,it.key).setIcon(R.drawable.setting_icon)
                 }
                 else{
@@ -144,7 +148,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 }
 
             }
-            navigationView.menu.add(2,groupInfoList.size+1,groupInfoList.size+1,"그룹추가").setIcon(R.drawable.plus_group)
+            navigationView.menu.add(2,groupInfoList.size+1,groupInfoList.size+1,"폴더 추가").setIcon(R.drawable.plus_group)
     }
 
 

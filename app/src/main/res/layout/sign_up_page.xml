@@ -90,6 +90,7 @@
                         android:layout_marginVertical="5dp"
                         android:background="@null"
                         android:textSize="15sp"
+                        android:text="gaya309@naver.com"
                         android:singleLine="true"
                         android:inputType="textEmailAddress"/>
 
@@ -144,6 +145,7 @@
                         android:layout_marginVertical="5dp"
                         android:background="@null"
                         android:textSize="15sp"
+                        android:text="1111111"
                         android:inputType="textPassword"
                         android:singleLine="true"
                         android:maxLength="15"/>
@@ -197,6 +199,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginVertical="5dp"
+                        android:text="dd"
                         android:singleLine="true"
                         android:background="@null"
                         android:textSize="15sp" />
@@ -250,6 +253,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginVertical="5dp"
+                        android:text="dd"
                         android:background="@null"
                         android:textSize="15sp" />
 

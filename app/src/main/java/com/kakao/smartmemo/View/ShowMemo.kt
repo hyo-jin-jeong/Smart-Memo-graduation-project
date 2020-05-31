@@ -39,6 +39,7 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
             contentText.text = memoData.content
             placeText.text = memoData.placeName
             dateText.text = memoData.date
+            show_memo_layout.setBackgroundColor(memoData.groupColor.toInt())
         }
 
 

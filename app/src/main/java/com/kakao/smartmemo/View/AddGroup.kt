@@ -25,10 +25,12 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
     lateinit var colorPicker: ImageView
     lateinit var saveBtn:Button
     lateinit var groupExitBtn : Button
-    var color : Int = -13184
+    var color = (System.currentTimeMillis()*1000).toInt()
     @SuppressLint("ShowToast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         setContentView(R.layout.app_bar_add_group)
         presenter = AddGroupPresenter(this)
 
