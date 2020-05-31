@@ -142,7 +142,9 @@ class MainLocationModel {
                             .getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                     }
                 } else {
-                    return null
+                    location =
+                        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                    return location
                 }
             }
         } catch (e: Exception) {
@@ -166,5 +168,8 @@ class MainLocationModel {
         return false
     }
 
+    fun checkValue(): Boolean {
+        return locationAddress != null && longitude != null && latitude != null
+    }
 
 }
