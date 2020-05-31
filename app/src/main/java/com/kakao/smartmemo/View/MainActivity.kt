@@ -21,9 +21,11 @@ import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Model.MainLocationModel
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
+import kotlinx.android.synthetic.main.todo_list_item.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View {
     lateinit var presenter : MainContract.Presenter
@@ -131,8 +133,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
         mainLocationModel = MainLocationModel()
         val location = mainLocationModel.getLocation(context)
-        if(location != null)
-            mainLocationModel.convertAddressFromMapPOIItem(location.longitude.toString(), location.latitude.toString())
+        mainLocationModel.convertAddressFromMapPOIItem(location!!.longitude.toString(), location!!.latitude.toString())
     }
 
     private fun getGroupInfo(){
@@ -198,21 +199,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             R.id.fab_memo -> {
                 anim()
                 val addMemoIntent = Intent(this.context, AddMemo::class.java)
-                if (mainLocationModel.checkValue()) {
-                    addMemoIntent.putExtra("longitude", mainLocationModel.longitude.toString())
-                    addMemoIntent.putExtra("latitude", mainLocationModel.latitude.toString())
-                    addMemoIntent.putExtra("address", mainLocationModel.locationAddress)
-                }
+                addMemoIntent.putExtra("longitude", mainLocationModel.longitude.toString())
+                addMemoIntent.putExtra("latitude", mainLocationModel.latitude.toString())
+                addMemoIntent.putExtra("address", mainLocationModel.locationAddress)
                 startActivity(addMemoIntent)
             }
             R.id.fab_todo -> {
                 anim()
                 val addTodoIntent = Intent(this, AddTodo::class.java)
-                if(mainLocationModel.checkValue()) {
-                    addTodoIntent.putExtra("longitude", mainLocationModel.longitude.toString())
-                    addTodoIntent.putExtra("latitude", mainLocationModel.latitude.toString())
-                    addTodoIntent.putExtra("address", mainLocationModel.locationAddress)
-                }
+                addTodoIntent.putExtra("longitude", mainLocationModel.longitude.toString())
+                addTodoIntent.putExtra("latitude", mainLocationModel.latitude.toString())
+                addTodoIntent.putExtra("address", mainLocationModel.locationAddress)
                 startActivity(addTodoIntent)
             }
 
