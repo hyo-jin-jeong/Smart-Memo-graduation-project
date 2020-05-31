@@ -3,6 +3,7 @@ package com.kakao.smartmemo.View
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.NotNull
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 
 class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.View, MapView.POIItemEventListener, MapView.MapViewEventListener {
@@ -73,48 +75,30 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         translateUp = AnimationUtils.loadAnimation(applicationContext, R.anim.translate_up)
         translateDown = AnimationUtils.loadAnimation(applicationContext, R.anim.translate_down)
 
-        listLayout = findViewById<LinearLayout>(R.id.listLayout)
+        listLayout = findViewById(R.id.listLayout)
 
         mapView.setMapViewEventListener(this)
         mapView.setPOIItemEventListener(this)
 
         val listView: ListView = findViewById(R.id.listView)
+        listAdapter = LocationListAdapter(context, locations)
+        listView.adapter = listAdapter
+
+        listView.setOnItemClickListener { parent, view, position, id ->
+            locations.remove(locations[position])
+            listAdapter.notifyDataSetChanged()
+        }
+
 
         var longitude = intent.getDoubleExtra("longitude", 0.0)
         var latitude = intent.getDoubleExtra("latitude", 0.0)
+        var address = intent.getStringExtra("address")
 
         var mapPoint: MapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
         mapView.setMapCenterPoint(mapPoint, false)
 
-//        비동기 방식에서 진행할 듯
-//        var listener: ReverseGeoCodingResultListener = object : ReverseGeoCodingResultListener {
-//            override fun onReverseGeoCoderFailedToFindAddress(p0: MapReverseGeoCoder?) {
-//                Log.i("jieun", "주소 찾기 실패 ㅠㅠ")
-//            }
-//
-//            override fun onReverseGeoCoderFoundAddress(p0: MapReverseGeoCoder?, p1: String?) {
-//                Log.i("jieun", "주소 찾기 성공!!")
-//            }
-//
-//        }
-//        var mapReverseGeoCoder = MapReverseGeoCoder("a74a781e501d031236f6ee1960b4d00e", mapPoint, listener, this)
-//        mapReverseGeoCoder.startFindingAddress()
-//        var address = mapReverseGeoCoder.findAddressForMapPointSync("a74a781e501d031236f6ee1960b4d00e", mapPoint, MapReverseGeoCoder.AddressType.ShortAddress)
-//        Log.i("jieun", address)
-
-        var mapPOIItem = createMarker("한성대학교(여기 주소값이 들어가)", mapPoint, R.drawable.cur_location_icon)
-        mapView.addPOIItem(mapPOIItem)
-
-        listAdapter = LocationListAdapter(context, locations)
-        listView.adapter = listAdapter
-
-//        listView.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-//            Toast.makeText(
-//                applicationContext,
-//                position.toString() + " 번째 값 : " + parent.getItemAtPosition(position),
-//                Toast.LENGTH_SHORT
-//            ).show()
-//        }
+        val longPressedItem = createMarker(address, mapPoint, R.drawable.cur_location_icon)
+        mapView.addPOIItem(longPressedItem)
     }
 
     override fun onPause() {
@@ -230,10 +214,9 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
 
     override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
         allMapItemShow()
-        var curPoint = p1!!.mapPointGeoCoord
-        var longitude = curPoint.longitude
-        var latitude = curPoint.latitude
-        mapPOIItem = createMarker("longitude=$longitude latitude=$latitude", p1!!, R.drawable.cur_location_icon)
+        mapPOIItem = createMarker(" ", p1!!, R.drawable.cur_location_icon)
+
+        presenter.convertAddressFromMapPOIItem(mapPOIItem!!)
         mapView.addPOIItem(mapPOIItem)
         if(!isUp) {
             saveButton.visibility = Button.INVISIBLE
@@ -241,7 +224,6 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
             listLayout.startAnimation(translateUp)
             isUp = true
         }
-        locationTextView.text = mapPOIItem!!.itemName
 
         addButton.setOnClickListener {
             if(!locations.contains(mapPOIItem!!.itemName)) {
@@ -305,4 +287,8 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         }
     }
 
+    override fun getLocationName(mapPOIItem: MapPOIItem, locationName: String?) {
+        mapPOIItem.itemName = locationName
+        locationTextView.text = locationName
+    }
 }

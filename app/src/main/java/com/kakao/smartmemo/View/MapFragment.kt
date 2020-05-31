@@ -16,6 +16,7 @@ import android.os.Handler
 import android.provider.Settings
 import android.util.Log
 import android.view.*
+import android.widget.Button
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -30,12 +31,10 @@ import com.kakao.smartmemo.ApiConnect.*
 import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Presenter.MapPresenter
 import com.kakao.smartmemo.R
-import kotlinx.android.synthetic.main.main_dialog.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.main_dialog.toolbar
 import kotlinx.android.synthetic.main.map_fragment.view.*
-import net.daum.mf.map.api.MapPOIItem
-import net.daum.mf.map.api.MapPoint
-import net.daum.mf.map.api.MapReverseGeoCoder
-import net.daum.mf.map.api.MapView
+import net.daum.mf.map.api.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -58,6 +57,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     private var isLongTouch: Boolean = false
     private var curLocationMarker: MapPOIItem = MapPOIItem()
+    private var convertedAddress: String? = null
 
     private var canGetLocation = false
     private lateinit var locationManager: LocationManager
@@ -94,9 +94,21 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 MapPoint.mapPointWithGeoCoord(curLatitude, curLongitude),
                 false
             )
-            mapViewContainer = view.map_view as ViewGroup
-            mapViewContainer.addView(mapView)
         }
+
+        val myOnClickLisnter = View.OnClickListener { v ->
+            when(v) {
+                (activity as MainActivity).fab_memo ->  {
+                    Log.i("jieun", "memo button click")
+                }
+                (activity as MainActivity).fab_todo -> {
+                    Log.i("jieun", "todo button click")
+                }
+            }
+        }
+        view.setOnClickListener(myOnClickLisnter)
+        mapViewContainer = view.map_view as ViewGroup
+        mapViewContainer.addView(mapView)
 
         mapView.setPOIItemEventListener(this)
         mapView.setMapViewEventListener(this)
@@ -151,6 +163,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
         (activity as MainActivity).toolbar.title = resources.getString(R.string.tab_text_1)
+        val plusButton = (activity as MainActivity).fab
 
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.search_view_in_map, menu)
@@ -158,57 +171,31 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         val searchItem: MenuItem? = menu.findItem(R.id.search)
         val searchView = searchItem!!.actionView as SearchView
 
+        var selectedX: String? = null
+        var selectedY: String? = null
+
         locationAdapter = LocationAdapter(documentList, context!!, searchView, recyclerView)
         recyclerView.adapter = locationAdapter
 
-        searchView.setOnCloseListener { false }
+        searchView.setOnCloseListener {
+            plusButton.visibility = Button.VISIBLE
+            false
+        }
+        searchView.setOnSearchClickListener {
+            plusButton.visibility = Button.INVISIBLE
+            false
+        }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean { // do your logic here
-//                documentList.clear()
-//                keywordLocationAdapter.clear()
-//                keywordLocationAdapter.notifyDataSetChanged()
-//                val apiClient: ApiClient =
-//                    ApiClient()
-//                val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(
-//                    ApiInterface::class.java
-//                )
-//                val call: Call<CategoryResult?>? = apiInterface.getSearchLocation(
-//                    getString(R.string.kakao_restapi_key),
-//                    query,
-//                    15
-//                )
-//                Log.i("jieun", "apiInterface와 call은 만들어졌음.")
-//                val callback: Callback<CategoryResult?> = object : Callback<CategoryResult?> {
-//                    //리스폰 시, 대응할 구현체
-//                    override fun onResponse(
-//                        call: Call<CategoryResult?>,
-//                        response: Response<CategoryResult?>
-//                    ) {
-//                        if (response.isSuccessful) { //check for Response status
-//                            //val result: CategoryResult? = response.body() //리스폰의 바디를 Result객체로 담아쥼.
-//                            Log.i("jieun", "여기 들어왔다능")
-//                            assert(response.body() != null)
-//                            for (document in response.body()?.getDocuments()!!) {
-//                                keywordLocationAdapter.addItem(document!!)
-//                            }
-//                            keywordLocationAdapter.notifyDataSetChanged()
-//                        } else {
-//                            val statusCode = response.code()
-//                            Log.i("jieun", "여기 들어왔다능 실패1 $statusCode")
-//                        }
-//                    }
-//
-//                    override fun onFailure(
-//                        call: Call<CategoryResult?>,
-//                        t: Throwable
-//                    ) {
-//                        Log.i("jieun", "여기 들어왔다능 실패2")
-//                    }
-//                }
-//                call!!.enqueue(callback)
-
+                plusButton.visibility = Button.VISIBLE
                 recyclerView.visibility = View.GONE
                 Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
+                if(locationAdapter.selectedX != null && locationAdapter.selectedY != null) {
+                    changeMapCenterPoint(locationAdapter.selectedX, locationAdapter.selectedY)
+                } else {
+                    changeMapCenterPoint(selectedX, selectedY)
+                }
+                searchView.clearFocus()
                 return false
             }
 
@@ -224,10 +211,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                     )
                     val callKeyword: Call<CategoryResult?>? = apiInterface.getSearchLocation(
                         getString(R.string.kakao_restapi_key),
-                        newText,
+                        "$newText ",
                         15
                     )
-                    Log.i("jieun", "apiInterface와 call은 만들어졌음.")
                     val callbackKeyword: Callback<CategoryResult?> = object : Callback<CategoryResult?> {
                         //리스폰 시, 대응할 구현체
                         override fun onResponse(
@@ -235,16 +221,15 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                             response: Response<CategoryResult?>
                         ) {
                             if (response.isSuccessful) { //check for Response status
-                                //val result: CategoryResult? = response.body() //리스폰의 바디를 Result객체로 담아쥼.
-                                Log.i("jieun", "여기 들어왔다능")
                                 assert(response.body() != null)
                                 for (document in response.body()?.getDocuments()!!) {
+                                    selectedX = response.body()?.getDocuments()!![0]!!.x
+                                    selectedY = response.body()?.getDocuments()!![0]!!.y
                                     locationAdapter.addItem(document!!)
                                 }
                                 locationAdapter.notifyDataSetChanged()
                             } else {
                                 val statusCode = response.code()
-                                Log.i("jieun", "여기 들어왔다능 실패1 $statusCode")
                             }
                         }
 
@@ -252,7 +237,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                             call: Call<CategoryResult?>,
                             t: Throwable
                         ) {
-                            Log.i("jieun", "여기 들어왔다능 실패2")
                         }
                     }
                     callKeyword!!.enqueue(callbackKeyword)
@@ -260,6 +244,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                     recyclerView.visibility = View.VISIBLE
                 } else {
                     recyclerView.visibility = View.GONE
+                    plusButton.visibility = Button.INVISIBLE
                 }
                 return false
             }
@@ -368,14 +353,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         val then: Long = 0
         Log.i("jieun", "LongPress 시작")
 
+        //이거는 확인하고 시간있으면 고쳐야해서 둠
         p0!!.setOnTouchListener(object : View.OnTouchListener {
             private val longClickDuration = 1500L
 
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-//                if (event?.action == MotionEvent.ACTION_DOWN) {
-//                    then = System.currentTimeMillis()
-//                    Log.i("jieun", "down then = $then")
-//                }
                 if (event?.action == MotionEvent.ACTION_UP) {
                     if ((System.currentTimeMillis() - then) > longClickDuration) {
                         Log.i("jieun", "클릭을 뗌!")
@@ -385,7 +367,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 return true
             }
         })
-
 
         handler.postDelayed({
             p0!!.setOnTouchListener(null)
@@ -406,6 +387,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         }
         curLocationMarker = createMarker("current marker", p1!!, R.drawable.cur_location_icon)
         mapView.addPOIItem(curLocationMarker)
+        presenter.convertAddressFromMapPOIItem(curLocationMarker)
 
         val items = arrayOf<CharSequence>("메모", "TODO 장소알람")
         val listDialog: AlertDialog.Builder = AlertDialog.Builder(
@@ -417,15 +399,18 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 when (which) {
                     0 -> {
                         val addMemoIntent = Intent(this.context, AddMemo::class.java)
-                        addMemoIntent.putExtra("Current Point", "나중에 좌표값 넣어")
+                        addMemoIntent.putExtra("longitude", longitude)
+                        addMemoIntent.putExtra("latitude", latitude)
+                        addMemoIntent.putExtra("address", convertedAddress)
+                        Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                         startActivity(addMemoIntent)
                         this.onDestroyView()
                     }
                     else -> {
-                        val addTodoIntent =
-                            Intent(this.context, PlaceAlarmDetailActivity::class.java)
+                        val addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
                         addTodoIntent.putExtra("longitude", longitude)
                         addTodoIntent.putExtra("latitude", latitude)
+                        addTodoIntent.putExtra("address", convertedAddress)
                         startActivity(addTodoIntent)
                         this.onDestroyView()
                         usingMapView = false
@@ -440,20 +425,10 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
 
     override fun onCurrentLocationUpdateFailed(p0: MapView?) {
-
     }
 
     override fun onCurrentLocationUpdate(p0: MapView?, p1: MapPoint?, p2: Float) {
-        val mapPointGeo: MapPoint.GeoCoordinate = p1!!.mapPointGeoCoord
-        Log.i(
-            "check",
-            String.format(
-                "MapView onCurrentLocationUpdate(%f, %f) accuracy (%f)",
-                mapPointGeo.latitude,
-                mapPointGeo.longitude,
-                p2
-            )
-        )
+
     }
 
     override fun onCurrentLocationUpdateCancelled(p0: MapView?) {
@@ -735,28 +710,18 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     }
 
-//    @Subscribe //검색예시 클릭시 이벤트 오토버스
-//    fun search(document: Document) { //public항상 붙여줘야함
-//        Toast.makeText(
-//            context,
-//            document.placeName.toString() + " 검색",
-//            Toast.LENGTH_SHORT
-//        ).show()
-//        mSearchName = document.getPlaceName()
-//        mSearchLng = document.getX().toDouble()
-//        mSearchLat = document.getY().toDouble()
-//        mMapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(mSearchLat, mSearchLng), true)
-//        mMapView.removePOIItem(searchMarker)
-//        searchMarker.setItemName(mSearchName)
-//        searchMarker.setTag(10000)
-//        val mapPoint = MapPoint.mapPointWithGeoCoord(mSearchLat, mSearchLng)
-//        searchMarker.setMapPoint(mapPoint)
-//        searchMarker.setMarkerType(MapPOIItem.MarkerType.BluePin) // 기본으로 제공하는 BluePin 마커 모양.
-//        searchMarker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin) // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
-//        //마커 드래그 가능하게 설정
-//        searchMarker.setDraggable(true)
-//        mMapView.addPOIItem(searchMarker)
-//    }
+    fun changeMapCenterPoint(x: String?, y: String?) {
+        if(x != null && y != null) {
+            var cameraPosition = CameraPosition(MapPoint.mapPointWithGeoCoord(y.toDouble(), x.toDouble()),
+                2F
+            )
+            mapView.moveCamera(CameraUpdateFactory.newMapPoint(MapPoint.mapPointWithGeoCoord(y.toDouble(), x.toDouble())))
+        }
+    }
+
+    override fun getLocationName(mapPOIItem: MapPOIItem, locationName: String?) {
+        convertedAddress = locationName
+    }
 
 }
 

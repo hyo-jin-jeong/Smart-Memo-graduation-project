@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +24,9 @@ class LocationAdapter(
     var items: ArrayList<Document> = items
     var searchView: SearchView = searchView
     var recyclerView: RecyclerView = recyclerView
+
+    var selectedX: String? = null
+    var selectedY: String? = null
     override fun getItemCount(): Int {
         return items.size
     }
@@ -59,10 +63,12 @@ class LocationAdapter(
         val model: Document = items[i]
         holder.placeNameText.text = model.placeName
         holder.addressText.text = model.addressName
-        holder.placeNameText.setOnClickListener {
-            //searchView의 text는 바꾸되 query를 전송하지는 X
-            searchView.setQuery(model.placeName, false)
+        holder.locationItem.setOnClickListener {
+            searchView.setQuery(model.placeName, true)
             recyclerView.visibility = View.GONE
+            selectedX = model.x
+            selectedY = model.y
+            searchView.clearFocus()
             BusProvider().getInstance().post(model)
         }
     }
@@ -70,6 +76,7 @@ class LocationAdapter(
     inner class LocationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var placeNameText: TextView = itemView.findViewById(R.id.place_name)
         var addressText: TextView = itemView.findViewById(R.id.address)
+        var locationItem: LinearLayout = itemView.findViewById(R.id.locationItem)
 
     }
 
