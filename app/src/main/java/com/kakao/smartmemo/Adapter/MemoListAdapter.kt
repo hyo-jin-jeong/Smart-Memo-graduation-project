@@ -10,6 +10,8 @@ import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_view.view.*
 
+
+
 class MemoListAdapter(private val memoList: MutableList<MemoData>) : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), MemoAdapterContract.Model, MemoAdapterContract.View { //memoList RecycleView
 
     override var onClickFunc: ((Int) -> Unit)? = null
@@ -55,5 +57,3 @@ class MemoListAdapter(private val memoList: MutableList<MemoData>) : RecyclerVie
 
     }
 }
-
-

@@ -74,7 +74,7 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
                     }
                 }else{
                     memoData = MemoData(titleEdit.text.toString(),today,contentEdit.text.toString(),groupName.text.toString(),
-                        groupId,0,placeNameText.text.toString(),0.0,0.0)
+                        groupId,0,placeNameText.text.toString(),"","")
                     presenter.addMemo(memoData)
                     finish()
                 }
