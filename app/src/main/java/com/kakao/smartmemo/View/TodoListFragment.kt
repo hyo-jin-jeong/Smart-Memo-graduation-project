@@ -42,7 +42,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var cont: Context
     private var todoArrayList = mutableListOf<TodoData>()
     val date: LocalDateTime = LocalDateTime.now()
-    val todoCalendar = Calendar.getInstance()
+    val todoCalendar: Calendar = Calendar.getInstance()
     private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -8,6 +8,12 @@ interface MemberDataContract {
         fun deleteUser(){}
     }
     interface  View{
+        fun onReStartApp()
 
+    }
+
+    interface OnDeleteUserListener {
+        fun onSuccess()
+        fun onFailure()
     }
 }
