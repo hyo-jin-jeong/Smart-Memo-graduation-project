@@ -35,7 +35,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         //헤드업알림
         val contentview = RemoteViews(context.packageName, R.layout.location_notification)
-        contentview.setTextViewText(R.id.notification_Title, "장 소 알 람")
+        contentview.setTextViewText(R.id.notification_Title, "알 람")
         contentview.setOnClickPendingIntent(R.id.later_notification, pendingIntent)
         contentview.setOnClickPendingIntent(R.id.cancel_notification, pendingIntent)
         notificationbuilder.setContent(contentview)
@@ -51,7 +51,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         notificationManager?.notify(0, notificationbuilder.build())
-        Log.e("JIWON", "알람 울림")
+        Log.v("seyuuuun", "Receivcer동작!!!! in AlarmReceiver")
     }
 
     companion object {
