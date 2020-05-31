@@ -29,6 +29,7 @@ class MemoListDeleteAdapter(private var memoList: MutableList<MemoData>) : Recyc
                 memoDate.text =item.date
                 memoBackground.setBackgroundColor(item.groupColor.toInt())
             }
+
         }
     }
 

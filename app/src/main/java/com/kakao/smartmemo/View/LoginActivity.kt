@@ -25,9 +25,6 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         email = findViewById(R.id.email)
         pw = findViewById(R.id.pw)
 
-        email.setText("gaya309@naver.com")
-        pw.setText("jj1341")
-
         loginButton.setOnClickListener {
             if (email.text.toString() != "" && pw.text.toString() != "") {
                 presenter.checkUser(this, email.text.toString(), pw.text.toString())

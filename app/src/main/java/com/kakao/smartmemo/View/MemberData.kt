@@ -77,8 +77,8 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
             }
 
             R.id.action_settings1 -> {
-                val member_data_change = Intent(this, MemberDataChange::class.java)
-                startActivity(member_data_change)
+                val memberDataChange = Intent(this, MemberDataChange::class.java)
+                startActivity(memberDataChange)
                 return true
             }
 
@@ -101,8 +101,10 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
                 builder.setPositiveButton("예", DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
                     var builder1 = AlertDialog.Builder(this)
                     builder1.setTitle("알림")
+                    //builder1.setMessage("비밀번호를 입력하시오")
                     var typePassword = EditText(this)
 //                    typePassword.hint = "비밀번호를 입력하시오"
+
                     typePassword.setPadding(10,5,10,0)
                     builder1.setView(typePassword)
                     typePassword.transformationMethod = PasswordTransformationMethod.getInstance()
@@ -111,9 +113,9 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
                             typePassword.text.isBlank() -> Toast.makeText(this, "비밀번호를 입력하시오", Toast.LENGTH_SHORT).show()
                             presenter.checkPassword(typePassword.text.toString()) -> {
                                 presenter.deleteUser()
-                                builder2.show()
+                                //builder2.show()
                                 val intent = Intent(this, LoginActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                                 val mHandler = Handler()
                                 mHandler.postDelayed(Runnable {
                                     startActivity(intent)
@@ -140,5 +142,9 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onReStartApp() {
+
     }
 }

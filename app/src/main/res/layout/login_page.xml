@@ -89,7 +89,7 @@
                     android:layout_gravity="center_vertical"
                     android:background="@null"
                     android:textSize="15sp"
-                    android:text="jj1341"
+                    android:text="1111111"
                     android:textStyle="bold"
                     android:inputType="textPassword"/>
             </LinearLayout>

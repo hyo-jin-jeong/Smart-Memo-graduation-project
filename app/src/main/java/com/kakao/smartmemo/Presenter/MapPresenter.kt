@@ -5,6 +5,7 @@ import com.kakao.smartmemo.Model.LocationModel
 import net.daum.mf.map.api.MapPOIItem
 
 class MapPresenter: MapContract.Presenter, MapContract.OnMapListener {
+
     private var view: MapContract.View
     private var locationModel: LocationModel
 

@@ -1,14 +1,9 @@
 package com.kakao.smartmemo.View
 
-import android.app.AlarmManager
 import android.app.AlertDialog
-import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.view.View.GONE
@@ -25,23 +20,20 @@ import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Presenter.TodoPresenter
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
-import com.kakao.smartmemo.Receiver.TodoReceiver
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDateTime
-import java.util.*
 
 class TodoListFragment : Fragment(), TodoContract.View {
 
     private lateinit var presenter : TodoContract.Presenter
     private lateinit var todolist : ListView
-    private lateinit var bottomnavigationview : BottomNavigationView
+    private lateinit var bottomNavigationView : BottomNavigationView
     private lateinit var textViewTodoList : TextView
-    private var todoArrayList = arrayListOf<TodoData>()
     private lateinit var adapter : TodoAdapter
     private lateinit var deleteAdapter : TodoDeleteAdapter
+    private lateinit var cont: Context
+    private var todoArrayList = mutableListOf<TodoData>()
     val date: LocalDateTime = LocalDateTime.now()
-    val todoCalendar = Calendar.getInstance()
     private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,44 +41,27 @@ class TodoListFragment : Fragment(), TodoContract.View {
         setHasOptionsMenu(true)
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.todolist_fragment, container, false)
-
-        bottomnavigationview = view.findViewById(R.id.navigationview_bottom)
+        cont = view.context // view의 컨텍스트
+        bottomNavigationView = view.findViewById(R.id.navigationview_bottom)
         textViewTodoList = view.findViewById(R.id.textView_todolist)
 
         presenter = TodoPresenter(this)
-        adapter = TodoAdapter(view.context, todoArrayList)
-        deleteAdapter = TodoDeleteAdapter(view.context, todoArrayList)
-        presenter.getTodo()
-
         todolist = view.findViewById(R.id.todolist) as ListView
-        todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-        todolist.adapter = adapter
-        presenter.setTodoAdapterModel(adapter)
-        presenter.setTodoAdapterView(adapter)
-
-        todoCalendar.set(Calendar.HOUR_OF_DAY, 0)
-        todoCalendar.set(Calendar.MINUTE, 39)
-        todoCalendar.set(Calendar.SECOND, 0)
-        setTodoAlarm(todoCalendar)
-
-        todolist.isClickable = true
         todolist.setOnItemClickListener { parent, view, position, id ->
-            var intent = Intent(view.context, AddTodo::class.java)
-            intent.putExtra("todo_id", view.id)
+            var intent = Intent(cont, AddTodo::class.java)
+            intent.putExtra("todoData", todoArrayList[position])
             startActivity(intent)
         }
 
-
         //하단 메뉴
-        bottomnavigationview.setOnNavigationItemSelectedListener {
+        bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.removeItem -> {
+                R.id.removeItem -> { // 세윤이 고치는 중이니까 건들지 말기
                     var count = deleteAdapter.count
                     var checkedItems = deleteAdapter.selectedTodo()
                     for( i in count-1 downTo 0) {
@@ -98,22 +73,28 @@ class TodoListFragment : Fragment(), TodoContract.View {
                     }
                     todolist.clearChoices()
                     adapter.notifyAdapter()
-                    bottomnavigationview.visibility = GONE //하단메뉴 안보이게
-                    todolist.adapter = TodoAdapter(view.context, todoArrayList)
+                    bottomNavigationView.visibility = GONE //하단메뉴 안보이게
+                    todolist.adapter = TodoAdapter(cont, todoArrayList)
                     true
                 }
                 R.id.cancelItem -> {
-                    bottomnavigationview.visibility = GONE //하단메뉴 안보이게
-                    todolist.adapter = TodoAdapter(view.context, todoArrayList)
+                    showAllTodo(todoArrayList)
                     true
                 }
             }
             true
         }
-
-        bottomnavigationview.visibility = GONE; //하단메뉴 안보이게
+        bottomNavigationView.visibility = GONE; //하단메뉴 안보이게
 
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        presenter.getTodo()
+        adapter = TodoAdapter(cont, todoArrayList)
+        todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        todolist.isClickable = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -135,8 +116,8 @@ class TodoListFragment : Fragment(), TodoContract.View {
             }
             R.id.delete_memo ->{
                 count++
-                if(count%2 == 0 ) {
-                    showTodo()
+                if(count%2 == 0) {
+                    showAllTodo(todoArrayList)
                 } else {
                     deleteTodo()
                 }
@@ -163,44 +144,28 @@ class TodoListFragment : Fragment(), TodoContract.View {
         )
         listDialog.setTitle("그룹 선택")
             .setItems(items, DialogInterface.OnClickListener { _, which ->
-               //그룹선택 구현
+                //그룹선택 구현
             })
             .show()
     }
 
-    private fun showTodo() {
+    override fun showAllTodo(todoData: MutableList<TodoData>) {
+        count = 0
+        todoArrayList = todoData
+        adapter = TodoAdapter(cont, todoArrayList)
         todolist.adapter = adapter
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
-        bottomnavigationview.visibility = GONE; //하단메뉴 안보이게
+        bottomNavigationView.visibility = GONE
+        adapter.notifyAdapter()
     }
 
-    private fun deleteTodo(){
+    private fun deleteTodo() {
+        deleteAdapter = TodoDeleteAdapter(cont, todoArrayList)
         todolist.adapter = deleteAdapter
         presenter.setTodoDeleteAdapterModel(deleteAdapter)
         presenter.setTodoDeleteAdapterView(deleteAdapter)
-        bottomnavigationview.visibility = VISIBLE //하단메뉴 보이게
-    }
-
-    private fun setTodoAlarm(calendar: Calendar) {
-        val pm = context!!.packageManager
-        val receiver = ComponentName(context, DeviceBootTodoReceiver::class.java)
-        val alarmIntent = Intent(context, TodoReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
-        val alarmManager = context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        if(alarmManager != null) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-            }
-            //부팅후 실행되는 리시버 사용가능하게 설정함.
-            pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP)
-        } else { // 알람을 허용하지 않았다면
-            if(PendingIntent.getBroadcast(context, 0, alarmIntent, 0)!=null && alarmManager!=null) {
-                alarmManager.cancel(pendingIntent)
-            }
-            pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
-        }
+        bottomNavigationView.visibility = VISIBLE //하단메뉴 보이게
+        deleteAdapter.notifyAdapter()
     }
 }

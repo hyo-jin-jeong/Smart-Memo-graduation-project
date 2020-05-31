@@ -4,8 +4,6 @@ import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
@@ -53,7 +51,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         notificationManager?.notify(0, notificationbuilder.build())
-        Log.v("seyuuuun", "Receivcer동작!!!! in AlarmReceiver")
+        Log.e("JIWON", "알람 울림")
     }
 
     companion object {

@@ -1,10 +1,12 @@
 package com.kakao.smartmemo.Model
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
+import java.security.acl.Group
 
 class GroupModel {
     private lateinit var onGetGroupInfoListener : MainContract.onGetGroupInfoListener
@@ -41,12 +43,10 @@ class GroupModel {
                 GroupObject.groupInfo.forEach {
                     if(snapShot.id == it.key){
                         groupInfoList[snapShot.get("group_name") as String] = snapShot.get("group_color") as Long
+                        Log.e("dkdk",it.value)
 
                     }
-
                 }
-
-
             }
             onGetGroupInfoListener.onSuccess(groupInfoList)
         }

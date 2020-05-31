@@ -15,7 +15,7 @@ import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.todo_list_delete.view.*
 
-class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<TodoData>) : BaseAdapter(), TodoDeleteAdapterContract.Model, TodoDeleteAdapterContract.View {
+class TodoDeleteAdapter(val context: Context, private val todoList: MutableList<TodoData>) : BaseAdapter(), TodoDeleteAdapterContract.Model, TodoDeleteAdapterContract.View {
 
     var pos = arrayListOf<Int>()
     @SuppressLint("ResourceType")
@@ -28,7 +28,7 @@ class TodoDeleteAdapter(val context: Context, private val todoList: ArrayList<To
 
         //checkbox_todo.isClickable = false  //체크박스 선택못하도록
 
-        view.group_color.setBackgroundColor(Color.parseColor("#B2CCFF"))
+        view.group_color.setBackgroundColor(todo.groupColor.toInt())
         checkbox_todo.setChecked((parent as ListView).isItemChecked(position))
 
         view.textView_todo.setOnClickListener { //리스트뷰 눌렀을시 체크박스 선택

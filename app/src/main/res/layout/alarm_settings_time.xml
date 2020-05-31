@@ -7,29 +7,11 @@
     android:layout_height="match_parent"
     android:layout_marginTop="20dp">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/settings_time_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        app:cardBackgroundColor="#6FA6D3"
-        app:cardCornerRadius="20dp">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listview_day_repeat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scrollbars="horizontal"
-            tools:listitem="@layout/repeat_day_item" />
-    </androidx.cardview.widget.CardView>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/time_date_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/settings_time_layout"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginBottom="15dp"
@@ -93,6 +75,7 @@
             android:layout_height="match_parent"
             android:background="@null"
             android:scaleType="fitCenter"
+            android:clickable="false"
             app:layout_constraintRight_toRightOf="parent"
             app:srcCompat="@drawable/triangle"
             tools:ignore="MissingConstraints" />

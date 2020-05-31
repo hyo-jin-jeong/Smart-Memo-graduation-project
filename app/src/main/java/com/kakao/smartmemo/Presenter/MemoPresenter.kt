@@ -19,12 +19,7 @@ class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
         this.view = view
         this.model = MemoModel(this)
     }
-    override fun getMemo(){
-        model.getMemo()
-    }
-    override fun getGroup() {
 
-    }
 
     override fun setMemoAdapterModel(model: MemoAdapterContract.Model) {
         adapterModel = model
@@ -42,6 +37,17 @@ class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
     override fun setMemoDeleteAdapterView(deleteAdapterView: MemoDeleteAdapterContract.View) {
         this.deleteAdapterView = deleteAdapterView
     }
+    override fun getMemo(){
+        model.getAllMemo()
+    }
+    override fun getGroup() {
+
+    }
+
+    override fun getGroupMemo(groupId: String) {
+        model.getGroupMemo(groupId)
+    }
+
     private fun onClickListener(position: Int){
         adapterModel.getMemo(position).let {
             view.showMemoItem(position)
