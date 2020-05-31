@@ -26,7 +26,7 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         pw = findViewById(R.id.pw)
 
         email.setText("gaya309@naver.com")
-        pw.setText("jj1341")
+        pw.setText("1111111")
 
         loginButton.setOnClickListener {
             if (email.text.toString() != "" && pw.text.toString() != "") {
