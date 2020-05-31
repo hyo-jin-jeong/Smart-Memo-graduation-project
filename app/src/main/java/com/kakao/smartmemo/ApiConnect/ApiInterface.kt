@@ -46,7 +46,7 @@ interface ApiInterface {
 
     //좌표로 주소 변환하기
     @GET("v2/local/geo/coord2address.json")
-    fun geConvertAddressFromCoordinate(
+    fun getConvertAddressFromCoordinate(
         @Header("Authorization") token: String?,
         @Query("x") x: String?,
         @Query("y") y: String?
