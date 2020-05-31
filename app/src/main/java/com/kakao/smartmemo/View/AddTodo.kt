@@ -18,7 +18,9 @@ import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.AddTodoPresenter
+import com.kakao.smartmemo.Presenter.MemberDataPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.AlarmReceiver
 import com.kakao.smartmemo.Receiver.DeviceBootAlarmReceiver
@@ -27,13 +29,13 @@ import com.kakao.smartmemo.Receiver.TodoReceiver
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
     private lateinit var todoToolBar: Toolbar
     private lateinit var presenter : AddTodoContract.Presenter
+    //private lateinit var userpresenter : MemberDataPresenter
     private lateinit var titleEdit: EditText
     private lateinit var selectGroup : Button
     private var groupName: String = ""
@@ -66,7 +68,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     private val placeCalendar = Calendar.getInstance()
     private val todoCalendar = Calendar.getInstance()
     private var settingsTimeMinutes = 0
-    private var settingsPlaceMinute = 0
+    private var settingsPlaceMinutes = 0
+    val interval = AlarmManager.INTERVAL_DAY
     private var notifyTime = false
     val date: LocalDateTime = LocalDateTime.now()
     var hour = 0
@@ -119,12 +122,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         var placeAgainAdapter = ArrayAdapter.createFromResource(applicationContext,
             R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
 
-        //현재시간 가져오기
-        val dateFormatter = DateTimeFormatter.ISO_DATE
-        val timeFormatter = DateTimeFormatter.ISO_TIME
-        val currentDate = date.format(dateFormatter) //현재 날짜
-        val currentTime = date.format(timeFormatter) //현재 시간
-
         timebtn = viewTime.findViewById(R.id.btn_time_settings) //시간설정버튼
         timebtn.isClickable = false
 
@@ -145,6 +142,9 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         placeDateLayout.setOnClickListener { //장소 날짜 설정
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 placeDateText.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
+                placeCalendar.set(Calendar.YEAR, year) //년
+                placeCalendar.set(Calendar.MONTH, month) //월
+                placeCalendar.set(Calendar.DATE, dayOfMonth) //일
             }
             val dateDia = DatePickerDialog(this,dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
             dateDia.show()
@@ -176,19 +176,19 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         placeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (position == 0) {
-                    settingsPlaceMinute = 0
+                    settingsPlaceMinutes = 0
                 } else if(position == 1) {
-                    settingsPlaceMinute = 1
+                    settingsPlaceMinutes = 1
                 } else if( position == 2) {
-                    settingsPlaceMinute = 3
+                    settingsPlaceMinutes = 3
                 } else if( position == 3) {
-                    settingsPlaceMinute = 5
+                    settingsPlaceMinutes = 5
                 } else if( position == 4) {
-                    settingsPlaceMinute = 10
+                    settingsPlaceMinutes = 10
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                settingsPlaceMinute = 0
+                settingsPlaceMinutes = 0
             }
         }
 
@@ -267,7 +267,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         "place" + System.currentTimeMillis(),
                         placeSwitch.isChecked,
                         placeDateText.text.toString(),
-                        settingsPlaceMinute,
+                        settingsPlaceMinutes,
                         "한성대학교",
                         "0.0",
                         "0.0"
@@ -275,9 +275,22 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                     presenter.addTodo(todoData)
                     if (timeSwitch.isChecked) {
                         // 지정한 시간에 울리게 알람을 세팅
-                        setTimeAlarm(timeCalendar, settingsPlaceMinute)
+                        setTimeAlarm(timeCalendar, settingsTimeMinutes)
                     }
+                    val TodoTime = UserObject.kakao_alarm_time
+                    //여기에 user의 kakao_alarm_time을 가져와 넣어주어야함! 지금은 임시로 해놓은것!
+                    todoCalendar.set(Calendar.HOUR_OF_DAY, 1)
+                    todoCalendar.set(Calendar.MINUTE, 16)
+                    todoCalendar.set(Calendar.SECOND, 0)
+                    val currentTime = System.currentTimeMillis()
+                    var settingTime = todoCalendar.timeInMillis
+                    val interval = AlarmManager.INTERVAL_DAY
+                    if (currentTime > settingTime) {
+                        todoCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
+                    }
+                    setTodoAlarm(todoCalendar)
 
+                    //val User = userpresenter.getProfile()
 //                    if (placeSwitch.isChecked) {
 //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
 //                        setTimeAlarm(placeCalendar)
@@ -331,14 +344,13 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             timeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay) // 시
             timeCalendar.set(Calendar.MINUTE, minute) // 분
             timeCalendar.set(Calendar.SECOND, 0) // 초
-            var settingTime = timeCalendar.timeInMillis
-            val currentTime = System.currentTimeMillis()
-            val interval = AlarmManager.INTERVAL_DAY
 
+            val currentTime = System.currentTimeMillis()
+            var settingTime = timeCalendar.timeInMillis
             if (currentTime > settingTime) {
                 timeCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
             }
-            setTimeAlarm(timeCalendar, settingsPlaceMinute)
+            //setTimeAlarm(timeCalendar, settingsTimeMinutes)
         }
         val dialog = TimePickerDialog(this, listener,12,0,false)
         dialog.show()
@@ -372,20 +384,20 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         val alarmIntent = Intent(this, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val interval = 1000*60*settingTime
 
         if(notifyTime) { //알람을 허용했다면
             if(alarmManager != null) {
-                    alarmManager.setRepeating(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.timeInMillis,
-                        1000*60*settingTime.toLong(),
-                        pendingIntent
-                    )
-
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         alarmManager.setExactAndAllowWhileIdle(
                             AlarmManager.RTC_WAKEUP,
                             calendar.timeInMillis,
+                            pendingIntent
+                        )
+                        alarmManager.setRepeating(
+                            AlarmManager.RTC,
+                            calendar.timeInMillis,
+                            interval.toLong(),
                             pendingIntent
                         )
                     }
@@ -414,17 +426,16 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
         if(notifyTime) { //알람을 허용했다면
             if(alarmManager != null) {
-                alarmManager.setRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.timeInMillis,
-                    AlarmManager.INTERVAL_DAY,
-                    pendingIntent
-                )
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         calendar.timeInMillis,
+                        pendingIntent
+                    )
+                    alarmManager.setRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        AlarmManager.INTERVAL_DAY,
                         pendingIntent
                     )
                 }
