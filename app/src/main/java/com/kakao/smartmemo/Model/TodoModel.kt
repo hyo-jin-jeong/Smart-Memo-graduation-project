@@ -46,8 +46,8 @@ class TodoModel {
                                                                 placeSnapshot.get("placeDate").toString(),
                                                                 placeSnapshot.get("placeAgain").toString().toInt(),
                                                                 placeInfoSnapshot?.get("placeName").toString(),
-                                                                placeInfoSnapshot?.get("latitude").toString().toDouble(),
-                                                                placeInfoSnapshot?.get("longitude").toString().toDouble()
+                                                                placeInfoSnapshot?.get("latitude").toString(),
+                                                                placeInfoSnapshot?.get("longitude").toString()
                                                             ))
                                                             onTodoListener.onSuccess(todoData)
                                                         }
