@@ -61,7 +61,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         //하단 메뉴
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.removeItem -> { // 세윤이 고치는 중이니까 건들지 말기
+                R.id.removeItem -> {
                     var count = deleteAdapter.count
                     var checkedItems = deleteAdapter.selectedTodo()
                     for( i in count-1 downTo 0) {

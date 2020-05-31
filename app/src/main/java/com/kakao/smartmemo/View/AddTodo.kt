@@ -22,6 +22,8 @@ import com.kakao.smartmemo.Presenter.AddTodoPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.AlarmReceiver
 import com.kakao.smartmemo.Receiver.DeviceBootAlarmReceiver
+import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
+import com.kakao.smartmemo.Receiver.TodoReceiver
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -62,6 +64,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     private lateinit var savebtn : Button
     private val timeCalendar = Calendar.getInstance()
     private val placeCalendar = Calendar.getInstance()
+    private val todoCalendar = Calendar.getInstance()
     private var settingsTimeMinutes = 0
     private var settingsPlaceMinute = 0
     private var notifyTime = false
@@ -189,8 +192,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             }
         }
 
-        timeSwitch.setOnCheckedChangeListener { compoundButton, isChecked->
-            if(isChecked) {
+        timeSwitch.setOnCheckedChangeListener { compoundButton, isChecked ->
+            if (isChecked) {
                 notifyTime = true // 알람 켬.
                 todoStubTime.visibility = VISIBLE
                 timeCalendar.timeInMillis
@@ -200,10 +203,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 notifyTime = false
             }
         }
-
-        /* for (i in 0.. DateList.size) { //size=0인 오류남.
-             Log.v("seyuuuun", "DateList:" + DateList.get(i).toString())
-         }*/
 
         placeSwitch.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
@@ -276,8 +275,9 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                     presenter.addTodo(todoData)
                     if (timeSwitch.isChecked) {
                         // 지정한 시간에 울리게 알람을 세팅
-                        setTimeAlarm(timeCalendar)
+                        setTimeAlarm(timeCalendar, settingsPlaceMinute)
                     }
+
 //                    if (placeSwitch.isChecked) {
 //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
 //                        setTimeAlarm(placeCalendar)
@@ -336,9 +336,9 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             val interval = AlarmManager.INTERVAL_DAY
 
             if (currentTime > settingTime) {
-                timeCalendar.timeInMillis += interval
+                timeCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
             }
-            //setTimeAlarm(timeCalendar)
+            setTimeAlarm(timeCalendar, settingsPlaceMinute)
         }
         val dialog = TimePickerDialog(this, listener,12,0,false)
         dialog.show()
@@ -366,20 +366,19 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             .show()
     }
 
-    private fun setTimeAlarm(calendar: Calendar) {
+    private fun setTimeAlarm(calendar: Calendar, settingTime: Int) {  //시간알람
         val pm = this.packageManager
         val receiver = ComponentName(this, DeviceBootAlarmReceiver::class.java)
         val alarmIntent = Intent(this, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         if(notifyTime) { //알람을 허용했다면
             if(alarmManager != null) {
-//                if (settingsTimeMinutes != 0) {
                     alarmManager.setRepeating(
                         AlarmManager.RTC_WAKEUP,
                         calendar.timeInMillis,
-                        (1000 * 60 * settingsTimeMinutes).toLong(),
+                        1000*60*settingTime.toLong(),
                         pendingIntent
                     )
 
@@ -396,10 +395,48 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                         PackageManager.DONT_KILL_APP
                     )
-//                }
             }
             else { // 알람을 허용하지 않았다면
-                if(PendingIntent.getBroadcast(this, 0, alarmIntent, 0)!=null && alarmManager!=null) {
+                if(PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {
+                    alarmManager.cancel(pendingIntent)
+                }
+                pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
+            }
+        }
+    }
+
+    private fun setTodoAlarm(calendar: Calendar) {  //시간알람
+        val pm = this.packageManager
+        val receiver = ComponentName(this, DeviceBootTodoReceiver::class.java)
+        val alarmIntent = Intent(this, TodoReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
+        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        if(notifyTime) { //알람을 허용했다면
+            if(alarmManager != null) {
+                alarmManager.setRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    AlarmManager.INTERVAL_DAY,
+                    pendingIntent
+                )
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        pendingIntent
+                    )
+                }
+                //부팅후 실행되는 리시버 사용가능하게 설정함.
+                pm.setComponentEnabledSetting(
+                    receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP
+                )
+            }
+            else { // 알람을 허용하지 않았다면
+                if(PendingIntent.getBroadcast(this, 1, alarmIntent, 0)!=null && alarmManager!=null) {
                     alarmManager.cancel(pendingIntent)
                 }
                 pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
