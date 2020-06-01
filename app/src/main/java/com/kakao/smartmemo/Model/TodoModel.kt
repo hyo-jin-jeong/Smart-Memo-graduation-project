@@ -102,6 +102,7 @@ class TodoModel {
                 Snapshot?.data?.forEach { todo ->
                     todoPath.document(todo.key).addSnapshotListener { todoSnapshot, _ ->
                         todoSnapshot?.reference?.collection("TimeAlarm")?.addSnapshotListener { timeAlarmIdSnapshot, _ ->
+
                                 var title = todoSnapshot?.get("title").toString()
                                 timeAlarmIdSnapshot?.forEach { timeSnapshot ->
                                     todoSnapshot.reference.collection("PlaceAlarm")?.addSnapshotListener { placeAlarmIdSnapshot, _ ->
@@ -135,6 +136,7 @@ class TodoModel {
                                         }
                                 }
                             }
+
                     }
                 }
             } else {

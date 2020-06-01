@@ -347,10 +347,12 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         setTodoAlarm(todoCalendar)
 
                         //val User = userpresenter.getProfile()
+
             //                    if (placeSwitch.isChecked) {
             //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
             //                        setTimeAlarm(placeCalendar)
             //                    }
+
                         finish()
                     }
                 }
@@ -443,25 +445,25 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
         if(notifyTime) { //알람을 허용했다면
             if(alarmManager != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        alarmManager.setExactAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
-                        alarmManager.setRepeating(
-                            AlarmManager.RTC,
-                            calendar.timeInMillis,
-                            interval.toLong(),
-                            pendingIntent
-                        )
-                    }
-                    //부팅후 실행되는 리시버 사용가능하게 설정함.
-                    pm.setComponentEnabledSetting(
-                        receiver,
-                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                        PackageManager.DONT_KILL_APP
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        pendingIntent
                     )
+                    alarmManager.setRepeating(
+                        AlarmManager.RTC,
+                        calendar.timeInMillis,
+                        interval.toLong(),
+                        pendingIntent
+                    )
+                }
+                //부팅후 실행되는 리시버 사용가능하게 설정함.
+                pm.setComponentEnabledSetting(
+                    receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP
+                )
             }
             else { // 알람을 허용하지 않았다면
                 if(PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {
