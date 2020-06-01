@@ -15,6 +15,17 @@ interface ApiInterface {
         @Query("size") size: Int
     ): Call<CategoryResult?>?
 
+    //키워드로 검색(특정 위치안의 요)
+    @GET("v2/local/search/keyword.json")
+    fun getSearchAroundLocation(
+        @Header("Authorization") token: String?,
+        @Query("query") query: String?,
+        @Query("size") size: Int,
+        @Query("radius") radius: Int?,
+        @Query("x") x: String?,
+        @Query("y") y: String?
+    ): Call<CategoryResult?>?
+
     //카테고리로 검색
     @GET("v2/local/search/category.json")
     fun getSearchCategory(
