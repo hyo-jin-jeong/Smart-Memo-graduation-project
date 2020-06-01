@@ -2,9 +2,13 @@ package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.kakao.smartmemo.Contract.AddMemoContract
@@ -18,16 +22,19 @@ import java.util.*
 class AddMemo : AppCompatActivity(), AddMemoContract.View {
     lateinit var presenter: AddMemoPresenter
     private lateinit var memoToolbar: Toolbar
-    private lateinit var saveBtn :Button
-    private lateinit var titleEdit : EditText
-    private lateinit var dateText : TextView
-    private lateinit var contentEdit:EditText
-    private lateinit var selectGroupBtn : Button
-    private lateinit var groupName : TextView
-    private lateinit var placeNameText : TextView
-    private lateinit var data :MemoData
+    private lateinit var saveBtn: Button
+    private lateinit var titleEdit: EditText
+    private lateinit var dateText: TextView
+    private lateinit var contentEdit: EditText
+    private lateinit var selectGroupBtn: Button
+    private lateinit var groupName: TextView
+    private lateinit var placeNameText: TextView
+    private lateinit var data: MemoData
     private var groupId = ""
-
+    private var originGroupId = ""
+    private var memoId = ""
+    private var hasData = false
+    private var groupCheck = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,41 +59,68 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         val date = Date(System.currentTimeMillis())
         val formatDate = SimpleDateFormat("yyyy.MM.dd")
         var today = formatDate.format(date)
-        var memoData :MemoData
+        var memoData: MemoData
         dateText.text = today
 
-        if(intent.hasExtra("memoData")){
+        if (intent.hasExtra("memoData")) {
+            hasData = true
             data = intent.getParcelableExtra("memoData")
             placeNameText.text = data.placeName
             titleEdit.setText(data.title)
             contentEdit.setText(data.content)
             groupName.text = data.groupName
+            originGroupId = data.groupId
+            memoId = data.memoId
 
-        }else{
-            saveBtn.setOnClickListener {
-                if(groupName.text=="[그룹 선택]"||contentEdit.text.toString()=="") {
-                    if (groupName.text == "[그룹 선택]") {
-                        Toast.makeText(this, "그룹을 선택하세요!", Toast.LENGTH_SHORT).show()
-                    } else if(contentEdit.text.toString()=="") {
-                        Toast.makeText(this, "내용을 입력하세요!", Toast.LENGTH_SHORT).show()
-                    }else{
-                        Toast.makeText(this, "그룹을 선택하고, 내용을입력하세요!", Toast.LENGTH_SHORT).show()
+        }
+        saveBtn.setOnClickListener {
+            if (groupName.text == "[그룹 선택]" || contentEdit.text.toString() == "") {
+                if (groupName.text == "[그룹 선택]") {
+                    Toast.makeText(this, "그룹을 선택하세요!", Toast.LENGTH_SHORT).show()
+                } else if (contentEdit.text.toString() == "") {
+                    Toast.makeText(this, "내용을 입력하세요!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "그룹을 선택하고, 내용을입력하세요!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                if (groupCheck){
+                    if(hasData) {
+                        presenter.deleteMemoInfo(originGroupId,memoId)
                     }
-                }else{
-                    memoData = MemoData(titleEdit.text.toString(),today,contentEdit.text.toString(),groupName.text.toString(),
-                        groupId,0,placeNameText.text.toString(),"","")
-                    presenter.addMemo(memoData)
-                    finish()
+                    originGroupId = groupId
+                }//그룹이 바뀌면 저장되었던 그룹에서 memo정보를 지워야한다.
+                memoData = MemoData(
+                    memoId,
+                    titleEdit.text.toString(),
+                    today,
+                    contentEdit.text.toString(),
+                    groupName.text.toString(),
+                    originGroupId,
+                    placeNameText.text.toString(),
+                    "",
+                    ""
+                )
+                presenter.addMemo(memoData)
+                if (hasData) {
+                    hasData = false
+                    var intent = Intent()
+                    intent.putExtra("memoData", memoData)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    setResult(RESULT_OK, intent)
                 }
 
-            }
+                finish()
+
+
         }
+    }
 
 
         selectGroupBtn.setOnClickListener {
             selectGroup()
         }
     }
+
 
     // 뒤로가기 버튼 누르면 이전 액티비티로 돌아가는 것을 판단해주는 함수
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -98,6 +132,7 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         }
         return super.onOptionsItemSelected(item)
     }
+
     private fun selectGroup(){
         var i = 0
         val items:Array<CharSequence> = Array(GroupObject.groupInfo.size) {""}
@@ -116,9 +151,11 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
 
         listDialog.setTitle("그룹 선택")
             .setItems(items, DialogInterface.OnClickListener { _, which ->
+                groupCheck = true
                 groupName.text = items[which].toString()
                 groupId = groupIdList[which]
             })
             .show()
     }
+
 }

@@ -1,12 +1,13 @@
 package com.kakao.smartmemo.Model
 
+
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
-import java.security.acl.Group
+
 
 class GroupModel {
     private lateinit var onGetGroupInfoListener : MainContract.onGetGroupInfoListener
@@ -30,6 +31,7 @@ class GroupModel {
         groupAddToGroup.document("$groupId").collection("MemberInfo").document("MemberEmail").set(
             hashMapOf(UserObject.email to UserObject.email), SetOptions.merge())
         GroupObject.groupInfo[groupId] = groupName
+        GroupObject.groupColor[groupId] = color.toLong()
     }
     fun updateGroup() {
 
@@ -43,8 +45,7 @@ class GroupModel {
                 GroupObject.groupInfo.forEach {
                     if(snapShot.id == it.key){
                         groupInfoList[snapShot.get("group_name") as String] = snapShot.get("group_color") as Long
-                        Log.e("dkdk",it.value)
-
+                        GroupObject.groupColor[it.key] = snapShot.get("group_color") as Long
                     }
                 }
             }

@@ -251,7 +251,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 }
                 var todoData
                         = TodoData(titleEdit.text.toString(), groupName, groupId, 0,"time"+System.currentTimeMillis(), timeSwitch.isChecked, "", timeDateText.text.toString(), timeText.text.toString(), settingsTimeMinutes,
-                    "place"+System.currentTimeMillis(), placeSwitch.isChecked, placeDateText.text.toString(), settingsPlaceMinute, "한성대학교", 0.0, 0.0)
+                    "place"+System.currentTimeMillis(), placeSwitch.isChecked, placeDateText.text.toString(), settingsPlaceMinute, "한성대학교", "", "")
                 presenter.addTodo(todoData)
                 setTimeAlarm(timeCalendar)
                 finish()
