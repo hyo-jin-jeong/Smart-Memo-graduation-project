@@ -121,9 +121,9 @@ class MemoModel {
                                                     memoSnapshot?.get("memoId").toString(),
                                                     memoInfoSnapshot?.get("title").toString(),
                                                     memoInfoSnapshot?.get("date").toString(),
-                                                    memoInfoSnapshot?.get("content").toString()
-                                                    ,
+                                                    memoInfoSnapshot?.get("content").toString(),
                                                     memoInfoSnapshot?.get("groupName").toString(),
+                                                    groupId ,
                                                     placeSnapshot?.get("placeName").toString(),
                                                     placeSnapshot?.get("latitude").toString(),
                                                     placeSnapshot?.get("longitude").toString()

@@ -1,7 +1,6 @@
 
 package com.kakao.smartmemo.Model
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.kakao.smartmemo.Contract.TodoContract
@@ -36,8 +35,13 @@ class TodoModel {
                                                 placeAlarmIdSnapshot?.forEach { placeSnapshot ->
                                                     placeSnapshot.reference.collection("Place").document("PlaceInfo").addSnapshotListener { placeInfoSnapshot, _ ->
                                                         if(!placeAlarmIdSnapshot.isEmpty){
-                                                            todoData.add(TodoData(title, todoSnapshot.get("groupName").toString(), it.key,
-                                                                snapShot.get("group_color").toString().toLong(), timeSnapshot.id,
+                                                            todoData.add(TodoData(
+                                                                title,
+                                                                todoSnapshot.get("groupName").toString(),
+                                                                it.key,
+                                                                snapShot.get("group_color").toString().toLong(),
+                                                                data.key,
+                                                                timeSnapshot.id,
                                                                 timeSnapshot?.get("setTimeAlarm").toString().toBoolean(),
                                                                 timeSnapshot?.get("timeDate").toString(),
                                                                 timeSnapshot?.get("timeTime").toString(),
@@ -66,9 +70,13 @@ class TodoModel {
         }
     }
 
-    fun addTodo(todoData: TodoData) {
-        var todoId = todoData.title+System.currentTimeMillis()
-        Log.e("timeAgain placeAgain", "${todoData.timeAgain} ${todoData.placeAgain}")
+    fun addTodo(todoData: TodoData) { // Todo create와 update를 모두 하는 함수
+        var todoId = ""
+        if (todoData.todoId == "") {
+            todoId = todoData.title + System.currentTimeMillis()
+        } else {
+            todoId = todoData.todoId
+        }
         todoPath.document("${todoId}").set(hashMapOf("title" to todoData.title, "groupName" to todoData.groupName), SetOptions.merge())
         todoPath.document("${todoId}").collection("TimeAlarm").document("${todoData.timeAlarmId}")
             .set(hashMapOf("setTimeAlarm" to todoData.setTimeAlarm, "timeDate" to todoData.timeDate, "timeTime" to todoData.timeTime
@@ -82,10 +90,59 @@ class TodoModel {
         firestore.collection("Group").document("${todoData.groupId}").collection("TodoInfo").document("todoId")
             .set(hashMapOf("${todoId}" to "${todoId}"), SetOptions.merge())
     }
-    fun deleteTodo() {
 
+    fun getGroupTodo(groupId: String) {
+        var todoData = mutableListOf<TodoData>()
+        var groupColor:Long  = 0
+        groupPath.document("${groupId}").addSnapshotListener { todoInfoSnapshot, _ ->
+            groupColor = todoInfoSnapshot?.get("group_color") as Long
+        }
+        groupPath.document("${groupId}").collection("TodoInfo").document("todoId").addSnapshotListener { Snapshot, _ ->
+            if (Snapshot?.data != null) {
+                Snapshot?.data?.forEach { todo ->
+                    todoPath.document(todo.key).addSnapshotListener { todoSnapshot, _ ->
+                        todoSnapshot?.reference?.collection("TimeAlarm")?.addSnapshotListener { timeAlarmIdSnapshot, _ ->
+                            var title = todoSnapshot?.get("title").toString()
+                            timeAlarmIdSnapshot?.forEach { timeSnapshot ->
+                                todoSnapshot.reference.collection("PlaceAlarm")?.addSnapshotListener { placeAlarmIdSnapshot, _ ->
+                                    placeAlarmIdSnapshot?.forEach { placeSnapshot ->
+                                        placeSnapshot.reference.collection("Place").document("PlaceInfo").addSnapshotListener { placeInfoSnapshot, _ ->
+                                            if (!placeAlarmIdSnapshot.isEmpty) {
+                                                todoData.add(TodoData(
+                                                    title,
+                                                    todoSnapshot.get("groupName").toString(),
+                                                    groupId,
+                                                    groupColor,
+                                                    Snapshot.id,
+                                                    timeSnapshot.id,
+                                                    timeSnapshot?.get("setTimeAlarm").toString().toBoolean(),
+                                                    timeSnapshot?.get("timeDate").toString(),
+                                                    timeSnapshot?.get("timeTime").toString(),
+                                                    timeSnapshot?.get("timeAgain").toString().toInt(),
+                                                    placeSnapshot.id,
+                                                    placeSnapshot.get("setPlaceAlarm").toString().toBoolean(),
+                                                    placeSnapshot.get("placeDate").toString(),
+                                                    placeSnapshot.get("placeAgain").toString().toInt(),
+                                                    placeInfoSnapshot?.get("placeName").toString(),
+                                                    placeInfoSnapshot?.get("latitude").toString(),
+                                                    placeInfoSnapshot?.get("longitude").toString()
+                                                )
+                                                )
+                                                onTodoListener.onSuccess(todoData)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                onTodoListener.onSuccess(todoData)
+            }
+        }
     }
-    fun updateTodo() {
+    fun deleteTodo() {
 
     }
 
