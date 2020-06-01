@@ -354,6 +354,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         finish()
                     }
                 }
+
             }
         }
 

@@ -1,3 +1,4 @@
+
 package com.kakao.smartmemo.Model
 
 import com.google.firebase.firestore.FirebaseFirestore
@@ -144,4 +145,5 @@ class TodoModel {
     fun deleteTodo() {
 
     }
+
 }

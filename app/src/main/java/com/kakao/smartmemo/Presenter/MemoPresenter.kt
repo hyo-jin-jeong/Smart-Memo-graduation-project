@@ -37,7 +37,7 @@ class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
     override fun setMemoDeleteAdapterView(deleteAdapterView: MemoDeleteAdapterContract.View) {
         this.deleteAdapterView = deleteAdapterView
     }
-    override fun getMemo(){
+    override fun getAllMemo(){
         model.getAllMemo()
     }
     override fun getGroup() {
