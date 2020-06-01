@@ -1,14 +1,9 @@
 package com.kakao.smartmemo.View
 
-import android.app.AlarmManager
 import android.app.AlertDialog
-import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.view.View.GONE
@@ -25,11 +20,8 @@ import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Presenter.TodoPresenter
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
-import com.kakao.smartmemo.Receiver.TodoReceiver
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDateTime
-import java.util.*
 
 class TodoListFragment : Fragment(), TodoContract.View {
 
@@ -42,14 +34,12 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var cont: Context
     private var todoArrayList = mutableListOf<TodoData>()
     val date: LocalDateTime = LocalDateTime.now()
-    val todoCalendar: Calendar = Calendar.getInstance()
     private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,12 +57,11 @@ class TodoListFragment : Fragment(), TodoContract.View {
             intent.putExtra("todoData", todoArrayList[position])
             startActivity(intent)
         }
-        //setTodoAlarm(todoCalendar)
 
         //하단 메뉴
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.removeItem -> { // 세윤이 고치는 중이니까 건들지 말기
+                R.id.removeItem -> {
                     var count = deleteAdapter.count
                     var checkedItems = deleteAdapter.selectedTodo()
                     for( i in count-1 downTo 0) {
@@ -105,10 +94,6 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.getTodo()
         adapter = TodoAdapter(cont, todoArrayList)
         todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-        todoCalendar.set(Calendar.HOUR_OF_DAY, 0)
-        todoCalendar.set(Calendar.MINUTE, 39)
-        todoCalendar.set(Calendar.SECOND, 0)
-        //setTodoAlarm(todoCalendar)
         todolist.isClickable = true
     }
 
@@ -183,27 +168,4 @@ class TodoListFragment : Fragment(), TodoContract.View {
         bottomNavigationView.visibility = VISIBLE //하단메뉴 보이게
         deleteAdapter.notifyAdapter()
     }
-
-    private fun setTodoAlarm(calendar: Calendar) {
-        val pm = context!!.packageManager
-        val receiver = ComponentName(context, DeviceBootTodoReceiver::class.java)
-        val alarmIntent = Intent(context, TodoReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
-        val alarmManager = context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        if(alarmManager != null) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-            }
-            //부팅후 실행되는 리시버 사용가능하게 설정함.
-            pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP)
-        } else { // 알람을 허용하지 않았다면
-            if(PendingIntent.getBroadcast(context, 0, alarmIntent, 0)!=null && alarmManager!=null) {
-                alarmManager.cancel(pendingIntent)
-            }
-            pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
-        }
-    }
-
 }

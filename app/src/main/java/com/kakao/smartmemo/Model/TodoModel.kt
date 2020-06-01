@@ -1,6 +1,9 @@
+
 package com.kakao.smartmemo.Model
 
-import com.google.firebase.firestore.*
+import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.GroupObject
@@ -36,7 +39,6 @@ class TodoModel {
                                                             todoData.add(TodoData(title, todoSnapshot.get("groupName").toString(), it.key,
                                                                 snapShot.get("group_color").toString().toLong(), timeSnapshot.id,
                                                                 timeSnapshot?.get("setTimeAlarm").toString().toBoolean(),
-                                                                timeSnapshot?.get("timeDay").toString(),
                                                                 timeSnapshot?.get("timeDate").toString(),
                                                                 timeSnapshot?.get("timeTime").toString(),
                                                                 timeSnapshot?.get("timeAgain").toString().toInt(),
@@ -50,7 +52,6 @@ class TodoModel {
                                                             ))
                                                             onTodoListener.onSuccess(todoData)
                                                         }
-
                                                     }
                                                 }
                                             }
@@ -67,9 +68,10 @@ class TodoModel {
 
     fun addTodo(todoData: TodoData) {
         var todoId = todoData.title+System.currentTimeMillis()
+        Log.e("timeAgain placeAgain", "${todoData.timeAgain} ${todoData.placeAgain}")
         todoPath.document("${todoId}").set(hashMapOf("title" to todoData.title, "groupName" to todoData.groupName), SetOptions.merge())
         todoPath.document("${todoId}").collection("TimeAlarm").document("${todoData.timeAlarmId}")
-            .set(hashMapOf("setTimeAlarm" to todoData.setTimeAlarm, "timeDay" to todoData.timeDay, "timeDate" to todoData.timeDate, "timeTime" to todoData.timeTime
+            .set(hashMapOf("setTimeAlarm" to todoData.setTimeAlarm, "timeDate" to todoData.timeDate, "timeTime" to todoData.timeTime
                 , "timeAgain" to todoData.timeAgain), SetOptions.merge())
         todoPath.document("${todoId}").collection("PlaceAlarm").document("${todoData.placeAlarmId}")
             .set(hashMapOf("setPlaceAlarm" to todoData.setPlaceAlarm, "placeDate" to todoData.placeDate, "placeAgain" to todoData.placeAgain), SetOptions.merge())
@@ -86,4 +88,5 @@ class TodoModel {
     fun updateTodo() {
 
     }
+
 }

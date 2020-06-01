@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageButton
 import android.widget.TextView
 import com.kakao.smartmemo.Contract.LocationListAdapterContract
 import com.kakao.smartmemo.R
@@ -12,13 +13,14 @@ import com.kakao.smartmemo.R
 class LocationListAdapter(val context: Context, private val placeList: ArrayList<String>): BaseAdapter(), LocationListAdapterContract.Model, LocationListAdapterContract.View {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view: View = LayoutInflater.from(context).inflate(R.layout.locaion_list_item, null)
-        val textView_place = view.findViewById<TextView>(R.id.textView_alarm_place_list)
+        val placeTextView = view.findViewById<TextView>(R.id.textView_alarm_place_list)
+        val deleteButton = view.findViewById<ImageButton>(R.id.btn_place_delete)
 
-        textView_place.text = placeList[position]
+        placeTextView.text = placeList[position]
 
-//        var deleteBtn = view.findViewById<Button>(R.id.btn_place_delete)
-//        deleteBtn.setOnClickListener {
-//            var selectedPlace = it.
+        //해보는 중이라 지우지 않겠습니다
+//        deleteButton.setOnClickListener {
+//            placeList.remove(placeList[position])
 //        }
 
         return view
@@ -35,4 +37,5 @@ class LocationListAdapter(val context: Context, private val placeList: ArrayList
     override fun getCount(): Int {
         return placeList.size
     }
+
 }

@@ -4,8 +4,6 @@ import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
@@ -37,7 +35,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         //헤드업알림
         val contentview = RemoteViews(context.packageName, R.layout.location_notification)
-        contentview.setTextViewText(R.id.notification_Title, "장 소 알 람")
+        contentview.setTextViewText(R.id.notification_Title, "알 람")
         contentview.setOnClickPendingIntent(R.id.later_notification, pendingIntent)
         contentview.setOnClickPendingIntent(R.id.cancel_notification, pendingIntent)
         notificationbuilder.setContent(contentview)
