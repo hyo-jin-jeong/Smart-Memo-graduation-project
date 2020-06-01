@@ -13,18 +13,23 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.kakao.smartmemo.Adapter.LocationAdapter
 import com.kakao.smartmemo.Adapter.LocationListAdapter
 import com.kakao.smartmemo.ApiConnect.ApiClient
 import com.kakao.smartmemo.ApiConnect.ApiInterface
 import com.kakao.smartmemo.ApiConnect.CategoryResult
+import com.kakao.smartmemo.ApiConnect.Document
 import com.kakao.smartmemo.Contract.PlaceAlarmDetailContract
 import com.kakao.smartmemo.Presenter.PlaceAlarmDetailPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.main_dialog.*
+import net.daum.mf.map.api.CameraUpdateFactory
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
-import org.jetbrains.annotations.NotNull
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,6 +43,13 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
     private lateinit var mapViewContainer: ViewGroup
     private val context: Context = this
 
+    private var curLongitude: Double? = null
+    private var curLatitude: Double? = null
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var locationAdapter: LocationAdapter
+    private var documentList: ArrayList<Document> = ArrayList()
+
     private lateinit var listAdapter: LocationListAdapter
     private lateinit var saveButton: Button
     private lateinit var addButton: Button
@@ -45,6 +57,7 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
     private val locations = ArrayList<String>()
     private var mapPOIItem: MapPOIItem? = null
     private var locationItems = ArrayList<MapPOIItem>()
+    private var aroundLocationItems = ArrayList<MapPOIItem>()
 
     private var isUp: Boolean = false
     private lateinit var translateUp: Animation
@@ -80,25 +93,47 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         mapView.setMapViewEventListener(this)
         mapView.setPOIItemEventListener(this)
 
-        val listView: ListView = findViewById(R.id.listView)
-        listAdapter = LocationListAdapter(context, locations)
+        recyclerView = findViewById(R.id.search_recyclerview)
+        val layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) //레이아웃매니저 생성
+
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+        ) //아래구분선 세팅
+
+        recyclerView.layoutManager = layoutManager
+
+        val listView: RecyclerView = findViewById(R.id.listView)
+        listAdapter = LocationListAdapter(context, locations, locationItems, aroundLocationItems, mapView)
         listView.adapter = listAdapter
 
-        listView.setOnItemClickListener { parent, view, position, id ->
-            locations.remove(locations[position])
-            listAdapter.notifyDataSetChanged()
-        }
+        val layoutManager2 =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) //레이아웃매니저 생성
+
+        listView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
+
+        listView.layoutManager = layoutManager2
 
 
-        var longitude = intent.getDoubleExtra("longitude", 0.0)
-        var latitude = intent.getDoubleExtra("latitude", 0.0)
+        curLongitude = intent.getDoubleExtra("longitude", 0.0)
+        curLatitude = intent.getDoubleExtra("latitude", 0.0)
         var address = intent.getStringExtra("address")
 
-        var mapPoint: MapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
-        mapView.setMapCenterPoint(mapPoint, false)
+        var mapPoint: MapPoint = MapPoint.mapPointWithGeoCoord(curLatitude!!, curLongitude!!)
+        mapView.setMapCenterPoint(mapPoint, true)
 
-        val longPressedItem = createMarker(address, mapPoint, R.drawable.cur_location_icon)
+        val longPressedItem = createMarker(address, mapPoint)
+        longPressedItem.showAnimationType = MapPOIItem.ShowAnimationType.DropFromHeaven
         mapView.addPOIItem(longPressedItem)
+
     }
 
     override fun onPause() {
@@ -124,53 +159,125 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
 
         val searchItem: MenuItem? = menu!!.findItem(R.id.search)
         var searchView = searchItem!!.actionView as SearchView
+
+        val apiClient = ApiClient()
+        val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(
+            ApiInterface::class.java
+        )
+
+        locationAdapter = LocationAdapter(documentList, context!!, searchView, recyclerView)
+        recyclerView.adapter = locationAdapter
+
+        var firstX: String? = null
+        var firstY: String? = null
+
         searchView.setOnCloseListener {
             saveButton.visibility = Button.VISIBLE
             false
         }
         searchView.setOnSearchClickListener {
             saveButton.visibility = Button.INVISIBLE
+            listLayout.visibility = LinearLayout.INVISIBLE
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean { // do your logic here
-                //locationAdapter.clear()
-                //locationAdapter.notifyDataSetChanged()
-                var apiClient: ApiClient =
-                    ApiClient()
-                val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(
-                    ApiInterface::class.java)
-                val call: Call<CategoryResult?>? = apiInterface.getSearchLocation(
-                    getString(R.string.kakao_app_key),
-                    query,
-                    15
-                )
-                call!!.enqueue(object : Callback<CategoryResult?> {
-                    override fun onResponse(
-                        @NotNull call: Call<CategoryResult?>?,
-                        @NotNull response: Response<CategoryResult?>
-                    ) {
-                        if (response.isSuccessful) {
-                            assert(response.body() != null)
-                            for (document in response.body()?.getDocuments()!!) {
-                                //값을 넣는 부분임. locationAdapter가 리스트를 나타내는데 필요한 adapter 같음.
-                                //locationAdapter.addItem(document)
+                locationAdapter.notifyDataSetChanged()
+                saveButton.visibility = Button.VISIBLE
+                recyclerView.visibility = View.GONE
+
+                Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
+                if(locationAdapter.clicked) {
+                    //해당 요소만 찍고 위치 이동.
+                    var mapPoint: MapPoint = MapPoint.mapPointWithGeoCoord(locationAdapter.selectedY!!.toDouble(), locationAdapter.selectedX!!.toDouble())
+                    val selectedItem = createMarker("address", mapPoint)
+                    mapView.addPOIItem(selectedItem)
+
+                    changeMapCenterPoint(locationAdapter.selectedX, locationAdapter.selectedY)
+
+                    presenter.convertAddressFromMapPOIItem(selectedItem)
+                } else {
+                    val call: Call<CategoryResult?>? = apiInterface.getSearchAroundLocation(
+                        getString(R.string.kakao_restapi_key),
+                        query,
+                        7, 500, curLongitude.toString(), curLatitude.toString()
+                    )
+                    val callback: Callback<CategoryResult?> = object : Callback<CategoryResult?> {
+                        override fun onResponse(
+                            call: Call<CategoryResult?>,
+                            response: Response<CategoryResult?>
+                        ) {
+                            if (response.isSuccessful) { //check for Response status
+                                assert(response.body() != null)
+                                for (document in response.body()?.getDocuments()!!) {
+                                    firstX = response.body()?.getDocuments()!![0]!!.x
+                                    firstY = response.body()?.getDocuments()!![0]!!.y
+                                    makeAroundItem(document!!.x, document!!.y, document!!.placeName)
+                                }
+                                changeMapCenterPoint(firstX, firstY)
+                            } else {
+                                val statusCode = response.code()
+                                val responseBody = response.body()
+                                Log.e("jieun", statusCode.toString())
                             }
-                            //locationAdapter.notifyDataSetChanged()
+                        }
+
+                        override fun onFailure(
+                            call: Call<CategoryResult?>,
+                            t: Throwable
+                        ) {
                         }
                     }
-
-                    override fun onFailure(
-                        @NotNull call: Call<CategoryResult?>?,
-                        @NotNull t: Throwable?
-                    ) {
-                    }
-                })
-                Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
+                    call!!.enqueue(callback)
+                    //근처의 요소들 화면에 찍기. 그리고 이동.
+                }
+                searchView.clearFocus()
+                locationAdapter.clicked = false
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText!!.isNotEmpty()) {
+                    documentList.clear()
+                    locationAdapter.clear()
+                    locationAdapter.notifyDataSetChanged()
+
+                    val callKeyword: Call<CategoryResult?>? = apiInterface.getSearchLocation(
+                        getString(R.string.kakao_restapi_key),
+                        "$newText ",
+                        15
+                    )
+                    val callbackKeyword: Callback<CategoryResult?> = object : Callback<CategoryResult?> {
+                        //리스폰 시, 대응할 구현체
+                        override fun onResponse(
+                            call: Call<CategoryResult?>,
+                            response: Response<CategoryResult?>
+                        ) {
+                            if (response.isSuccessful) { //check for Response status
+                                assert(response.body() != null)
+                                for (document in response.body()?.getDocuments()!!) {
+                                    locationAdapter.addItem(document!!)
+                                }
+                                locationAdapter.notifyDataSetChanged()
+                            } else {
+                                val statusCode = response.code()
+                                val responseBody = response.body()
+                            }
+                        }
+
+                        override fun onFailure(
+                            call: Call<CategoryResult?>,
+                            t: Throwable
+                        ) {
+                        }
+                    }
+                    callKeyword!!.enqueue(callbackKeyword)
+
+                    recyclerView.visibility = View.VISIBLE
+                } else {
+                    recyclerView.visibility = View.GONE
+                    saveButton.visibility = Button.INVISIBLE
+                }
                 return false
             }
         })
@@ -213,8 +320,10 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
     }
 
     override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
+        listAdapter.notifyDataSetChanged()
         allMapItemShow()
-        mapPOIItem = createMarker(" ", p1!!, R.drawable.cur_location_icon)
+        mapPOIItem = createMarker(" ", p1!!)
+        mapPOIItem!!.markerType = MapPOIItem.MarkerType.RedPin
 
         presenter.convertAddressFromMapPOIItem(mapPOIItem!!)
         mapView.addPOIItem(mapPOIItem)
@@ -227,19 +336,22 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
 
         addButton.setOnClickListener {
             if(!locations.contains(mapPOIItem!!.itemName)) {
-                locations.add(mapPOIItem!!.itemName)
+                listAdapter.addItem(mapPOIItem!!.itemName)
+                listAdapter.notifyDataSetChanged()
+                mapPOIItem!!.markerType = MapPOIItem.MarkerType.YellowPin
                 listAdapter.notifyDataSetChanged()
                 locationItems.add(mapPOIItem!!)
+                allMapItemShow()
             }
         }
     }
 
-    private fun createMarker(name: String, point: MapPoint, imageResourceId: Int): MapPOIItem {
+    private fun createMarker(name: String, point: MapPoint): MapPOIItem {
         var marker = MapPOIItem()
         marker.itemName = name
         marker.mapPoint = point
-        marker.markerType = MapPOIItem.MarkerType.CustomImage
-        marker.customImageResourceId = imageResourceId
+        marker.markerType = MapPOIItem.MarkerType.BluePin
+        marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
         marker.isCustomImageAutoscale = false
         marker.isShowCalloutBalloonOnTouch = false
         marker.setCustomImageAnchor(0.5f, 1.0f)
@@ -264,6 +376,7 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
     }
 
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
+        listAdapter.notifyDataSetChanged()
         if(!isUp) {
             saveButton.visibility = Button.INVISIBLE
             listLayout.visibility = View.VISIBLE
@@ -273,9 +386,11 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         locationTextView.text = p1!!.itemName
         addButton.setOnClickListener {
             if(!locations.contains(p1!!.itemName)) {
-                locations.add(p1!!.itemName)
+                p1!!.markerType = MapPOIItem.MarkerType.YellowPin
+                listAdapter.addItem(p1!!.itemName)
                 listAdapter.notifyDataSetChanged()
                 locationItems.add(p1!!)
+                allMapItemShow()
             }
         }
     }
@@ -285,10 +400,29 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         for (mapItem in locationItems) {
             mapView.addPOIItem(mapItem)
         }
+        for (aroundMapItem in aroundLocationItems) {
+            mapView.addPOIItem(aroundMapItem)
+        }
     }
 
     override fun getLocationName(mapPOIItem: MapPOIItem, locationName: String?) {
         mapPOIItem.itemName = locationName
         locationTextView.text = locationName
+    }
+
+    fun changeMapCenterPoint(x: String?, y: String?) {
+        if(x != null && y != null) {
+            mapView.moveCamera(CameraUpdateFactory.newMapPoint(MapPoint.mapPointWithGeoCoord(y.toDouble(), x.toDouble())))
+        }
+    }
+
+    fun makeAroundItem(x: String?, y: String?, location: String?) {
+        if(x != null && y != null && location != null) {
+            var mapPoint: MapPoint = MapPoint.mapPointWithGeoCoord(y.toDouble(), x.toDouble())
+            var item = createMarker(location, mapPoint)
+            mapView.addPOIItem(item)
+            aroundLocationItems.add(item)
+        }
+
     }
 }

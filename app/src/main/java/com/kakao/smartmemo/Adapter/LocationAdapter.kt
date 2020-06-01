@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.Adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ class LocationAdapter(
 
     var selectedX: String? = null
     var selectedY: String? = null
+    var clicked = false
     override fun getItemCount(): Int {
         return items.size
     }
@@ -64,10 +66,11 @@ class LocationAdapter(
         holder.placeNameText.text = model.placeName
         holder.addressText.text = model.addressName
         holder.locationItem.setOnClickListener {
-            searchView.setQuery(model.placeName, true)
             recyclerView.visibility = View.GONE
             selectedX = model.x
             selectedY = model.y
+            clicked = true
+            searchView.setQuery(model.placeName, true)
             searchView.clearFocus()
             BusProvider().getInstance().post(model)
         }

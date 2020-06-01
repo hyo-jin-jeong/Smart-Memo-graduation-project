@@ -6,4 +6,5 @@
     <color name="colorWhite">#ffffff</color>
     <color name="font_default_color">#000000</color>
     <color name="groupExitButton">#E6E6FA</color>
+    <color name="lightGray">#C5CAE9</color>
 </resources>
