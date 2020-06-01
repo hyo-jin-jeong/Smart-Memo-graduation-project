@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -132,8 +133,10 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private fun selectGroup(){
         var i = 1
         val items:Array<CharSequence> = Array(GroupObject.groupInfo.size+1) {""}
+        val groupIds:Array<CharSequence> = Array(GroupObject.groupInfo.size+1) {""}
         items[0] = "전체메모"
         GroupObject.groupInfo.forEach {
+            groupIds[i] = it.key
             items[i] = it.value
             i++
         }
@@ -144,20 +147,30 @@ class TodoListFragment : Fragment(), TodoContract.View {
         )
         listDialog.setTitle("그룹 선택")
             .setItems(items, DialogInterface.OnClickListener { _, which ->
-                //그룹선택 구현
+                if (which == 0) {
+                    (activity as MainActivity).toolbar.title = "Todo List"
+                    presenter.getTodo()
+                } else {
+                    (activity as MainActivity).toolbar.title = items[which]
+                    presenter.getGroupTodo(groupIds[which].toString())
+                }
             })
             .show()
     }
 
     override fun showAllTodo(todoData: MutableList<TodoData>) {
         count = 0
-        todoArrayList = todoData
+        if (todoData.isEmpty()) {
+            todoArrayList.clear()
+        } else {
+            todoArrayList = todoData
+        }
         adapter = TodoAdapter(cont, todoArrayList)
         todolist.adapter = adapter
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
         bottomNavigationView.visibility = GONE
-        adapter.notifyAdapter()
+        Log.e("todoData", todoData.toString())
     }
 
     private fun deleteTodo() {
@@ -166,6 +179,5 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.setTodoDeleteAdapterModel(deleteAdapter)
         presenter.setTodoDeleteAdapterView(deleteAdapter)
         bottomNavigationView.visibility = VISIBLE //하단메뉴 보이게
-        deleteAdapter.notifyAdapter()
     }
 }
