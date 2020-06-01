@@ -15,11 +15,9 @@ import com.kakao.smartmemo.Adapter.MemoListDeleteAdapter
 import com.kakao.smartmemo.Contract.MemoContract
 import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.Object.GroupObject
-
 import com.kakao.smartmemo.Presenter.MemoPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
-
 
 class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var presenter: MemoPresenter
@@ -27,7 +25,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var memoAdapter: MemoListAdapter
     private lateinit var memoDeleteAdapter: MemoListDeleteAdapter
     private lateinit var bottomNavigationView : BottomNavigationView
-    private lateinit var memoList:MutableList<MemoData>
+    private var memoList:MutableList<MemoData> = mutableListOf()
     private var count = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +33,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     }
     override fun onStart() {
         super.onStart()
-        presenter.getMemo()
+        presenter.getAllMemo()
 
     }
     override fun onCreateView(
@@ -46,7 +44,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
         val view = inflater.inflate(R.layout.memo_list_fragment, container, false)
 
         presenter = MemoPresenter(this)
-        presenter.getMemo()
         recyclerView1 = view.findViewById(R.id.rv_memo_list!!)as RecyclerView
         bottomNavigationView = view.findViewById(R.id.navigationview_bottom)
 
@@ -115,16 +112,18 @@ class MemoListFragment : Fragment(), MemoContract.View {
         recyclerView1.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         bottomNavigationView.visibility = View.INVISIBLE
         memoAdapter.notifyAdapter()
-
     }
 
     private fun deleteMemo(){
-        memoDeleteAdapter = MemoListDeleteAdapter(memoList)
-        recyclerView1.adapter = memoDeleteAdapter
-        presenter.setMemoDeleteAdapterModel(memoDeleteAdapter)
-        presenter.setMemoDeleteAdapterView(memoDeleteAdapter)
-        recyclerView1.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        bottomNavigationView.visibility = View.VISIBLE
+        if(memoList.size != 0 ){
+            memoDeleteAdapter = MemoListDeleteAdapter(memoList)
+            recyclerView1.adapter = memoDeleteAdapter
+            presenter.setMemoDeleteAdapterModel(memoDeleteAdapter)
+            presenter.setMemoDeleteAdapterView(memoDeleteAdapter)
+            recyclerView1.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            bottomNavigationView.visibility = View.VISIBLE
+        }
+
     }
 
     private fun selectGroup(){
@@ -142,12 +141,11 @@ class MemoListFragment : Fragment(), MemoContract.View {
             this.context,
             android.R.style.Theme_DeviceDefault_Light_Dialog_Alert
         )
-
         listDialog.setTitle("폴더 선택")
             .setItems(value, DialogInterface.OnClickListener { _, which ->
                 if(which==0){
                     (activity as MainActivity).toolbar.title = "Memo List"
-                    presenter.getMemo()
+                    presenter.getAllMemo()
                 }else{
                     (activity as MainActivity).toolbar.title = value[which]
                     presenter.getGroupMemo(key[which].toString())
@@ -156,9 +154,5 @@ class MemoListFragment : Fragment(), MemoContract.View {
             })
             .show()
     }
-
-
-
-
 
 }

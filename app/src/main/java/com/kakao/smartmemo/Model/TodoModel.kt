@@ -1,3 +1,4 @@
+
 package com.kakao.smartmemo.Model
 
 import android.util.Log
@@ -87,4 +88,5 @@ class TodoModel {
     fun updateTodo() {
 
     }
+
 }
