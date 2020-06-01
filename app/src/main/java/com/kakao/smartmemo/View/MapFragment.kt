@@ -199,7 +199,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 locationAdapter.notifyDataSetChanged()
                 plusButton.visibility = Button.VISIBLE
                 goCurLocation.visibility = FloatingActionButton.VISIBLE
-                //recyclerView.visibility = View.GONE
+                recyclerView.visibility = View.GONE
                 Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
                 if(locationAdapter.clicked) {
                     changeMapCenterPoint(locationAdapter.selectedX, locationAdapter.selectedY)
