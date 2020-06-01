@@ -20,7 +20,6 @@ import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.AddTodoPresenter
-import com.kakao.smartmemo.Presenter.MemberDataPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.AlarmReceiver
 import com.kakao.smartmemo.Receiver.DeviceBootAlarmReceiver
@@ -37,9 +36,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     private lateinit var presenter : AddTodoContract.Presenter
     //private lateinit var userpresenter : MemberDataPresenter
     private lateinit var titleEdit: EditText
-    private lateinit var selectGroup : Button
+    private lateinit var selectGroupBtn : Button
     private var groupName: String = ""
     private var groupId: String = ""
+    private var groupColor: Long = 0
     private lateinit var todoStubTime: ViewStub
     private lateinit var todoStubLocation: ViewStub
     private lateinit var viewTime : View
@@ -67,6 +67,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     private val timeCalendar = Calendar.getInstance()
     private val placeCalendar = Calendar.getInstance()
     private val todoCalendar = Calendar.getInstance()
+    private var timeAlarmId = ""
+    private var placeAlarmId = ""
     private var settingsTimeMinutes = 0
     private var settingsPlaceMinutes = 0
     val interval = AlarmManager.INTERVAL_DAY
@@ -74,7 +76,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     val date: LocalDateTime = LocalDateTime.now()
     var hour = 0
     var amPm = "오전"
-    var min = ""
+    var min = 0
     private lateinit var data : TodoData
 
     private var placeList = arrayListOf(PlaceData("연세병원"))
@@ -92,7 +94,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         // presenter 초기화
         presenter = AddTodoPresenter(this)
         titleEdit = findViewById(R.id.edit_todolist)
-        selectGroup = findViewById(R.id.todo_select_group)
+        selectGroupBtn = findViewById(R.id.todo_select_group)
         timeSwitch = findViewById(R.id.switch_time)
         todoStubTime = findViewById(R.id.stub_alarm_time)
         todoStubLocation = findViewById(R.id.stub_alarm_location)
@@ -119,8 +121,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
         var timeAgainAdapter = ArrayAdapter.createFromResource(applicationContext,
             R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
-        var placeAgainAdapter = ArrayAdapter.createFromResource(applicationContext,
-            R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
 
         timebtn = viewTime.findViewById(R.id.btn_time_settings) //시간설정버튼
         timebtn.isClickable = false
@@ -129,24 +129,30 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         placeListView = viewLocation.findViewById(R.id.listview_place) //장소선택시 나오는 listview
 
         timeDateLayout.setOnClickListener { //시간 날짜 설정
+            var year = LocalDate.now().year
+            var month = LocalDate.now().monthValue-1
+            var day = LocalDate.now().dayOfMonth
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 timeDateText.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
                 timeCalendar.set(Calendar.YEAR, year) // 년
                 timeCalendar.set(Calendar.MONTH, month) // 월
                 timeCalendar.set(Calendar.DATE, dayOfMonth) // 일
             }
-            val dateDia = DatePickerDialog(this, dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
+            val dateDia = DatePickerDialog(this,dateListener, year, month, day)
             dateDia.show()
         }
 
         placeDateLayout.setOnClickListener { //장소 날짜 설정
+            var year = LocalDate.now().year
+            var month = LocalDate.now().monthValue-1
+            var day = LocalDate.now().dayOfMonth
             var dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 placeDateText.text = "${year}년 ${month+1}월 ${dayOfMonth}일"
                 placeCalendar.set(Calendar.YEAR, year) //년
                 placeCalendar.set(Calendar.MONTH, month) //월
                 placeCalendar.set(Calendar.DATE, dayOfMonth) //일
             }
-            val dateDia = DatePickerDialog(this,dateListener, LocalDate.now().year,LocalDate.now().monthValue-1,LocalDate.now().dayOfMonth)
+            val dateDia = DatePickerDialog(this,dateListener, year, month, day)
             dateDia.show()
         }
 
@@ -172,7 +178,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         }
 
         //장소 알림 반복시간 설정
-        placeSpinner.adapter = placeAgainAdapter
+        placeSpinner.adapter = timeAgainAdapter
         placeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (position == 0) {
@@ -199,6 +205,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 timeCalendar.timeInMillis
                 timeLayout.setOnClickListener(timeDialogClickListener)
             } else {
+                timeDateText.text = "[기본] 날짜 미설정"
+                settingsTimeMinutes = 0
                 todoStubTime.visibility = GONE
                 notifyTime = false
             }
@@ -212,6 +220,9 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                     this.startActivity(placechoiceIntent)
                 })
             } else {
+                placeDateText.text = "[기본] 날짜 미설정"
+                settingsPlaceMinutes = 0
+                placeList.clear()
                 todoStubLocation.visibility = GONE
             }
         }
@@ -238,69 +249,115 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 5 -> placePosition = 3
                 10 -> placePosition = 4
             }
+
+            groupId = data.groupId
+            groupColor = data.groupColor
             titleEdit.setText(data.title)
+            selectGroupBtn.text = data.groupName
             timeSwitch.isChecked = data.setTimeAlarm
-            placeSwitch.isChecked = data.setPlaceAlarm
             timeDateText.text = data.timeDate
             timeText.text = data.timeTime
+            settingsTimeMinutes = data.timeAgain
             timeSpinner.adapter = timeAgainAdapter
             timeSpinner.setSelection(timePosition, true)
 
+            placeSwitch.isChecked = data.setPlaceAlarm
             placeDateText.text = data.placeDate
+            settingsPlaceMinutes = data.placeAgain
             placeSpinner.adapter = timeAgainAdapter
             placeSpinner.setSelection(placePosition, true)
+
+            savebtn.setOnClickListener {
+                when {
+                    titleEdit.text.isEmpty() -> {
+                        Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        var todoData = TodoData(
+                            titleEdit.text.toString(),
+                            data.groupName,
+                            data.groupId,
+                            data.groupColor,
+                            data.todoId,
+                            data.timeAlarmId,
+                            timeSwitch.isChecked,
+                            "${timeDateText.text}",
+                            timeText.text.toString(),
+                            settingsTimeMinutes,
+                            data.placeAlarmId,
+                            placeSwitch.isChecked,
+                            "${placeDateText.text}",
+                            settingsPlaceMinutes,
+                            "한성대학교",
+                            "0.0",
+                            "0.0"
+                        )
+                        presenter.addTodo(todoData)
+                        finish()
+                    }
+                }
+            }
         } else {
             savebtn.setOnClickListener {
-                if (groupName == "") {
-                    Toast.makeText(applicationContext, "그룹을 선택해주세요", Toast.LENGTH_SHORT).show()
-                } else {
-                    var todoData = TodoData(
-                        titleEdit.text.toString(),
-                        groupName,
-                        groupId,
-                        0,
-                        "time" + System.currentTimeMillis(),
-                        timeSwitch.isChecked,
-                        timeDateText.text.toString(),
-                        timeText.text.toString(),
-                        settingsTimeMinutes,
-                        "place" + System.currentTimeMillis(),
-                        placeSwitch.isChecked,
-                        placeDateText.text.toString(),
-                        settingsPlaceMinutes,
-                        "한성대학교",
-                        "0.0",
-                        "0.0"
-                    )
-                    presenter.addTodo(todoData)
-                    if (timeSwitch.isChecked) {
-                        // 지정한 시간에 울리게 알람을 세팅
-                        setTimeAlarm(timeCalendar, settingsTimeMinutes)
+                when {
+                    groupName == "" -> {
+                        Toast.makeText(applicationContext, "그룹을 선택해주세요", Toast.LENGTH_SHORT).show()
                     }
-                    val TodoTime = UserObject.kakao_alarm_time
-                    //여기에 user의 kakao_alarm_time을 가져와 넣어주어야함! 지금은 임시로 해놓은것!
-                    todoCalendar.set(Calendar.HOUR_OF_DAY, 1)
-                    todoCalendar.set(Calendar.MINUTE, 16)
-                    todoCalendar.set(Calendar.SECOND, 0)
-                    val currentTime = System.currentTimeMillis()
-                    var settingTime = todoCalendar.timeInMillis
-                    val interval = AlarmManager.INTERVAL_DAY
-                    if (currentTime > settingTime) {
-                        todoCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
+                    titleEdit.text.isEmpty() -> {
+                        Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
                     }
-                    setTodoAlarm(todoCalendar)
+                    else -> {
+                        timeAlarmId = "time" + System.currentTimeMillis()
+                        placeAlarmId = "place" + System.currentTimeMillis()
+                        var todoData = TodoData(
+                            titleEdit.text.toString(),
+                            groupName,
+                            groupId,
+                            0,
+                            "",
+                            "${timeAlarmId}",
+                            timeSwitch.isChecked,
+                            "${timeDateText.text}",
+                            timeText.text.toString(),
+                            settingsTimeMinutes,
+                            "${placeAlarmId}",
+                            placeSwitch.isChecked,
+                            "${placeDateText.text}",
+                            settingsPlaceMinutes,
+                            "한성대학교",
+                            "0.0",
+                            "0.0"
+                        )
+                        presenter.addTodo(todoData)
+                        if (timeSwitch.isChecked) {
+                            // 지정한 시간에 울리게 알람을 세팅
+                            setTimeAlarm(timeCalendar, settingsTimeMinutes)
+                        }
+                        val TodoTime = UserObject.kakao_alarm_time
+                        //여기에 user의 kakao_alarm_time을 가져와 넣어주어야함! 지금은 임시로 해놓은것!
+                        todoCalendar.set(Calendar.HOUR_OF_DAY, 1)
+                        todoCalendar.set(Calendar.MINUTE, 16)
+                        todoCalendar.set(Calendar.SECOND, 0)
+                        val currentTime = System.currentTimeMillis()
+                        var settingTime = todoCalendar.timeInMillis
+                        val interval = AlarmManager.INTERVAL_DAY
+                        if (currentTime > settingTime) {
+                            todoCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
+                        }
+                        setTodoAlarm(todoCalendar)
 
-                    //val User = userpresenter.getProfile()
-//                    if (placeSwitch.isChecked) {
-//                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
-//                        setTimeAlarm(placeCalendar)
-//                    }
-                    finish()
+                        //val User = userpresenter.getProfile()
+            //                    if (placeSwitch.isChecked) {
+            //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
+            //                        setTimeAlarm(placeCalendar)
+            //                    }
+                        finish()
+                    }
                 }
             }
         }
 
-        selectGroup.setOnClickListener {
+        selectGroupBtn.setOnClickListener {
             selectGroup()
         }
     }
@@ -318,9 +375,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
     private var timeDialogClickListener = View.OnClickListener { view ->
         var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-            hour = 0
-            amPm = "오전"
-            min = minute.toString()
+            min = minute
             if (hourOfDay == 0) {
                 amPm = "오전"
                 hour = 12
@@ -336,11 +391,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             }
 
             min = if (minute == 0) {
-                "00"
+                0
             } else {
-                minute.toString()
+                minute
             }
-            timeText.text = "${amPm} ${hour} : ${min}"
+            timeText.text = "${amPm} ${hour} : ${String.format("%02d", min)}"
             timeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay) // 시
             timeCalendar.set(Calendar.MINUTE, minute) // 분
             timeCalendar.set(Calendar.SECOND, 0) // 초
@@ -350,7 +405,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             if (currentTime > settingTime) {
                 timeCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
             }
-            //setTimeAlarm(timeCalendar, settingsTimeMinutes)
         }
         val dialog = TimePickerDialog(this, listener,12,0,false)
         dialog.show()
@@ -371,7 +425,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         )
         listDialog.setTitle("그룹 선택")
             .setItems(items, DialogInterface.OnClickListener() { _, which ->
-                selectGroup.text = items[which]
+                selectGroupBtn.text = items[which]
                 groupName = items[which].toString()
                 groupId = groupIds[which].toString()
             })

@@ -1,5 +1,6 @@
 package com.kakao.smartmemo.Contract
 
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.kakao.smartmemo.Data.TodoData
 
 interface TodoContract {
@@ -9,7 +10,7 @@ interface TodoContract {
     }
 
     interface Presenter {
-        fun getGroup()
+        fun getGroupTodo(groupId: String)
         fun setTodoAdapterModel(adapterModel : TodoAdapterContract.Model)
         fun setTodoAdapterView(adapterView : TodoAdapterContract.View)
         fun setTodoDeleteAdapterModel(deleteAdapterModel : TodoDeleteAdapterContract.Model)
