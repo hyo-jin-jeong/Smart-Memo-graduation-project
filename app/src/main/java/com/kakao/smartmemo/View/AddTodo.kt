@@ -347,10 +347,12 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         setTodoAlarm(todoCalendar)
 
                         //val User = userpresenter.getProfile()
-                        //                    if (placeSwitch.isChecked) {
-                        //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
-                        //                        setTimeAlarm(placeCalendar)
-                        //                    }
+
+            //                    if (placeSwitch.isChecked) {
+            //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
+            //                        setTimeAlarm(placeCalendar)
+            //                    }
+
                         finish()
                     }
                 }

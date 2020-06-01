@@ -102,39 +102,41 @@ class TodoModel {
                 Snapshot?.data?.forEach { todo ->
                     todoPath.document(todo.key).addSnapshotListener { todoSnapshot, _ ->
                         todoSnapshot?.reference?.collection("TimeAlarm")?.addSnapshotListener { timeAlarmIdSnapshot, _ ->
-                            var title = todoSnapshot?.get("title").toString()
-                            timeAlarmIdSnapshot?.forEach { timeSnapshot ->
-                                todoSnapshot.reference.collection("PlaceAlarm")?.addSnapshotListener { placeAlarmIdSnapshot, _ ->
-                                    placeAlarmIdSnapshot?.forEach { placeSnapshot ->
-                                        placeSnapshot.reference.collection("Place").document("PlaceInfo").addSnapshotListener { placeInfoSnapshot, _ ->
-                                            if (!placeAlarmIdSnapshot.isEmpty) {
-                                                todoData.add(TodoData(
-                                                    title,
-                                                    todoSnapshot.get("groupName").toString(),
-                                                    groupId,
-                                                    groupColor,
-                                                    Snapshot.id,
-                                                    timeSnapshot.id,
-                                                    timeSnapshot?.get("setTimeAlarm").toString().toBoolean(),
-                                                    timeSnapshot?.get("timeDate").toString(),
-                                                    timeSnapshot?.get("timeTime").toString(),
-                                                    timeSnapshot?.get("timeAgain").toString().toInt(),
-                                                    placeSnapshot.id,
-                                                    placeSnapshot.get("setPlaceAlarm").toString().toBoolean(),
-                                                    placeSnapshot.get("placeDate").toString(),
-                                                    placeSnapshot.get("placeAgain").toString().toInt(),
-                                                    placeInfoSnapshot?.get("placeName").toString(),
-                                                    placeInfoSnapshot?.get("latitude").toString(),
-                                                    placeInfoSnapshot?.get("longitude").toString()
-                                                )
-                                                )
-                                                onTodoListener.onSuccess(todoData)
+
+                                var title = todoSnapshot?.get("title").toString()
+                                timeAlarmIdSnapshot?.forEach { timeSnapshot ->
+                                    todoSnapshot.reference.collection("PlaceAlarm")?.addSnapshotListener { placeAlarmIdSnapshot, _ ->
+                                            placeAlarmIdSnapshot?.forEach { placeSnapshot ->
+                                                placeSnapshot.reference.collection("Place").document("PlaceInfo").addSnapshotListener { placeInfoSnapshot, _ ->
+                                                        if (!placeAlarmIdSnapshot.isEmpty) {
+                                                            todoData.add(TodoData(
+                                                                    title,
+                                                                    todoSnapshot.get("groupName").toString(),
+                                                                    groupId,
+                                                                    groupColor,
+                                                                    Snapshot.id,
+                                                                    timeSnapshot.id,
+                                                                    timeSnapshot?.get("setTimeAlarm").toString().toBoolean(),
+                                                                    timeSnapshot?.get("timeDate").toString(),
+                                                                    timeSnapshot?.get("timeTime").toString(),
+                                                                    timeSnapshot?.get("timeAgain").toString().toInt(),
+                                                                    placeSnapshot.id,
+                                                                    placeSnapshot.get("setPlaceAlarm").toString().toBoolean(),
+                                                                    placeSnapshot.get("placeDate").toString(),
+                                                                    placeSnapshot.get("placeAgain").toString().toInt(),
+                                                                    placeInfoSnapshot?.get("placeName").toString(),
+                                                                    placeInfoSnapshot?.get("latitude").toString(),
+                                                                    placeInfoSnapshot?.get("longitude").toString()
+                                                                )
+                                                            )
+                                                            onTodoListener.onSuccess(todoData)
+                                                        }
+                                                    }
                                             }
                                         }
-                                    }
                                 }
                             }
-                        }
+
                     }
                 }
             } else {
