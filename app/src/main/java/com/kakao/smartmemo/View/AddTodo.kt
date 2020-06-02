@@ -334,26 +334,15 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         presenter.addTodo(todoData)
                         if (timeSwitch.isChecked) {
                             // 지정한 시간에 울리게 알람을 세팅
-                            setTimeAlarm(timeCalendar, settingsTimeMinutes)
+                            setTimeLocationAlarm(timeCalendar, settingsTimeMinutes)
                         }
-                        val TodoTime = UserObject.kakao_alarm_time
-                        //여기에 user의 kakao_alarm_time을 가져와 넣어주어야함! 지금은 임시로 해놓은것!
-                        todoCalendar.set(Calendar.HOUR_OF_DAY, 1)
-                        todoCalendar.set(Calendar.MINUTE, 16)
-                        todoCalendar.set(Calendar.SECOND, 0)
-                        val currentTime = System.currentTimeMillis()
-                        var settingTime = todoCalendar.timeInMillis
-                        val interval = AlarmManager.INTERVAL_DAY
-                        if (currentTime > settingTime) {
-                            todoCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
-                        }
-                        setTodoAlarm(todoCalendar)
 
-                        //val User = userpresenter.getProfile()
+                        todoAlarm()
+                        receiverData()
 
             //                    if (placeSwitch.isChecked) {
-            //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
-            //                        setTimeAlarm(placeCalendar)
+            //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinutes)
+            //                        setTimeLocationAlarm(placeCalendar, settingsPlaceMinutes)
             //                    }
 
                         finish()
