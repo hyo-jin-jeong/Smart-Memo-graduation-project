@@ -401,6 +401,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 timeCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
             }
         }
+
+        /*TimePicker.OnTimeChangedListener { view, hourOfDay, minute ->  //시간설정 변경 안되는것때문에 해놓은것! 나중에 고치기!
+
+        }*/
+
         val dialog = TimePickerDialog(this, listener,12,0,false)
         dialog.show()
     }

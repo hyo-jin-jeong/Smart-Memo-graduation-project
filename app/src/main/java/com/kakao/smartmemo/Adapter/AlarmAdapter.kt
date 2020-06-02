@@ -30,8 +30,8 @@ class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(), AlarmAdapt
 
     fun initData() {
         //여기다 임의로 data 넣어줬습니다. 이것을 수정해서 DB 연결해주세용
-        placeData = mutableListOf(PlaceAlarmData("한성대학교", "2020.03.14", "도서관 책 "), PlaceAlarmData("녹십자약국", "2020.03.15", "마스크 사기"))
-        timeData = mutableListOf(TimeAlarmData("오전 9:00", "월요일 마다", "약 먹기"))
+        placeData = mutableListOf(PlaceAlarmData("한성대학교", "2020.03.14", "도서관 책 ", true), PlaceAlarmData("녹십자약국", "2020.03.15", "마스크 사기", false))
+        timeData = mutableListOf(TimeAlarmData("오전 9:00", "월요일 마다", "약 먹기", true))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -42,6 +42,7 @@ class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(), AlarmAdapt
                         alarm_place.text = it.place
                         alarm_date.text = it.date
                         alarm_content.text = it.content
+                        switch.isChecked = it.onoff
                     }
                 }
             }
@@ -51,6 +52,7 @@ class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(), AlarmAdapt
                         alarm_place.text = it.time
                         alarm_date.text = it.date
                         alarm_content.text = it.content
+                        switch.isChecked = it.onoff
                     }
                 }
 
@@ -89,7 +91,6 @@ class AlarmAdapter : RecyclerView.Adapter<AlarmAdapter.ViewHolder>(), AlarmAdapt
         val alarm_place: TextView = itemView.textView_alarm_place
         val alarm_date: TextView = itemView.textView_date
         val alarm_content: TextView = itemView.textView_alarm_content
-
         val switch: Switch = itemView.switch_alarm_settings
     }
 

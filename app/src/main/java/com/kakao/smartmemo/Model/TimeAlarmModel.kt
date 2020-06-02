@@ -9,9 +9,9 @@ class TimeAlarmModel {
 
     }
     fun removeTimeAlarm(position: Int) : TimeAlarmData {
-        return TimeAlarmData("", "", "")
+        return TimeAlarmData("", "", "", false)
     }
     fun getTimeAlarm(position: Int) : TimeAlarmData {
-        return TimeAlarmData("", "", "")
+        return TimeAlarmData("", "", "", false)
     }
 }
