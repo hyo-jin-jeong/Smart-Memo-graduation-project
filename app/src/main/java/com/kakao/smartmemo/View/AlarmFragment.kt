@@ -2,6 +2,7 @@ package com.kakao.smartmemo.View
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Switch
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +18,7 @@ class AlarmFragment : Fragment(), AlarmContract.View {
     lateinit var Alarm : RecyclerView
     lateinit var presenter : AlarmContract.Presenter
     lateinit var myAdapter: AlarmAdapter
+    private lateinit var alarmswitch : Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -31,6 +33,7 @@ class AlarmFragment : Fragment(), AlarmContract.View {
         val view = inflater.inflate(R.layout.place_alarm_fragment, container, false)
         presenter = AlarmPresenter(this)
         Alarm = view.findViewById(R.id.alarm_settings_view) as RecyclerView
+        alarmswitch = view.findViewById(R.id.switch_alarm_settings)
         myAdapter = AlarmAdapter()
         myAdapter.setMode(0)
         myAdapter.initData()
