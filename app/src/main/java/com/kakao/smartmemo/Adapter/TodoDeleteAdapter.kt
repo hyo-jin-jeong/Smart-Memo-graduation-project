@@ -34,7 +34,6 @@ class TodoDeleteAdapter(val context: Context, private val todoList: MutableList<
         view.textView_todo.setOnClickListener { //리스트뷰 눌렀을시 체크박스 선택
             checkbox_todo.isChecked = true
             pos.add(position)
-            Log.v("seyuuuun", position.toString())
         }
 
         return view
