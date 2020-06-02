@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.kakao.smartmemo.Adapter.LocationAdapter
 import com.kakao.smartmemo.ApiConnect.*
 import com.kakao.smartmemo.Contract.MapContract
@@ -44,10 +45,12 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener,
     MapView.OpenAPIKeyAuthenticationResultListener {
     private lateinit var presenter: MapPresenter
+    private lateinit var goCurLocation: FloatingActionButton
 
     private lateinit var mapView: MapView
     private lateinit var mapViewContainer: ViewGroup
     private var usingMapView = false
+    private var isCurLocation = false
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var locationAdapter: LocationAdapter
@@ -58,6 +61,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     private var isLongTouch: Boolean = false
     private var curLocationMarker: MapPOIItem = MapPOIItem()
     private var convertedAddress: String? = null
+    private var curLongitude: Double? = null
+    private var curLatitude: Double? = null
 
     private var canGetLocation = false
     private lateinit var locationManager: LocationManager
@@ -86,27 +91,16 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         val curLocation: Location? = getLocation()
         if (curLocation != null) {
-            val curLongitude = curLocation.longitude
-            val curLatitude = curLocation.latitude
+            curLongitude = curLocation.longitude
+            curLatitude = curLocation.latitude
 
             //중심점 설정하는
             mapView.setMapCenterPoint(
-                MapPoint.mapPointWithGeoCoord(curLatitude, curLongitude),
+                MapPoint.mapPointWithGeoCoord(curLatitude!!, curLongitude!!),
                 false
             )
         }
 
-        val myOnClickLisnter = View.OnClickListener { v ->
-            when(v) {
-                (activity as MainActivity).fab_memo ->  {
-                    Log.i("jieun", "memo button click")
-                }
-                (activity as MainActivity).fab_todo -> {
-                    Log.i("jieun", "todo button click")
-                }
-            }
-        }
-        view.setOnClickListener(myOnClickLisnter)
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
 
@@ -115,6 +109,20 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapView.setCurrentLocationEventListener(this)
         mapView.setOpenAPIKeyAuthenticationResultListener(this)
 
+        goCurLocation = view.findViewById(R.id.go_curLocation)
+        goCurLocation.setOnClickListener {
+            if(!isCurLocation) {
+                isCurLocation = true
+                goCurLocation.setImageResource(R.drawable.current_location_click_icon)
+                mapView.currentLocationTrackingMode =
+                    MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+            } else {
+                isCurLocation = false
+                goCurLocation.setImageResource(R.drawable.current_location_icon)
+                mapView.currentLocationTrackingMode =
+                    MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
+            }
+        }
         recyclerView = view.findViewById(R.id.map_recyclerview)
         val layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) //레이아웃매니저 생성
@@ -142,7 +150,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     override fun onResume() {
         super.onResume()
         if (!usingMapView) {
-            Log.i("jieun", "이거시 실행되었다.")
             mapView = MapView(view!!.context)
             mapViewContainer.addView(mapView)
 
@@ -171,31 +178,37 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         val searchItem: MenuItem? = menu.findItem(R.id.search)
         val searchView = searchItem!!.actionView as SearchView
 
-        var selectedX: String? = null
-        var selectedY: String? = null
+        var firstX: String? = null
+        var firstY: String? = null
 
         locationAdapter = LocationAdapter(documentList, context!!, searchView, recyclerView)
         recyclerView.adapter = locationAdapter
 
         searchView.setOnCloseListener {
+            goCurLocation.visibility = FloatingActionButton.VISIBLE
             plusButton.visibility = Button.VISIBLE
             false
         }
         searchView.setOnSearchClickListener {
+            goCurLocation.visibility = FloatingActionButton.INVISIBLE
             plusButton.visibility = Button.INVISIBLE
             false
         }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean { // do your logic here
+                locationAdapter.notifyDataSetChanged()
                 plusButton.visibility = Button.VISIBLE
+                goCurLocation.visibility = FloatingActionButton.VISIBLE
                 recyclerView.visibility = View.GONE
                 Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
-                if(locationAdapter.selectedX != null && locationAdapter.selectedY != null) {
+                if(locationAdapter.clicked) {
                     changeMapCenterPoint(locationAdapter.selectedX, locationAdapter.selectedY)
                 } else {
-                    changeMapCenterPoint(selectedX, selectedY)
+                    //첫번째 요소의 포인트로 이동
+                    changeMapCenterPoint(firstX, firstY)
                 }
                 searchView.clearFocus()
+                locationAdapter.clicked = false
                 return false
             }
 
@@ -223,13 +236,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                             if (response.isSuccessful) { //check for Response status
                                 assert(response.body() != null)
                                 for (document in response.body()?.getDocuments()!!) {
-                                    selectedX = response.body()?.getDocuments()!![0]!!.x
-                                    selectedY = response.body()?.getDocuments()!![0]!!.y
+                                    firstX = response.body()?.getDocuments()!![0]!!.x
+                                    firstY = response.body()?.getDocuments()!![0]!!.y
                                     locationAdapter.addItem(document!!)
                                 }
                                 locationAdapter.notifyDataSetChanged()
                             } else {
                                 val statusCode = response.code()
+                                val responseBody = response.body()
                             }
                         }
 
@@ -243,6 +257,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
                     recyclerView.visibility = View.VISIBLE
                 } else {
+                    goCurLocation.visibility = FloatingActionButton.INVISIBLE
                     recyclerView.visibility = View.GONE
                     plusButton.visibility = Button.INVISIBLE
                 }
@@ -336,7 +351,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onMapViewDragEnded(p0: MapView?, p1: MapPoint?) {
-
+        mapView.removePOIItem(curLocationMarker)
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
@@ -380,6 +395,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         val curPoint = p1.mapPointGeoCoord
         val longitude = curPoint.longitude
         val latitude = curPoint.latitude
+
         //주소 정보도 포함하기
         when {
             !isLongTouch -> isLongTouch = true
@@ -405,8 +421,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                         startActivity(addMemoIntent)
                         this.onDestroyView()
+                        mapView.removePOIItem(curLocationMarker)
                     }
-                    else -> {
+                    1 -> {
                         val addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
                         addTodoIntent.putExtra("longitude", longitude)
                         addTodoIntent.putExtra("latitude", latitude)
@@ -416,11 +433,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         usingMapView = false
                         mapView.onPause()
                         mapViewContainer.removeAllViews()
+                        mapView.removePOIItem(curLocationMarker)
                     }
                 }
             })
             .show()
-
     }
 
 
@@ -712,9 +729,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     fun changeMapCenterPoint(x: String?, y: String?) {
         if(x != null && y != null) {
-            var cameraPosition = CameraPosition(MapPoint.mapPointWithGeoCoord(y.toDouble(), x.toDouble()),
-                2F
-            )
             mapView.moveCamera(CameraUpdateFactory.newMapPoint(MapPoint.mapPointWithGeoCoord(y.toDouble(), x.toDouble())))
         }
     }

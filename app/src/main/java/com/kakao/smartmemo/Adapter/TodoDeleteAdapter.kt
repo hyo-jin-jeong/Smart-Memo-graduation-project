@@ -1,15 +1,14 @@
 package com.kakao.smartmemo.Adapter
 
 import android.annotation.SuppressLint
-
 import android.content.Context
-
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.BaseAdapter
+import android.widget.CheckBox
+import android.widget.ListView
 import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.R
@@ -23,6 +22,7 @@ class TodoDeleteAdapter(val context: Context, private val todoList: MutableList<
         val view = LayoutInflater.from(context).inflate(R.layout.todo_list_delete, null)
         val todo = todoList[position]
 
+        view.delete_group_name.text = todo.groupName
         val checkbox_todo = view.findViewById(R.id.checkDelete) as CheckBox
         view.textView_todo.text = todo.title
 

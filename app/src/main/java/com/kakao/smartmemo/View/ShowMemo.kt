@@ -1,5 +1,6 @@
 package com.kakao.smartmemo.View
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.kakao.smartmemo.Contract.ShowMemoContract
 import com.kakao.smartmemo.Data.MemoData
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Presenter.ShowMemoPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_show_memo.*
@@ -22,6 +24,10 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
     private lateinit var placeText : TextView
     private lateinit var dateText : TextView
     private lateinit var memoData : MemoData
+    private var groupId = ""
+    private var memoId = ""
+    private val REQUEST_TEST = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_memo)
@@ -32,18 +38,10 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
         contentText = findViewById(R.id.show_content)
         placeText = findViewById(R.id.location_name)
         dateText = findViewById(R.id.memo_date)
-        if(intent.hasExtra("memoData")){
+        if(intent.hasExtra("memoData")) {
             memoData = intent.getParcelableExtra("memoData")
-            memoToolbar.title = memoData.groupName
-            titleText.text = memoData.title
-            contentText.text = memoData.content
-            placeText.text = memoData.placeName
-            dateText.text = memoData.date
-            show_memo_layout.setBackgroundColor(memoData.groupColor.toInt())
+            setData()
         }
-
-
-
         setSupportActionBar(memoToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -54,7 +52,6 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
         menuInflater.inflate(R.menu.select_options_in_showmemo, menu)
         return true
     }
-
     // 뒤로가기 버튼 누르면 이전 액티비티로 돌아가는 것을 판단해주는 함수
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -63,9 +60,9 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
                 return true
             }
             R.id.action_modification -> {
-                var intent = Intent(this,AddGroup::class.java)
+                var intent = Intent(this,AddMemo::class.java)
                 intent.putExtra("memoData",memoData)
-                startActivity(intent)
+                startActivityForResult(intent,REQUEST_TEST)
                 return true
             }
             R.id.action_deletion -> {
@@ -74,5 +71,34 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_TEST -> {
+                    if (intent != null) {
+                        onResume()
+                        memoData = intent.getParcelableExtra("memoData")
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setData()
+    }
+
+    private fun setData() {
+        memoToolbar.title = this.memoData.groupName
+        titleText.text = this.memoData.title
+        contentText.text = this.memoData.content
+        placeText.text = this.memoData.placeName
+        dateText.text = this.memoData.date
+        groupId = this.memoData.groupId
+        memoId = this.memoData.memoId
+        GroupObject.groupColor[groupId]?.toInt()?.let { show_memo_layout.setBackgroundColor(it) }
     }
 }
