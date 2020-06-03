@@ -20,11 +20,11 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val repeatIntent = Intent(context, AddTodo::class.java)
         repeatIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        //repeatIntent.putExtra("다시알림", 5)
+        repeatIntent.putExtra("다시알림", 5)
 
         val cancelIntent = Intent(context, AddTodo::class.java)
         cancelIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        //cancelIntent.putExtra("알림해제", true)
+        cancelIntent.putExtra("알림해제", true)
 
         val pendingIntent = PendingIntent.getActivity(context, 2, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val repeatpendingIntent = PendingIntent.getActivity(context, 2, repeatIntent, PendingIntent.FLAG_UPDATE_CURRENT)

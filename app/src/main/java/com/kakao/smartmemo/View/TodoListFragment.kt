@@ -63,12 +63,15 @@ class TodoListFragment : Fragment(), TodoContract.View {
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.removeItem -> {
-                    var count = deleteAdapter.count
+                    var listview_count = deleteAdapter.count
                     var checkedItems = deleteAdapter.selectedTodo()
-                    for( i in count-1 downTo 0) {
-                        for (j in checkedItems) {
-                            if(i == j) {
-                                todoArrayList.removeAt(i)
+                    if(checkedItems != null) {
+                        for (i in listview_count - 1 downTo 0) {
+                            for (j in checkedItems) {
+                                if (i == j) {
+                                    deleteAdapter.deleteTodo(i)
+                                    Log.v("seyuuuun", i.toString())
+                                }
                             }
                         }
                     }
@@ -76,6 +79,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
                     adapter.notifyAdapter()
                     bottomNavigationView.visibility = GONE //하단메뉴 안보이게
                     todolist.adapter = TodoAdapter(cont, todoArrayList)
+                    count++
                     true
                 }
                 R.id.cancelItem -> {
