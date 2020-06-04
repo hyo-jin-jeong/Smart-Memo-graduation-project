@@ -74,6 +74,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     private var settingsPlaceMinutes = 0
     private var todoHour = 0
     private var todoMinute = 0
+    private var currentHour = 0
+    private var currentMinute = 0
     val interval = AlarmManager.INTERVAL_DAY
     private var notifyTime = false
     val date: LocalDateTime = LocalDateTime.now()
@@ -203,6 +205,15 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 todoStubTime.visibility = VISIBLE
                 timeCalendar.timeInMillis
                 timeLayout.setOnClickListener(timeDialogClickListener)
+                currentHour = timeCalendar.get(Calendar.HOUR_OF_DAY)
+                currentMinute = timeCalendar.get(Calendar.MINUTE)
+                if(timeCalendar.get(Calendar.HOUR_OF_DAY) < 12) {
+                    amPm = "오전"
+                }else {
+                    amPm = "오후"
+                    currentHour -=  12
+                }
+                timeText.text = "${amPm} ${currentHour} : ${String.format("%02d", currentMinute)}"
             } else {
                 timeDateText.text = "[기본] 날짜 미설정"
                 settingsTimeMinutes = 0
