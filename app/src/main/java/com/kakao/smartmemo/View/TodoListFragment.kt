@@ -38,7 +38,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
