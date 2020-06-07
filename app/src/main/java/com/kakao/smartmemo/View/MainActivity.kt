@@ -3,7 +3,10 @@ package com.kakao.smartmemo.View
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -16,6 +19,9 @@ import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
@@ -43,6 +49,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     var openFlag:Boolean = false
 
     private lateinit var mainLocationModel: MainLocationModel
+    private var mLocationRequest: LocationRequest? = null
+    private var mFusedLocationClient: FusedLocationProviderClient? = null
+    private var mServiceHandler: Handler? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,9 +139,46 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         fabTodo.setOnClickListener(this)
 
         mainLocationModel = MainLocationModel()
-        val location = mainLocationModel.getLocation(context)
-        if(location != null)
-            mainLocationModel.convertAddressFromMapPOIItem(location.longitude.toString(), location.latitude.toString())
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        createLocationRequest()
+        getLastLocation()
+        val handlerThread = HandlerThread(MainActivity::class.java.simpleName)
+        handlerThread.start()
+        mServiceHandler = Handler(handlerThread.looper)
+
+    }
+
+    private fun createLocationRequest() {
+        mLocationRequest = LocationRequest()
+        mLocationRequest!!.interval = 10000
+        mLocationRequest!!.fastestInterval = 5000
+        mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+
+    private fun getLastLocation() {
+        try {
+            mFusedLocationClient!!.lastLocation
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful && task.result != null) {
+                        var location = task.result
+                        mainLocationModel.setLocation(location!!)
+                        Log.e("check", "current location : $location")
+                        mainLocationModel.convertAddressFromPoint(location.longitude.toString(), location.latitude.toString())
+                        //mLocation = task.result
+                    } else {
+                        Log.w(
+                            "check",
+                            "Failed to get location."
+                        )
+                    }
+                }
+        } catch (unlikely: SecurityException) {
+            Log.e(
+                "check",
+                "Lost location permission.$unlikely"
+            )
+        }
     }
 
     private fun getGroupInfo(){
@@ -199,8 +245,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 anim()
                 val addMemoIntent = Intent(this.context, AddMemo::class.java)
                 if (mainLocationModel.checkValue()) {
-                    addMemoIntent.putExtra("longitude", mainLocationModel.longitude.toString())
-                    addMemoIntent.putExtra("latitude", mainLocationModel.latitude.toString())
+                    addMemoIntent.putExtra("longitude", mainLocationModel.longitude!!.toDouble())
+                    addMemoIntent.putExtra("latitude", mainLocationModel.latitude!!.toDouble())
                     addMemoIntent.putExtra("address", mainLocationModel.locationAddress)
                 }
                 startActivity(addMemoIntent)
@@ -209,8 +255,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 anim()
                 val addTodoIntent = Intent(this, AddTodo::class.java)
                 if(mainLocationModel.checkValue()) {
-                    addTodoIntent.putExtra("longitude", mainLocationModel.longitude.toString())
-                    addTodoIntent.putExtra("latitude", mainLocationModel.latitude.toString())
+                    addTodoIntent.putExtra("longitude", mainLocationModel.longitude!!.toDouble())
+                    addTodoIntent.putExtra("latitude", mainLocationModel.latitude!!.toDouble())
                     addTodoIntent.putExtra("address", mainLocationModel.locationAddress)
                 }
                 startActivity(addTodoIntent)
@@ -239,5 +285,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             }
         }
     }
+
+
 
 }
