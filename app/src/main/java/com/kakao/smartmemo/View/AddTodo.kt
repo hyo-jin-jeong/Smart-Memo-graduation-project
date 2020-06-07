@@ -82,6 +82,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     var min = 0
     private lateinit var data : TodoData
 
+
+    private var latitude: Double? = null
+    private var longitude: Double? = null
+    private var address: String? = null
+
     private var placeList = arrayListOf(PlaceData("연세병원"), PlaceData("학교"), PlaceData("집"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -215,9 +220,12 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             if(isChecked) {
                 todoStubLocation.visibility = VISIBLE
                 placeLayout.setOnClickListener(View.OnClickListener {
-                    val placechoiceIntent = Intent(it.context, MainActivity::class.java)
+                    val placechoiceIntent = Intent(it.context, PlaceAlarmDetailActivity::class.java)
+                    placechoiceIntent.putExtra("longitude", longitude)
+                    placechoiceIntent.putExtra("latitude", latitude)
+                    placechoiceIntent.putExtra("address", address)
                     this.startActivity(placechoiceIntent)
-                })
+            })
                 notifyTime = true // 알람 켬.
             } else {
                 placeDateText.text = "[기본] 날짜 미설정"
@@ -362,6 +370,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         selectGroupBtn.setOnClickListener {
             selectGroup()
         }
+
+        latitude = intent.getDoubleExtra("latitude", 0.0)
+        longitude = intent.getDoubleExtra("longitude", 0.0)
+        address = intent.getStringExtra("address")
+        Log.e("check", "latitude = $latitude, longitude = $longitude, address = $address")
     }
 
     //툴바의 뒤로가기 버튼

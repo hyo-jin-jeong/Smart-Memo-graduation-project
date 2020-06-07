@@ -130,8 +130,11 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         var mapPoint: MapPoint = MapPoint.mapPointWithGeoCoord(curLatitude!!, curLongitude!!)
         mapView.setMapCenterPoint(mapPoint, true)
 
-        val longPressedItem = createMarker(address, mapPoint)
-        longPressedItem.showAnimationType = MapPOIItem.ShowAnimationType.DropFromHeaven
+        val longPressedItem: MapPOIItem
+        if (address == null)
+            longPressedItem = createMarker("여기 널이라능 ㅠㅠ", mapPoint)
+        else
+            longPressedItem = createMarker(address, mapPoint)
         mapView.addPOIItem(longPressedItem)
 
     }
