@@ -35,7 +35,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
     private lateinit var todoToolBar: Toolbar
     private lateinit var presenter : AddTodoContract.Presenter
-    //private lateinit var userpresenter : MemberDataPresenter
     private lateinit var titleEdit: EditText
     private lateinit var selectGroupBtn : Button
     private var groupName: String = ""
@@ -271,9 +270,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             }
 
             groupId = data.groupId
-            groupColor = data.groupColor
             titleEdit.setText(data.title)
-            selectGroupBtn.text = data.groupName
             timeSwitch.isChecked = data.setTimeAlarm
             timeDateText.text = data.timeDate
             timeText.text = data.timeTime
@@ -294,23 +291,16 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                     }
                     else -> {
                         var todoData = TodoData(
-                            titleEdit.text.toString(),
-                            data.groupName,
-                            data.groupId,
-                            data.groupColor,
                             data.todoId,
-                            data.timeAlarmId,
+                            titleEdit.text.toString(),
+                            data.groupId,
                             timeSwitch.isChecked,
                             "${timeDateText.text}",
                             timeText.text.toString(),
                             settingsTimeMinutes,
-                            data.placeAlarmId,
                             placeSwitch.isChecked,
                             "${placeDateText.text}",
-                            settingsPlaceMinutes,
-                            "한성대학교",
-                            "0.0",
-                            "0.0"
+                            settingsPlaceMinutes
                         )
                         presenter.addTodo(todoData)
                         if (timeSwitch.isChecked) {
@@ -336,26 +326,17 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        timeAlarmId = "time" + System.currentTimeMillis()
-                        placeAlarmId = "place" + System.currentTimeMillis()
                         var todoData = TodoData(
-                            titleEdit.text.toString(),
-                            groupName,
-                            groupId,
-                            0,
                             "",
-                            "${timeAlarmId}",
+                            titleEdit.text.toString(),
+                            groupId,
                             timeSwitch.isChecked,
                             "${timeDateText.text}",
                             timeText.text.toString(),
                             settingsTimeMinutes,
-                            "${placeAlarmId}",
                             placeSwitch.isChecked,
                             "${placeDateText.text}",
-                            settingsPlaceMinutes,
-                            "한성대학교",
-                            "0.0",
-                            "0.0"
+                            settingsPlaceMinutes
                         )
                         presenter.addTodo(todoData)
                         if (timeSwitch.isChecked) {
@@ -466,7 +447,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             val cancel = intent.getBooleanExtra("알림해제", true)
             Log.v("seyuuuun", "cancel in" + cancel)
         } else {
-
         }
     }
 

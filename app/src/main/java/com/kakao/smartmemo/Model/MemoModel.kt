@@ -1,18 +1,17 @@
 package com.kakao.smartmemo.Model
 
-import android.util.Log
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.kakao.smartmemo.Contract.MemoContract
 import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.Object.GroupObject
 
 class MemoModel {
     private lateinit var onMemoListener: MemoContract.OnMemoListener
-    private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val memoPath = firestore.collection("Memo")
-
+    private var firebaseMemo = FirebaseDatabase.getInstance().reference.child("Memo")
+    private var firebaseGroup = FirebaseDatabase.getInstance().reference.child("Group")
     constructor()
     constructor(onMemoListener: MemoContract.OnMemoListener) {
         this.onMemoListener = onMemoListener
@@ -21,133 +20,76 @@ class MemoModel {
     fun addMemo(memoData: MemoData) {
         var memoId = ""
         memoId = if (memoData.memoId == "") {
-            memoData.title + System.currentTimeMillis()
+            (System.currentTimeMillis()*3000).toInt().toString()
         } else {
             memoData.memoId
         }
-        memoPath.document(memoId).set(
-            hashMapOf(
-                "title" to memoData.title,
-                "date" to memoData.date,
-                "content" to memoData.content,
-                "groupName" to memoData.groupName,
-                "groupId" to memoData.groupId
-            ), SetOptions.merge()
-        )
-        memoPath.document(memoId).collection("Place").document("PlaceInfo")
-            .set(
-                hashMapOf(
-                    "placeName" to memoData.placeName,
-                    "latitude" to memoData.latitude,
-                    "longitude" to memoData.longitude
-                ),
-                SetOptions.merge()
-            )
-        firestore.collection("Group").document(memoData.groupId).collection("MemoInfo")
-            .document("MemoId").set(
-            hashMapOf(memoId to memoId), SetOptions.merge()
-        )
+        firebaseGroup.child(memoData.groupId).child("MemoInfo").updateChildren(mapOf(memoId to memoId))
+        firebaseMemo.child(memoId).setValue(memoData)
     }
 
     fun getAllMemo() {
+        var i = 0
+        var j = 0
+        var bool = false
         var memoList = mutableListOf<MemoData>()
-        firestore.collection("Group").addSnapshotListener { querySnapshot, _ ->
-            querySnapshot?.forEach { snapShot ->
-                GroupObject.groupInfo.forEach {
-                    if (snapShot.id == it.key) {
-                        snapShot.reference.collection("MemoInfo").document("MemoId")
-                            .addSnapshotListener { documentSnapshot, _ ->
-                                documentSnapshot?.data?.forEach { data ->
-                                    memoPath.document(data.key)
-                                        .addSnapshotListener { memoSnapshot, _ ->
-                                            memoSnapshot?.reference?.collection("Place")
-                                                ?.document("PlaceInfo")
-                                                ?.addSnapshotListener { placeSnapshot, _ ->
-                                                    if (placeSnapshot != null) {
-                                                        memoList.add(
-                                                            MemoData(
-                                                                memoSnapshot.id,
-                                                                memoSnapshot?.get("title")
-                                                                    .toString(),
-                                                                memoSnapshot?.get("date")
-                                                                    .toString(),
-                                                                memoSnapshot?.get("content")
-                                                                    .toString()
-                                                                ,
-                                                                memoSnapshot?.get("groupName")
-                                                                    .toString(),
-                                                                memoSnapshot?.get("groupId")
-                                                                    .toString(),
-                                                                placeSnapshot?.get("placeName")
-                                                                    .toString(),
-                                                                placeSnapshot?.get("latitude")
-                                                                    .toString(),
-                                                                placeSnapshot?.get("longitude")
-                                                                    .toString()
-                                                            )
-                                                        )
-                                                        onMemoListener.onSuccess(memoList)
-                                                    }
-                                                }
+        GroupObject.groupInfo.forEach {
+            firebaseGroup.child(it.key).child("MemoInfo").addValueEventListener(object :ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {}
+                override fun onDataChange(memoIdSnapshot: DataSnapshot) {
+                    if(memoIdSnapshot.children.count()!=0){
+                        j=0
+                        for(memoId in memoIdSnapshot.children){
+                            firebaseMemo.child(memoId.value.toString()).addValueEventListener(object :ValueEventListener{
+                                override fun onCancelled(p0: DatabaseError) {}
+                                override fun onDataChange(memoSnapshot: DataSnapshot) {
+                                        memoList.add(MemoData(memoId.value.toString(),memoSnapshot.child("title").value.toString(),
+                                            memoSnapshot.child("date").value.toString(),memoSnapshot.child("content").value.toString()
+                                            ,memoSnapshot.child("groupId").value.toString(),
+                                            memoSnapshot.child("placeName").value.toString(),
+                                            memoSnapshot.child("latitude").value.toString(),
+                                            memoSnapshot.child("longitude").value.toString()))
+                                        if(i == GroupObject.groupInfo.size-1&&j == memoIdSnapshot.children.count()-1){
+                                            onMemoListener.onSuccess(memoList)
+                                            i=0
+                                        }else if(j == memoIdSnapshot.children.count()-1){
+                                            j=0
+                                            i++
+                                        }else{
+                                            j++
                                         }
-                                }
-                            }
+                                    }
+                            })
+                        }
+                    }else{
+                        if(i == GroupObject.groupInfo.size-1){
+                            i=0
+                            onMemoListener.onSuccess(memoList)
+                        }
+                        i++
                     }
                 }
-            }
+            })
         }
+
     }
 
-    fun deleteMemo() {
 
+    fun deleteMemo(deleteMemoList: MutableList<MemoData>) {
+        deleteMemoList.forEach{memoId->
+            firebaseGroup.child(memoId.groupId).child("MemoInfo").child(memoId.memoId).removeValue()
+            firebaseMemo.child(memoId.memoId).removeValue()
+        }
     }
 
 
     fun getGroupMemo(groupId: String) {
-        var memoList = mutableListOf<MemoData>()
-        firestore.collection("Group").document(groupId).collection("MemoInfo").document("MemoId")
-            .addSnapshotListener { memoSnapshot, _ ->
-                if (memoSnapshot != null) {
-                    Log.e("memoSnapshot",memoSnapshot.data.toString())
-                    if (memoSnapshot.data!=null) {
-                        memoSnapshot?.data?.forEach { data ->
-                            memoPath.document(data.key).addSnapshotListener { memoInfoSnapshot, _ ->
-                                memoInfoSnapshot?.reference?.collection("Place")
-                                    ?.document("PlaceInfo")
-                                    ?.addSnapshotListener { placeSnapshot, _ ->
-                                        if (placeSnapshot != null) {
-                                            memoList.add(
-                                                MemoData(
-                                                    memoSnapshot?.get("memoId").toString(),
-                                                    memoInfoSnapshot?.get("title").toString(),
-                                                    memoInfoSnapshot?.get("date").toString(),
-                                                    memoInfoSnapshot?.get("content").toString(),
-                                                    memoInfoSnapshot?.get("groupName").toString(),
-                                                    groupId ,
-                                                    placeSnapshot?.get("placeName").toString(),
-                                                    placeSnapshot?.get("latitude").toString(),
-                                                    placeSnapshot?.get("longitude").toString()
-                                                )
-                                            )
-                                            onMemoListener.onSuccess(memoList)
-                                        }
-                                    }
-                            }
-                        }
-                    }else{
-                        onMemoListener.onSuccess(memoList)
-                    }
-                }
-            }
+
+       // onMemoListener.onSuccess(memoList)
 
     }
 
     fun deleteMemoInfo(groupId: String, memoId: String) {
-        val docRef = firestore.collection("Group").document(groupId).collection("MemoInfo")
-            .document("MemoId")
-        val updates = hashMapOf<String, Any>(
-            memoId to FieldValue.delete()
-        )
-        docRef.update(updates)
+
     }
 }

@@ -3,8 +3,10 @@ package com.kakao.smartmemo.Model
 import android.app.Activity
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.kakao.smartmemo.Contract.LoginContract
 import com.kakao.smartmemo.Contract.MemberChangeContract
 import com.kakao.smartmemo.Contract.MemberDataContract
@@ -19,41 +21,46 @@ class UserModel {
     private lateinit var onPasswordChangeListener: MemberChangeContract.OnPasswordChangeSuccessListener
     private lateinit var onDeleteUserListener: MemberDataContract.OnDeleteUserListener
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
-    private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private var firebaseUser = FirebaseDatabase.getInstance().reference.child("User")
+    private var firebaseGroup = FirebaseDatabase.getInstance().reference.child("Group")
 
     constructor()
 
     constructor(onLoginListener: LoginContract.OnLoginListener) {
         this.onLoginListener = onLoginListener
     }
+
     constructor(onSignUpListener: SignUpContract.onSignUpListener) {
         this.onSignUpListener = onSignUpListener
     }
+
     constructor(onPasswordChangeListener: MemberChangeContract.OnPasswordChangeSuccessListener) {
         this.onPasswordChangeListener = onPasswordChangeListener
     }
+
     constructor(onDeleteUserListener: MemberDataContract.OnDeleteUserListener) {
         this.onDeleteUserListener = onDeleteUserListener
     }
+
     fun getProfile() { // user 정보 받아오는 함수
-        val fireStoreUser = firestore.collection("User").document("${UserObject.email}")
-        fireStoreUser.addSnapshotListener { documentSnapshot, _ ->
-            if (documentSnapshot != null) {
-                if (documentSnapshot.exists()) {
-                    with(UserObject) {
-                        this.addr = documentSnapshot["addr"].toString()
-                        this.img_id = documentSnapshot["img_id"].toString()
-                        this.img_url = documentSnapshot["img_url"].toString()
-                        this.kakao_alarm_time = documentSnapshot["kakao_alarm_time"].toString()
-                        this.kakao_connected = documentSnapshot["kakao_connected"] as Boolean
-                        this.password = documentSnapshot["password"].toString()
-                        this.user_name = documentSnapshot["user_name"].toString()
-                    }
-                }
+        Log.e("uid", UserObject.uid)
+        firebaseUser.child(UserObject.uid).addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(snapShot: DataSnapshot) {
+                UserObject.uid = snapShot.child("uid").value.toString()
+                UserObject.email = snapShot.child("email").value.toString()
+                UserObject.password = snapShot.child("password").value.toString()
+                UserObject.user_name = snapShot.child("user_name").value.toString()
+                UserObject.addr = snapShot.child("addr").value.toString()
+                UserObject.kakao_connected =
+                    snapShot.child("kakao_connected").value.toString().toBoolean()
+                UserObject.kakao_alarm_time = snapShot.child("kakao_alarm_time").value.toString()
             }
-        }
+        })
+
 
     }
+
     fun addAuthUser(
         context: Activity,
         email: String,
@@ -63,6 +70,7 @@ class UserModel {
     ) { // user 추가하는 함수
         auth.createUserWithEmailAndPassword(email, pw).addOnCompleteListener(context) { task ->
             if (task.isSuccessful) {
+                UserObject.uid = auth.uid.toString()
                 UserObject.email = email
                 UserObject.password = pw
                 UserObject.user_name = name
@@ -73,87 +81,29 @@ class UserModel {
             }
         }
     }
+
     fun addFirestoreUser() {
-        val groupId = UserObject.email + System.currentTimeMillis()
-        firestore.collection("User").document("${UserObject.email}").set(UserObject)
-        firestore.collection("User").document("${UserObject.email}")
-            .collection("GroupInfo").document("GroupId").set(hashMapOf(groupId to "내 폴더"))
-        firestore.collection("Group").document(groupId)
-            .set(hashMapOf("group_name" to "내 폴더", "group_color" to -1234))
-        firestore.collection("Group").document(groupId).collection("MemberInfo")
-            .document("MemberEmail").set(
-                hashMapOf(UserObject.email to UserObject.email), SetOptions.merge()
-            )
+        val groupId = "내 폴더" + System.currentTimeMillis()
+        firebaseUser.updateChildren(
+            mapOf(UserObject.uid to UserObject)
+        )
+        firebaseUser.child(UserObject.uid).child("GroupInfo").setValue(mapOf(groupId to "내폴더"))
+        firebaseGroup.child(groupId).setValue(mapOf("group_color" to 1549068184))
+        firebaseGroup.child(groupId).updateChildren(mapOf("group_name" to "내폴더"))
+        firebaseGroup.child(groupId).child("MemberInfo")
+            .updateChildren(mapOf(UserObject.uid to UserObject.email))
     }
+
     fun updateFirestoreUser(pw: String, name: String, addr: String, kakaoAlarmTime: String) {
         UserObject.password = pw
         UserObject.user_name = name
         UserObject.addr = addr
         UserObject.kakao_alarm_time = kakaoAlarmTime
-        firestore.collection("User").document(UserObject.email).set(UserObject)
+        firebaseUser.updateChildren(mapOf(UserObject.uid to UserObject))
     }
+
     fun deleteUser() { // collection에서 user 삭제하는 함수
-        firestore.collection("User").document(UserObject.email).collection("GroupInfo")
-            .document("GroupId").delete()
-        firestore.collection("User").document(UserObject.email).delete()
-        GroupObject.groupInfo.forEach { group ->
-            firestore.collection("Group").document(group.key).collection("MemberInfo")
-                .document("MemberEmail").addSnapshotListener { memberSnapshot, _ ->
-                    if (memberSnapshot?.data?.count() == 1) {
-                        firestore.collection("Group").document(group.key).collection("MemoInfo")
-                            .document("MemoId").addSnapshotListener { memoSnapshot, _ ->
-                                firestore.collection("Group").document(group.key)
-                                    .collection("TodoInfo")
-                                    .document("todoId").addSnapshotListener { todoSnapshot, _ ->
 
-                                        memoSnapshot?.data?.forEach { memoDeleteSnapshot ->
-                                            firestore.collection("Memo")
-                                                .document(memoDeleteSnapshot.value as String)
-                                                .collection("Place")
-                                                .document("PlaceInfo").delete()
-                                            firestore.collection("Memo")
-                                                .document(memoDeleteSnapshot.value as String)
-                                                .delete()
-                                        }
-                                        todoSnapshot?.data?.forEach { todoDeleteSnapshot ->
-                                            firestore.collection("Todo")
-                                                .document(todoDeleteSnapshot.value as String)
-                                                .collection("TimeAlarm")
-                                                .addSnapshotListener { timeSnapshot, _ ->
-                                                    firestore.collection("Todo")
-                                                        .document(todoDeleteSnapshot.value as String)
-                                                        .collection("PlaceAlarm")
-                                                        .addSnapshotListener { placeSnapshot, _ ->
-                                                            placeSnapshot?.forEach {
-                                                                it.reference.delete()
-                                                            }
-
-                                                            timeSnapshot?.forEach {
-                                                                it.reference.delete()
-
-                                                            }
-                                                            firestore.collection("Todo")
-                                                                .document(todoDeleteSnapshot.value as String)
-                                                                .delete()
-                                                        }
-                                                }
-                                        }
-                                        firestore.collection("Group").document(group.key)
-                                            .collection("TodoInfo").document("todoId").delete()
-                                        firestore.collection("Group").document(group.key)
-                                            .collection("MemoInfo").document("MemoId").delete()
-                                        firestore.collection("Group").document(group.key)
-                                            .collection("MemberInfo").document("MemberEmail")
-                                            .delete()
-                                        firestore.collection("Group").document(group.key).delete()
-                                    }
-                            }
-
-                    } else {
-                        memberSnapshot?.reference?.delete()
-                    }
-                }
-        }
     }
 
     fun deleteAuth() { // authentication에서 사용자 삭제하는 함수
@@ -161,7 +111,6 @@ class UserModel {
         user?.delete()?.continueWith { task ->
             if (task.isSuccessful) {
                 auth.signOut()
-
             } else {
                 Log.e("auth delete Result", task.exception.toString())
                 //onDeleteUserListener.onSuccess()
@@ -190,15 +139,18 @@ class UserModel {
                 GroupObject.groupInfo.clear()
                 GroupObject.groupColor.clear()
                 auth.currentUser
+                UserObject.uid = auth.uid.toString()
                 UserObject.email = email
-                firestore.collection("User").document("${UserObject.email}").collection("GroupInfo")
-                    .document("GroupId")
-                    .addSnapshotListener { groupSnapshot, firebaseFirestoreException ->
-                        groupSnapshot?.data?.forEach {
-                            GroupObject.groupInfo[it.key] = it.value as String
+                firebaseUser.child(UserObject.uid).child("GroupInfo")
+                    .addValueEventListener(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {}
+                        override fun onDataChange(snapShot: DataSnapshot) {
+                            for (data in snapShot.children) {
+                                GroupObject.groupInfo[data.key.toString()] = data.value.toString()
+                            }
+                            onLoginListener.onSuccess(task.result.toString())
                         }
-                    }
-                onLoginListener.onSuccess(task.result.toString())
+                    })
             } else {
                 onLoginListener.onFailure(task.exception.toString())
             }

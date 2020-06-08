@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.kakao.smartmemo.Contract.TodoAdapterContract
 import com.kakao.smartmemo.Data.TodoData
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.todo_list_item.view.*
 
@@ -17,8 +18,12 @@ class TodoAdapter(val context: Context, private val todoList: MutableList<TodoDa
         val todo = todoList[position]
         var checkedTodo = false
         view.textView_todo.text = todo.title
-        view.group_color.setBackgroundColor(todo.groupColor.toInt())
-        view.group_name.text = todo.groupName
+        GroupObject.groupColor[todo.groupId]?.toInt().let {
+            if (it != null) {
+                view.group_color.setBackgroundColor(it)
+            }
+        }
+        view.group_name.text = GroupObject.groupInfo[todo.groupId]
         if(!todo.setPlaceAlarm && !todo.setTimeAlarm){
             view.img_todo.visibility = View.INVISIBLE
         }
@@ -40,13 +45,4 @@ class TodoAdapter(val context: Context, private val todoList: MutableList<TodoDa
     override fun notifyAdapter() {
         notifyDataSetChanged()
     }
-
-    override fun getTodoContent() {
-
-    }
-
-    override fun getGroup() {
-
-    }
-
 }

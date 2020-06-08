@@ -14,8 +14,15 @@ class ModifyGroupPresenter : ModifyGroupContract.Presenter{
         this.groupModel = GroupModel()
     }
 
-    override fun updateGroup() {
+    override fun updateGroup(groupId: String, groupName: String, groupColor: Long) {
         //GroupObject에 데이터 세팅후, UserObject의 group_info수정
-        groupModel.updateGroup()
+        groupModel.updateGroup(groupId,groupName,groupColor)
+
     }
+
+    override fun deleteGroup(groupId: String) {
+        groupModel.deleteGroup(groupId)
+    }
+
+
 }

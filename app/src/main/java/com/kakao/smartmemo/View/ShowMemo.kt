@@ -92,7 +92,7 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
     }
 
     private fun setData() {
-        memoToolbar.title = this.memoData.groupName
+        memoToolbar.title = GroupObject.groupInfo[this.memoData.groupId]
         titleText.text = this.memoData.title
         contentText.text = this.memoData.content
         placeText.text = this.memoData.placeName

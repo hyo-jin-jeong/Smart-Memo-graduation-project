@@ -14,6 +14,7 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Contract.ModifyGroupContract
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Presenter.ModifyGroupPresenter
 
 class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupContract.View{
@@ -30,8 +31,10 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
     lateinit var groupExitBtn : Button
     lateinit var kakaoImg : ImageView
     lateinit var kakaoText : TextView
+    lateinit var groupId : String
 
     private var count = 0
+    private var color = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_bar_add_group)
@@ -54,10 +57,13 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         kakaoImg = findViewById(R.id.kakao_icon)
         kakaoText = findViewById(R.id.kakao_text)
 
-        if (intent.hasExtra("groupName")&&intent.hasExtra("groupColor")) {
-            groupNameEdit.setText(intent.getStringExtra("groupName"))
-            groupNameText.text = intent.getStringExtra("groupName")
-            themeColor.setBackgroundColor(intent.getStringExtra("groupColor").toInt())
+        if (intent.hasExtra("groupId")) {
+            groupId = intent.getStringExtra("groupId")
+            groupNameEdit.setText(GroupObject.groupInfo[groupId])
+            groupNameText.text = GroupObject.groupInfo[groupId].toString()
+            GroupObject.groupColor[groupId]?.toInt()?.let {
+                themeColor.setBackgroundColor(it)
+            }
         }
 
         groupMemberSet.text = resources.getString(R.string.group_member)
@@ -76,7 +82,11 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         saveBtn.setOnClickListener {
             count = 0
             groupSetting()
-            presenter.updateGroup()
+            presenter.updateGroup(groupId,groupNameEdit.text.toString(),color.toLong())
+        }
+        groupExitBtn.setOnClickListener {
+            presenter.deleteGroup(groupId)
+            finish()
         }
     }
 
@@ -96,7 +106,8 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
                 if(count%2 == 0){
                     count = 0
                     groupSetting()
-                    presenter.updateGroup()
+                    presenter.updateGroup(groupId,groupNameEdit.text.toString(),color.toLong())
+
                 }else{
                     groupModify()
                 }
@@ -138,6 +149,9 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
 
     override fun onDialogDismissed(dialogId: Int) {  }
     override fun onColorSelected(dialogId: Int, color: Int) {
+        this.color = color
         themeColor.setBackgroundColor(color)
     }
+
+
 }

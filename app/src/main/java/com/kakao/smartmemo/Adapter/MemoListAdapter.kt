@@ -24,7 +24,7 @@ class MemoListAdapter(private val memoList: MutableList<MemoData>) : RecyclerVie
     override fun onBindViewHolder(holer: MainViewHolder, position: Int) {
         memoList[position].let { item ->
             with(holer) {
-                groupName.text = item.groupName
+                groupName.text = GroupObject.groupInfo[item.groupId]
                 memoTitle.text = item.title
                 memoContent.text = item.content
                 memoDate.text = item.date
