@@ -1,13 +1,16 @@
 package com.kakao.smartmemo.View
 
+import android.Manifest
 import android.app.*
-import android.content.ComponentName
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
+import android.location.Location
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
+import android.preference.PreferenceManager
+import android.provider.Settings
 import android.util.Log
 import android.view.*
 import android.view.View.*
@@ -15,6 +18,9 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.snackbar.Snackbar
 import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
@@ -26,12 +32,15 @@ import com.kakao.smartmemo.Receiver.AlarmReceiver
 import com.kakao.smartmemo.Receiver.DeviceBootAlarmReceiver
 import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
 import com.kakao.smartmemo.Receiver.TodoReceiver
+import com.kakao.smartmemo.Service.LocationUpdatesService
+import com.kakao.smartmemo.Utils.Utils
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
-class AddTodo : AppCompatActivity(), AddTodoContract.View {
+class AddTodo : AppCompatActivity(), AddTodoContract.View,
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var todoToolBar: Toolbar
     private lateinit var presenter : AddTodoContract.Presenter
@@ -82,6 +91,12 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     var amPm = "오전"
     var min = 0
     private lateinit var data : TodoData
+    private lateinit var notificationManager : NotificationManager
+    private var myReceiver: MyReceiver? = null
+    private var mService: LocationUpdatesService? = null
+    private var mBound = false
+    private lateinit var timeAgainAdapter : ArrayAdapter<CharSequence>
+    private lateinit var placeAgainAdapter : ArrayAdapter<CharSequence>
 
 
     private var latitude: Double? = null
@@ -90,9 +105,32 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
     private var placeList = arrayListOf(PlaceData("연세병원"), PlaceData("학교"), PlaceData("집"))
 
+    private val mServiceConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val binder = service as LocationUpdatesService.LocalBinder
+            mService = binder.service
+            mBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            mService = null
+            mBound = false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.time_location_settings)
+
+        myReceiver = MyReceiver()
+
+        if (Utils.requestingLocationUpdates(this)) {
+            if (!checkPermissions()) {
+                requestPermissions()
+            }
+        }
+
+        notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // Toolbar달기
         todoToolBar = findViewById(R.id.settings_toolbar)
@@ -129,6 +167,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         placeAgainText = viewLocation.findViewById(R.id.ring_again_place)
 
         var timeAgainAdapter = ArrayAdapter.createFromResource(applicationContext,
+            R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
+        var placeAgainAdapter = ArrayAdapter.createFromResource(applicationContext,
             R.array.again_time, android.R.layout.simple_spinner_dropdown_item)
 
         timebtn = viewTime.findViewById(R.id.btn_time_settings) //시간설정버튼
@@ -185,7 +225,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         }
 
         //장소 알림 반복시간 설정
-        placeSpinner.adapter = timeAgainAdapter
+        placeSpinner.adapter = placeAgainAdapter
         placeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (position == 0) {
@@ -208,7 +248,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 notifyTime = true // 알람 켬.
                 todoStubTime.visibility = VISIBLE
                 timeCalendar.timeInMillis
-                timeLayout.setOnClickListener(timeDialogClickListener)
                 currentHour = timeCalendar.get(Calendar.HOUR_OF_DAY)
                 currentMinute = timeCalendar.get(Calendar.MINUTE)
                 if(timeCalendar.get(Calendar.HOUR_OF_DAY) < 12) {
@@ -218,6 +257,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                     currentHour -=  12
                 }
                 timeText.text = "${amPm} ${currentHour} : ${String.format("%02d", currentMinute)}"
+                timeLayout.setOnClickListener(timeDialogClickListener)
             } else {
                 timeDateText.text = "[기본] 날짜 미설정"
                 settingsTimeMinutes = 0
@@ -252,7 +292,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         presenter.setTodoPlaceAdapterModel(placeListAdapter)
         presenter.setTodoPlaceAdapterView(placeListAdapter)
 
-        if (intent.hasExtra("todoData")) {
+        todoAlarm()
+        receiverData()
+
+        if (intent.hasExtra("todoData")) {  //intent값을 가지고 있을때
             data = intent.getParcelableExtra("todoData")
             when(data.timeAgain) {
                 0 -> timePosition = 0
@@ -309,14 +352,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         }else {
                             unsetTimeLocationAlarm() //알람 해제
                         }
-
-                        todoAlarm()
-                        receiverData()
                         finish()
                     }
                 }
             }
-        } else {
+        } else {  //intent값을 가지고 있지않을때
             savebtn.setOnClickListener {
                 when {
                     groupName == "" -> {
@@ -342,10 +382,9 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         if (timeSwitch.isChecked) {
                             // 지정한 시간에 울리게 알람을 세팅
                             setTimeLocationAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
+                        } else {
+                            unsetTimeLocationAlarm() //알람 해제
                         }
-
-                        todoAlarm()
-                        receiverData()
 
                         //if (placeSwitch.isChecked) {
                         //      placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinutes)
@@ -440,25 +479,33 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             .show()
     }
 
-    private fun receiverData() {
-        if (intent.hasExtra("다시알림") or intent.hasExtra("알림해제")) {
-            var repeat = intent.getIntExtra("다시알림", 5)
-            Log.v("seyuuuun", "repeat in" + repeat)
-            val cancel = intent.getBooleanExtra("알림해제", true)
-            Log.v("seyuuuun", "cancel in" + cancel)
-        } else {
+    private fun receiverData() {  //브로드캐스트에서 intent넘겨받기
+        if (intent.hasExtra(BROADCAST) or intent.hasExtra(BROADCAST2)) {
+            var repeat = intent.getIntExtra(BROADCAST, 0)
+            val cancel = intent.getBooleanExtra(BROADCAST2, false)
+            val notificationID = intent.getIntExtra(NOTIFICATION_NAME, 0)
+            Log.v("seyuuuun", "repeat: " + repeat.toString())
+            Log.v("seyuuuun", "repeat: " + cancel.toString())
+            if(repeat == 5) {
+                settingsTimeMinutes = repeat
+                timePosition = 3
+                setTimeLocationAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
+            }
+            if(cancel.equals(true)) {
+                unsetTimeLocationAlarm()
+            }
         }
     }
 
     private fun todoAlarm() {
         val todoTime = UserObject.kakao_alarm_time
-        if(!todoTime.equals("")) { //안에 아무것도 없을시에
+        if(!todoTime.equals("")) {
             var Todo = todoTime.split(" ")
             when (Todo.get(0)) { //오전 오후 구분
                 "오후" ->
                     todoHour = Todo.get(1).toInt() + 12
                 "오전" ->
-                    todoHour = Todo.get(0).toInt()
+                    todoHour = Todo.get(1).toInt()
             }
             todoMinute = Todo.get(3).toInt() //분
 
@@ -467,7 +514,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             todoCalendar.set(Calendar.SECOND, 0)
             val currentTime = System.currentTimeMillis()
             var settingTime = todoCalendar.timeInMillis
-            val interval = AlarmManager.INTERVAL_DAY
             if (currentTime > settingTime) {
                 todoCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
             }
@@ -485,6 +531,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         val pendingIntent = PendingIntent.getBroadcast(this, 2, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val interval = 1000*60*settingTime
+        Log.v("seyuuuun", "interval :" + interval.toString())
 
         if(notifyTime) { //알람을 허용했다면
             if(alarmManager != null) {
@@ -525,7 +572,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
     }
 
-    private fun setTodoAlarm(calendar: Calendar) {  //시간알람
+    private fun setTodoAlarm(calendar: Calendar) {  // TODO 알람
         val pm = this.packageManager
         val receiver = ComponentName(this, DeviceBootTodoReceiver::class.java)
         val alarmIntent = Intent(this, TodoReceiver::class.java)
@@ -567,5 +614,177 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             alarmManager.cancel(pendingIntent)
         }
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
+    }
+
+    companion object {
+        private const val PACKAGE_NAME = "com.kakao.smartmemo"
+        val BROADCAST = "$PACKAGE_NAME.broadcast"
+        val BROADCAST2 = "$PACKAGE_NAME.broadcast2"
+        val NOTIFICATION_NAME = "NotificationID"
+        private val TAG = AddTodo::class.java.simpleName
+        private const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
+    }
+
+    override fun onStart() {
+        super.onStart()
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .registerOnSharedPreferenceChangeListener(this)
+
+        if (!checkPermissions()) {
+            requestPermissions()
+        } else {
+            mService?.requestLocationUpdates()
+        }
+        //mService!!.removeLocationUpdates()  과부하 방지를 위해 남겨놓음.일단은!!!!
+
+        bindService(
+            Intent(this, LocationUpdatesService::class.java), mServiceConnection,
+            Context.BIND_AUTO_CREATE
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            myReceiver!!,
+            IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
+        )
+    }
+
+    override fun onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(myReceiver!!)
+        super.onPause()
+    }
+
+    override fun onStop() {
+        if (mBound) {
+            // Unbind from the service. This signals to the service that this activity is no longer
+            // in the foreground, and the service can respond by promoting itself to a foreground
+            // service.
+            unbindService(mServiceConnection)
+            mBound = false
+        }
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .unregisterOnSharedPreferenceChangeListener(this)
+        super.onStop()
+    }
+
+    private fun checkPermissions(): Boolean {
+        return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    }
+
+    private fun requestPermissions() {
+        val shouldProvideRationale =
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+
+        // Provide an additional rationale to the user. This would happen if the user denied the
+        // request previously, but didn't check the "Don't ask again" checkbox.
+        if (shouldProvideRationale) {
+            Log.i(
+                TAG,
+                "Displaying permission rationale to provide additional context."
+            )
+            Snackbar.make(
+                findViewById(R.id.time_location_settings_layout),
+                R.string.permission_rationale,
+                Snackbar.LENGTH_INDEFINITE
+            )
+                .setAction(R.string.ok) { // Request permission
+                    ActivityCompat.requestPermissions(
+                        this@AddTodo,
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        REQUEST_PERMISSIONS_REQUEST_CODE
+                    )
+                }
+                .show()
+        } else {
+            Log.i(TAG, "Requesting permission")
+            // Request permission. It's possible this can be auto answered if device policy
+            // sets the permission in a given state or the user denied the permission
+            // previously and checked "Never ask again".
+            ActivityCompat.requestPermissions(
+                this@AddTodo,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_PERMISSIONS_REQUEST_CODE
+            )
+        }
+    }
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        Log.i(TAG, "onRequestPermissionResult")
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.size <= 0) {
+                // If user interaction was interrupted, the permission request is cancelled and you
+                // receive empty arrays.
+                Log.i(TAG, "User interaction was cancelled.")
+            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted.
+                mService?.requestLocationUpdates()
+                Log.v("seyuuuun", "reqeustLocationUpdates in onRequestPermissions")
+            } else {
+                // Permission denied.
+                //setButtonsState(false)   !!!
+                Snackbar.make(
+                    findViewById(R.id.time_location_settings_layout),
+                    R.string.permission_denied_explanation,
+                    Snackbar.LENGTH_INDEFINITE
+                )
+                    .setAction(R.string.settings) { // Build intent that displays the App settings screen.
+                        val intent = Intent()
+                        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        val uri = Uri.fromParts(
+                            "package",
+                            "com.kakao.smartmemo", null
+                        )
+                        intent.data = uri
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                    }
+                    .show()
+            }
+        }
+    }
+
+    /**
+     * Receiver for broadcasts sent by [LocationUpdatesService].
+     */
+    private inner class MyReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val location =
+                intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
+            if (location != null) {
+                Toast.makeText(
+                    this@AddTodo, Utils.getLocationText(location),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    override fun onSharedPreferenceChanged(
+        sharedPreferences: SharedPreferences,
+        s: String
+    ) {
+        // Update the buttons state depending on whether location updates are being requested.
+        if (s == Utils.KEY_REQUESTING_LOCATION_UPDATES) {
+            /*setButtonsState(
+                sharedPreferences.getBoolean(
+                    Utils.KEY_REQUESTING_LOCATION_UPDATES,
+                    false
+                )  //->True
+            )*/
+        }
     }
 }
