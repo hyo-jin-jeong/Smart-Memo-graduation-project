@@ -103,6 +103,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     private var latitude: Double? = null
     private var longitude: Double? = null
     private var address: String? = null
+    private var placeData: PlaceData? = null
     private var placeDatas: ArrayList<PlaceData>? = null
 
     private var placeList = arrayListOf(PlaceData("연세병원"), PlaceData("학교"), PlaceData("집"))
@@ -273,12 +274,19 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             if(isChecked) {
                 todoStubLocation.visibility = VISIBLE
                 placeLayout.setOnClickListener(View.OnClickListener {
-                    val placechoiceIntent = Intent(it.context, PlaceAlarmDetailActivity::class.java)
-                    placechoiceIntent.putExtra("longitude", longitude)
-                    placechoiceIntent.putExtra("latitude", latitude)
-                    placechoiceIntent.putExtra("address", address)
-                    placechoiceIntent.putExtra("todoPlaceAlarm", placeDatas)
-                    startActivityForResult(placechoiceIntent, 200)
+
+                    val placechoiceIntent =
+                        Intent(it.context, PlaceAlarmDetailActivity::class.java)
+                    if(intent.getStringExtra("mode") == "fromMain"){
+                        placechoiceIntent.putExtra("placeData", placeData)
+                        startActivity(placechoiceIntent)
+                    } else {
+                        placechoiceIntent.putExtra("longitude", longitude)
+                        placechoiceIntent.putExtra("latitude", latitude)
+                        placechoiceIntent.putExtra("address", address)
+                        placechoiceIntent.putExtra("todoPlaceAlarm", placeDatas)
+                        startActivityForResult(placechoiceIntent, 200)
+                    }
             })
                 notifyTime = true // 알람 켬.
             } else {
@@ -406,10 +414,18 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             selectGroup()
         }
 
-        latitude = intent.getParcelableExtra<PlaceData>("placeData").latitude
-        longitude = intent.getParcelableExtra<PlaceData>("placeData").longitude
-        address = intent.getParcelableExtra<PlaceData>("placeData").place
-        Log.e("check", "latitude = $latitude, longitude = $longitude, address = $address")
+        if(intent.getStringExtra("mode") == "longPressed") {
+            placeSwitch.isChecked = true
+            todoStubLocation.visibility = VISIBLE
+        }
+
+        if(intent.getParcelableExtra<PlaceData>("placeData") != null) {
+            latitude = intent.getParcelableExtra<PlaceData>("placeData").latitude
+            longitude = intent.getParcelableExtra<PlaceData>("placeData").longitude
+            address = intent.getParcelableExtra<PlaceData>("placeData").place
+            placeData = PlaceData(address!!, latitude!!, longitude!!)
+            Log.e("check", "latitude = $latitude, longitude = $longitude, address = $address")
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

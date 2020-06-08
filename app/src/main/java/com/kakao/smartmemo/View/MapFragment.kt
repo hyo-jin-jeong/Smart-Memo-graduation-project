@@ -186,7 +186,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         if (!usingMapView) {
             mapView = MapView(view!!.context)
             mapViewContainer.addView(mapView)
-
+            mapView.currentLocationTrackingMode =
+                MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
             mapView.setPOIItemEventListener(this)
             mapView.setMapViewEventListener(this)
             mapView.setCurrentLocationEventListener(this)
@@ -198,13 +199,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         super.onPause()
         usingMapView = false
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
-        mapView.setShowCurrentLocationMarker(false)
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
@@ -465,6 +459,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         val addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
                         val placeData = PlaceData(convertedAddress!!, latitude, longitude)
                         addTodoIntent.putExtra("placeData", placeData)
+                        addTodoIntent.putExtra("mode", "longPressed")
+                        Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                         startActivity(addTodoIntent)
                         this.onDestroyView()
                         usingMapView = false

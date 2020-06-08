@@ -50,6 +50,7 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
 
     private var curLongitude: Double? = null
     private var curLatitude: Double? = null
+    private var curAddress: String? = null
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var locationAdapter: LocationAdapter
@@ -137,10 +138,9 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
 
         listView.layoutManager = layoutManager2
 
-
-        curLongitude = intent.getDoubleExtra("longitude", 0.0)
-        curLatitude = intent.getDoubleExtra("latitude", 0.0)
-        var address = intent.getStringExtra("address")
+        curLatitude = intent.getParcelableExtra<PlaceData>("placeData").latitude
+        curLongitude = intent.getParcelableExtra<PlaceData>("placeData").longitude
+        curAddress = intent.getParcelableExtra<PlaceData>("placeData").place
         var placeDatas: ArrayList<PlaceData>? = intent.getParcelableArrayListExtra("todoPlaceAlarm")
         if (!placeDatas.isNullOrEmpty()) {
             for (placeData in placeDatas!!.iterator()) {
@@ -164,25 +164,34 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
         mapView.setMapCenterPoint(mapPoint, true)
 
         val initialItem: MapPOIItem
-        if (address == null)
-            initialItem = createMarker("여기 널이라능 ㅠㅠ", mapPoint)
+        initialItem = if (curAddress == null)
+            createMarker("여기 널이라능 ㅠㅠ", mapPoint)
         else
-            initialItem = createMarker(address, mapPoint)
+            createMarker(curAddress!!, mapPoint)
         if (!locationNames.contains(initialItem.itemName)) {
             mapView.addPOIItem(initialItem)
         }
 
         saveButton.setOnClickListener {
-            val intent = Intent()
-            val placeDatas = replaceWithData()
-
-            Log.e("jieun", "지금 placeDatas 담김")
-            intent.putExtra("longitude", curLongitude!!.toDouble())
-            intent.putExtra("latitude", curLatitude!!.toDouble())
-            intent.putExtra("address", address)
-            intent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
-            setResult(Activity.RESULT_OK, intent)
-            finish()
+            //long pressed 로 들어왔을 때
+            if(intent.getStringExtra("mode") == "longPressed"){
+                val todoIntent = Intent(this.context, AddTodo::class.java)
+                val placeData = PlaceData(curAddress!!, curLatitude!!, curLongitude!!)
+                todoIntent.putExtra("placeData", placeData)
+                todoIntent.putExtra("mode", "longPressed")
+                startActivity(todoIntent)
+                finish()
+            } else {    //(+)버튼으로 들어왔을 때
+                val intent = Intent()
+                val placeDatas = replaceWithData()
+                Log.e("jieun", "지금 placeDatas 담김")
+                intent.putExtra("longitude", curLongitude!!.toDouble())
+                intent.putExtra("latitude", curLatitude!!.toDouble())
+                intent.putExtra("address", curAddress)
+                intent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
         }
 
     }
