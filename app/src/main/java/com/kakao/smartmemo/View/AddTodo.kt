@@ -8,8 +8,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.view.*
-import android.view.View.*
+import android.view.MenuItem
+import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.view.ViewStub
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -34,7 +37,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
     private lateinit var todoToolBar: Toolbar
     private lateinit var presenter : AddTodoContract.Presenter
-    //private lateinit var userpresenter : MemberDataPresenter
     private lateinit var titleEdit: EditText
     private lateinit var selectGroupBtn : Button
     private var groupName: String = ""
@@ -251,9 +253,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             }
 
             groupId = data.groupId
-            groupColor = data.groupColor
             titleEdit.setText(data.title)
-            selectGroupBtn.text = data.groupName
             timeSwitch.isChecked = data.setTimeAlarm
             timeDateText.text = data.timeDate
             timeText.text = data.timeTime
@@ -274,23 +274,16 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                     }
                     else -> {
                         var todoData = TodoData(
-                            titleEdit.text.toString(),
-                            data.groupName,
-                            data.groupId,
-                            data.groupColor,
                             data.todoId,
-                            data.timeAlarmId,
+                            titleEdit.text.toString(),
+                            data.groupId,
                             timeSwitch.isChecked,
                             "${timeDateText.text}",
                             timeText.text.toString(),
                             settingsTimeMinutes,
-                            data.placeAlarmId,
                             placeSwitch.isChecked,
                             "${placeDateText.text}",
-                            settingsPlaceMinutes,
-                            "한성대학교",
-                            "0.0",
-                            "0.0"
+                            settingsPlaceMinutes
                         )
                         presenter.addTodo(todoData)
                         finish()
@@ -307,26 +300,17 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        timeAlarmId = "time" + System.currentTimeMillis()
-                        placeAlarmId = "place" + System.currentTimeMillis()
                         var todoData = TodoData(
-                            titleEdit.text.toString(),
-                            groupName,
-                            groupId,
-                            0,
                             "",
-                            "${timeAlarmId}",
+                            titleEdit.text.toString(),
+                            groupId,
                             timeSwitch.isChecked,
                             "${timeDateText.text}",
                             timeText.text.toString(),
                             settingsTimeMinutes,
-                            "${placeAlarmId}",
                             placeSwitch.isChecked,
                             "${placeDateText.text}",
-                            settingsPlaceMinutes,
-                            "한성대학교",
-                            "0.0",
-                            "0.0"
+                            settingsPlaceMinutes
                         )
                         presenter.addTodo(todoData)
                         if (timeSwitch.isChecked) {
@@ -347,10 +331,12 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         setTodoAlarm(todoCalendar)
 
                         //val User = userpresenter.getProfile()
-            //                    if (placeSwitch.isChecked) {
-            //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
-            //                        setTimeAlarm(placeCalendar)
-            //                    }
+
+                        //                    if (placeSwitch.isChecked) {
+                        //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
+                        //                        setTimeAlarm(placeCalendar)
+                        //                    }
+
                         finish()
                     }
                 }
@@ -443,25 +429,25 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
 
         if(notifyTime) { //알람을 허용했다면
             if(alarmManager != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        alarmManager.setExactAndAllowWhileIdle(
-                            AlarmManager.RTC_WAKEUP,
-                            calendar.timeInMillis,
-                            pendingIntent
-                        )
-                        alarmManager.setRepeating(
-                            AlarmManager.RTC,
-                            calendar.timeInMillis,
-                            interval.toLong(),
-                            pendingIntent
-                        )
-                    }
-                    //부팅후 실행되는 리시버 사용가능하게 설정함.
-                    pm.setComponentEnabledSetting(
-                        receiver,
-                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                        PackageManager.DONT_KILL_APP
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        pendingIntent
                     )
+                    alarmManager.setRepeating(
+                        AlarmManager.RTC,
+                        calendar.timeInMillis,
+                        interval.toLong(),
+                        pendingIntent
+                    )
+                }
+                //부팅후 실행되는 리시버 사용가능하게 설정함.
+                pm.setComponentEnabledSetting(
+                    receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP
+                )
             }
             else { // 알람을 허용하지 않았다면
                 if(PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {

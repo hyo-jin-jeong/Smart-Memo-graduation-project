@@ -21,6 +21,7 @@ import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Model.MainLocationModel
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
@@ -39,11 +40,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     lateinit var mDrawerLayout: DrawerLayout
     lateinit var memberName: TextView
     private val context: Context = this
-    private lateinit var groupMap : HashMap<String, Long>
+    private lateinit var groupIdList : MutableList<String>
     var openFlag:Boolean = false
 
     private lateinit var mainLocationModel: MainLocationModel
 
+    override fun onStart() {
+        super.onStart()
+        Log.e("onStart - main", "onStart")
+        presenter.getGroupInfo()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -92,22 +98,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.menu)
 
-        getGroupInfo()
-
         navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             mDrawerLayout!!.closeDrawers()
             when(val id = menuItem.itemId) {
                 -1 -> {
                 }
-                groupMap.size+1 -> {
+                groupIdList.size+1 -> {
                     val nextIntent = Intent(this, AddGroup::class.java)
                     startActivity(nextIntent)
                 }
                 else -> {
                     var groupSettingIntent = Intent(this, ModifyGroup::class.java)
-                    groupSettingIntent.putExtra("groupName", menuItem.title)
-                    groupSettingIntent.putExtra("groupColor",groupMap[menuItem.title].toString())
+                    groupSettingIntent.putExtra("groupId", groupIdList[menuItem.itemId-1])
+
                     startActivity(groupSettingIntent)
                 }
             }
@@ -135,21 +139,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             mainLocationModel.convertAddressFromMapPOIItem(location.longitude.toString(), location.latitude.toString())
     }
 
-    private fun getGroupInfo(){
-        presenter.getGroupInfo()
-    }
     @SuppressLint("ResourceType")
-    override fun setNavigationView(groupInfoList: HashMap<String, Long>){ // call back func
-            groupMap = groupInfoList
+    override fun setNavigationView(groupInfoList: MutableList<String>){ // call back func
+            groupIdList = groupInfoList
             var i = 1
             navigationView.menu.clear()
 
             groupInfoList.forEach {
-                if(it.key == "내 폴더"){
-                    navigationView.menu.add(0,-1,0,it.key).setIcon(R.drawable.setting_icon)
+                if(it == "내 폴더"){
+                    navigationView.menu.add(0,-1,0,GroupObject.groupInfo[it]).setIcon(R.drawable.setting_icon)
                 }
                 else{
-                    navigationView.menu.add(1,i,i,it.key).setIcon(R.drawable.setting_icon)
+                    navigationView.menu.add(1,i,i,GroupObject.groupInfo[it]).setIcon(R.drawable.setting_icon)
                     i++
                 }
 

@@ -96,7 +96,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             )
         }
 
-        val myOnClickLisnter = View.OnClickListener { v ->
+        val myOnClickListenr = View.OnClickListener { v ->
             when(v) {
                 (activity as MainActivity).fab_memo ->  {
                     Log.i("jieun", "memo button click")
@@ -106,7 +106,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 }
             }
         }
-        view.setOnClickListener(myOnClickLisnter)
+        view.setOnClickListener(myOnClickListenr)
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
 

@@ -52,6 +52,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         textViewTodoList = view.findViewById(R.id.textView_todolist)
 
         presenter = TodoPresenter(this)
+
         todolist = view.findViewById(R.id.todolist) as ListView
         todolist.setOnItemClickListener { parent, view, position, id ->
             var intent = Intent(cont, AddTodo::class.java)
@@ -63,22 +64,33 @@ class TodoListFragment : Fragment(), TodoContract.View {
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.removeItem -> {
+                    count = 0
+                    var selectedItem = mutableListOf<TodoData>()
                     var count = deleteAdapter.count
                     var checkedItems = deleteAdapter.selectedTodo()
+                    var keys = checkedItems
                     for( i in count-1 downTo 0) {
-                        for (j in checkedItems) {
-                            if(i == j) {
+                        for (item in checkedItems) {
+                            if(i == item.key) {
+                                selectedItem.add(item.value)
                                 todoArrayList.removeAt(i)
+                                Log.e("selectedItem", "${selectedItem}")
                             }
                         }
                     }
+
+                    presenter.deleteTodo(selectedItem)
                     todolist.clearChoices()
-                    adapter.notifyAdapter()
                     bottomNavigationView.visibility = GONE //하단메뉴 안보이게
-                    todolist.adapter = TodoAdapter(cont, todoArrayList)
+                    adapter = TodoAdapter(cont, todoArrayList)
+                    todolist.adapter = adapter
+                    presenter.setTodoAdapterModel(adapter)
+                    presenter.setTodoAdapterView(adapter)
+
                     true
                 }
                 R.id.cancelItem -> {
+                    count = 0
                     showAllTodo(todoArrayList)
                     true
                 }
@@ -122,7 +134,6 @@ class TodoListFragment : Fragment(), TodoContract.View {
                 } else {
                     deleteTodo()
                 }
-
                 return true
             }
             else ->
@@ -170,7 +181,6 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
         bottomNavigationView.visibility = GONE
-        Log.e("todoData", todoData.toString())
     }
 
     private fun deleteTodo() {
