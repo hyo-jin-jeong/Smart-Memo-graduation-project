@@ -33,6 +33,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.kakao.smartmemo.Adapter.LocationAdapter
 import com.kakao.smartmemo.ApiConnect.*
 import com.kakao.smartmemo.Contract.MapContract
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Presenter.MapPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -98,11 +99,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         when {
             !checkLocationServicesStatus() -> {
-                Log.e("jieun", "첫번째 여기 들어옴")
                 showDialogForLocationServiceSetting()
             }
             else -> {
-                Log.e("jieun", "else 여기 들어옴")
                 checkRunTimePermission()
             }
         }
@@ -193,6 +192,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             mapView.setCurrentLocationEventListener(this)
             mapView.setOpenAPIKeyAuthenticationResultListener(this)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        usingMapView = false
     }
 
     override fun onDestroy() {
@@ -450,9 +454,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 when (which) {
                     0 -> {
                         val addMemoIntent = Intent(this.context, AddMemo::class.java)
-                        addMemoIntent.putExtra("longitude", longitude)
-                        addMemoIntent.putExtra("latitude", latitude)
-                        addMemoIntent.putExtra("address", convertedAddress)
+                        val placeData = PlaceData(convertedAddress!!, latitude, longitude)
+                        addMemoIntent.putExtra("placeData", placeData)
                         Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                         startActivity(addMemoIntent)
                         this.onDestroyView()
@@ -460,9 +463,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                     }
                     1 -> {
                         val addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
-                        addTodoIntent.putExtra("longitude", longitude)
-                        addTodoIntent.putExtra("latitude", latitude)
-                        addTodoIntent.putExtra("address", convertedAddress)
+                        val placeData = PlaceData(convertedAddress!!, latitude, longitude)
+                        addTodoIntent.putExtra("placeData", placeData)
                         startActivity(addTodoIntent)
                         this.onDestroyView()
                         usingMapView = false
