@@ -258,6 +258,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 if(mainLocationModel.checkValue()) {
                     val placeData = PlaceData(mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
                     addTodoIntent.putExtra("placeData", placeData)
+                    addTodoIntent.putExtra("mode", "fromMain")
                 }
                 startActivity(addTodoIntent)
             }
