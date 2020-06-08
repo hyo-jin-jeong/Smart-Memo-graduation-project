@@ -26,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Model.MainLocationModel
 import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
@@ -246,9 +247,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 anim()
                 val addMemoIntent = Intent(this.context, AddMemo::class.java)
                 if (mainLocationModel.checkValue()) {
-                    addMemoIntent.putExtra("longitude", mainLocationModel.longitude!!.toDouble())
-                    addMemoIntent.putExtra("latitude", mainLocationModel.latitude!!.toDouble())
-                    addMemoIntent.putExtra("address", mainLocationModel.locationAddress)
+                    val placeData = PlaceData(mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
+                    addMemoIntent.putExtra("placeData", placeData)
                 }
                 startActivity(addMemoIntent)
             }
@@ -256,9 +256,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 anim()
                 val addTodoIntent = Intent(this, AddTodo::class.java)
                 if(mainLocationModel.checkValue()) {
-                    addTodoIntent.putExtra("longitude", mainLocationModel.longitude!!.toDouble())
-                    addTodoIntent.putExtra("latitude", mainLocationModel.latitude!!.toDouble())
-                    addTodoIntent.putExtra("address", mainLocationModel.locationAddress)
+                    val placeData = PlaceData(mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
+                    addTodoIntent.putExtra("placeData", placeData)
                 }
                 startActivity(addTodoIntent)
             }
