@@ -1,7 +1,10 @@
 package com.kakao.smartmemo.View
 
+import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -23,6 +26,7 @@ import com.kakao.smartmemo.ApiConnect.ApiInterface
 import com.kakao.smartmemo.ApiConnect.CategoryResult
 import com.kakao.smartmemo.ApiConnect.Document
 import com.kakao.smartmemo.Contract.PlaceAlarmDetailContract
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Presenter.PlaceAlarmDetailPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.main_dialog.*
@@ -54,7 +58,8 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
     private lateinit var saveButton: Button
     private lateinit var addButton: Button
     private lateinit var locationTextView: TextView
-    private val locations = ArrayList<String>()
+    private val locationNames = ArrayList<String>()
+    private val locations = ArrayList<Location>()
     private var mapPOIItem: MapPOIItem? = null
     private var locationItems = ArrayList<MapPOIItem>()
     private var aroundLocationItems = ArrayList<MapPOIItem>()
@@ -107,7 +112,7 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         recyclerView.layoutManager = layoutManager
 
         val listView: RecyclerView = findViewById(R.id.listView)
-        listAdapter = LocationListAdapter(context, locations, locationItems, aroundLocationItems, mapView)
+        listAdapter = LocationListAdapter(context, locationNames, locations, locationItems, aroundLocationItems, mapView)
         listView.adapter = listAdapter
 
         val layoutManager2 =
@@ -137,6 +142,28 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
             longPressedItem = createMarker(address, mapPoint)
         mapView.addPOIItem(longPressedItem)
 
+        saveButton.setOnClickListener {
+            val intent = Intent(this, AddTodo::class.java)
+            val placeDatas = replaceWithData()
+            if(placeDatas.isEmpty()){
+                //담겨있지 않을경우 처리
+            } else {
+                intent.putExtra("todoAlarm", placeDatas)
+                startActivity(intent)
+            }
+        }
+
+    }
+
+    private fun replaceWithData(): ArrayList<PlaceData> {
+        var placeDatas = ArrayList<PlaceData>()
+
+        for (i in locations.indices) {
+            var placeData = PlaceData(locationNames[i], locations[i].latitude, locations[i].longitude)
+            placeDatas.add(placeData)
+        }
+
+        return placeDatas
     }
 
     override fun onPause() {
@@ -328,6 +355,11 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         mapPOIItem = createMarker(" ", p1!!)
         mapPOIItem!!.markerType = MapPOIItem.MarkerType.RedPin
 
+        var location = Location("")
+        location.latitude = p1.mapPointGeoCoord.latitude
+        location.longitude = p1.mapPointGeoCoord.longitude
+
+
         presenter.convertAddressFromMapPOIItem(mapPOIItem!!)
         mapView.addPOIItem(mapPOIItem)
         if(!isUp) {
@@ -338,8 +370,9 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         }
 
         addButton.setOnClickListener {
-            if(!locations.contains(mapPOIItem!!.itemName)) {
+            if(!locationNames.contains(mapPOIItem!!.itemName)) {
                 listAdapter.addItem(mapPOIItem!!.itemName)
+                listAdapter.addItemLocation(location)
                 listAdapter.notifyDataSetChanged()
                 mapPOIItem!!.markerType = MapPOIItem.MarkerType.YellowPin
                 listAdapter.notifyDataSetChanged()
@@ -379,7 +412,15 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
     }
 
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
+        recyclerView.visibility = View.GONE
         listAdapter.notifyDataSetChanged()
+
+
+
+        var location = Location("")
+        location.latitude = p1!!.mapPoint.mapPointGeoCoord.latitude
+        location.longitude = p1!!.mapPoint.mapPointGeoCoord.longitude
+
         if(!isUp) {
             saveButton.visibility = Button.INVISIBLE
             listLayout.visibility = View.VISIBLE
@@ -388,9 +429,10 @@ class PlaceAlarmDetailActivity: AppCompatActivity(), PlaceAlarmDetailContract.Vi
         }
         locationTextView.text = p1!!.itemName
         addButton.setOnClickListener {
-            if(!locations.contains(p1!!.itemName)) {
+            if(!locationNames.contains(p1!!.itemName)) {
                 p1!!.markerType = MapPOIItem.MarkerType.YellowPin
                 listAdapter.addItem(p1!!.itemName)
+                listAdapter.addItemLocation(location)
                 listAdapter.notifyDataSetChanged()
                 locationItems.add(p1!!)
                 allMapItemShow()
