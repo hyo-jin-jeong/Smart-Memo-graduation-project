@@ -7,7 +7,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.MemoAdapterContract
 import com.kakao.smartmemo.Data.MemoData
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_view.view.*
 import kotlinx.android.synthetic.main.memo_list_view.view.memo_date
@@ -24,12 +24,12 @@ class MemoListAdapter(private val memoList: MutableList<MemoData>) : RecyclerVie
     override fun onBindViewHolder(holer: MainViewHolder, position: Int) {
         memoList[position].let { item ->
             with(holer) {
-                groupName.text = GroupObject.groupInfo[item.groupId]
+                groupName.text = FolderObject.folderInfo[item.groupId]
                 memoTitle.text = item.title
                 memoContent.text = item.content
                 memoDate.text = item.date
                 memoBackground.isClickable = true
-                GroupObject.groupColor[item.groupId]?.toInt()?.let {
+                FolderObject.folderColor[item.groupId]?.toInt()?.let {
                     memoBackground.setBackgroundColor(
                         it
                     )

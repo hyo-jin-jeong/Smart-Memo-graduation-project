@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.kakao.smartmemo.Contract.AddMemoContract
 import com.kakao.smartmemo.Data.MemoData
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Presenter.AddMemoPresenter
 import com.kakao.smartmemo.R
 import java.text.SimpleDateFormat
@@ -68,7 +68,7 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
             placeNameText.text = data.placeName
             titleEdit.setText(data.title)
             contentEdit.setText(data.content)
-            groupName.text = GroupObject.groupInfo[data.groupId]
+            groupName.text = FolderObject.folderInfo[data.groupId]
             originGroupId = data.groupId
             memoId = data.memoId
 
@@ -134,10 +134,10 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
 
     private fun selectGroup(){
         var i = 0
-        val items:Array<CharSequence> = Array(GroupObject.groupInfo.size) {""}
-        var groupIdList = Array(GroupObject.groupInfo.size){""}
+        val items:Array<CharSequence> = Array(FolderObject.folderInfo.size) {""}
+        var groupIdList = Array(FolderObject.folderInfo.size){""}
 
-        GroupObject.groupInfo.forEach {
+        FolderObject.folderInfo.forEach {
             groupIdList[i] = it.key
             items[i] = it.value
             i++

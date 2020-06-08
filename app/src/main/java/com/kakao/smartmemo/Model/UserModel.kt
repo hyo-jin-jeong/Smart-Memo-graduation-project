@@ -11,7 +11,7 @@ import com.kakao.smartmemo.Contract.LoginContract
 import com.kakao.smartmemo.Contract.MemberChangeContract
 import com.kakao.smartmemo.Contract.MemberDataContract
 import com.kakao.smartmemo.Contract.SignUpContract
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 
 
@@ -138,8 +138,8 @@ class UserModel {
                     kakao_connected = false
                     kakao_alarm_time = ""
                 }
-                GroupObject.groupInfo.clear()
-                GroupObject.groupColor.clear()
+                FolderObject.folderInfo.clear()
+                FolderObject.folderColor.clear()
                 auth.currentUser
                 UserObject.uid = auth.uid.toString()
                 UserObject.email = email
@@ -148,7 +148,7 @@ class UserModel {
                         override fun onCancelled(p0: DatabaseError) {}
                         override fun onDataChange(snapShot: DataSnapshot) {
                             for (data in snapShot.children) {
-                                GroupObject.groupInfo[data.key.toString()] = data.value.toString()
+                                FolderObject.folderInfo[data.key.toString()] = data.value.toString()
                             }
                             onLoginListener.onSuccess(task.result.toString())
                         }
@@ -171,8 +171,8 @@ class UserModel {
                 kakao_connected = false
                 kakao_alarm_time = ""
             }
-            with(GroupObject) {
-                this.groupInfo.clear()
+            with(FolderObject) {
+                this.folderInfo.clear()
             }
             auth.signOut()
         } else {
