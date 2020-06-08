@@ -48,7 +48,7 @@
             android:layout_height="40dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/notification_btn_shape"
-            android:text="다시알림"
+            android:text="다시 알림"
             android:layout_weight="1"/>
 
         <Button
@@ -58,7 +58,7 @@
             android:layout_marginLeft="5dp"
             android:background="@drawable/notification_btn_shape"
             android:layout_toRightOf="@id/later_notification"
-            android:text="알림해제"
+            android:text="알림 해제"
             android:layout_weight="1"/>
     </LinearLayout>
 
