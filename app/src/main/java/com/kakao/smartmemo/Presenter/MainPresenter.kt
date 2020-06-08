@@ -3,18 +3,18 @@ package com.kakao.smartmemo.Presenter
 import android.util.Log
 import com.kakao.smartmemo.Contract.MainAdapterContract
 import com.kakao.smartmemo.Contract.MainContract
-import com.kakao.smartmemo.Model.GroupModel
+import com.kakao.smartmemo.Model.FolderModel
 
 class MainPresenter : MainContract.Presenter,MainContract.onGetGroupInfoListener{
 
     private var view : MainContract.View
-    var groupModel: GroupModel
+    var folderModel: FolderModel
     private lateinit var adapterView: MainAdapterContract.View
     private lateinit var adapterModel: MainAdapterContract.Model
 
     constructor(view: MainContract.View){
         this.view = view
-        this.groupModel = GroupModel(this)
+        this.folderModel = FolderModel(this)
     }
 
     override fun setMainAdapterModel(model: MainAdapterContract.Model) {
@@ -26,7 +26,7 @@ class MainPresenter : MainContract.Presenter,MainContract.onGetGroupInfoListener
     }
 
     override fun getGroupInfo() {
-        groupModel.getGroupInfo()
+        folderModel.getGroupInfo()
     }
 
 

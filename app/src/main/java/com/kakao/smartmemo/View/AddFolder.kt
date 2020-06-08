@@ -20,7 +20,7 @@ import com.kakao.smartmemo.Presenter.AddGroupPresenter
 import com.kakao.smartmemo.R
 import com.kakao.util.helper.log.Logger
 
-class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
+class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
 
     lateinit var presenter : AddGroupContract.Presenter
     lateinit var toolbar: Toolbar

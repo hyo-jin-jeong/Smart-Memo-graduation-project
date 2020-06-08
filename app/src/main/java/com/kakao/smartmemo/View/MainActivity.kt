@@ -3,7 +3,11 @@ package com.kakao.smartmemo.View
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.location.Location
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
+import android.graphics.drawable.Animatable
+import android.media.Image
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -11,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 
@@ -18,6 +23,7 @@ import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.toColorInt
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
@@ -27,7 +33,7 @@ import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Model.MainLocationModel
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
@@ -44,7 +50,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private lateinit var fabTodo:FloatingActionButton
     lateinit var navigationView: NavigationView
     lateinit var mDrawerLayout: DrawerLayout
-    lateinit var memberName: TextView
+
+    private lateinit var profileImageView: ImageView
+    private lateinit var userId: TextView
+    private lateinit var editFolderImageView: ImageView
     private val context: Context = this
     private lateinit var groupIdList : MutableList<String>
     var openFlag:Boolean = false
@@ -56,7 +65,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
     override fun onStart() {
         super.onStart()
-        Log.e("onStart - main", "onStart")
+
+        userId.text = UserObject.email
         presenter.getGroupInfo()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,7 +89,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         mDrawerLayout = findViewById(R.id.drawer_layout)
 
         val naviHeaderView = navigationView.getHeaderView(0)
-        memberName = naviHeaderView.findViewById(R.id.nav_name)
+        profileImageView = naviHeaderView.findViewById(R.id.nav_member_icon)
+        userId = naviHeaderView.findViewById(R.id.nav_id)
+        editFolderImageView = naviHeaderView.findViewById(R.id.nav_edit_folder)
 
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
@@ -111,23 +123,24 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             menuItem.isChecked = true
             mDrawerLayout!!.closeDrawers()
             when(val id = menuItem.itemId) {
-                -1 -> {
+                0 -> {
                 }
                 groupIdList.size+1 -> {
-                    val nextIntent = Intent(this, AddGroup::class.java)
+                    val nextIntent = Intent(this, AddFolder::class.java)
                     startActivity(nextIntent)
                 }
                 else -> {
-                    var groupSettingIntent = Intent(this, ModifyGroup::class.java)
-                    groupSettingIntent.putExtra("groupId", groupIdList[menuItem.itemId-1])
-
-                    startActivity(groupSettingIntent)
+                    
+//                    var groupSettingIntent = Intent(this, ModifyGroup::class.java)
+//                    groupSettingIntent.putExtra("groupId", groupIdList[menuItem.itemId-1])
+//
+//                    startActivity(groupSettingIntent)
                 }
             }
             menuItem.isChecked=false
             true
         }
-        naviHeaderView.setOnClickListener {
+        profileImageView.setOnClickListener {
             if (UserObject == null) {
                 Toast.makeText(this, "회원정보를 가져오지 못했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                 Log.e("GetProfile Error", "UserObject is null")
@@ -135,6 +148,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 val memberData = Intent(this, MemberData::class.java)
                 startActivity(memberData)
             }
+        }
+        editFolderImageView.setOnClickListener {
+            //Folder edit activity 만들기
         }
 
         setFloatingIcon()
@@ -190,26 +206,29 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             groupIdList = groupInfoList
             var i = 1
             navigationView.menu.clear()
-
+            FolderObject.folderInfo.toSortedMap()
             groupInfoList.forEach {
-                if(it == "내 폴더"){
-                    navigationView.menu.add(0,-1,0,GroupObject.groupInfo[it]).setIcon(R.drawable.setting_icon)
+                if(FolderObject.folderInfo[it] == "내 폴더"){
+                    navigationView.menu.add(0,0,0,FolderObject.folderInfo[it])
                 }
                 else{
-                    navigationView.menu.add(1,i,i,GroupObject.groupInfo[it]).setIcon(R.drawable.setting_icon)
+                    navigationView.menu.add(1,i,i,FolderObject.folderInfo[it])
+                    if(FolderObject.folerShare[it]!!){
+                        navigationView.menu.getItem(i-1).setIcon(R.drawable.share)
+//                        FolderObject.folderColor[it]?.toInt()?.let { it1 ->
+//                            navigationView.menu.getItem(i-1).icon.setColorFilter(it1, PorterDuff.Mode.SRC_IN)
+//                        }//공유 폴더 icon색바꾸기
+                    }
                     i++
                 }
 
             }
             navigationView.menu.add(2,groupInfoList.size+1,groupInfoList.size+1,"폴더 추가").setIcon(R.drawable.plus_group)
+
     }
 
 
 
-    override fun onResume() {
-        super.onResume()
-        memberName.text = UserObject.user_name
-    }
 
     private fun setFloatingIcon() {
         // FloatingActionButton

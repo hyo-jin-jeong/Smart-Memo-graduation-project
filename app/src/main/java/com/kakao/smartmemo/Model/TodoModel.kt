@@ -6,8 +6,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Data.TodoData
-import com.kakao.smartmemo.Object.GroupObject
-import java.util.*
+import com.kakao.smartmemo.Object.FolderObject
 
 
 class TodoModel {
@@ -57,7 +56,7 @@ class TodoModel {
         var i = 0
         var j = 0
         var todoList = mutableListOf<TodoData>()
-        GroupObject.groupInfo.forEach {
+        FolderObject.folderInfo.forEach {
             firebaseGroup.child(it.key).child("TodoInfo").addValueEventListener(object :
                 ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {}
@@ -76,7 +75,7 @@ class TodoModel {
                                             timeAlarm.timeTime,timeAlarm.timeAgain,placeAlarm.setPlaceAlarm,placeAlarm.placeDate,placeAlarm.placeAgain))
                                     }
 
-                                    if(i == GroupObject.groupInfo.size-1&&j == todoIdSanpshot.children.count()-1){
+                                    if(i == FolderObject.folderInfo.size-1&&j == todoIdSanpshot.children.count()-1){
                                         onTodoListener.onSuccess(todoList)
                                         i=0
                                     }else if(j == todoIdSanpshot.children.count()-1){
@@ -89,7 +88,7 @@ class TodoModel {
                             })
                         }
                     }else{
-                        if(i == GroupObject.groupInfo.size-1){
+                        if(i == FolderObject.folderInfo.size-1){
                             i=0
                             onTodoListener.onSuccess(todoList)
                         }
