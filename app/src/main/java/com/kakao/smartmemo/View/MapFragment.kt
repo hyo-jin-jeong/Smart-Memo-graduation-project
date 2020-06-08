@@ -9,10 +9,10 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
+import android.os.HandlerThread
 import android.provider.Settings
 import android.util.Log
 import android.view.*
@@ -26,6 +26,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.kakao.smartmemo.Adapter.LocationAdapter
 import com.kakao.smartmemo.ApiConnect.*
 import com.kakao.smartmemo.Contract.MapContract
@@ -44,10 +48,12 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener,
     MapView.OpenAPIKeyAuthenticationResultListener {
     private lateinit var presenter: MapPresenter
+    private lateinit var goCurLocation: FloatingActionButton
 
     private lateinit var mapView: MapView
     private lateinit var mapViewContainer: ViewGroup
     private var usingMapView = false
+    private var isCurLocation = false
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var locationAdapter: LocationAdapter
@@ -56,11 +62,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     private var bus = BusProvider().getInstance()
 
     private var isLongTouch: Boolean = false
+
+    private var mLocationRequest: LocationRequest? = null
+    private var mFusedLocationClient: FusedLocationProviderClient? = null
+    private var mServiceHandler: Handler? = null
     private var curLocationMarker: MapPOIItem = MapPOIItem()
     private var convertedAddress: String? = null
+    private var currentLocation: Location? = null
 
-    private var canGetLocation = false
-    private lateinit var locationManager: LocationManager
     private val GPS_ENABLE_REQUEST_CODE: Int = 2001
     private val PERMISSIONS_REQUEST_CODE: Int = 100
     var REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -84,29 +93,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapView = MapView(view.context)
         usingMapView = true
 
-        val curLocation: Location? = getLocation()
-        if (curLocation != null) {
-            val curLongitude = curLocation.longitude
-            val curLatitude = curLocation.latitude
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
 
-            //중심점 설정하는
-            mapView.setMapCenterPoint(
-                MapPoint.mapPointWithGeoCoord(curLatitude, curLongitude),
-                false
-            )
-        }
+        createLocationRequest()
+        getLastLocation()
+        val handlerThread = HandlerThread(MapFragment::class.java.simpleName)
+        handlerThread.start()
+        mServiceHandler = Handler(handlerThread.looper)
 
-        val myOnClickListenr = View.OnClickListener { v ->
-            when(v) {
-                (activity as MainActivity).fab_memo ->  {
-                    Log.i("jieun", "memo button click")
-                }
-                (activity as MainActivity).fab_todo -> {
-                    Log.i("jieun", "todo button click")
-                }
-            }
-        }
-        view.setOnClickListener(myOnClickListenr)
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
 
@@ -115,6 +109,20 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapView.setCurrentLocationEventListener(this)
         mapView.setOpenAPIKeyAuthenticationResultListener(this)
 
+        goCurLocation = view.findViewById(R.id.go_curLocation)
+        goCurLocation.setOnClickListener {
+            if(!isCurLocation) {
+                isCurLocation = true
+                goCurLocation.setImageResource(R.drawable.current_location_click_icon)
+                mapView.currentLocationTrackingMode =
+                    MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+            } else {
+                isCurLocation = false
+                goCurLocation.setImageResource(R.drawable.current_location_icon)
+                mapView.currentLocationTrackingMode =
+                    MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
+            }
+        }
         recyclerView = view.findViewById(R.id.map_recyclerview)
         val layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) //레이아웃매니저 생성
@@ -139,10 +147,41 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         }
     }
 
+    private fun createLocationRequest() {
+        mLocationRequest = LocationRequest()
+        mLocationRequest!!.interval = 10000
+        mLocationRequest!!.fastestInterval = 5000
+        mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+
+    private fun getLastLocation() {
+        try {
+            mFusedLocationClient!!.lastLocation
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful && task.result != null) {
+                        currentLocation = task.result
+                        mapView.setMapCenterPoint(
+                            MapPoint.mapPointWithGeoCoord(currentLocation!!.latitude, currentLocation!!.longitude!!),
+                            false
+                        )
+                    } else {
+                        Log.w(
+                            "check",
+                            "Failed to get location."
+                        )
+                    }
+                }
+        } catch (unlikely: SecurityException) {
+            Log.e(
+                "check",
+                "Lost location permission.$unlikely"
+            )
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         if (!usingMapView) {
-            Log.i("jieun", "이거시 실행되었다.")
             mapView = MapView(view!!.context)
             mapViewContainer.addView(mapView)
 
@@ -171,31 +210,37 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         val searchItem: MenuItem? = menu.findItem(R.id.search)
         val searchView = searchItem!!.actionView as SearchView
 
-        var selectedX: String? = null
-        var selectedY: String? = null
+        var firstX: String? = null
+        var firstY: String? = null
 
         locationAdapter = LocationAdapter(documentList, context!!, searchView, recyclerView)
         recyclerView.adapter = locationAdapter
 
         searchView.setOnCloseListener {
+            goCurLocation.visibility = FloatingActionButton.VISIBLE
             plusButton.visibility = Button.VISIBLE
             false
         }
         searchView.setOnSearchClickListener {
+            goCurLocation.visibility = FloatingActionButton.INVISIBLE
             plusButton.visibility = Button.INVISIBLE
             false
         }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean { // do your logic here
+                locationAdapter.notifyDataSetChanged()
                 plusButton.visibility = Button.VISIBLE
+                goCurLocation.visibility = FloatingActionButton.VISIBLE
                 recyclerView.visibility = View.GONE
                 Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
-                if(locationAdapter.selectedX != null && locationAdapter.selectedY != null) {
+                if(locationAdapter.clicked) {
                     changeMapCenterPoint(locationAdapter.selectedX, locationAdapter.selectedY)
                 } else {
-                    changeMapCenterPoint(selectedX, selectedY)
+                    //첫번째 요소의 포인트로 이동
+                    changeMapCenterPoint(firstX, firstY)
                 }
                 searchView.clearFocus()
+                locationAdapter.clicked = false
                 return false
             }
 
@@ -223,13 +268,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                             if (response.isSuccessful) { //check for Response status
                                 assert(response.body() != null)
                                 for (document in response.body()?.getDocuments()!!) {
-                                    selectedX = response.body()?.getDocuments()!![0]!!.x
-                                    selectedY = response.body()?.getDocuments()!![0]!!.y
+                                    firstX = response.body()?.getDocuments()!![0]!!.x
+                                    firstY = response.body()?.getDocuments()!![0]!!.y
                                     locationAdapter.addItem(document!!)
                                 }
                                 locationAdapter.notifyDataSetChanged()
                             } else {
                                 val statusCode = response.code()
+                                val responseBody = response.body()
                             }
                         }
 
@@ -243,6 +289,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
                     recyclerView.visibility = View.VISIBLE
                 } else {
+                    goCurLocation.visibility = FloatingActionButton.INVISIBLE
                     recyclerView.visibility = View.GONE
                     plusButton.visibility = Button.INVISIBLE
                 }
@@ -336,7 +383,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onMapViewDragEnded(p0: MapView?, p1: MapPoint?) {
-
+        mapView.removePOIItem(curLocationMarker)
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
@@ -380,6 +427,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         val curPoint = p1.mapPointGeoCoord
         val longitude = curPoint.longitude
         val latitude = curPoint.latitude
+
         //주소 정보도 포함하기
         when {
             !isLongTouch -> isLongTouch = true
@@ -405,8 +453,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                         startActivity(addMemoIntent)
                         this.onDestroyView()
+                        mapView.removePOIItem(curLocationMarker)
                     }
-                    else -> {
+                    1 -> {
                         val addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
                         addTodoIntent.putExtra("longitude", longitude)
                         addTodoIntent.putExtra("latitude", latitude)
@@ -416,11 +465,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         usingMapView = false
                         mapView.onPause()
                         mapViewContainer.removeAllViews()
+                        mapView.removePOIItem(curLocationMarker)
                     }
                 }
             })
             .show()
-
     }
 
 
@@ -609,112 +658,12 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
     }
 
-    //map 현 위치 찾는 메소드
-    @SuppressLint("MissingPermission")
-    fun getLocation(): Location? {
-        val MIN_TIME_BW_UPDATES = 10000L
-        val MIN_DISTANCE_CHANGE_FOR_UPDATES = 10000F
-        var location: Location? = null
-        val listener: LocationListener = object : LocationListener {
-            //provider의 상태가 변경되때마다 호출
-            override fun onStatusChanged(provider: String?, tatus: Int, extras: Bundle?) {
-
-            }
-
-            //provider가 사용 가능한 상태가 되는 순간 호출
-            override fun onProviderEnabled(provider: String?) {
-
-            }
-
-            //provider가 사용 불가능 상황이 되는 순간 호출
-            override fun onProviderDisabled(provider: String?) {
-
-            }
-
-            //위치 정보 전달 목적으로 호출
-            override fun onLocationChanged(location: Location?) {
-
-            }
-        }
-        try {
-            locationManager =
-                this.context!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            val isGPSEnabled = locationManager
-                .isProviderEnabled(LocationManager.GPS_PROVIDER)
-            val isPassiveEnabled = locationManager
-                .isProviderEnabled(LocationManager.PASSIVE_PROVIDER)
-            val isNetworkEnabled = locationManager
-                .isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-            if (isGPSEnabled || isNetworkEnabled || isPassiveEnabled) {
-                canGetLocation = true
-                // if GPS Enabled get lat/long using GPS Services
-                if (checkPermissions()) {
-                    if (isGPSEnabled && location == null) {
-                        locationManager.requestLocationUpdates(
-                            LocationManager.GPS_PROVIDER,
-                            MIN_TIME_BW_UPDATES,
-                            MIN_DISTANCE_CHANGE_FOR_UPDATES, listener
-                        )
-                        Log.d("GPS", "GPS Enabled")
-                        location =
-                            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    }
-                    if (isPassiveEnabled && location == null) {
-                        locationManager.requestLocationUpdates(
-                            LocationManager.PASSIVE_PROVIDER,
-                            MIN_TIME_BW_UPDATES,
-                            MIN_DISTANCE_CHANGE_FOR_UPDATES, listener
-                        )
-                        Log.d("Network", "Network Enabled")
-                        location =
-                            locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
-
-                        return location
-                    }
-                    if (isNetworkEnabled && location == null) {
-                        locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER,
-                            MIN_TIME_BW_UPDATES,
-                            MIN_DISTANCE_CHANGE_FOR_UPDATES, listener
-                        )
-                        Log.d("Network", "Network Enabled")
-                        location = locationManager
-                            .getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                    }
-                } else {
-                    return null
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return location
-    }
-
-    private fun checkPermissions(): Boolean {
-        if (ActivityCompat.checkSelfPermission(
-                this@MapFragment.requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(
-                this@MapFragment.requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            return true
-        }
-        return false
-    }
-
     override fun onDaumMapOpenAPIKeyAuthenticationResult(p0: MapView?, p1: Int, p2: String?) {
 
     }
 
     fun changeMapCenterPoint(x: String?, y: String?) {
         if(x != null && y != null) {
-            var cameraPosition = CameraPosition(MapPoint.mapPointWithGeoCoord(y.toDouble(), x.toDouble()),
-                2F
-            )
             mapView.moveCamera(CameraUpdateFactory.newMapPoint(MapPoint.mapPointWithGeoCoord(y.toDouble(), x.toDouble())))
         }
     }

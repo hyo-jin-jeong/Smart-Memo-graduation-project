@@ -62,4 +62,5 @@ dependencies {
     implementation "com.kakao.sdk:v2-link-rx:2.0.0-beta02"
     implementation "com.kakao.sdk:v2-navi:2.0.0-beta02"
     implementation 'com.squareup:otto:1.3.7'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 }

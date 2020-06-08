@@ -8,11 +8,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
-import android.view.ViewStub
+import android.util.Log
+import android.view.*
+import android.view.View.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -73,6 +71,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     private var placeAlarmId = ""
     private var settingsTimeMinutes = 0
     private var settingsPlaceMinutes = 0
+    private var todoHour = 0
+    private var todoMinute = 0
+    private var currentHour = 0
+    private var currentMinute = 0
     val interval = AlarmManager.INTERVAL_DAY
     private var notifyTime = false
     val date: LocalDateTime = LocalDateTime.now()
@@ -81,7 +83,12 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
     var min = 0
     private lateinit var data : TodoData
 
-    private var placeList = arrayListOf(PlaceData("연세병원"))
+
+    private var latitude: Double? = null
+    private var longitude: Double? = null
+    private var address: String? = null
+
+    private var placeList = arrayListOf(PlaceData("연세병원"), PlaceData("학교"), PlaceData("집"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,9 +181,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                     settingsTimeMinutes = 10
                 }
             }
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                settingsTimeMinutes = 0
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {  }
         }
 
         //장소 알림 반복시간 설정
@@ -195,9 +200,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                     settingsPlaceMinutes = 10
                 }
             }
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                settingsPlaceMinutes = 0
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {  }
         }
 
         timeSwitch.setOnCheckedChangeListener { compoundButton, isChecked ->
@@ -206,11 +209,20 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 todoStubTime.visibility = VISIBLE
                 timeCalendar.timeInMillis
                 timeLayout.setOnClickListener(timeDialogClickListener)
+                currentHour = timeCalendar.get(Calendar.HOUR_OF_DAY)
+                currentMinute = timeCalendar.get(Calendar.MINUTE)
+                if(timeCalendar.get(Calendar.HOUR_OF_DAY) < 12) {
+                    amPm = "오전"
+                }else {
+                    amPm = "오후"
+                    currentHour -=  12
+                }
+                timeText.text = "${amPm} ${currentHour} : ${String.format("%02d", currentMinute)}"
             } else {
                 timeDateText.text = "[기본] 날짜 미설정"
                 settingsTimeMinutes = 0
                 todoStubTime.visibility = GONE
-                notifyTime = false
+                notifyTime = false //알람 끔.
             }
         }
 
@@ -218,14 +230,19 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             if(isChecked) {
                 todoStubLocation.visibility = VISIBLE
                 placeLayout.setOnClickListener(View.OnClickListener {
-                    val placechoiceIntent = Intent(it.context, MainActivity::class.java)
+                    val placechoiceIntent = Intent(it.context, PlaceAlarmDetailActivity::class.java)
+                    placechoiceIntent.putExtra("longitude", longitude)
+                    placechoiceIntent.putExtra("latitude", latitude)
+                    placechoiceIntent.putExtra("address", address)
                     this.startActivity(placechoiceIntent)
-                })
+            })
+                notifyTime = true // 알람 켬.
             } else {
                 placeDateText.text = "[기본] 날짜 미설정"
                 settingsPlaceMinutes = 0
                 placeList.clear()
                 todoStubLocation.visibility = GONE
+                notifyTime = false //알람 끔.
             }
         }
 
@@ -286,6 +303,15 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                             settingsPlaceMinutes
                         )
                         presenter.addTodo(todoData)
+                        if (timeSwitch.isChecked) {
+                            // 지정한 시간에 울리게 알람을 세팅
+                            setTimeLocationAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
+                        }else {
+                            unsetTimeLocationAlarm() //알람 해제
+                        }
+
+                        todoAlarm()
+                        receiverData()
                         finish()
                     }
                 }
@@ -315,27 +341,16 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         presenter.addTodo(todoData)
                         if (timeSwitch.isChecked) {
                             // 지정한 시간에 울리게 알람을 세팅
-                            setTimeAlarm(timeCalendar, settingsTimeMinutes)
+                            setTimeLocationAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
                         }
-                        val TodoTime = UserObject.kakao_alarm_time
-                        //여기에 user의 kakao_alarm_time을 가져와 넣어주어야함! 지금은 임시로 해놓은것!
-                        todoCalendar.set(Calendar.HOUR_OF_DAY, 1)
-                        todoCalendar.set(Calendar.MINUTE, 16)
-                        todoCalendar.set(Calendar.SECOND, 0)
-                        val currentTime = System.currentTimeMillis()
-                        var settingTime = todoCalendar.timeInMillis
-                        val interval = AlarmManager.INTERVAL_DAY
-                        if (currentTime > settingTime) {
-                            todoCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
-                        }
-                        setTodoAlarm(todoCalendar)
 
-                        //val User = userpresenter.getProfile()
+                        todoAlarm()
+                        receiverData()
 
-                        //                    if (placeSwitch.isChecked) {
-                        //                        placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinute)
-                        //                        setTimeAlarm(placeCalendar)
-                        //                    }
+                        //if (placeSwitch.isChecked) {
+                        //      placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinutes)
+                        //      setTimeLocationAlarm(placeCalendar, settingsPlaceMinutes)
+                        //}
 
                         finish()
                     }
@@ -347,6 +362,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
         selectGroupBtn.setOnClickListener {
             selectGroup()
         }
+
+        latitude = intent.getDoubleExtra("latitude", 0.0)
+        longitude = intent.getDoubleExtra("longitude", 0.0)
+        address = intent.getStringExtra("address")
+        Log.e("check", "latitude = $latitude, longitude = $longitude, address = $address")
     }
 
     //툴바의 뒤로가기 버튼
@@ -393,6 +413,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                 timeCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
             }
         }
+
         val dialog = TimePickerDialog(this, listener,12,0,false)
         dialog.show()
     }
@@ -419,11 +440,49 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
             .show()
     }
 
-    private fun setTimeAlarm(calendar: Calendar, settingTime: Int) {  //시간알람
+    private fun receiverData() {
+        if (intent.hasExtra("다시알림") or intent.hasExtra("알림해제")) {
+            var repeat = intent.getIntExtra("다시알림", 5)
+            Log.v("seyuuuun", "repeat in" + repeat)
+            val cancel = intent.getBooleanExtra("알림해제", true)
+            Log.v("seyuuuun", "cancel in" + cancel)
+        } else {
+        }
+    }
+
+    private fun todoAlarm() {
+        val todoTime = UserObject.kakao_alarm_time
+        if(!todoTime.equals("")) { //안에 아무것도 없을시에
+            var Todo = todoTime.split(" ")
+            when (Todo.get(0)) { //오전 오후 구분
+                "오후" ->
+                    todoHour = Todo.get(1).toInt() + 12
+                "오전" ->
+                    todoHour = Todo.get(0).toInt()
+            }
+            todoMinute = Todo.get(3).toInt() //분
+
+            todoCalendar.set(Calendar.HOUR_OF_DAY, todoHour)
+            todoCalendar.set(Calendar.MINUTE, todoMinute)
+            todoCalendar.set(Calendar.SECOND, 0)
+            val currentTime = System.currentTimeMillis()
+            var settingTime = todoCalendar.timeInMillis
+            val interval = AlarmManager.INTERVAL_DAY
+            if (currentTime > settingTime) {
+                todoCalendar.timeInMillis += interval //지정시간이 지난 경우 interval을 추가해줌.
+            }
+            setTodoAlarm(todoCalendar)
+        } else {
+            unsetTodoAlarm()
+        }
+    }
+
+    private fun setTimeLocationAlarm(notifyTime : Boolean, calendar: Calendar, settingTime: Int) {  //시간알람, 장소알람
         val pm = this.packageManager
         val receiver = ComponentName(this, DeviceBootAlarmReceiver::class.java)
         val alarmIntent = Intent(this, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val pendingIntent = PendingIntent.getBroadcast(this, 2, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val interval = 1000*60*settingTime
 
@@ -436,7 +495,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                         pendingIntent
                     )
                     alarmManager.setRepeating(
-                        AlarmManager.RTC,
+                        AlarmManager.RTC_WAKEUP,
                         calendar.timeInMillis,
                         interval.toLong(),
                         pendingIntent
@@ -449,50 +508,64 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View {
                     PackageManager.DONT_KILL_APP
                 )
             }
-            else { // 알람을 허용하지 않았다면
-                if(PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {
-                    alarmManager.cancel(pendingIntent)
-                }
-                pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
-            }
         }
+    }
+
+    private fun unsetTimeLocationAlarm() {
+        val pm = this.packageManager
+        val receiver = ComponentName(this, DeviceBootAlarmReceiver::class.java)
+        val alarmIntent = Intent(this, AlarmReceiver::class.java)
+
+        val pendingIntent = PendingIntent.getBroadcast(this, 2, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
+        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        if(PendingIntent.getBroadcast(this, 2, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {
+            alarmManager.cancel(pendingIntent)
+        }
+        pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
     }
 
     private fun setTodoAlarm(calendar: Calendar) {  //시간알람
         val pm = this.packageManager
         val receiver = ComponentName(this, DeviceBootTodoReceiver::class.java)
         val alarmIntent = Intent(this, TodoReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(this, 1, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        if(notifyTime) { //알람을 허용했다면
-            if(alarmManager != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.timeInMillis,
-                        pendingIntent
-                    )
-                    alarmManager.setRepeating(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.timeInMillis,
-                        AlarmManager.INTERVAL_DAY,
-                        pendingIntent
-                    )
-                }
-                //부팅후 실행되는 리시버 사용가능하게 설정함.
-                pm.setComponentEnabledSetting(
-                    receiver,
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP
+        if(alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    pendingIntent
+                )
+                alarmManager.setRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    AlarmManager.INTERVAL_DAY,
+                    pendingIntent
                 )
             }
-            else { // 알람을 허용하지 않았다면
-                if(PendingIntent.getBroadcast(this, 1, alarmIntent, 0)!=null && alarmManager!=null) {
-                    alarmManager.cancel(pendingIntent)
-                }
-                pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
-            }
+            //부팅후 실행되는 리시버 사용가능하게 설정함.
+            pm.setComponentEnabledSetting(
+                receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP
+            )
         }
+    }
+
+    private fun unsetTodoAlarm() {
+        val pm = this.packageManager
+        val receiver = ComponentName(this, DeviceBootTodoReceiver::class.java)
+        val todoalarmIntent = Intent(this, TodoReceiver::class.java)
+
+        val pendingIntent = PendingIntent.getBroadcast(this, 1, todoalarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
+        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        if(PendingIntent.getBroadcast(this, 1, todoalarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) { //알림 해제
+            alarmManager.cancel(pendingIntent)
+        }
+        pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
     }
 }

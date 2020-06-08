@@ -8,10 +8,10 @@ class PlaceAlarmModel {
 
     }
     fun removePlaceAlarm(position: Int) : PlaceAlarmData {
-        return PlaceAlarmData("", "", "")
+        return PlaceAlarmData("", "", "", false)
     }
     fun getPlaceAlarm(position: Int) : PlaceAlarmData {
-        return PlaceAlarmData("", "", "")
+        return PlaceAlarmData("", "", "", false)
     }
 
 }

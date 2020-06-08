@@ -2,6 +2,7 @@ package com.kakao.smartmemo.Adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Switch
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.TodoDialogAdapterContract
 import com.kakao.smartmemo.Data.PlaceAlarmData
@@ -10,7 +11,7 @@ import kotlinx.android.synthetic.main.alarm_list_item.view.*
 
 class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.DialogViewHolder>(), TodoDialogAdapterContract.View, TodoDialogAdapterContract.Model {
 
-    var data:MutableList<PlaceAlarmData> = mutableListOf(PlaceAlarmData("한성대학교", "2020.03.14", "도서관 책 "), PlaceAlarmData("녹십자약국", "2020.03.15", "마스크 사기"))
+    var data:MutableList<PlaceAlarmData> = mutableListOf(PlaceAlarmData("한성대학교", "2020.03.14", "도서관 책 ", true), PlaceAlarmData("녹십자약국", "2020.03.15", "마스크 사기", false))
     //View Holder생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = DialogViewHolder(parent)
 
@@ -24,6 +25,7 @@ class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.Dial
                 alarm_place.text = it.place
                 alarm_date.text = it.date
                 alarm_content.text = it.content
+                switch.isChecked = it.onoff
             }
         }
 
@@ -43,6 +45,7 @@ class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.Dial
         val alarm_place = itemView.textView_alarm_place
         val alarm_date = itemView.textView_date
         val alarm_content = itemView.textView_alarm_content
+        val switch: Switch = itemView.switch_alarm_settings
     }
 
     override fun notifyAdapter() {

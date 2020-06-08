@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.kakao.smartmemo.R
@@ -55,7 +54,6 @@ class TodoReceiver : BroadcastReceiver(){
         }
 
         notificationManager?.notify(9999, notificationbuilder.build())
-        Log.v("seyuuuun", "Receivcer동작!!!! in TodoReceiver")
     }
 
     companion object {
