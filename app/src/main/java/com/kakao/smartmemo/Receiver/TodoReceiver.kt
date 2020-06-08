@@ -12,12 +12,13 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.View.AddTodo
+import com.kakao.smartmemo.View.MainActivity
 
 class TodoReceiver : BroadcastReceiver(){
     override fun onReceive(context: Context?, intent: Intent?) {
         val notificationManager: NotificationManager = context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val notificationIntent = Intent(context, AddTodo::class.java)
+        val notificationIntent = Intent(context, MainActivity::class.java)
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
         val pendingIntent = PendingIntent.getActivity(context, 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -32,12 +33,11 @@ class TodoReceiver : BroadcastReceiver(){
             .setAutoCancel(true)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
             .setFullScreenIntent(pendingIntent,true) //헤드업알림
-            .setNumber(999) //확인하지않은 알림 개수 설정
 
         //헤드업알림
         val contentview = RemoteViews(context.packageName, R.layout.todolist_headup_alarm)
         contentview.setTextViewText(R.id.notification_Title, "Todolist")
-        contentview.setTextViewText(R.id.todolist_textView, "1. 영양제 먹기")
+        contentview.setTextViewText(R.id.todolist_textView, "1. 영양제 먹기\n2. 학교 가기")
         contentview.setTextViewText(R.id.todolist_location, "● 삼성약국/녹십자약국/온누리약국")
         contentview.setOnClickPendingIntent(R.id.later_notification, pendingIntent)
         contentview.setOnClickPendingIntent(R.id.cancel_notification, pendingIntent)

@@ -28,10 +28,10 @@ class DialogFragment : DialogFragment(), DialogContract.View {
         myDialog = super.onCreateDialog(savedInstanceState)
         myDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         myDialog.setContentView(R.layout.main_dialog)
-        var params: WindowManager.LayoutParams = myDialog.window.attributes
+        var params: WindowManager.LayoutParams = myDialog.window!!.attributes
         params.width = 1000
         params.height = 1200
-        myDialog.window.attributes = params
+        myDialog.window!!.attributes = params
 
         return myDialog
     }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -31,14 +30,14 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var bottomNavigationView : BottomNavigationView
     private lateinit var textViewTodoList : TextView
     private lateinit var adapter : TodoAdapter
-    private lateinit var deleteAdapter : TodoDeleteAdapter
+    private lateinit var todoDeleteAdapter : TodoDeleteAdapter
     private lateinit var cont: Context
     private var todoArrayList = mutableListOf<TodoData>()
     val date: LocalDateTime = LocalDateTime.now()
     private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState);
         setHasOptionsMenu(true)
     }
 
@@ -52,6 +51,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         textViewTodoList = view.findViewById(R.id.textView_todolist)
 
         presenter = TodoPresenter(this)
+
         todolist = view.findViewById(R.id.todolist) as ListView
         todolist.setOnItemClickListener { parent, view, position, id ->
             var intent = Intent(cont, AddTodo::class.java)
@@ -59,36 +59,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
             startActivity(intent)
         }
 
-        //하단 메뉴
-        bottomNavigationView.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.removeItem -> {
-                    var listview_count = deleteAdapter.count
-                    var checkedItems = deleteAdapter.selectedTodo()
-                    if(checkedItems != null) {
-                        for (i in listview_count - 1 downTo 0) {
-                            for (j in checkedItems) {
-                                if (i == j) {
-                                    deleteAdapter.deleteTodo(i)
-                                    Log.v("seyuuuun", i.toString())
-                                }
-                            }
-                        }
-                    }
-                    todolist.clearChoices()
-                    adapter.notifyAdapter()
-                    bottomNavigationView.visibility = GONE //하단메뉴 안보이게
-                    todolist.adapter = TodoAdapter(cont, todoArrayList)
-                    count++
-                    true
-                }
-                R.id.cancelItem -> {
-                    showAllTodo(todoArrayList)
-                    true
-                }
-            }
-            true
-        }
+
         bottomNavigationView.visibility = GONE; //하단메뉴 안보이게
 
         return view
@@ -96,10 +67,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
     override fun onStart() {
         super.onStart()
-        presenter.getTodo()
-        adapter = TodoAdapter(cont, todoArrayList)
-        todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-        todolist.isClickable = true
+        presenter.getAllTodo()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -122,11 +90,11 @@ class TodoListFragment : Fragment(), TodoContract.View {
             R.id.delete_memo ->{
                 count++
                 if(count%2 == 0) {
-                    showAllTodo(todoArrayList)
+                    presenter.getAllTodo()
+                    count = 0
                 } else {
                     deleteTodo()
                 }
-
                 return true
             }
             else ->
@@ -136,12 +104,12 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
     private fun selectGroup(){
         var i = 1
-        val items:Array<CharSequence> = Array(GroupObject.groupInfo.size+1) {""}
+        val groupValues:Array<CharSequence> = Array(GroupObject.groupInfo.size+1) {""}
         val groupIds:Array<CharSequence> = Array(GroupObject.groupInfo.size+1) {""}
-        items[0] = "전체메모"
+        groupValues[0] = "전체메모"
         GroupObject.groupInfo.forEach {
             groupIds[i] = it.key
-            items[i] = it.value
+            groupValues[i] = it.value
             i++
         }
 
@@ -149,13 +117,13 @@ class TodoListFragment : Fragment(), TodoContract.View {
             this.context,
             android.R.style.Theme_DeviceDefault_Light_Dialog_Alert
         )
-        listDialog.setTitle("그룹 선택")
-            .setItems(items, DialogInterface.OnClickListener { _, which ->
+        listDialog.setTitle("폴더 선택")
+            .setItems(groupValues, DialogInterface.OnClickListener { _, which ->
                 if (which == 0) {
                     (activity as MainActivity).toolbar.title = "Todo List"
-                    presenter.getTodo()
+                    presenter.getAllTodo()
                 } else {
-                    (activity as MainActivity).toolbar.title = items[which]
+                    (activity as MainActivity).toolbar.title = groupValues[which]
                     presenter.getGroupTodo(groupIds[which].toString())
                 }
             })
@@ -169,19 +137,59 @@ class TodoListFragment : Fragment(), TodoContract.View {
         } else {
             todoArrayList = todoData
         }
+
         adapter = TodoAdapter(cont, todoArrayList)
+        todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        todolist.isClickable = true
         todolist.adapter = adapter
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
-        bottomNavigationView.visibility = GONE
-        Log.e("todoData", todoData.toString())
+        adapter.notifyAdapter()
     }
 
     private fun deleteTodo() {
-        deleteAdapter = TodoDeleteAdapter(cont, todoArrayList)
-        todolist.adapter = deleteAdapter
-        presenter.setTodoDeleteAdapterModel(deleteAdapter)
-        presenter.setTodoDeleteAdapterView(deleteAdapter)
+        if (todoArrayList.size != 0) {
+            //하단 메뉴
+            bottomNavigationView.setOnNavigationItemSelectedListener {
+                when (it.itemId) {
+                    R.id.removeItem -> {
+                        count = 0
+                        var selectedItem = mutableListOf<TodoData>()
+                        var count = todoDeleteAdapter.count
+                        var checkedItems = todoDeleteAdapter.selectedTodo()
+                        var keys = checkedItems
+                        for( i in count-1 downTo 0) {
+                            for (item in checkedItems) {
+                                if(i == item.key) {
+                                    selectedItem.add(item.value)
+                                    todoArrayList.removeAt(i)
+                                }
+                            }
+                        }
+
+                        presenter.deleteTodo(selectedItem)
+                        todolist.clearChoices()
+                        bottomNavigationView.visibility = GONE //하단메뉴 안보이게
+                        adapter = TodoAdapter(cont, todoArrayList)
+                        todolist.adapter = adapter
+                        presenter.setTodoAdapterModel(adapter)
+                        presenter.setTodoAdapterView(adapter)
+
+                        true
+                    }
+                    R.id.cancelItem -> {
+                        count = 0
+                        showAllTodo(todoArrayList)
+                        true
+                    }
+                }
+                true
+            }
+        }
+        todoDeleteAdapter = TodoDeleteAdapter(cont, todoArrayList)
+        todolist.adapter = todoDeleteAdapter
+        presenter.setTodoDeleteAdapterModel(todoDeleteAdapter)
+        presenter.setTodoDeleteAdapterView(todoDeleteAdapter)
         bottomNavigationView.visibility = VISIBLE //하단메뉴 보이게
     }
 }

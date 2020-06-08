@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.Object
 
 object UserObject{
+    var uid:String = ""
     var email:String = ""
     var password:String =""
     var user_name:String =""

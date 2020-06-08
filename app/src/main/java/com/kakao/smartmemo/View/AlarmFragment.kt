@@ -2,7 +2,7 @@ package com.kakao.smartmemo.View
 
 import android.os.Bundle
 import android.view.*
-import androidx.core.view.GravityCompat
+import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,9 +14,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class AlarmFragment : Fragment(), AlarmContract.View {
 
-    lateinit var Alarm : RecyclerView
-    lateinit var presenter : AlarmContract.Presenter
-    lateinit var myAdapter: AlarmAdapter
+    private lateinit var Alarm : RecyclerView
+    private lateinit var presenter : AlarmContract.Presenter
+    private lateinit var myAdapter: AlarmAdapter
+    private lateinit var radioGroup: RadioGroup
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
@@ -31,14 +32,31 @@ class AlarmFragment : Fragment(), AlarmContract.View {
         val view = inflater.inflate(R.layout.place_alarm_fragment, container, false)
         presenter = AlarmPresenter(this)
         Alarm = view.findViewById(R.id.alarm_settings_view) as RecyclerView
+        radioGroup = view.findViewById(R.id.radioGroup) as RadioGroup
         myAdapter = AlarmAdapter()
         myAdapter.setMode(0)
         myAdapter.initData()
         Alarm.adapter = myAdapter
-        Alarm.layoutManager = LinearLayoutManager(activity)
+        Alarm.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
+        radioGroup.check(R.id.placeAlarmRadio)
 
         presenter.setAlarmAdapterModel(myAdapter)
         presenter.setAlarmAdapterView(myAdapter)
+
+        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            when(checkedId) {
+                R.id.placeAlarmRadio -> {
+                    (activity as MainActivity).toolbar.title="장소 알람 관리"
+                    myAdapter.setMode(0)
+                    myAdapter.notifyAdapter()
+                }
+                R.id.timeAlarmRadio -> {
+                    (activity as MainActivity).toolbar.title="시간 알람 관리"
+                    myAdapter.setMode(1)
+                    myAdapter.notifyAdapter()
+                }
+            }
+        }
 
         return view
     }
@@ -46,33 +64,5 @@ class AlarmFragment : Fragment(), AlarmContract.View {
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
         (activity as MainActivity).toolbar.title="장소 알람 관리"
-        val menuInflater = menuInflater
-        menuInflater.inflate(R.menu.select_alarm, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        return when (item.itemId) {
-            android.R.id.home -> {
-                (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
-                return true
-            }
-            //장소알람관리를 눌렀을 때
-            R.id.action_place_alarm -> {
-                (activity as MainActivity).toolbar.title=item.title
-                myAdapter.setMode(0)
-                myAdapter.notifyAdapter()
-                return true
-            }
-            //시간알람관리를 눌렀을 때
-            R.id.action_time_alarm -> {
-                (activity as MainActivity).toolbar.title=item.title
-                myAdapter.setMode(1)
-                myAdapter.notifyAdapter()
-                return true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 }

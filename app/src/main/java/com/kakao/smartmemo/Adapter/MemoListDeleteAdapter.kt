@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.Adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
@@ -17,12 +16,15 @@ import kotlinx.android.synthetic.main.memo_list_view.view.memo_date
 import kotlinx.android.synthetic.main.memo_list_view.view.memo_title
 
 class MemoListDeleteAdapter(private var memoList: MutableList<MemoData>) : RecyclerView.Adapter<MemoListDeleteAdapter.MainViewHolder>(), MemoDeleteAdapterContract.Model, MemoDeleteAdapterContract.View { //memoList RecycleView
-
+    var deleteMemoList = mutableListOf<MemoData>()
+    lateinit var holder:MainViewHolder
+    var position:Int = 0
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 
     override fun getItemCount(): Int = memoList.size
 
     override fun onBindViewHolder(holer: MainViewHolder, position: Int) {
+        holder= holer
         memoList[position].let { item ->
             with(holer) {
                 memoTitle.text = item.title
@@ -31,11 +33,16 @@ class MemoListDeleteAdapter(private var memoList: MutableList<MemoData>) : Recyc
                 GroupObject.groupColor[item.groupId]?.toInt()?.let {
                     memoBackground.setBackgroundColor(it)
                 }
+                checkboxTodo.setOnCheckedChangeListener { buttonView, _ ->
+                    if(buttonView.isChecked){
+                        deleteMemoList.add(memoList[position])
+                    }
+                }
+
             }
 
         }
     }
-
     inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.memo_list_delete, parent, false)) {
         val memoTitle: TextView = itemView.memo_title
@@ -43,9 +50,7 @@ class MemoListDeleteAdapter(private var memoList: MutableList<MemoData>) : Recyc
         val memoDate: TextView = itemView.memo_date
         val memoBackground: CardView = itemView.memo_list_delete
         var pos = arrayListOf<Int>()
-        var checkbox_todo = itemView.findViewById(R.id.checkMemoDelete) as CheckBox
-
-
+        var checkboxTodo = itemView.findViewById(R.id.checkMemoDelete) as CheckBox
     }
 
     override fun notifyAdapter() {
@@ -56,8 +61,8 @@ class MemoListDeleteAdapter(private var memoList: MutableList<MemoData>) : Recyc
 
     }
 
-    override fun deleteMemo() {
-
+    override fun deleteMemo(): MutableList<MemoData> {
+        return deleteMemoList
     }
 }
 

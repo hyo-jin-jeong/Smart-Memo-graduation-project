@@ -30,7 +30,7 @@ class MainPresenter : MainContract.Presenter,MainContract.onGetGroupInfoListener
     }
 
 
-    override fun onSuccess(groupInfoList: HashMap<String, Long>) {
+    override fun onSuccess(groupInfoList: MutableList<String>) {
         view.setNavigationView(groupInfoList)
     }
 
