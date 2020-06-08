@@ -3,7 +3,10 @@ package com.kakao.smartmemo.View
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -16,11 +19,15 @@ import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Model.MainLocationModel
+import com.kakao.smartmemo.Object.GroupObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
@@ -39,11 +46,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     lateinit var mDrawerLayout: DrawerLayout
     lateinit var memberName: TextView
     private val context: Context = this
-    private lateinit var groupMap : HashMap<String, Long>
+    private lateinit var groupIdList : MutableList<String>
     var openFlag:Boolean = false
 
     private lateinit var mainLocationModel: MainLocationModel
+    private var mLocationRequest: LocationRequest? = null
+    private var mFusedLocationClient: FusedLocationProviderClient? = null
+    private var mServiceHandler: Handler? = null
 
+    override fun onStart() {
+        super.onStart()
+        Log.e("onStart - main", "onStart")
+        presenter.getGroupInfo()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -92,22 +107,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.menu)
 
-        getGroupInfo()
-
         navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             mDrawerLayout!!.closeDrawers()
             when(val id = menuItem.itemId) {
                 -1 -> {
                 }
-                groupMap.size+1 -> {
+                groupIdList.size+1 -> {
                     val nextIntent = Intent(this, AddGroup::class.java)
                     startActivity(nextIntent)
                 }
                 else -> {
                     var groupSettingIntent = Intent(this, ModifyGroup::class.java)
-                    groupSettingIntent.putExtra("groupName", menuItem.title)
-                    groupSettingIntent.putExtra("groupColor",groupMap[menuItem.title].toString())
+                    groupSettingIntent.putExtra("groupId", groupIdList[menuItem.itemId-1])
+
                     startActivity(groupSettingIntent)
                 }
             }
@@ -130,26 +143,60 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         fabTodo.setOnClickListener(this)
 
         mainLocationModel = MainLocationModel()
-        val location = mainLocationModel.getLocation(context)
-        if(location != null)
-            mainLocationModel.convertAddressFromMapPOIItem(location.longitude.toString(), location.latitude.toString())
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        createLocationRequest()
+        getLastLocation()
+        val handlerThread = HandlerThread(MainActivity::class.java.simpleName)
+        handlerThread.start()
+        mServiceHandler = Handler(handlerThread.looper)
+
     }
 
-    private fun getGroupInfo(){
-        presenter.getGroupInfo()
+    private fun createLocationRequest() {
+        mLocationRequest = LocationRequest()
+        mLocationRequest!!.interval = 10000
+        mLocationRequest!!.fastestInterval = 5000
+        mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
+
+    private fun getLastLocation() {
+        try {
+            mFusedLocationClient!!.lastLocation
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful && task.result != null) {
+                        var location = task.result
+                        mainLocationModel.setLocation(location!!)
+                        Log.e("check", "current location : $location")
+                        mainLocationModel.convertAddressFromPoint(location.longitude.toString(), location.latitude.toString())
+                        //mLocation = task.result
+                    } else {
+                        Log.w(
+                            "check",
+                            "Failed to get location."
+                        )
+                    }
+                }
+        } catch (unlikely: SecurityException) {
+            Log.e(
+                "check",
+                "Lost location permission.$unlikely"
+            )
+        }
+    }
+
     @SuppressLint("ResourceType")
-    override fun setNavigationView(groupInfoList: HashMap<String, Long>){ // call back func
-            groupMap = groupInfoList
+    override fun setNavigationView(groupInfoList: MutableList<String>){ // call back func
+            groupIdList = groupInfoList
             var i = 1
             navigationView.menu.clear()
 
             groupInfoList.forEach {
-                if(it.key == "내 폴더"){
-                    navigationView.menu.add(0,-1,0,it.key).setIcon(R.drawable.setting_icon)
+                if(it == "내 폴더"){
+                    navigationView.menu.add(0,-1,0,GroupObject.groupInfo[it]).setIcon(R.drawable.setting_icon)
                 }
                 else{
-                    navigationView.menu.add(1,i,i,it.key).setIcon(R.drawable.setting_icon)
+                    navigationView.menu.add(1,i,i,GroupObject.groupInfo[it]).setIcon(R.drawable.setting_icon)
                     i++
                 }
 
@@ -199,8 +246,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 anim()
                 val addMemoIntent = Intent(this.context, AddMemo::class.java)
                 if (mainLocationModel.checkValue()) {
-                    addMemoIntent.putExtra("longitude", mainLocationModel.longitude.toString())
-                    addMemoIntent.putExtra("latitude", mainLocationModel.latitude.toString())
+                    addMemoIntent.putExtra("longitude", mainLocationModel.longitude!!.toDouble())
+                    addMemoIntent.putExtra("latitude", mainLocationModel.latitude!!.toDouble())
                     addMemoIntent.putExtra("address", mainLocationModel.locationAddress)
                 }
                 startActivity(addMemoIntent)
@@ -209,8 +256,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 anim()
                 val addTodoIntent = Intent(this, AddTodo::class.java)
                 if(mainLocationModel.checkValue()) {
-                    addTodoIntent.putExtra("longitude", mainLocationModel.longitude.toString())
-                    addTodoIntent.putExtra("latitude", mainLocationModel.latitude.toString())
+                    addTodoIntent.putExtra("longitude", mainLocationModel.longitude!!.toDouble())
+                    addTodoIntent.putExtra("latitude", mainLocationModel.latitude!!.toDouble())
                     addTodoIntent.putExtra("address", mainLocationModel.locationAddress)
                 }
                 startActivity(addTodoIntent)
@@ -239,5 +286,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             }
         }
     }
+
+
 
 }

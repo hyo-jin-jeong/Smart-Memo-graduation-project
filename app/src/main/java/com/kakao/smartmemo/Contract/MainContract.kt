@@ -8,13 +8,13 @@ interface MainContract {
 
     }
     interface View {
-        fun setNavigationView(groupInfoList: HashMap<String, Long>)
+        fun setNavigationView(groupInfoList: MutableList<String>)
 
 
     }
 
     interface onGetGroupInfoListener {
-        fun onSuccess(groupInfoList: HashMap<String, Long>)
+        fun onSuccess(groupInfoList: MutableList<String>)
         fun onFailure()
     }
 

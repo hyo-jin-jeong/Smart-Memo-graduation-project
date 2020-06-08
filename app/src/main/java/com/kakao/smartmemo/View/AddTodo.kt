@@ -44,7 +44,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     private lateinit var todoToolBar: Toolbar
     private lateinit var presenter : AddTodoContract.Presenter
-    //private lateinit var userpresenter : MemberDataPresenter
     private lateinit var titleEdit: EditText
     private lateinit var selectGroupBtn : Button
     private var groupName: String = ""
@@ -98,6 +97,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     private var mBound = false
     private lateinit var timeAgainAdapter : ArrayAdapter<CharSequence>
     private lateinit var placeAgainAdapter : ArrayAdapter<CharSequence>
+
+
+    private var latitude: Double? = null
+    private var longitude: Double? = null
+    private var address: String? = null
 
     private var placeList = arrayListOf(PlaceData("연세병원"), PlaceData("학교"), PlaceData("집"))
 
@@ -266,9 +270,12 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             if(isChecked) {
                 todoStubLocation.visibility = VISIBLE
                 placeLayout.setOnClickListener(View.OnClickListener {
-                    val placechoiceIntent = Intent(it.context, MainActivity::class.java)
+                    val placechoiceIntent = Intent(it.context, PlaceAlarmDetailActivity::class.java)
+                    placechoiceIntent.putExtra("longitude", longitude)
+                    placechoiceIntent.putExtra("latitude", latitude)
+                    placechoiceIntent.putExtra("address", address)
                     this.startActivity(placechoiceIntent)
-                })
+            })
                 notifyTime = true // 알람 켬.
             } else {
                 placeDateText.text = "[기본] 날짜 미설정"
@@ -306,9 +313,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             }
 
             groupId = data.groupId
-            groupColor = data.groupColor
             titleEdit.setText(data.title)
-            selectGroupBtn.text = data.groupName
             timeSwitch.isChecked = data.setTimeAlarm
             timeDateText.text = data.timeDate
             timeText.text = data.timeTime
@@ -329,23 +334,16 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                     }
                     else -> {
                         var todoData = TodoData(
-                            titleEdit.text.toString(),
-                            data.groupName,
-                            data.groupId,
-                            data.groupColor,
                             data.todoId,
-                            data.timeAlarmId,
+                            titleEdit.text.toString(),
+                            data.groupId,
                             timeSwitch.isChecked,
                             "${timeDateText.text}",
                             timeText.text.toString(),
                             settingsTimeMinutes,
-                            data.placeAlarmId,
                             placeSwitch.isChecked,
                             "${placeDateText.text}",
-                            settingsPlaceMinutes,
-                            "한성대학교",
-                            "0.0",
-                            "0.0"
+                            settingsPlaceMinutes
                         )
                         presenter.addTodo(todoData)
                         if (timeSwitch.isChecked) {
@@ -368,26 +366,17 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                         Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        timeAlarmId = "time" + System.currentTimeMillis()
-                        placeAlarmId = "place" + System.currentTimeMillis()
                         var todoData = TodoData(
-                            titleEdit.text.toString(),
-                            groupName,
-                            groupId,
-                            0,
                             "",
-                            "${timeAlarmId}",
+                            titleEdit.text.toString(),
+                            groupId,
                             timeSwitch.isChecked,
                             "${timeDateText.text}",
                             timeText.text.toString(),
                             settingsTimeMinutes,
-                            "${placeAlarmId}",
                             placeSwitch.isChecked,
                             "${placeDateText.text}",
-                            settingsPlaceMinutes,
-                            "한성대학교",
-                            "0.0",
-                            "0.0"
+                            settingsPlaceMinutes
                         )
                         presenter.addTodo(todoData)
                         if (timeSwitch.isChecked) {
@@ -412,6 +401,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         selectGroupBtn.setOnClickListener {
             selectGroup()
         }
+
+        latitude = intent.getDoubleExtra("latitude", 0.0)
+        longitude = intent.getDoubleExtra("longitude", 0.0)
+        address = intent.getStringExtra("address")
+        Log.e("check", "latitude = $latitude, longitude = $longitude, address = $address")
     }
 
     //툴바의 뒤로가기 버튼

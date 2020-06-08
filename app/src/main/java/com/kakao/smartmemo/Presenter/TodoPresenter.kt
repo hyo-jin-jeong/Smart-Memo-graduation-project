@@ -1,7 +1,6 @@
 package com.kakao.smartmemo.Presenter
 
 import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.kakao.smartmemo.Contract.TodoAdapterContract
 import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
@@ -21,14 +20,6 @@ class TodoPresenter : TodoContract.Presenter, TodoContract.OnTodoListener {
         this.todoModel = TodoModel(this)
     }
 
-    override fun getGroupTodo(groupId: String) {
-        todoModel.getGroupTodo(groupId)
-    }
-
-    override fun getTodo() {
-        todoModel.getTodo()
-    }
-
     override fun setTodoAdapterModel(adapterModel: TodoAdapterContract.Model) {
         this.adapterModel = adapterModel
     }
@@ -45,8 +36,19 @@ class TodoPresenter : TodoContract.Presenter, TodoContract.OnTodoListener {
         this.deleteAdapterView = deleteAdapterView
     }
 
+    override fun getAllTodo() {
+        todoModel.getAllTodo()
+    }
+
+    override fun getGroupTodo(groupId: String) {
+        todoModel.getGroupTodo(groupId)
+    }
+
+    override fun deleteTodo(todoData: MutableList<TodoData>) {
+        todoModel.deleteTodo(todoData)
+    }
+
     override fun onSuccess(todoData: MutableList<TodoData>) {
-        Log.e("todoData at TodoPresenter", todoData.toString())
         view.showAllTodo(todoData)
     }
 

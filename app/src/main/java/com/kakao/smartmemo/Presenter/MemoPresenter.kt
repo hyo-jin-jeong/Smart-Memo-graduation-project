@@ -14,7 +14,6 @@ class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
     private lateinit var deleteAdapterView : MemoDeleteAdapterContract.View
     private lateinit var deleteAdapterModel : MemoDeleteAdapterContract.Model
 
-
     constructor(view: MemoContract.View) {
         this.view = view
         this.model = MemoModel(this)
@@ -48,18 +47,23 @@ class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
         model.getGroupMemo(groupId)
     }
 
+    override fun deleteMemo(deleteMemoList: MutableList<MemoData>) {
+        model.deleteMemo(deleteMemoList)
+    }
+
     private fun onClickListener(position: Int){
         adapterModel.getMemo(position).let {
             view.showMemoItem(position)
         }
     }
 
-    override fun onSuccess(memoList:MutableList<MemoData>) {
+    override fun onSuccess(memoList: MutableList<MemoData>) {
         view.showAllMemo(memoList)
     }
 
     override fun onFailer() {
 
     }
+
 
 }

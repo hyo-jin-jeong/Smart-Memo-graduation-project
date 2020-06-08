@@ -6,8 +6,5 @@ interface TodoDeleteAdapterContract {
     }
 
     interface Model {
-        fun getTodoContent()
-        fun deleteTodo(position: Int)
-        fun getGroup()
     }
 }

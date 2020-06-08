@@ -49,7 +49,7 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         presenter = AddMemoPresenter(this)
         saveBtn = findViewById(R.id.save_button)
         titleEdit = findViewById(R.id.memo_title)
-        dateText = findViewById<TextView>(R.id.memo_date)
+        dateText = findViewById(R.id.memo_date)
         contentEdit = findViewById(R.id.memo_content)
         selectGroupBtn = findViewById(R.id.select_group)
         groupName = findViewById(R.id.memo_group)
@@ -68,7 +68,7 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
             placeNameText.text = data.placeName
             titleEdit.setText(data.title)
             contentEdit.setText(data.content)
-            groupName.text = data.groupName
+            groupName.text = GroupObject.groupInfo[data.groupId]
             originGroupId = data.groupId
             memoId = data.memoId
 
@@ -94,7 +94,6 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
                     titleEdit.text.toString(),
                     today,
                     contentEdit.text.toString(),
-                    groupName.text.toString(),
                     originGroupId,
                     placeNameText.text.toString(),
                     "",
