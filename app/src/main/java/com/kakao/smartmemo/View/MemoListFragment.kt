@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -28,9 +27,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var bottomNavigationView: BottomNavigationView
     private var memoList: MutableList<MemoData> = mutableListOf()
     private var count = 0
-    var c = 0
-    private var check = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -38,8 +34,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
 
     override fun onStart() {
         super.onStart()
-        Log.e("onSSSSSS", c.toString())
-        c++
         presenter.getAllMemo()
     }
 
@@ -95,9 +89,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
 
     override fun showAllMemo(memoList: MutableList<MemoData>) {
         this.memoList.clear()
-
         this.memoList = memoList
-        Log.e("showAll", memoList.toString())
         count = 0
         memoAdapter = MemoListAdapter(this.memoList)
         recyclerView1.adapter = memoAdapter
@@ -109,7 +101,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
         memoAdapter.notifyAdapter()
     }
 
-
     private fun deleteMemo() {
         if (memoList.size != 0) {
             //하단 메뉴
@@ -117,11 +108,8 @@ class MemoListFragment : Fragment(), MemoContract.View {
                 when (it.itemId) {
                     R.id.removeItem -> {
                         var deleteMemoList = memoDeleteAdapter.deleteMemo()
-                        Log.e("deleteMemo", deleteMemoList.toString())
                         presenter.deleteMemo(deleteMemoList)
-                        Log.e("deleteMemo1111111111", "dmdjdjjd")
                         presenter.getAllMemo()
-                        Log.e("000000000000000000000000", "dmdjdjjd")
                         true
                     }
                     R.id.cancelItem -> {

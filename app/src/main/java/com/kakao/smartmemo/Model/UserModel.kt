@@ -88,10 +88,12 @@ class UserModel {
             mapOf(UserObject.uid to UserObject)
         )
         firebaseUser.child(UserObject.uid).child("GroupInfo").setValue(mapOf(groupId to "내폴더"))
-        firebaseGroup.child(groupId).setValue(mapOf("group_color" to 1549068184))
-        firebaseGroup.child(groupId).updateChildren(mapOf("group_name" to "내폴더"))
-        firebaseGroup.child(groupId).child("MemberInfo")
-            .updateChildren(mapOf(UserObject.uid to UserObject.email))
+
+        with(firebaseGroup.child(groupId)){
+            setValue(mapOf("group_color" to 1549068184))
+            updateChildren(mapOf("group_name" to "내폴더"))
+            child("MemberInfo").updateChildren(mapOf(UserObject.uid to UserObject.email))
+        }
     }
 
     fun updateFirestoreUser(pw: String, name: String, addr: String, kakaoAlarmTime: String) {
