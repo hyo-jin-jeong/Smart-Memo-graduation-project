@@ -46,14 +46,13 @@ import retrofit2.Response
 class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener,
     MapContract.View,
     MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener,
-    MapView.OpenAPIKeyAuthenticationResultListener {
+    MapView.OpenAPIKeyAuthenticationResultListener, ActivityCompat.OnRequestPermissionsResultCallback {
     private lateinit var presenter: MapPresenter
     private lateinit var goCurLocation: FloatingActionButton
 
     private lateinit var mapView: MapView
     private lateinit var mapViewContainer: ViewGroup
     private var usingMapView = false
-    private var isCurLocation = false
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var locationAdapter: LocationAdapter
@@ -93,13 +92,20 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapView = MapView(view.context)
         usingMapView = true
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
 
-        createLocationRequest()
-        getLastLocation()
-        val handlerThread = HandlerThread(MapFragment::class.java.simpleName)
-        handlerThread.start()
-        mServiceHandler = Handler(handlerThread.looper)
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
+        locationSetting()
+
+        when {
+            !checkLocationServicesStatus() -> {
+                Log.e("jieun", "첫번째 여기 들어옴")
+                showDialogForLocationServiceSetting()
+            }
+            else -> {
+                Log.e("jieun", "else 여기 들어옴")
+                checkRunTimePermission()
+            }
+        }
 
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
@@ -111,13 +117,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         goCurLocation = view.findViewById(R.id.go_curLocation)
         goCurLocation.setOnClickListener {
-            if(!isCurLocation) {
-                isCurLocation = true
+            if(mapView.currentLocationTrackingMode == MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving) {
                 goCurLocation.setImageResource(R.drawable.current_location_click_icon)
                 mapView.currentLocationTrackingMode =
                     MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
             } else {
-                isCurLocation = false
                 goCurLocation.setImageResource(R.drawable.current_location_icon)
                 mapView.currentLocationTrackingMode =
                     MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
@@ -136,15 +140,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         recyclerView.layoutManager = layoutManager
 
+    }
 
-        when {
-            !checkLocationServicesStatus() -> {
-                showDialogForLocationServiceSetting()
-            }
-            else -> {
-                checkRunTimePermission()
-            }
-        }
+    private fun locationSetting() {
+        createLocationRequest()
+        getLastLocation()
+        val handlerThread = HandlerThread(MapFragment::class.java.simpleName)
+        handlerThread.start()
+        mServiceHandler = Handler(handlerThread.looper)
     }
 
     private fun createLocationRequest() {
@@ -516,10 +519,12 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             }
             if (check_result) {
                 Log.d("@@@", "start")
+
                 //위치 값을 가져올 수 있음
                 mapView.currentLocationTrackingMode =
-                    MapView.CurrentLocationTrackingMode.TrackingModeOff
+                    MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
                 mapView.setShowCurrentLocationMarker(true)
+
             } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
@@ -569,10 +574,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             // 2. 이미 퍼미션을 가지고 있다면
             // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)
 
-
             // 3.  위치 값을 가져올 수 있음
             mapView.currentLocationTrackingMode =
-                MapView.CurrentLocationTrackingMode.TrackingModeOff
+                MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
             mapView.setShowCurrentLocationMarker(true)
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
 
@@ -598,6 +602,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             } else {
                 // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
                 // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
+
                 ActivityCompat.requestPermissions(
                     this@MapFragment.requireActivity(), REQUIRED_PERMISSIONS,
                     PERMISSIONS_REQUEST_CODE
