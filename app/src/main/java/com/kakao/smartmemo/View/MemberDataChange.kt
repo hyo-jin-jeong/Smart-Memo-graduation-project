@@ -4,7 +4,7 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
-import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
@@ -25,12 +25,12 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
     private lateinit var retypePasswordText : EditText
     private lateinit var nameText : EditText
     private lateinit var addrText : EditText
-    private lateinit var kakaoAlarmTime1 : TextView
+    private lateinit var kakaoAlarmTimeText : TextView
     private lateinit var showPassword : ImageView
     private lateinit var hidePassword : ImageView
     private lateinit var showRetypePassword : ImageView
     private lateinit var hideRetypePassword : ImageView
-    lateinit var button: Button
+    private lateinit var switchTodoAlarm: Switch
     private val calendarTodo = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,19 +43,22 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
         retypePasswordText = findViewById(R.id.retype_passwordText)
         nameText = findViewById(R.id.nameText)
         addrText = findViewById(R.id.addrText)
-        kakaoAlarmTime1 = findViewById(R.id.kakao_alarm_time)
+        kakaoAlarmTimeText = findViewById(R.id.kakao_alarm_time_text)
         showPassword = findViewById(R.id.showPassword)
         hidePassword = findViewById(R.id.hidePassword)
         showRetypePassword = findViewById(R.id.showRetypePassword)
         hideRetypePassword = findViewById(R.id.hideRetypePassword)
-        button = findViewById(R.id.button)
+        switchTodoAlarm = findViewById(R.id.switch_todo_alarm)
 
         if (UserObject != null) {
             emailText.text = UserObject.email
             passwordText.setText(UserObject.password)
             nameText.setText(UserObject.user_name)
             addrText.setText(UserObject.addr)
-            kakaoAlarmTime1.text = UserObject.kakao_alarm_time
+            if (UserObject.kakao_alarm_time != "") {
+                switchTodoAlarm.isChecked = true
+                kakaoAlarmTimeText.text = UserObject.kakao_alarm_time
+            } else switchTodoAlarm.isChecked = false
         }
 
         memberToolbar = findViewById(R.id.member_toolbar)
@@ -64,7 +67,7 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
 
         supportActionBar?.setDisplayShowTitleEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        kakao_alarm_timeView.setOnClickListener {
+        kakao_alarm_time_text.setOnClickListener {
             var listener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                 var hour: Int
                 var am_pm = "오전"
@@ -80,38 +83,11 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
                 calendarTodo.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 calendarTodo.set(Calendar.MINUTE, minute)
                 calendarTodo.set(Calendar.SECOND, 0)
-                kakaoAlarmTime1.text = "${am_pm} ${hour} : ${m} "
+                kakaoAlarmTimeText.text = "${am_pm} ${hour} : ${m} "
             }
             val dialog = TimePickerDialog(this, listener, 12, 0, false)
 
             dialog.show()
-        }
-
-
-
-        button.setOnClickListener{
-            if (passwordText.text.toString() != UserObject.password) {
-                if (passwordText.text.toString() != retypePasswordText.text.toString())
-                    Toast.makeText(applicationContext, "비밀번호와 비밀번호 확인이 다릅니다.\n재입력해주십시오.", Toast.LENGTH_SHORT).show()
-                else {
-                    var pw = passwordText.text.toString()
-                    var name = nameText.text.toString()
-                    var address = addrText.text.toString()
-                    var kakaoAlarmTime = kakaoAlarmTime1.text.toString()
-                    Log.e("save 터치", "터치 성공")
-                    presenter.updateUser(this, pw, name, address, kakaoAlarmTime)
-                    Log.e("순서3", "저장하고 view로 돌아옴")
-                    presenter.updatePassword(pw)
-                }
-            } else {
-                var pw = passwordText.text.toString()
-                var name = nameText.text.toString()
-                var address = addrText.text.toString()
-                var kakaoAlarmTime = kakaoAlarmTime1.text.toString()
-                Log.e("save 터치", "터치 성공")
-                presenter.updateUser(this, pw, name, address, kakaoAlarmTime)
-                finish()
-            }
         }
 
         showPassword.setOnClickListener {
@@ -134,15 +110,56 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
             hideRetypePassword.visibility = View.GONE
             showRetypePassword.visibility = View.VISIBLE
         }
+
+        switchTodoAlarm.setOnCheckedChangeListener { compoundButton, isChecked ->
+            if (switchTodoAlarm.isChecked) {
+                kakaoAlarmTimeText.visibility = View.VISIBLE
+            } else {
+                kakaoAlarmTimeText.text = ""
+                kakaoAlarmTimeText.visibility = View.GONE
+            }
+        }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_save, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true
             }
-
+            R.id.menu_save -> {
+                if (passwordText.text.toString() != UserObject.password) {
+                    if (passwordText.text.toString() != retypePasswordText.text.toString()) {
+                        Toast.makeText(
+                            applicationContext,
+                            "비밀번호와 비밀번호 확인이 다릅니다.\n재입력해주십시오.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        var pw = passwordText.text.toString()
+                        var name = nameText.text.toString()
+                        var address = addrText.text.toString()
+                        var kakaoAlarmTime = kakaoAlarmTimeText.text.toString()
+                        if (kakaoAlarmTime == "없음") {
+                            kakaoAlarmTime = ""
+                        }
+                        presenter.updateUser(this, pw, name, address, kakaoAlarmTime)
+                        presenter.updatePassword(pw)
+                    }
+                } else {
+                    var pw = passwordText.text.toString()
+                    var name = nameText.text.toString()
+                    var address = addrText.text.toString()
+                    var kakaoAlarmTime = kakaoAlarmTimeText.text.toString()
+                    presenter.updateUser(this, pw, name, address, kakaoAlarmTime)
+                    finish()
+                }
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

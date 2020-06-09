@@ -14,10 +14,10 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Contract.ModifyGroupContract
-import com.kakao.smartmemo.Object.GroupObject
-import com.kakao.smartmemo.Presenter.ModifyGroupPresenter
+import com.kakao.smartmemo.Object.FolderObject
+import com.kakao.smartmemo.Presenter.ModifyFolderPresenter
 
-class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupContract.View{
+class ModifyFolder : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupContract.View{
 
     lateinit var presenter: ModifyGroupContract.Presenter
 
@@ -39,7 +39,7 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_bar_add_group)
 
-        presenter = ModifyGroupPresenter(this)
+        presenter = ModifyFolderPresenter(this)
 
         toolbar= findViewById(R.id.addGroupToolbar)
         toolbar.title = resources.getString(R.string.setting_group)
@@ -53,15 +53,15 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         colorPicker = findViewById(R.id.color_picker)
         saveBtn = findViewById(R.id.save_group)
         groupMemberSet = findViewById(R.id.group_invitation)
-        groupExitBtn = findViewById(R.id.group_member_exit)
+        groupExitBtn = findViewById(R.id.member_exit)
         kakaoImg = findViewById(R.id.kakao_icon)
         kakaoText = findViewById(R.id.kakao_text)
 
         if (intent.hasExtra("groupId")) {
             groupId = intent.getStringExtra("groupId")
-            groupNameEdit.setText(GroupObject.groupInfo[groupId])
-            groupNameText.text = GroupObject.groupInfo[groupId].toString()
-            GroupObject.groupColor[groupId]?.toInt()?.let {
+            groupNameEdit.setText(FolderObject.folderInfo[groupId])
+            groupNameText.text = FolderObject.folderInfo[groupId].toString()
+            FolderObject.folderColor[groupId]?.toInt()?.let {
                 themeColor.setBackgroundColor(it)
             }
         }

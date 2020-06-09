@@ -16,11 +16,10 @@ import com.kakao.message.template.*
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
 import com.kakao.smartmemo.Contract.AddGroupContract
-import com.kakao.smartmemo.Presenter.AddGroupPresenter
+import com.kakao.smartmemo.Presenter.AddFolderPresenter
 import com.kakao.smartmemo.R
-import com.kakao.util.helper.log.Logger
 
-class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
+class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
 
     lateinit var presenter : AddGroupContract.Presenter
     lateinit var toolbar: Toolbar
@@ -36,7 +35,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
 
 
         setContentView(R.layout.app_bar_add_group)
-        presenter = AddGroupPresenter(this)
+        presenter = AddFolderPresenter(this)
 
         toolbar= findViewById(R.id.addGroupToolbar)
         toolbar.title = resources.getString(R.string.add_group)
@@ -47,7 +46,7 @@ class AddGroup : AppCompatActivity(), ColorPickerDialogListener, AddGroupContrac
         themeColor = findViewById(R.id.selected_color)
         colorPicker = findViewById(R.id.color_picker)
         saveBtn = findViewById(R.id.save_group)
-        groupExitBtn = findViewById(R.id.group_member_exit)
+        groupExitBtn = findViewById(R.id.member_exit)
         groupExitBtn.visibility = View.GONE
         //val kakao_member
         val kakaoLink = findViewById<LinearLayout>(R.id.kakao_link)

@@ -25,8 +25,8 @@ class MemberDataPresenter : MemberDataContract.Presenter, MemberDataContract.OnD
     }
 
     override fun deleteUser() {
-        userModel.deleteUser()
-        userModel.deleteAuth()
+//        userModel.deleteUser()
+//        userModel.deleteAuth()
     }
 
     override fun onSuccess() {

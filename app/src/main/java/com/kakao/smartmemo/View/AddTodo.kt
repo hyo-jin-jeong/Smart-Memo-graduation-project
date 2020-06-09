@@ -24,7 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.AddTodoPresenter
 import com.kakao.smartmemo.R
@@ -459,10 +459,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     fun selectGroup() {
         var i = 0
-        val items:Array<CharSequence> = Array(GroupObject.groupInfo.size) {""}
-        val groupIds:Array<CharSequence> = Array(GroupObject.groupInfo.size) {""}
+        val items:Array<CharSequence> = Array(FolderObject.folderInfo.size) {""}
+        val groupIds:Array<CharSequence> = Array(FolderObject.folderInfo.size) {""}
 
-        GroupObject.groupInfo.forEach {
+        FolderObject.folderInfo.forEach {
             groupIds[i] = it.key
             items[i] = it.value
             i++

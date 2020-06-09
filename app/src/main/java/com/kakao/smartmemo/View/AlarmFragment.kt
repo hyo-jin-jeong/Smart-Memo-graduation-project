@@ -3,6 +3,7 @@ package com.kakao.smartmemo.View
 import android.os.Bundle
 import android.view.*
 import android.widget.RadioGroup
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class AlarmFragment : Fragment(), AlarmContract.View {
 
-    private lateinit var Alarm : RecyclerView
+    private lateinit var alarm : RecyclerView
     private lateinit var presenter : AlarmContract.Presenter
     private lateinit var myAdapter: AlarmAdapter
     private lateinit var radioGroup: RadioGroup
@@ -31,13 +32,13 @@ class AlarmFragment : Fragment(), AlarmContract.View {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.place_alarm_fragment, container, false)
         presenter = AlarmPresenter(this)
-        Alarm = view.findViewById(R.id.alarm_settings_view) as RecyclerView
+        alarm = view.findViewById(R.id.alarm_settings_view) as RecyclerView
         radioGroup = view.findViewById(R.id.radioGroup) as RadioGroup
         myAdapter = AlarmAdapter()
         myAdapter.setMode(0)
         myAdapter.initData()
-        Alarm.adapter = myAdapter
-        Alarm.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
+        alarm.adapter = myAdapter
+        alarm.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
         radioGroup.check(R.id.placeAlarmRadio)
 
         presenter.setAlarmAdapterModel(myAdapter)
@@ -64,5 +65,16 @@ class AlarmFragment : Fragment(), AlarmContract.View {
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
         (activity as MainActivity).toolbar.title="장소 알람 관리"
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item?.itemId) {
+            android.R.id.home -> {
+                (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
+                return true
+            }
+            else ->
+                super.onOptionsItemSelected(item)
+        }
     }
 }

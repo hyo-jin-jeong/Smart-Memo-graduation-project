@@ -3,7 +3,6 @@ package com.kakao.smartmemo.View
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -27,7 +26,7 @@ import com.google.android.material.navigation.NavigationView
 import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Model.MainLocationModel
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
@@ -114,11 +113,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 -1 -> {
                 }
                 groupIdList.size+1 -> {
-                    val nextIntent = Intent(this, AddGroup::class.java)
+                    val nextIntent = Intent(this, AddFolder::class.java)
                     startActivity(nextIntent)
                 }
                 else -> {
-                    var groupSettingIntent = Intent(this, ModifyGroup::class.java)
+                    var groupSettingIntent = Intent(this, ModifyFolder::class.java)
                     groupSettingIntent.putExtra("groupId", groupIdList[menuItem.itemId-1])
 
                     startActivity(groupSettingIntent)
@@ -193,10 +192,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
             groupInfoList.forEach {
                 if(it == "내 폴더"){
-                    navigationView.menu.add(0,-1,0,GroupObject.groupInfo[it]).setIcon(R.drawable.setting_icon)
+                    navigationView.menu.add(0,-1,0,FolderObject.folderInfo[it]).setIcon(R.drawable.setting_icon)
                 }
                 else{
-                    navigationView.menu.add(1,i,i,GroupObject.groupInfo[it]).setIcon(R.drawable.setting_icon)
+                    navigationView.menu.add(1,i,i,FolderObject.folderInfo[it]).setIcon(R.drawable.setting_icon)
                     i++
                 }
 

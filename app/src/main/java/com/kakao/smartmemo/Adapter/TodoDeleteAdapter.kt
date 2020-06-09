@@ -2,16 +2,13 @@ package com.kakao.smartmemo.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.CheckBox
-import android.widget.ListView
 import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
 import com.kakao.smartmemo.Data.TodoData
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.todo_list_delete.view.*
 
@@ -24,10 +21,10 @@ class TodoDeleteAdapter(val context: Context, private val todoList: MutableList<
         val todo = todoList[position]
         var count = 0
 
-        view.delete_group_name.text = GroupObject.groupInfo[todo.groupId]
+        view.delete_group_name.text = FolderObject.folderInfo[todo.groupId]
         view.textView_todo.text = todo.title
 
-        GroupObject.groupColor[todo.groupId]?.toInt().let {
+        FolderObject.folderColor[todo.groupId]?.toInt().let {
             if (it != null) {
                 view.group_color.setBackgroundColor(it)
             }

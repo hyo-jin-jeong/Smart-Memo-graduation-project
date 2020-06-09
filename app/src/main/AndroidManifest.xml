@@ -88,7 +88,7 @@
         <receiver android:name=".Receiver.TodoReceiver">
         </receiver>
         <activity
-            android:name=".View.AddGroup"
+            android:name=".View.AddFolder"
             android:label="@string/add_group"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -126,7 +126,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".View.ModifyGroup"
+            android:name=".View.ModifyFolder"
             android:label="그룹 설정"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

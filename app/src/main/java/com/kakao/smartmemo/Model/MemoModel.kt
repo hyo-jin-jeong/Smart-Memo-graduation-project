@@ -6,7 +6,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kakao.smartmemo.Contract.MemoContract
 import com.kakao.smartmemo.Data.MemoData
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 
 class MemoModel {
     private lateinit var onMemoListener: MemoContract.OnMemoListener
@@ -33,7 +33,7 @@ class MemoModel {
         var j = 0
         var bool = false
         var memoList = mutableListOf<MemoData>()
-        GroupObject.groupInfo.forEach {
+        FolderObject.folderInfo.forEach {
             firebaseGroup.child(it.key).child("MemoInfo").addValueEventListener(object :ValueEventListener{
                 override fun onCancelled(p0: DatabaseError) {}
                 override fun onDataChange(memoIdSnapshot: DataSnapshot) {
@@ -49,7 +49,7 @@ class MemoModel {
                                             memoSnapshot.child("placeName").value.toString(),
                                             memoSnapshot.child("latitude").value.toString(),
                                             memoSnapshot.child("longitude").value.toString()))
-                                        if(i == GroupObject.groupInfo.size-1&&j == memoIdSnapshot.children.count()-1){
+                                        if(i == FolderObject.folderInfo.size-1&&j == memoIdSnapshot.children.count()-1){
                                             onMemoListener.onSuccess(memoList)
                                             i=0
                                         }else if(j == memoIdSnapshot.children.count()-1){
@@ -62,7 +62,7 @@ class MemoModel {
                             })
                         }
                     }else{
-                        if(i == GroupObject.groupInfo.size-1){
+                        if(i == FolderObject.folderInfo.size-1){
                             i=0
                             onMemoListener.onSuccess(memoList)
                         }
