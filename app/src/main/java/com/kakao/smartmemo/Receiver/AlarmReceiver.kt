@@ -17,7 +17,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val notificationManager: NotificationManager = context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notificationIntent = Intent(context, MainActivity::class.java)
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
 
         val repeatIntent = Intent(context, AddTodo::class.java)
         repeatIntent.putExtra(BROADCAST, 5)
