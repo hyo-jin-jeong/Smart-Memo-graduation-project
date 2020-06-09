@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "673743441847-j96cafg1sbr9oio807iok1ubeeqrf5pu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kakao.smartmemo",
+            "certificate_hash": "7ad1d47c3e687ec8ce594210a91e53faa0c13969"
+          }
+        },
+        {
           "client_id": "673743441847-qll5thctr3n1ibq8ou9llq1mfnn98bs5.apps.googleusercontent.com",
           "client_type": 3
         }

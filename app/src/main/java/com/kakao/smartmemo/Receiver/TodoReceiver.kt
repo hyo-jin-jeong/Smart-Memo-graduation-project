@@ -36,11 +36,9 @@ class TodoReceiver : BroadcastReceiver(){
 
         //헤드업알림
         val contentview = RemoteViews(context.packageName, R.layout.todolist_headup_alarm)
-        contentview.setTextViewText(R.id.notification_Title, "Todolist")
+        contentview.setTextViewText(R.id.notification_Title, "T O D O L I S T")
         contentview.setTextViewText(R.id.todolist_textView, "1. 영양제 먹기\n2. 학교 가기")
         contentview.setTextViewText(R.id.todolist_location, "● 삼성약국/녹십자약국/온누리약국")
-        contentview.setOnClickPendingIntent(R.id.later_notification, pendingIntent)
-        contentview.setOnClickPendingIntent(R.id.cancel_notification, pendingIntent)
         notificationbuilder.setContent(contentview)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { //Oreo 버전 이후부터 channel설정해줘야함.
