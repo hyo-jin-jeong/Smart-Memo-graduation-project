@@ -89,18 +89,15 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     val interval = AlarmManager.INTERVAL_DAY
     private var notifyTime = false
     val date: LocalDateTime = LocalDateTime.now()
+    private val TimeNotificationID = (System.currentTimeMillis()/1000).toInt()
     var hour = 0
     var amPm = "오전"
     var min = 0
-    private lateinit var data: TodoData
-    private lateinit var notificationManager: NotificationManager
+    private lateinit var data : TodoData
     private var myReceiver: MyReceiver? = null
     private var mService: LocationUpdatesService? = null
     private var mBound = false
-    private lateinit var timeAgainAdapter: ArrayAdapter<CharSequence>
-    private lateinit var placeAgainAdapter: ArrayAdapter<CharSequence>
-
-
+      
     private var latitude: Double? = null
     private var longitude: Double? = null
     private var address: String? = null
@@ -133,10 +130,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                 requestPermissions()
             }
         }
-
-        notificationManager =
-            this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
         // Toolbar달기
         todoToolBar = findViewById(R.id.settings_toolbar)
         todoToolBar.title = resources.getString(R.string.todo)
@@ -225,14 +218,15 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             ) {
                 if (position == 0) {
                     settingsTimeMinutes = 0
-                } else if (position == 1) {
-                    settingsTimeMinutes = 1
-                } else if (position == 2) {
-                    settingsTimeMinutes = 3
-                } else if (position == 3) {
+
+                } else if(position == 1) {
                     settingsTimeMinutes = 5
-                } else if (position == 4) {
+                } else if( position == 2) {
                     settingsTimeMinutes = 10
+                } else if( position == 3) {
+                    settingsTimeMinutes = 15
+                } else if( position == 4) {
+                    settingsTimeMinutes = 30
                 }
             }
 
@@ -250,14 +244,14 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             ) {
                 if (position == 0) {
                     settingsPlaceMinutes = 0
-                } else if (position == 1) {
-                    settingsPlaceMinutes = 1
-                } else if (position == 2) {
-                    settingsPlaceMinutes = 3
-                } else if (position == 3) {
+                } else if(position == 1) {
                     settingsPlaceMinutes = 5
-                } else if (position == 4) {
+                } else if( position == 2) {
                     settingsPlaceMinutes = 10
+                } else if( position == 3) {
+                    settingsPlaceMinutes = 15
+                } else if( position == 4) {
+                    settingsPlaceMinutes = 30
                 }
             }
 
@@ -320,17 +314,17 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             data = intent.getParcelableExtra("todoData")
             when (data.timeAgain) {
                 0 -> timePosition = 0
-                1 -> timePosition = 1
-                3 -> timePosition = 2
-                5 -> timePosition = 3
-                10 -> timePosition = 4
+                5 -> timePosition = 1
+                10 -> timePosition = 2
+                15 -> timePosition = 3
+                30 -> timePosition = 4
             }
             when (data.placeAgain) {
                 0 -> placePosition = 0
-                1 -> placePosition = 1
-                3 -> placePosition = 2
-                5 -> placePosition = 3
-                10 -> placePosition = 4
+                5 -> placePosition = 1
+                10 -> placePosition = 2
+                15 -> placePosition = 3
+                30 -> placePosition = 4
             }
 
             groupId = data.groupId
@@ -369,9 +363,9 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                         presenter.addTodo(todoData)
                         if (timeSwitch.isChecked) {
                             // 지정한 시간에 울리게 알람을 세팅
-                            setTimeLocationAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
-                        } else {
-                            unsetTimeLocationAlarm() //알람 해제
+                            setTimeAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
+                        }else {
+                            unsetTimeAlarm() //시간알람 해제
                         }
                         finish()
                     }
@@ -402,9 +396,9 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                         presenter.addTodo(todoData)
                         if (timeSwitch.isChecked) {
                             // 지정한 시간에 울리게 알람을 세팅
-                            setTimeLocationAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
+                            setTimeAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
                         } else {
-                            unsetTimeLocationAlarm() //알람 해제
+                            unsetTimeAlarm() //시간알람 해제
                         }
 
                         //if (placeSwitch.isChecked) {
@@ -536,19 +530,15 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     }
 
     private fun receiverData() {  //브로드캐스트에서 intent넘겨받기
-        if (intent.hasExtra(BROADCAST) or intent.hasExtra(BROADCAST2)) {
-            var repeat = intent.getIntExtra(BROADCAST, 0)
-            val cancel = intent.getBooleanExtra(BROADCAST2, false)
-            val notificationID = intent.getIntExtra(NOTIFICATION_NAME, 0)
-            Log.v("seyuuuun", "repeat: " + repeat.toString())
+        if (intent.hasExtra(BROADCAST)) {
+            finish()
+            var cancel = intent.getBooleanExtra(BROADCAST, false)
             Log.v("seyuuuun", "repeat: " + cancel.toString())
-            if (repeat == 5) {
-                settingsTimeMinutes = repeat
-                timePosition = 3
-                setTimeLocationAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
-            }
-            if (cancel.equals(true)) {
-                unsetTimeLocationAlarm()
+          
+            if(cancel.equals(true)) {
+                notifyTime = false
+                timeSwitch.isChecked = false
+                unsetTimeAlarm()
             }
         }
     }
@@ -579,24 +569,27 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         }
     }
 
-    private fun setTimeLocationAlarm(
-        notifyTime: Boolean,
-        calendar: Calendar,
-        settingTime: Int
-    ) {  //시간알람, 장소알람
+    private fun setTimeAlarm(notifyTime : Boolean, calendar: Calendar, settingTime: Int) {  //시간알람, 장소알람
+
         val pm = this.packageManager
         val receiver = ComponentName(this, DeviceBootAlarmReceiver::class.java)
         val alarmIntent = Intent(this, AlarmReceiver::class.java)
 
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            2,
-            alarmIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )  //Broadcast Receiver시작
+        if (titleEdit.text!=null) {
+            val todoTitle = titleEdit.text.toString()
+            alarmIntent.putExtra("todoTitle", todoTitle)
+        }
+
+        //DB작업끝난후 바꿔야함.
+        alarmIntent.putExtra("todoPlace", "온누리 약국")
+
+        alarmIntent.putExtra("todoId", TimeNotificationID) //reqeustcode 때문에 넣어준 것!!
+        Log.v("seyuuuun", "notificationId " + TimeNotificationID)
+
+        val pendingIntent = PendingIntent.getBroadcast(this, TimeNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val interval = 1000 * 60 * settingTime
-        Log.v("seyuuuun", "interval :" + interval.toString())
+        val interval = 1000*60*settingTime
+
 
         if (notifyTime) { //알람을 허용했다면
             if (alarmManager != null) {
@@ -623,33 +616,21 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         }
     }
 
-    private fun unsetTimeLocationAlarm() {
+    private fun unsetTimeAlarm() {
         val pm = this.packageManager
         val receiver = ComponentName(this, DeviceBootAlarmReceiver::class.java)
         val alarmIntent = Intent(this, AlarmReceiver::class.java)
 
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            2,
-            alarmIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )  //Broadcast Receiver시작
+        val pendingIntent = PendingIntent.getBroadcast(this, TimeNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        if (PendingIntent.getBroadcast(
-                this,
-                2,
-                alarmIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            ) != null && alarmManager != null
-        ) {
+        if(PendingIntent.getBroadcast(this, TimeNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {
             alarmManager.cancel(pendingIntent)
+            Log.v("seyuuuun", "알림해제 in time")
         }
-        pm.setComponentEnabledSetting(
-            receiver,
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )
+
+        pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
+        Log.v("seyuuuun", "알림해제2 in time")
     }
 
     private fun setTodoAlarm(calendar: Calendar) {  // TODO 알람
@@ -715,8 +696,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     companion object {
         private const val PACKAGE_NAME = "com.kakao.smartmemo"
         val BROADCAST = "$PACKAGE_NAME.broadcast"
-        val BROADCAST2 = "$PACKAGE_NAME.broadcast2"
-        val NOTIFICATION_NAME = "NotificationID"
+        val NOTIFICATION = "$PACKAGE_NAME.notifiation"
+        val NOTIFICATIONID = (System.currentTimeMillis()/1000).toInt()
         private val TAG = AddTodo::class.java.simpleName
         private const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
     }
@@ -725,6 +706,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         super.onStart()
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(this)
+
+        //receiverData()
 
         if (!checkPermissions()) {
             requestPermissions()
