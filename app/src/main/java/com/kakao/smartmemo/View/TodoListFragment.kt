@@ -73,16 +73,15 @@ class TodoListFragment : Fragment(), TodoContract.View {
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
         (activity as MainActivity).toolbar.title="Todo List"
+        (activity as MainActivity).fab.visibility = View.VISIBLE
+        (activity as MainActivity).fab_todo.visibility = View.VISIBLE
+        (activity as MainActivity).fab_memo.visibility = View.VISIBLE
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_group_in_list, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item?.itemId) {
-            android.R.id.home -> {
-                (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
-                return true
-            }
             R.id.select_group -> {
                 selectGroup()
                 return true

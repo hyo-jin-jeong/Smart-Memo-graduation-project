@@ -22,16 +22,16 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
     lateinit var presenter: ModifyGroupContract.Presenter
 
     lateinit var toolbar: Toolbar
-    lateinit var groupNameEdit : EditText
-    lateinit var groupNameText :  TextView
+    lateinit var folderNameEdit : EditText
+    lateinit var folderNameText :  TextView
     lateinit var themeColor : View
-    lateinit var groupMemberSet:TextView
+    lateinit var folderMemberSet:TextView
     lateinit var colorPicker: ImageView
     lateinit var saveBtn: Button
     lateinit var groupExitBtn : Button
     lateinit var kakaoImg : ImageView
     lateinit var kakaoText : TextView
-    lateinit var groupId : String
+    lateinit var folderId : String
 
     private var count = 0
     private var color = 0
@@ -47,26 +47,26 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        groupNameEdit = findViewById(R.id.editGroupName)
-        groupNameText = findViewById(R.id.textGroupName)
+        folderNameEdit = findViewById(R.id.editGroupName)
+        folderNameText = findViewById(R.id.textGroupName)
         themeColor = findViewById(R.id.selected_color)
         colorPicker = findViewById(R.id.color_picker)
         saveBtn = findViewById(R.id.save_group)
-        groupMemberSet = findViewById(R.id.group_invitation)
+        folderMemberSet = findViewById(R.id.group_invitation)
         groupExitBtn = findViewById(R.id.group_member_exit)
         kakaoImg = findViewById(R.id.kakao_icon)
         kakaoText = findViewById(R.id.kakao_text)
 
-        if (intent.hasExtra("groupId")) {
-            groupId = intent.getStringExtra("groupId")
-            groupNameEdit.setText(FolderObject.folderInfo[groupId])
-            groupNameText.text = FolderObject.folderInfo[groupId].toString()
-            FolderObject.folderColor[groupId]?.toInt()?.let {
+        if (intent.hasExtra("folderId")) {
+            folderId = intent.getStringExtra("folderId")
+            folderNameEdit.setText(FolderObject.folderInfo[folderId])
+            folderNameText.text = FolderObject.folderInfo[folderId].toString()
+            FolderObject.folderColor[folderId]?.toInt()?.let {
                 themeColor.setBackgroundColor(it)
             }
         }
 
-        groupMemberSet.text = resources.getString(R.string.group_member)
+        folderMemberSet.text = resources.getString(R.string.group_member)
 
         groupSetting()
 
@@ -82,10 +82,10 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         saveBtn.setOnClickListener {
             count = 0
             groupSetting()
-            presenter.updateGroup(groupId,groupNameEdit.text.toString(),color.toLong())
+            presenter.updateGroup(folderId,folderNameEdit.text.toString(),color.toLong())
         }
         groupExitBtn.setOnClickListener {
-            presenter.deleteGroup(groupId)
+            presenter.deleteGroup(folderId)
             finish()
         }
     }
@@ -106,7 +106,7 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
                 if(count%2 == 0){
                     count = 0
                     groupSetting()
-                    presenter.updateGroup(groupId,groupNameEdit.text.toString(),color.toLong())
+                    presenter.updateGroup(folderId,folderNameEdit.text.toString(),color.toLong())
 
                 }else{
                     groupModify()
@@ -125,26 +125,26 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
 
     private fun groupSetting(){
         toolbar.title = resources.getString(R.string.setting_group)
-        groupNameEdit.visibility = View.GONE
-        groupNameText.visibility = View.VISIBLE
+        folderNameEdit.visibility = View.GONE
+        folderNameText.visibility = View.VISIBLE
         colorPicker.visibility = View.GONE
         kakaoImg.visibility = View.VISIBLE
         kakaoText.visibility = View.VISIBLE
         saveBtn.visibility = View.INVISIBLE
         groupExitBtn.visibility = View.VISIBLE
-        groupMemberSet.visibility = View.VISIBLE
+        folderMemberSet.visibility = View.VISIBLE
     }
 
     private  fun groupModify(){
         toolbar.title = resources.getString(R.string.update_group)
-        groupNameEdit.visibility = View.VISIBLE
-        groupNameText.visibility = View.GONE
+        folderNameEdit.visibility = View.VISIBLE
+        folderNameText.visibility = View.GONE
         colorPicker.visibility = View.VISIBLE
         kakaoImg.visibility = View.INVISIBLE
         kakaoText.visibility = View.INVISIBLE
         saveBtn.visibility = View.VISIBLE
         groupExitBtn.visibility = View.GONE
-        groupMemberSet.visibility = View.INVISIBLE
+        folderMemberSet.visibility = View.INVISIBLE
     }
 
     override fun onDialogDismissed(dialogId: Int) {  }

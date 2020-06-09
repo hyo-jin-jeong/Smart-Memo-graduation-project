@@ -39,17 +39,12 @@ class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
     override fun getAllMemo(){
         model.getAllMemo()
     }
-    override fun getGroup() {
-
-    }
-
-    override fun getGroupMemo(groupId: String) {
-        model.getGroupMemo(groupId)
-    }
 
     override fun deleteMemo(deleteMemoList: MutableList<MemoData>) {
         model.deleteMemo(deleteMemoList)
     }
+
+
 
     private fun onClickListener(position: Int){
         adapterModel.getMemo(position).let {

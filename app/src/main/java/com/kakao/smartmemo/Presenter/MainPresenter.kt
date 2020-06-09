@@ -29,9 +29,8 @@ class MainPresenter : MainContract.Presenter,MainContract.onGetGroupInfoListener
         folderModel.getGroupInfo()
     }
 
-
     override fun onSuccess(groupInfoList: MutableList<String>) {
-        view.setNavigationView(groupInfoList)
+
     }
 
     override fun onFailure() {

@@ -1,5 +1,6 @@
 package com.kakao.smartmemo.Model
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -12,6 +13,7 @@ class MemoModel {
     private lateinit var onMemoListener: MemoContract.OnMemoListener
     private var firebaseMemo = FirebaseDatabase.getInstance().reference.child("Memo")
     private var firebaseGroup = FirebaseDatabase.getInstance().reference.child("Group")
+
     constructor()
     constructor(onMemoListener: MemoContract.OnMemoListener) {
         this.onMemoListener = onMemoListener
@@ -20,11 +22,12 @@ class MemoModel {
     fun addMemo(memoData: MemoData) {
         var memoId = ""
         memoId = if (memoData.memoId == "") {
-            (System.currentTimeMillis()*3000).toInt().toString()
+            (System.currentTimeMillis() * 3000).toInt().toString()
         } else {
             memoData.memoId
         }
-        firebaseGroup.child(memoData.groupId).child("MemoInfo").updateChildren(mapOf(memoId to memoId))
+        firebaseGroup.child(memoData.groupId).child("MemoInfo")
+            .updateChildren(mapOf(memoId to memoId))
         firebaseMemo.child(memoId).setValue(memoData)
     }
 
@@ -34,62 +37,107 @@ class MemoModel {
         var bool = false
         var memoList = mutableListOf<MemoData>()
         FolderObject.folderInfo.forEach {
-            firebaseGroup.child(it.key).child("MemoInfo").addValueEventListener(object :ValueEventListener{
-                override fun onCancelled(p0: DatabaseError) {}
-                override fun onDataChange(memoIdSnapshot: DataSnapshot) {
-                    if(memoIdSnapshot.children.count()!=0){
-                        j=0
-                        for(memoId in memoIdSnapshot.children){
-                            firebaseMemo.child(memoId.value.toString()).addValueEventListener(object :ValueEventListener{
-                                override fun onCancelled(p0: DatabaseError) {}
-                                override fun onDataChange(memoSnapshot: DataSnapshot) {
-                                        memoList.add(MemoData(memoId.value.toString(),memoSnapshot.child("title").value.toString(),
-                                            memoSnapshot.child("date").value.toString(),memoSnapshot.child("content").value.toString()
-                                            ,memoSnapshot.child("groupId").value.toString(),
-                                            memoSnapshot.child("placeName").value.toString(),
-                                            memoSnapshot.child("latitude").value.toString(),
-                                            memoSnapshot.child("longitude").value.toString()))
-                                        if(i == FolderObject.folderInfo.size-1&&j == memoIdSnapshot.children.count()-1){
-                                            onMemoListener.onSuccess(memoList)
-                                            i=0
-                                        }else if(j == memoIdSnapshot.children.count()-1){
-                                            j=0
-                                            i++
-                                        }else{
-                                            j++
+            firebaseGroup.child(it.key).child("MemoInfo")
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {}
+                    override fun onDataChange(memoIdSnapshot: DataSnapshot) {
+                        if (memoIdSnapshot.children.count() != 0) {
+                            j = 0
+                            for (memoId in memoIdSnapshot.children) {
+                                firebaseMemo.child(memoId.value.toString())
+                                    .addValueEventListener(object : ValueEventListener {
+                                        override fun onCancelled(p0: DatabaseError) {}
+                                        override fun onDataChange(memoSnapshot: DataSnapshot) {
+                                            memoList.add(
+                                                MemoData(
+                                                    memoId.value.toString(),
+                                                    memoSnapshot.child("title").value.toString(),
+                                                    memoSnapshot.child("date").value.toString(),
+                                                    memoSnapshot.child("content").value.toString()
+                                                    ,
+                                                    memoSnapshot.child("groupId").value.toString(),
+                                                    memoSnapshot.child("placeName").value.toString(),
+                                                    memoSnapshot.child("latitude").value.toString(),
+                                                    memoSnapshot.child("longitude").value.toString()
+                                                )
+                                            )
+                                            if (i == FolderObject.folderInfo.size - 1 && j == memoIdSnapshot.children.count() - 1) {
+                                                onMemoListener.onSuccess(memoList)
+                                                i = 0
+                                            } else if (j == memoIdSnapshot.children.count() - 1) {
+                                                j = 0
+                                                i++
+                                            } else {
+                                                j++
+                                            }
                                         }
-                                    }
-                            })
+                                    })
+                            }
+                        } else {
+                            if (i == FolderObject.folderInfo.size - 1) {
+                                i = 0
+                                onMemoListener.onSuccess(memoList)
+                            }
+                            i++
                         }
-                    }else{
-                        if(i == FolderObject.folderInfo.size-1){
-                            i=0
-                            onMemoListener.onSuccess(memoList)
-                        }
-                        i++
                     }
-                }
-            })
+                })
         }
 
     }
 
 
     fun deleteMemo(deleteMemoList: MutableList<MemoData>) {
-        deleteMemoList.forEach{memoId->
+        deleteMemoList.forEach { memoId ->
             firebaseGroup.child(memoId.groupId).child("MemoInfo").child(memoId.memoId).removeValue()
             firebaseMemo.child(memoId.memoId).removeValue()
         }
     }
 
 
-    fun getGroupMemo(groupId: String) {
+//    fun getFolderMemo() {
+//        var j = 0
+//        var memoList = mutableListOf<MemoData>()
+//        firebaseGroup.child(FolderObject.selectFolderInfo).child("MemoInfo").addValueEventListener(object : ValueEventListener {
+//            override fun onCancelled(p0: DatabaseError) {}
+//            override fun onDataChange(memoIdSnapshot: DataSnapshot) {
+//                for (memoId in memoIdSnapshot.children) {
+//                    firebaseMemo.child(memoId.value.toString())
+//                        .addValueEventListener(object : ValueEventListener {
+//                            override fun onCancelled(p0: DatabaseError) {}
+//                            override fun onDataChange(memoSnapshot: DataSnapshot) {
+//                                memoList.add(
+//                                    MemoData(
+//                                        memoId.value.toString(),
+//                                        memoSnapshot.child("title").value.toString(),
+//                                        memoSnapshot.child("date").value.toString(),
+//                                        memoSnapshot.child("content").value.toString()
+//                                        ,
+//                                        memoSnapshot.child("groupId").value.toString(),
+//                                        memoSnapshot.child("placeName").value.toString(),
+//                                        memoSnapshot.child("latitude").value.toString(),
+//                                        memoSnapshot.child("longitude").value.toString()
+//                                    )
+//                                )
+//                                Log.e("memoList",memoList[j].toString())
+//                                if (j == memoIdSnapshot.children.count() - 1&&memoList[j]!=null) {
+//                                    onMemoListener.onSuccess(memoList)
+//                                }else{
+//                                    j++
+//                                }
+//
+//                            }
+//                        })
+//                }
+//            }
+//        })
+//        // onMemoListener.onSuccess(memoList)
+//    }
 
-       // onMemoListener.onSuccess(memoList)
-
-    }
 
     fun deleteMemoInfo(groupId: String, memoId: String) {
 
+
     }
 }
+
