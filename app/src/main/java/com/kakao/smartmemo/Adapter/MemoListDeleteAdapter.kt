@@ -8,7 +8,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.MemoDeleteAdapterContract
 import com.kakao.smartmemo.Data.MemoData
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_delete.view.*
 import kotlinx.android.synthetic.main.memo_list_view.view.memo_content
@@ -30,7 +30,7 @@ class MemoListDeleteAdapter(private var memoList: MutableList<MemoData>) : Recyc
                 memoTitle.text = item.title
                 memoContent.text = item.content
                 memoDate.text =item.date
-                GroupObject.groupColor[item.groupId]?.toInt()?.let {
+                FolderObject.folderColor[item.groupId]?.toInt()?.let {
                     memoBackground.setBackgroundColor(it)
                 }
                 checkboxTodo.setOnCheckedChangeListener { buttonView, _ ->

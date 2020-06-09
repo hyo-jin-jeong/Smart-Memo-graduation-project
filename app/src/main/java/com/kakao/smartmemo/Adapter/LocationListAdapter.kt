@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.Adapter
 
 import android.content.Context
+import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +14,13 @@ import net.daum.mf.map.api.MapView
 
 class LocationListAdapter(context: Context,
                           items: ArrayList<String>,
+                          itemLocations: ArrayList<Location>,
                           mapItems: ArrayList<MapPOIItem>,
                           aroundItems: ArrayList<MapPOIItem>,
-    mapView: MapView): RecyclerView.Adapter<LocationListAdapter.LocationListViewHolder>(), LocationListAdapterContract.Model, LocationListAdapterContract.View {
+                          mapView: MapView): RecyclerView.Adapter<LocationListAdapter.LocationListViewHolder>(), LocationListAdapterContract.Model, LocationListAdapterContract.View {
     var context: Context = context
     var items: ArrayList<String> = items
+    var itemLocations: ArrayList<Location> = itemLocations
     var mapItems: ArrayList<MapPOIItem> = mapItems
     var aroundItems: ArrayList<MapPOIItem> = aroundItems
     var mapView: MapView = mapView
@@ -39,6 +42,10 @@ class LocationListAdapter(context: Context,
         items.add(item)
     }
 
+    fun addItemLocation(location: Location) {
+        itemLocations.add(location)
+    }
+
     fun clear() {
         items.clear()
     }
@@ -48,6 +55,7 @@ class LocationListAdapter(context: Context,
         holder.deleteButton.setOnClickListener {
             mapItems[position].markerType = MapPOIItem.MarkerType.BluePin
             items.remove(items[position])
+            itemLocations.remove(itemLocations[position])
             mapItems.remove(mapItems[position])
             this.notifyDataSetChanged()
             allMapItemShow()

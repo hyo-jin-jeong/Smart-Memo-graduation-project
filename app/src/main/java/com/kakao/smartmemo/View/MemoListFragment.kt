@@ -14,7 +14,7 @@ import com.kakao.smartmemo.Adapter.MemoListAdapter
 import com.kakao.smartmemo.Adapter.MemoListDeleteAdapter
 import com.kakao.smartmemo.Contract.MemoContract
 import com.kakao.smartmemo.Data.MemoData
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Presenter.MemoPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -132,10 +132,10 @@ class MemoListFragment : Fragment(), MemoContract.View {
 
     private fun selectGroup() {
         var i = 1
-        val value: Array<CharSequence> = Array(GroupObject.groupInfo.size + 1) { "" }
-        val key: Array<CharSequence> = Array(GroupObject.groupInfo.size + 1) { "" }
+        val value: Array<CharSequence> = Array(FolderObject.folderInfo.size + 1) { "" }
+        val key: Array<CharSequence> = Array(FolderObject.folderInfo.size + 1) { "" }
         value[0] = "전체메모"
-        GroupObject.groupInfo.forEach {
+        FolderObject.folderInfo.forEach {
             value[i] = it.value
             key[i] = it.key
             i++

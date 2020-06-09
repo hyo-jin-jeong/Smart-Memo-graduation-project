@@ -17,7 +17,7 @@ import com.kakao.smartmemo.Adapter.TodoAdapter
 import com.kakao.smartmemo.Adapter.TodoDeleteAdapter
 import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Data.TodoData
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Presenter.TodoPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -104,10 +104,10 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
     private fun selectGroup(){
         var i = 1
-        val groupValues:Array<CharSequence> = Array(GroupObject.groupInfo.size+1) {""}
-        val groupIds:Array<CharSequence> = Array(GroupObject.groupInfo.size+1) {""}
+        val groupValues:Array<CharSequence> = Array(FolderObject.folderInfo.size+1) {""}
+        val groupIds:Array<CharSequence> = Array(FolderObject.folderInfo.size+1) {""}
         groupValues[0] = "전체메모"
-        GroupObject.groupInfo.forEach {
+        FolderObject.folderInfo.forEach {
             groupIds[i] = it.key
             groupValues[i] = it.value
             i++

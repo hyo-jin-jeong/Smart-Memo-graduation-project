@@ -14,7 +14,6 @@
         android:layout_height="match_parent"
         android:paddingRight="15dp"
         android:paddingLeft="15dp">
-
         <View
             android:id="@+id/group_color"
             android:layout_width="10dp"

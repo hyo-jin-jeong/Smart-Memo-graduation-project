@@ -24,7 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.AddTodoPresenter
 import com.kakao.smartmemo.R
@@ -38,6 +38,7 @@ import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.collections.ArrayList
 
 class AddTodo : AppCompatActivity(), AddTodoContract.View,
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -99,6 +100,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     private var latitude: Double? = null
     private var longitude: Double? = null
     private var address: String? = null
+    private var placeData: PlaceData? = null
+    private var placeDatas: ArrayList<PlaceData>? = null
 
     private var placeList = arrayListOf(PlaceData("연세병원"), PlaceData("학교"), PlaceData("집"))
 
@@ -261,16 +264,24 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             }
         }
 
+
         placeSwitch.setOnCheckedChangeListener { compoundButton, isChecked->
             if(isChecked) {
                 todoStubLocation.visibility = VISIBLE
                 placeLayout.setOnClickListener(View.OnClickListener {
-                    val placechoiceIntent = Intent(it.context, PlaceAlarmDetailActivity::class.java)
-                    placechoiceIntent.putExtra("longitude", longitude)
-                    placechoiceIntent.putExtra("latitude", latitude)
-                    placechoiceIntent.putExtra("address", address)
-                    this.startActivity(placechoiceIntent)
-                })
+                    val placechoiceIntent =
+                        Intent(it.context, PlaceAlarmDetailActivity::class.java)
+                    if(intent.getStringExtra("mode") == "fromMain"){
+                        placechoiceIntent.putExtra("placeData", placeData)
+                        startActivity(placechoiceIntent)
+                    } else {
+                        placechoiceIntent.putExtra("longitude", longitude)
+                        placechoiceIntent.putExtra("latitude", latitude)
+                        placechoiceIntent.putExtra("address", address)
+                        placechoiceIntent.putExtra("todoPlaceAlarm", placeDatas)
+                        startActivityForResult(placechoiceIntent, 200)
+                    }
+            })
                 notifyTime = true // 알람 켬.
             } else {
                 placeDateText.text = "[기본] 날짜 미설정"
@@ -397,11 +408,42 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             selectGroup()
         }
 
-        latitude = intent.getDoubleExtra("latitude", 0.0)
-        longitude = intent.getDoubleExtra("longitude", 0.0)
-        address = intent.getStringExtra("address")
-        Log.e("check", "latitude = $latitude, longitude = $longitude, address = $address")
+        if(intent.getStringExtra("mode") == "longPressed") {
+            placeSwitch.isChecked = true
+            todoStubLocation.visibility = VISIBLE
+        }
+
+        if(intent.getParcelableExtra<PlaceData>("placeData") != null) {
+            latitude = intent.getParcelableExtra<PlaceData>("placeData").latitude
+            longitude = intent.getParcelableExtra<PlaceData>("placeData").longitude
+            address = intent.getParcelableExtra<PlaceData>("placeData").place
+            placeData = PlaceData(address!!, latitude!!, longitude!!)
+            Log.e("check", "latitude = $latitude, longitude = $longitude, address = $address")
+        }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                200 -> {
+                    longitude = data!!.getDoubleExtra("longitude", 0.0)
+                    latitude = data!!.getDoubleExtra("latitude", 0.0)
+                    address = data!!.getStringExtra("address")
+
+                    //장소 리스트 intent
+                    placeDatas = data!!.getParcelableArrayListExtra("todoPlaceAlarm")
+                    if(!placeDatas.isNullOrEmpty()) {
+                        for (i in placeDatas!!.iterator()) {
+                            Log.e("jieun", i.toString())
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
 
     //툴바의 뒤로가기 버튼
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -454,10 +496,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     fun selectGroup() {
         var i = 0
-        val items:Array<CharSequence> = Array(GroupObject.groupInfo.size) {""}
-        val groupIds:Array<CharSequence> = Array(GroupObject.groupInfo.size) {""}
+        val items:Array<CharSequence> = Array(FolderObject.folderInfo.size) {""}
+        val groupIds:Array<CharSequence> = Array(FolderObject.folderInfo.size) {""}
 
-        GroupObject.groupInfo.forEach {
+        FolderObject.folderInfo.forEach {
             groupIds[i] = it.key
             items[i] = it.value
             i++

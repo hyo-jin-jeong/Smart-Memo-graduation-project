@@ -14,7 +14,7 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Contract.ModifyGroupContract
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Presenter.ModifyGroupPresenter
 
 class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupContract.View{
@@ -59,9 +59,9 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
 
         if (intent.hasExtra("groupId")) {
             groupId = intent.getStringExtra("groupId")
-            groupNameEdit.setText(GroupObject.groupInfo[groupId])
-            groupNameText.text = GroupObject.groupInfo[groupId].toString()
-            GroupObject.groupColor[groupId]?.toInt()?.let {
+            groupNameEdit.setText(FolderObject.folderInfo[groupId])
+            groupNameText.text = FolderObject.folderInfo[groupId].toString()
+            FolderObject.folderColor[groupId]?.toInt()?.let {
                 themeColor.setBackgroundColor(it)
             }
         }

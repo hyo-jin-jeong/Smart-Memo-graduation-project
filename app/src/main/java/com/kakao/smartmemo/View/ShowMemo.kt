@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.kakao.smartmemo.Contract.ShowMemoContract
 import com.kakao.smartmemo.Data.MemoData
-import com.kakao.smartmemo.Object.GroupObject
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Presenter.ShowMemoPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_show_memo.*
@@ -92,13 +92,13 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
     }
 
     private fun setData() {
-        memoToolbar.title = GroupObject.groupInfo[this.memoData.groupId]
+        memoToolbar.title = FolderObject.folderInfo[this.memoData.groupId]
         titleText.text = this.memoData.title
         contentText.text = this.memoData.content
         placeText.text = this.memoData.placeName
         dateText.text = this.memoData.date
         groupId = this.memoData.groupId
         memoId = this.memoData.memoId
-        GroupObject.groupColor[groupId]?.toInt()?.let { show_memo_layout.setBackgroundColor(it) }
+        FolderObject.folderColor[groupId]?.toInt()?.let { show_memo_layout.setBackgroundColor(it) }
     }
 }
