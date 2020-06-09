@@ -5,6 +5,8 @@ interface  FolderContract{
 
     }
     interface Presenter{
+        fun getMemoList()
+        fun getTodoList()
 
     }
 }

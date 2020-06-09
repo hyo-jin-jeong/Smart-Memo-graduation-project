@@ -6,16 +6,13 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.kakao.smartmemo.*
 import com.kakao.smartmemo.Contract.MainAdapterContract
-import com.kakao.smartmemo.View.MapFragment
-import com.kakao.smartmemo.View.MemoListFragment
-import com.kakao.smartmemo.View.AlarmFragment
-import com.kakao.smartmemo.View.TodoListFragment
+import com.kakao.smartmemo.View.*
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_text_1,
     R.string.tab_text_2,
     R.string.tab_text_3,
-    R.string.tab_text_4
+    R.string.tab_text_5
 )
 
 /**
@@ -33,8 +30,9 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
             }
             2 -> {return TodoListFragment()
             }
-            3 -> {return AlarmFragment()
+            3 -> {return  ManagementFragment()
             }
+
         }
         return MapFragment()
     }

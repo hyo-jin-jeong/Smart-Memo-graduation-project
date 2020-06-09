@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -52,16 +51,15 @@ class MemoListFragment : Fragment(), MemoContract.View {
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
         (activity as MainActivity).toolbar.title = "Memo List"
+        (activity as MainActivity).fab.visibility = View.VISIBLE
+        (activity as MainActivity).fab_todo.visibility = View.VISIBLE
+        (activity as MainActivity).fab_memo.visibility = View.VISIBLE
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_group_in_list, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item?.itemId) {
-            android.R.id.home -> {
-                (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
-                return true
-            }
             R.id.select_group -> {
                 selectGroup()
                 return true
@@ -151,7 +149,8 @@ class MemoListFragment : Fragment(), MemoContract.View {
                     presenter.getAllMemo()
                 } else {
                     (activity as MainActivity).toolbar.title = value[which]
-                    presenter.getGroupMemo(key[which].toString())
+//                    FolderObject.selectFolderInfo = key[which].toString()
+//                    presenter.getFolderMemo()
                 }
 
             })

@@ -189,6 +189,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
         (activity as MainActivity).toolbar.title = resources.getString(R.string.tab_text_1)
+        (activity as MainActivity).fab.visibility = View.VISIBLE
+        (activity as MainActivity).fab_todo.visibility = View.VISIBLE
+        (activity as MainActivity).fab_memo.visibility = View.VISIBLE
         val plusButton = (activity as MainActivity).fab
 
         val menuInflater = menuInflater
@@ -299,11 +302,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            android.R.id.home -> {
-                (activity as MainActivity).mDrawerLayout!!.openDrawer(GravityCompat.START)
-                return true
-            }
-
             else -> super.onOptionsItemSelected(item)
         }
     }

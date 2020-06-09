@@ -7,7 +7,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
+
 import android.provider.Settings
+
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -83,9 +85,9 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
     }
 
     override fun onLoginSuccess(message : String) {
+        Log.e("dd","이거아냐")
         presenter.getProfile()
         startMainActivity()
-
     }
     override fun onLoginFailure(message: String) {
         Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()

@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.Presenter
 
 import android.app.Activity
+import android.util.Log
 import com.kakao.smartmemo.Contract.LoginContract
 import com.kakao.smartmemo.Model.UserModel
 
@@ -17,6 +18,7 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.OnLoginListener {
         userModel.checkUser(context, email, password)
     }
     override fun getProfile() {
+        Log.e("그만해","ㅇㅇ")
         userModel.getProfile()
     }
 

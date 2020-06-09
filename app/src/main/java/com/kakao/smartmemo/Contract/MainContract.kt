@@ -8,9 +8,6 @@ interface MainContract {
 
     }
     interface View {
-        fun setNavigationView(groupInfoList: MutableList<String>)
-
-
     }
 
     interface onGetGroupInfoListener {
