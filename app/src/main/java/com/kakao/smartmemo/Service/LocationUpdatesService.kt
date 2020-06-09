@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.location.Location
 import android.os.*
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
@@ -204,6 +205,7 @@ class LocationUpdatesService : Service() {
     private fun getNotification(): Notification {
         val intent = Intent(this, LocationUpdatesService::class.java)
         val text: CharSequence = getLocationText(mLocation)
+        val contentText = "앱의 장소 알람 기능을 사용하시려 알람을 유지해주세요.\\n이 알림을 끄면 장소 알림이 제대로 실행되지 않을 수 있습니다."
 
         // Extra to help us figure out if we arrived in onStartCommand via the notification or not.
         intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true)
@@ -219,22 +221,26 @@ class LocationUpdatesService : Service() {
             this, 0,
             Intent(this, AddTodo::class.java), 0
         )
+
+//        val builder = Notification.Builder(this)
+//        val remoteViews = RemoteViews(packageName, R.layout.custom_notif)
+//        builder.setCustomContentView(remoteViews)
+//        //builder.setSmallIcon(R.mipmap.ic_launcher)
+//        builder.setSmallIcon(R.mipmap.app_icon)
+//        builder.setPriority(Notification.PRIORITY_LOW)
+//        builder.setVisibility(Notification.VISIBILITY_SECRET)
+
+        //val remoteViews = RemoteViews(packageName, R.layout.custom_notif)
         val builder =
             NotificationCompat.Builder(this)
-                .addAction(
-                    R.drawable.ic_launch, getString(R.string.launch_activity),
-                    activityPendingIntent
-                )
-                .addAction(
-                    R.drawable.ic_cancel, getString(R.string.remove_location_updates),
-                    servicePendingIntent
-                )
-                .setContentText(text)
-                .setContentTitle(getLocationTitle(this))
+                .setContentTitle("백그라운드에서 대기 중")
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                //.setCustomContentView(remoteViews)
+                .setContentIntent(activityPendingIntent)
+                .setContentText(contentText)
                 .setOngoing(true)
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setTicker(text)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setSmallIcon(R.mipmap.app_icon)
                 .setWhen(System.currentTimeMillis())
 
         // Set the Channel ID for Android O.
@@ -331,9 +337,6 @@ class LocationUpdatesService : Service() {
         val locationtext: CharSequence = getLocationText(mLocation)
         Log.v("seyuuuun", "위치확인 " + locationtext.toString())
 
-        val startIntent = Intent(this, LocationUpdatesService::class.java)
-        val start = startIntent.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION, false)
-
         // Notify anyone listening for broadcasts about the new location.
         val intent = Intent(ACTION_BROADCAST)
         intent.putExtra(EXTRA_LOCATION, location)
@@ -342,7 +345,7 @@ class LocationUpdatesService : Service() {
         // Update notification content if running as a foreground service.
         if (serviceIsRunningInForeground(this)) {
             if (calDistance(mLocation!!)) {
-                Log.e("jieun", "여기 background 라능 $locationtext")
+                Log.e("jieun", "이 지점에 300m 안이라 $locationtext")
                 receiver()
             }
 
@@ -359,12 +362,14 @@ class LocationUpdatesService : Service() {
             }
             Log.v("seyuuuun", start.toString())*/
         }
+
+
     }
 
     fun calDistance(location: Location): Boolean {
 
-        val curLatitude = 37.590710
-        val curLongitude = 127.019339
+        val curLatitude = 37.595743
+        val curLongitude = 127.020295
         val theta: Double
         var dist: Double
         theta = curLongitude - location.longitude
@@ -378,10 +383,9 @@ class LocationUpdatesService : Service() {
         dist *= 60 * 1.1515
         dist *= 1.609344 // 단위 mile 에서 km 변환.
         dist *= 1000.0 // 단위  km 에서 m 로 변환
-        dist += 35  //오차 범위
 
         Log.e("jieun", "확인중 $dist")
-        return dist <= 100
+        return dist <= 300
     }
 
     // 주어진 도(degree) 값을 라디언으로 변환

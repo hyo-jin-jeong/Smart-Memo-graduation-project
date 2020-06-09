@@ -22,7 +22,7 @@ class AlarmReceiver : BroadcastReceiver() {
         Log.v("seyuuuun", "id: " + id.toString())
 
         val notificationIntent = Intent(context, MainActivity::class.java)
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
 
         val cancelIntent = Intent(context, AddTodo::class.java)
         cancelIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
