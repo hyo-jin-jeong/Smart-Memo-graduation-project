@@ -7,10 +7,7 @@ interface MemberDataContract {
         fun checkPassword(confirmPassword: String) :Boolean{return true}
         fun deleteUser(){}
     }
-    interface  View{
-        fun onReStartApp()
-
-    }
+    interface  View{    }
 
     interface OnDeleteUserListener {
         fun onSuccess()

@@ -1,7 +1,6 @@
 package com.kakao.smartmemo.View
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -50,7 +49,9 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
 
     private var curLongitude: Double? = null
     private var curLatitude: Double? = null
+    private var curMarker: MapPOIItem? = null
     private var curAddress: String? = null
+    private var centerAddress: String? = null
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var locationAdapter: LocationAdapter
@@ -138,13 +139,14 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
 
         listView.layoutManager = layoutManager2
 
-        curLatitude = intent.getParcelableExtra<PlaceData>("placeData").latitude
-        curLongitude = intent.getParcelableExtra<PlaceData>("placeData").longitude
-        curAddress = intent.getParcelableExtra<PlaceData>("placeData").place
+        if(intent.getParcelableExtra<PlaceData>("placeData") != null) {
+            curLatitude = intent.getParcelableExtra<PlaceData>("placeData").latitude
+            curLongitude = intent.getParcelableExtra<PlaceData>("placeData").longitude
+            curAddress = intent.getParcelableExtra<PlaceData>("placeData").place
+        }
         var placeDatas: ArrayList<PlaceData>? = intent.getParcelableArrayListExtra("todoPlaceAlarm")
         if (!placeDatas.isNullOrEmpty()) {
             for (placeData in placeDatas!!.iterator()) {
-                Log.e("jieun", "todoPlaceAlarm 들어옴.")
                 var location = Location("")
                 location.longitude = placeData.longitude
                 location.latitude = placeData.latitude
@@ -173,22 +175,33 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
         }
 
         saveButton.setOnClickListener {
+            curAddress = curMarker!!.itemName
             //long pressed 로 들어왔을 때
             if(intent.getStringExtra("mode") == "longPressed"){
                 val todoIntent = Intent(this.context, AddTodo::class.java)
                 val placeData = PlaceData(curAddress!!, curLatitude!!, curLongitude!!)
+                val placeDatas = replaceWithData()
                 todoIntent.putExtra("placeData", placeData)
+                todoIntent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
+                for (i in placeDatas.indices) {
+                    var placeData =
+                        PlaceData(locationNames[i], locations[i].latitude, locations[i].longitude)
+                    Log.e("jieun", "선택된 장소들 $placeData")
+                }
                 todoIntent.putExtra("mode", "longPressed")
                 startActivity(todoIntent)
                 finish()
             } else {    //(+)버튼으로 들어왔을 때
                 val intent = Intent()
                 val placeDatas = replaceWithData()
-                Log.e("jieun", "지금 placeDatas 담김")
-                intent.putExtra("longitude", curLongitude!!.toDouble())
-                intent.putExtra("latitude", curLatitude!!.toDouble())
-                intent.putExtra("address", curAddress)
+                val placeData = PlaceData(curAddress!!, curLatitude!!, curLongitude!!)
+                intent.putExtra("placeData", placeData)
                 intent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
+                for (i in placeDatas.indices) {
+                    var placeData =
+                        PlaceData(locationNames[i], locations[i].latitude, locations[i].longitude)
+                    Log.e("jieun", "선택된 장소들 $placeData")
+                }
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             }
@@ -259,7 +272,9 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
                 recyclerView.visibility = View.GONE
 
                 Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
+
                 if (locationAdapter.clicked) {
+
                     //해당 요소만 찍고 위치 이동.
                     var mapPoint: MapPoint = MapPoint.mapPointWithGeoCoord(
                         locationAdapter.selectedY!!.toDouble(),
@@ -377,6 +392,12 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
     }
 
     override fun onMapViewCenterPointMoved(p0: MapView?, p1: MapPoint?) {
+        curLatitude = mapView.mapCenterPoint.mapPointGeoCoord.latitude
+        curLongitude = mapView.mapCenterPoint.mapPointGeoCoord.longitude
+        curMarker = createMarker("", MapPoint.mapPointWithGeoCoord(curLatitude!!, curLongitude!!))
+        if(listLayout.visibility == View.INVISIBLE) {
+            presenter.convertAddressFromMapPOIItem(curMarker!!)
+        }
     }
 
     override fun onMapViewDragEnded(p0: MapView?, p1: MapPoint?) {

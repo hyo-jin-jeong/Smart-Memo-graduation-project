@@ -65,4 +65,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation group: 'com.kakao.sdk', name: 'kakaolink', version: project.KAKAO_SDK_VERSION
     implementation 'com.google.firebase:firebase-dynamic-links:19.0.0'
+
 }
