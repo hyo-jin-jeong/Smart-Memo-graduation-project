@@ -83,15 +83,15 @@ class UserModel {
     }
 
     fun addFirestoreUser() {
-        val groupId = "내 폴더" + System.currentTimeMillis()
+        val groupId = "기본폴더" + System.currentTimeMillis()
         firebaseUser.updateChildren(
             mapOf(UserObject.uid to UserObject)
         )
-        firebaseUser.child(UserObject.uid).child("GroupInfo").setValue(mapOf(groupId to "내폴더"))
+        firebaseUser.child(UserObject.uid).child("GroupInfo").setValue(mapOf(groupId to "기본폴더"))
 
         with(firebaseGroup.child(groupId)){
-            setValue(mapOf("group_color" to 1549068184))
-            updateChildren(mapOf("group_name" to "내폴더"))
+            setValue(mapOf("folderColor" to 1549068184))
+            updateChildren(mapOf("folderName" to "기본폴더"))
             child("MemberInfo").updateChildren(mapOf(UserObject.uid to UserObject.email))
         }
     }
@@ -143,16 +143,7 @@ class UserModel {
                 auth.currentUser
                 UserObject.uid = auth.uid.toString()
                 UserObject.email = email
-                firebaseUser.child(UserObject.uid).child("GroupInfo")
-                    .addValueEventListener(object : ValueEventListener {
-                        override fun onCancelled(p0: DatabaseError) {}
-                        override fun onDataChange(snapShot: DataSnapshot) {
-                            for (data in snapShot.children) {
-                                FolderObject.folderInfo[data.key.toString()] = data.value.toString()
-                            }
-                            onLoginListener.onSuccess(task.result.toString())
-                        }
-                    })
+                onLoginListener.onSuccess(task.result.toString())
             } else {
                 onLoginListener.onFailure(task.exception.toString())
             }

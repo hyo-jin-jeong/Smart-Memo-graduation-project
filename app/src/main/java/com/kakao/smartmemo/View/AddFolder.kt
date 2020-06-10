@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.View
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -18,7 +17,6 @@ import com.kakao.network.callback.ResponseCallback
 import com.kakao.smartmemo.Contract.AddGroupContract
 import com.kakao.smartmemo.Presenter.AddGroupPresenter
 import com.kakao.smartmemo.R
-import com.kakao.util.helper.log.Logger
 
 class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
 
@@ -30,11 +28,9 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
     lateinit var saveBtn:Button
     lateinit var groupExitBtn : Button
     var color = (System.currentTimeMillis()*1000).toInt()
-    @SuppressLint("ShowToast")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         setContentView(R.layout.app_bar_add_group)
         presenter = AddGroupPresenter(this)
 
@@ -69,12 +65,12 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
 
         saveBtn.setOnClickListener {
             if(groupName.text.toString() != ""){
-                presenter.addGroup(groupName.text.toString(),color)
                 finish()
+                presenter.addGroup(groupName.text.toString(),color)
+
             }else{
                 Toast.makeText(this,"그룹이름을 작성하세요",Toast.LENGTH_SHORT).show()
             }
-
         }
     }
 
