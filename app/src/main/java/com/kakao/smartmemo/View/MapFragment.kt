@@ -45,7 +45,8 @@ import retrofit2.Response
 class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEventListener,
     MapContract.View,
     MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener,
-    MapView.OpenAPIKeyAuthenticationResultListener, ActivityCompat.OnRequestPermissionsResultCallback {
+    MapView.OpenAPIKeyAuthenticationResultListener,
+    ActivityCompat.OnRequestPermissionsResultCallback {
     private lateinit var presenter: MapPresenter
     private lateinit var goCurLocation: FloatingActionButton
 
@@ -60,8 +61,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     private var todo = mutableListOf<PlaceData>()
     private var memo = mutableListOf<PlaceData>()
 
-
-    private val allMarkers = ArrayList<MapPOIItem>()
+    private val memoMapPoint = ArrayList<MapPoint>()
+    private val todoMapPoint = ArrayList<MapPoint>()
 
     private var isLongTouch: Boolean = false
 
@@ -90,7 +91,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         mapView = MapView(view.context)
         usingMapView = true
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
+        mFusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(this.requireActivity())
         locationSetting()
 
         mapViewContainer = view.map_view as ViewGroup
@@ -103,7 +105,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         goCurLocation = view.findViewById(R.id.go_curLocation)
         goCurLocation.setOnClickListener {
-            if(mapView.currentLocationTrackingMode == MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving) {
+            if (mapView.currentLocationTrackingMode == MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving) {
                 goCurLocation.setImageResource(R.drawable.current_location_click_icon)
                 mapView.currentLocationTrackingMode =
                     MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
@@ -150,7 +152,10 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                     if (task.isSuccessful && task.result != null) {
                         currentLocation = task.result
                         mapView.setMapCenterPoint(
-                            MapPoint.mapPointWithGeoCoord(currentLocation!!.latitude, currentLocation!!.longitude!!),
+                            MapPoint.mapPointWithGeoCoord(
+                                currentLocation!!.latitude,
+                                currentLocation!!.longitude!!
+                            ),
                             false
                         )
                     } else {
@@ -170,7 +175,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onResume() {
         super.onResume()
-        Log.e("jieun", "usingMapView = $usingMapView")
         if (!usingMapView) {
             mapView = MapView(view!!.context)
             mapViewContainer.addView(mapView)
@@ -185,16 +189,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onStart() {
         super.onStart()
-        mapView.removeAllPOIItems()
-        allMarkers.clear()
         presenter.getTodoPlaceAlarm("map")
         presenter.getMemo()
     }
+
     override fun onPause() {
         super.onPause()
         mapView.removeAllPOIItems()
         usingMapView = false
-        Log.e("jieun", "이것을 스침.")
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -234,17 +236,23 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 goCurLocation.visibility = FloatingActionButton.VISIBLE
                 recyclerView.visibility = View.GONE
                 Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
-                if(locationAdapter.clicked) {
+                if (locationAdapter.clicked) {
                     changeMapCenterPoint(locationAdapter.selectedX, locationAdapter.selectedY)
-                    val point: MapPoint = MapPoint.mapPointWithGeoCoord(locationAdapter.selectedY!!.toDouble(), locationAdapter.selectedX!!.toDouble())
-                    curLocationMarker = createMarker("current marker", point, R.drawable.cur_location_icon)
+                    val point: MapPoint = MapPoint.mapPointWithGeoCoord(
+                        locationAdapter.selectedY!!.toDouble(),
+                        locationAdapter.selectedX!!.toDouble()
+                    )
+                    curLocationMarker =
+                        createMarker("current marker", point, R.drawable.cur_location_icon)
                     mapView.addPOIItem(curLocationMarker)
                     presenter.convertAddressFromMapPOIItem(curLocationMarker)
                 } else {
                     //첫번째 요소의 포인트로 이동
                     changeMapCenterPoint(firstX, firstY)
-                    val point: MapPoint = MapPoint.mapPointWithGeoCoord(firstY!!.toDouble(), firstX!!.toDouble())
-                    curLocationMarker = createMarker("current marker", point, R.drawable.cur_location_icon)
+                    val point: MapPoint =
+                        MapPoint.mapPointWithGeoCoord(firstY!!.toDouble(), firstX!!.toDouble())
+                    curLocationMarker =
+                        createMarker("current marker", point, R.drawable.cur_location_icon)
                     mapView.addPOIItem(curLocationMarker)
                     presenter.convertAddressFromMapPOIItem(curLocationMarker)
                 }
@@ -268,32 +276,33 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         "$newText ",
                         15
                     )
-                    val callbackKeyword: Callback<CategoryResult?> = object : Callback<CategoryResult?> {
-                        //리스폰 시, 대응할 구현체
-                        override fun onResponse(
-                            call: Call<CategoryResult?>,
-                            response: Response<CategoryResult?>
-                        ) {
-                            if (response.isSuccessful) { //check for Response status
-                                assert(response.body() != null)
-                                for (document in response.body()?.getDocuments()!!) {
-                                    firstX = response.body()?.getDocuments()!![0]!!.x
-                                    firstY = response.body()?.getDocuments()!![0]!!.y
-                                    locationAdapter.addItem(document!!)
+                    val callbackKeyword: Callback<CategoryResult?> =
+                        object : Callback<CategoryResult?> {
+                            //리스폰 시, 대응할 구현체
+                            override fun onResponse(
+                                call: Call<CategoryResult?>,
+                                response: Response<CategoryResult?>
+                            ) {
+                                if (response.isSuccessful) { //check for Response status
+                                    assert(response.body() != null)
+                                    for (document in response.body()?.getDocuments()!!) {
+                                        firstX = response.body()?.getDocuments()!![0]!!.x
+                                        firstY = response.body()?.getDocuments()!![0]!!.y
+                                        locationAdapter.addItem(document!!)
+                                    }
+                                    locationAdapter.notifyDataSetChanged()
+                                } else {
+                                    val statusCode = response.code()
+                                    val responseBody = response.body()
                                 }
-                                locationAdapter.notifyDataSetChanged()
-                            } else {
-                                val statusCode = response.code()
-                                val responseBody = response.body()
+                            }
+
+                            override fun onFailure(
+                                call: Call<CategoryResult?>,
+                                t: Throwable
+                            ) {
                             }
                         }
-
-                        override fun onFailure(
-                            call: Call<CategoryResult?>,
-                            t: Throwable
-                        ) {
-                        }
-                    }
                     callKeyword!!.enqueue(callbackKeyword)
 
                     recyclerView.visibility = View.VISIBLE
@@ -363,7 +372,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                             0 -> {
                                 val addMemoIntent = Intent(this.context, AddMemo::class.java)
                                 val point = curLocationMarker.mapPoint.mapPointGeoCoord
-                                val placeData = PlaceData(convertedAddress!!, point.latitude, point.longitude)
+                                val placeData =
+                                    PlaceData(convertedAddress!!, point.latitude, point.longitude)
                                 addMemoIntent.putExtra("placeData", placeData)
                                 Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                                 startActivity(addMemoIntent)
@@ -371,9 +381,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                                 mapView.removePOIItem(curLocationMarker)
                             }
                             1 -> {
-                                val addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
+                                val addTodoIntent =
+                                    Intent(this.context, PlaceAlarmDetailActivity::class.java)
                                 val point = curLocationMarker.mapPoint.mapPointGeoCoord
-                                val placeData = PlaceData(convertedAddress!!, point.latitude, point.longitude)
+                                val placeData =
+                                    PlaceData(convertedAddress!!, point.latitude, point.longitude)
                                 addTodoIntent.putExtra("placeData", placeData)
                                 addTodoIntent.putExtra("mode", "longPressed")
                                 Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
@@ -397,17 +409,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onMapViewInitialized(p0: MapView?) {
-//        val mapPoint1 = MapPoint.mapPointWithGeoCoord(37.565841, 126.976825)
-//        val memoAndTodo = createMarker("Memo And Todo", mapPoint1, R.drawable.memo_todo_icon)
-//        mapView.addPOIItem(memoAndTodo)
-//
-//        val mapPoint2 = MapPoint.mapPointWithGeoCoord(37.565799, 126.975183)
-//        val memo = createMarker("Memo", mapPoint2, R.drawable.memo_icon)
-//        mapView.addPOIItem(memo)
-//
-//        val mapPoint3 = MapPoint.mapPointWithGeoCoord(37.564170, 126.978471)
-//        val todo = createMarker("Todo", mapPoint3, R.drawable.todo_icon)
-//        mapView.addPOIItem(todo)
+
     }
 
     override fun onMapViewDragStarted(p0: MapView?, p1: MapPoint?) {
@@ -494,7 +496,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         mapView.removePOIItem(curLocationMarker)
                     }
                     1 -> {
-                        val addTodoIntent = Intent(this.context, PlaceAlarmDetailActivity::class.java)
+                        val addTodoIntent =
+                            Intent(this.context, PlaceAlarmDetailActivity::class.java)
                         val placeData = PlaceData(convertedAddress!!, latitude, longitude)
                         addTodoIntent.putExtra("placeData", placeData)
                         addTodoIntent.putExtra("mode", "longPressed")
@@ -561,8 +564,15 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     fun changeMapCenterPoint(x: String?, y: String?) {
-        if(x != null && y != null) {
-            mapView.moveCamera(CameraUpdateFactory.newMapPoint(MapPoint.mapPointWithGeoCoord(y.toDouble(), x.toDouble())))
+        if (x != null && y != null) {
+            mapView.moveCamera(
+                CameraUpdateFactory.newMapPoint(
+                    MapPoint.mapPointWithGeoCoord(
+                        y.toDouble(),
+                        x.toDouble()
+                    )
+                )
+            )
         }
     }
 
@@ -571,44 +581,64 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onSuccess(placeList: MutableList<PlaceData>, status: String) {
-        val memoMapPoint = ArrayList<MapPoint>()
-        val todoMapPoint = ArrayList<MapPoint>()
+        //여기에 로그는 가끔 로딩이 느리면 안들어 가는 경우가 있어서 로그가 찍히면 이제 마커 생성된거라 확인하려고 로그 안지웠습니다
         if (status == "todo") {
             todo = placeList
-
             for (i in todo) {
                 var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)
-                if(!todoMapPoint.contains(mapPoint)){
-                    var todoMarker = createMarker("", mapPoint, R.drawable.todo_icon)
+                if(!containPoint(todoMapPoint, mapPoint)) {
                     todoMapPoint.add(mapPoint)
-                    //allMarkers.add(todoMarker)
-                    mapView.addPOIItem(todoMarker)
                     Log.e("jieun", "todo $i 가 들어감")
                 }
             }
-            if(todo.isEmpty()) {
-                Log.e("jieun", "todo 현재 못불러옴.")
-            }
         } else {
             memo = placeList
-
             for (i in memo) {
                 var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)
-                if(!memoMapPoint.contains(mapPoint)){
-                    var memoMarker = createMarker("", mapPoint, R.drawable.memo_icon)
+                if(!containPoint(memoMapPoint, mapPoint)) {
                     memoMapPoint.add(mapPoint)
-                    //allMarkers.add(memoMarker)
-                    mapView.addPOIItem(memoMarker)
                     Log.e("jieun", "memo $i 가 들어감")
+                } else {
+
                 }
-            }
-            if(memo.isEmpty()) {
-                Log.e("jieun", "memo 현재 못불러옴.")
             }
         }
 
+        createMarkerAccordingType(todoMapPoint, memoMapPoint)
 
         Log.e("jieun", "구분점~~~~")
+    }
+
+    private fun containPoint(list: ArrayList<MapPoint>, item: MapPoint): Boolean {
+        val curLatitude = item.mapPointGeoCoord.latitude
+        val curLongitude = item.mapPointGeoCoord.longitude
+        for (i in list) {
+            val latitude = i.mapPointGeoCoord.latitude
+            val longitude = i.mapPointGeoCoord.longitude
+            if (curLatitude == latitude && curLongitude == longitude) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun createMarkerAccordingType(todoList: ArrayList<MapPoint>, memoList: ArrayList<MapPoint>) {
+        for (todo in todoList) {
+            if(containPoint(memoList, todo)) {
+                val memoAddTodo = createMarker("", todo, R.drawable.memo_todo_icon)
+                mapView.addPOIItem(memoAddTodo)
+            } else {
+                val todo = createMarker("", todo, R.drawable.todo_icon)
+                mapView.addPOIItem(todo)
+            }
+        }
+        for (memo in memoList) {
+            if(!containPoint(todoList, memo)) {
+                val memo = createMarker("", memo, R.drawable.memo_icon)
+                mapView.addPOIItem(memo)
+            }
+        }
+
     }
 
 }

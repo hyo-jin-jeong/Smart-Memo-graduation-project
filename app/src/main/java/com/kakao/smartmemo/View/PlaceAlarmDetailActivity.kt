@@ -1,16 +1,14 @@
 package com.kakao.smartmemo.View
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
@@ -165,7 +163,7 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
             }
         }
 
-        var mapPoint: MapPoint = MapPoint.mapPointWithGeoCoord(curLatitude!!, curLongitude!!)
+        val mapPoint: MapPoint = MapPoint.mapPointWithGeoCoord(curLatitude!!, curLongitude!!)
         mapView.setMapCenterPoint(mapPoint, true)
 
         val initialItem: MapPOIItem
@@ -178,26 +176,41 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
         }
 
         saveButton.setOnClickListener {
-            curAddress = curMarker!!.itemName
-            val placeDatas = replaceWithData()
-            val placeData = PlaceData(curAddress!!, curLatitude!!, curLongitude!!)
-            //long pressed 로 들어왔을 때
-            if(intent.getStringExtra("mode") == "longPressed"){
-                val todoIntent = Intent(this.context, AddTodo::class.java)
-                todoIntent.putExtra("placeData", placeData)
-                todoIntent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
-                todoIntent.putExtra("mode", "longPressed")
-                finish()
-                startActivity(todoIntent)
+            if(locations.isEmpty()) {
+                val builder: AlertDialog.Builder = AlertDialog.Builder(
+                    ContextThemeWrapper(
+                        context,
+                        R.style.Theme_AppCompat_Light_Dialog_Alert
+                    )
+                )
+                builder.setTitle("장소 미 선택")
+                builder.setMessage("알람을 설정할 장소가 선택 되어 있지 않습니다. 장소를 선택해주세요.")
+                builder.setPositiveButton("확인") { dialog, id ->
 
-            } else {    //(+)버튼으로 들어왔을 때
-                val intent = Intent()
-                intent.putExtra("placeData", placeData)
-                intent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
-                finish()
-                setResult(Activity.RESULT_OK, intent)
+                }
+                builder.show()
+            } else {
+                curAddress = curMarker!!.itemName
+                val placeDatas = replaceWithData()
+                val placeData = PlaceData(curAddress!!, curLatitude!!, curLongitude!!)
+                //long pressed 로 들어왔을 때
+                if (intent.getStringExtra("mode") == "longPressed") {
+                    val todoIntent = Intent(this.context, AddTodo::class.java)
+                    todoIntent.putExtra("placeData", placeData)
+                    todoIntent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
+                    todoIntent.putExtra("mode", "longPressed")
+                    startActivity(todoIntent)
+                    finish()
+
+                } else {    //(+)버튼으로 들어왔을 때
+                    val intent = Intent()
+                    intent.putExtra("placeData", placeData)
+                    intent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }
+
             }
-
         }
 
     }

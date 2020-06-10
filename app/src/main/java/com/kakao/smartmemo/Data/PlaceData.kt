@@ -30,4 +30,5 @@ data class PlaceData(var place : String, var latitude : Double = 0.0, var longit
             return arrayOfNulls(size)
         }
     }
+
 }
