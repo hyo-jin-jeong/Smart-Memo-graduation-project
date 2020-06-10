@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.Service
 
 import android.app.*
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -12,11 +13,14 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.kakao.smartmemo.R
+import com.kakao.smartmemo.Receiver.DeviceBootPlaceReceiver
+import com.kakao.smartmemo.Receiver.PlaceReceiver
 import com.kakao.smartmemo.Utils.Utils.getLocationText
 import com.kakao.smartmemo.Utils.Utils.getLocationTitle
 import com.kakao.smartmemo.Utils.Utils.requestingLocationUpdates
 import com.kakao.smartmemo.Utils.Utils.setRequestingLocationUpdates
 import com.kakao.smartmemo.View.AddTodo
+import java.util.*
 import kotlin.math.acos
 import kotlin.math.cos
 import kotlin.math.sin
@@ -36,6 +40,11 @@ class LocationUpdatesService : Service() {
      * Contains parameters used by [com.google.android.gms.location.FusedLocationProviderApi].
      */
     private var mLocationRequest: LocationRequest? = null
+
+    private val PlaceNotificationID = (System.currentTimeMillis()/1000).toInt()
+    private val placeCalendar = Calendar.getInstance()
+    private var addTodo : AddTodo = AddTodo()
+    private var settingsTime = 0
 
     /**
      * Provides access to the Fused Location Provider API.
@@ -217,7 +226,7 @@ class LocationUpdatesService : Service() {
         )
 
         // The PendingIntent to launch activity.
-        val activityPendingIntent = PendingIntent.getActivity(  //메인으로 넘어감
+        val activityPendingIntent = PendingIntent.getActivity(  //AddTodo으로 넘어감
             this, 0,
             Intent(this, AddTodo::class.java), 0
         )
@@ -286,29 +295,30 @@ class LocationUpdatesService : Service() {
         }
 
         AlarmNotificationManager?.notify(NOTIFICATION_ID_NOTIFICATION, notificationbuilder.build())
-
-        /*val text: CharSequence = getLocationText(mLocation)
-
-        val alarmIntent = Intent(this, Receiver::class.java)
-        alarmIntent.putExtra("location", text.toString())
-        val pendingIntent = PendingIntent.getBroadcast(this, 2, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if(alarmManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    Calendar.getInstance().timeInMillis,
-                    pendingIntent
-                )
-                alarmManager.setRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    Calendar.getInstance().timeInMillis,
-                    AlarmManager.INTERVAL_DAY,
-                    pendingIntent
-                )
-            }
-        }*/
     }
+
+    /*private fun setPlaceAlarm(calendar : Calendar) {
+        val text: CharSequence = getLocationText(mLocation)
+
+        val pm = this.packageManager
+        val placereceiver = ComponentName(this, DeviceBootPlaceReceiver::class.java)
+        val placealarmIntent = Intent(this, PlaceReceiver::class.java)
+
+        if (titleEdit.text!=null) {
+            val todoTitle = titleEdit.text.toString()
+            placealarmIntent.putExtra("todoTitle", todoTitle)
+        }
+
+        //DB작업끝난후 바꿔야함.
+        placealarmIntent.putExtra("todoPlace", "온누리 약국")
+
+        placealarmIntent.putExtra("todoId", PlaceNotificationID) //reqeustcode 때문에 넣어준 것!!
+        Log.v("seyuuuun", "notificationId in place" + PlaceNotificationID)
+
+        val pendingIntent = PendingIntent.getBroadcast(this, PlaceNotificationID, placealarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
+        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val interval = 1000*60*settingTime
+    }*/
 
     private fun getLastLocation() {
         try {
@@ -347,20 +357,14 @@ class LocationUpdatesService : Service() {
             if (calDistance(mLocation!!)) {
                 Log.e("jieun", "이 지점에 300m 안이라 $locationtext")
                 receiver()
+                //placeCalendar.timeInMillis
+                //addTodo.setPlaceAlarm(placeCalendar)
             }
 
             mNotificationManager!!.notify(
                 NOTIFICATION_ID,
                 getNotification()
             )
-            //내가 한 코드
-            /*val locationIntent = Intent(this, LocationUpdatesService::class.java)
-            val extraValue = locationIntent.getBooleanExtra(EXTRA_START_FROM_NOTIFICATION, false)
-            Log.v("seyuuuun", extraValue.toString())
-            if(extraValue) {
-                Log.v("seyuuuun", extraValue.toString())
-            }
-            Log.v("seyuuuun", start.toString())*/
         }
 
 
@@ -368,8 +372,14 @@ class LocationUpdatesService : Service() {
 
     fun calDistance(location: Location): Boolean {
 
+<<<<<<< HEAD
         val curLatitude = 37.595743
         val curLongitude = 127.020295
+=======
+        //장소 바꿔놓음
+        val curLatitude = 37.598985
+        val curLongitude = 127.014712
+>>>>>>> origin/naseyun
         val theta: Double
         var dist: Double
         theta = curLongitude - location.longitude
@@ -384,8 +394,14 @@ class LocationUpdatesService : Service() {
         dist *= 1.609344 // 단위 mile 에서 km 변환.
         dist *= 1000.0 // 단위  km 에서 m 로 변환
 
+<<<<<<< HEAD
         Log.e("jieun", "확인중 $dist")
         return dist <= 300
+=======
+        //Log.e("jieun", "확인중 $dist")
+        Log.v("seyuuuun", "거리 : $dist")
+        return dist <= 200
+>>>>>>> origin/naseyun
     }
 
     // 주어진 도(degree) 값을 라디언으로 변환
