@@ -397,6 +397,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             setPlaceListAdapter()
         } else {
             placeData = intent.getParcelableExtra<PlaceData>("placeData")
+            setPlaceListAdapter()
         }
 
     }
@@ -406,7 +407,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 200 -> {
-                    placeData = data!!.getParcelableExtra<PlaceData>("placeData")
+                    placeData = data!!.getParcelableExtra("placeData")
                     placeList = data!!.getParcelableArrayListExtra("todoPlaceAlarm")
                     setPlaceListAdapter()
                 }
