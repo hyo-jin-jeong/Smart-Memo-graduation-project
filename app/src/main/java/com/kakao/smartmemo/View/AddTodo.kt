@@ -395,6 +395,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             placeData = intent.getParcelableExtra<PlaceData>("placeData")
             placeList = intent.getParcelableArrayListExtra("todoPlaceAlarm")
             setPlaceListAdapter()
+        } else {
+            placeData = intent.getParcelableExtra<PlaceData>("placeData")
         }
 
     }

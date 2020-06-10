@@ -191,6 +191,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                     val placeData = PlaceData(mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
                     addTodoIntent.putExtra("placeData", placeData)
                     addTodoIntent.putExtra("mode", "fromMain")
+                    Log.e("jieun", "placeData = $placeData")
                 }
                 startActivity(addTodoIntent)
             }
