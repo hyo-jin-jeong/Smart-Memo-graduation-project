@@ -71,7 +71,7 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <receiver android:name=".Receiver.DeviceBootAlarmReceiver"
+        <receiver android:name=".Receiver.DeviceBootTimeReceiver"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -83,7 +83,7 @@
                 <action android:name="android.intent.action.BATTERY_CHANGED"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".Receiver.AlarmReceiver">
+        <receiver android:name=".Receiver.TimeReceiver">
         </receiver>
         <receiver android:name=".Receiver.TodoReceiver">
         </receiver>
