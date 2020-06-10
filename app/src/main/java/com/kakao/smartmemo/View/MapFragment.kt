@@ -192,6 +192,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
     override fun onPause() {
         super.onPause()
+        mapView.removeAllPOIItems()
         usingMapView = false
         Log.e("jieun", "이것을 스침.")
     }

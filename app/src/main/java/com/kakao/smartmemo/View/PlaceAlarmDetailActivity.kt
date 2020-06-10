@@ -142,6 +142,10 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
             curLatitude = intent.getParcelableExtra<PlaceData>("placeData").latitude
             curLongitude = intent.getParcelableExtra<PlaceData>("placeData").longitude
             curAddress = intent.getParcelableExtra<PlaceData>("placeData").place
+        } else {
+            curAddress = "한성대학교"
+            curLatitude = 37.582276
+            curLongitude = 127.009850
         }
         var placeDatas: ArrayList<PlaceData>? = intent.getParcelableArrayListExtra("todoPlaceAlarm")
         if (!placeDatas.isNullOrEmpty()) {
