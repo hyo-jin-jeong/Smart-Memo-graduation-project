@@ -60,6 +60,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     private var todo = mutableListOf<PlaceData>()
     private var memo = mutableListOf<PlaceData>()
 
+
+    private val allMarkers = ArrayList<MapPOIItem>()
+
     private var isLongTouch: Boolean = false
 
     private var mLocationRequest: LocationRequest? = null
@@ -182,9 +185,10 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onStart() {
         super.onStart()
+        mapView.removeAllPOIItems()
+        allMarkers.clear()
         presenter.getTodoPlaceAlarm()
         presenter.getMemo()
-
     }
     override fun onPause() {
         super.onPause()
@@ -392,17 +396,17 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onMapViewInitialized(p0: MapView?) {
-        val mapPoint1 = MapPoint.mapPointWithGeoCoord(37.565841, 126.976825)
-        val memoAndTodo = createMarker("Memo And Todo", mapPoint1, R.drawable.memo_todo_icon)
-        mapView.addPOIItem(memoAndTodo)
-
-        val mapPoint2 = MapPoint.mapPointWithGeoCoord(37.565799, 126.975183)
-        val memo = createMarker("Memo", mapPoint2, R.drawable.memo_icon)
-        mapView.addPOIItem(memo)
-
-        val mapPoint3 = MapPoint.mapPointWithGeoCoord(37.564170, 126.978471)
-        val todo = createMarker("Todo", mapPoint3, R.drawable.todo_icon)
-        mapView.addPOIItem(todo)
+//        val mapPoint1 = MapPoint.mapPointWithGeoCoord(37.565841, 126.976825)
+//        val memoAndTodo = createMarker("Memo And Todo", mapPoint1, R.drawable.memo_todo_icon)
+//        mapView.addPOIItem(memoAndTodo)
+//
+//        val mapPoint2 = MapPoint.mapPointWithGeoCoord(37.565799, 126.975183)
+//        val memo = createMarker("Memo", mapPoint2, R.drawable.memo_icon)
+//        mapView.addPOIItem(memo)
+//
+//        val mapPoint3 = MapPoint.mapPointWithGeoCoord(37.564170, 126.978471)
+//        val todo = createMarker("Todo", mapPoint3, R.drawable.todo_icon)
+//        mapView.addPOIItem(todo)
     }
 
     override fun onMapViewDragStarted(p0: MapView?, p1: MapPoint?) {
@@ -566,11 +570,44 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onSuccess(placeList: MutableList<PlaceData>, status: String) {
+        val memoMapPoint = ArrayList<MapPoint>()
+        val todoMapPoint = ArrayList<MapPoint>()
         if (status == "todo") {
             todo = placeList
+
+            for (i in todo) {
+                var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)
+                if(!todoMapPoint.contains(mapPoint)){
+                    var todoMarker = createMarker("", mapPoint, R.drawable.todo_icon)
+                    todoMapPoint.add(mapPoint)
+                    //allMarkers.add(todoMarker)
+                    mapView.addPOIItem(todoMarker)
+                    Log.e("jieun", "todo $i 가 들어감")
+                }
+            }
+            if(todo.isEmpty()) {
+                Log.e("jieun", "todo 현재 못불러옴.")
+            }
         } else {
             memo = placeList
+
+            for (i in memo) {
+                var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)
+                if(!memoMapPoint.contains(mapPoint)){
+                    var memoMarker = createMarker("", mapPoint, R.drawable.memo_icon)
+                    memoMapPoint.add(mapPoint)
+                    //allMarkers.add(memoMarker)
+                    mapView.addPOIItem(memoMarker)
+                    Log.e("jieun", "memo $i 가 들어감")
+                }
+            }
+            if(memo.isEmpty()) {
+                Log.e("jieun", "memo 현재 못불러옴.")
+            }
         }
+
+
+        Log.e("jieun", "구분점~~~~")
     }
 
 }
