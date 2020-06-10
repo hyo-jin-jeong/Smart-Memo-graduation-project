@@ -9,8 +9,7 @@ data class PlaceData(val place : String, val latitude : Double = 0.0, val longit
         parcel.readString()!!,
         parcel.readDouble(),
         parcel.readDouble()
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(place)
