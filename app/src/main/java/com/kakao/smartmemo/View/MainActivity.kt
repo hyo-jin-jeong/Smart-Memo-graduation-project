@@ -180,6 +180,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 if (mainLocationModel.checkValue()) {
                     val placeData = PlaceData(mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
                     addMemoIntent.putExtra("placeData", placeData)
+                    Log.e("jieun", "placeData = $placeData")
                 }
                 startActivity(addMemoIntent)
             }
