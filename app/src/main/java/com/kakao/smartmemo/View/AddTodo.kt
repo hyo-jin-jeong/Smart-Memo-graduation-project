@@ -68,6 +68,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     private lateinit var placeSpinner: Spinner
     private var placePosition = 0
     private lateinit var placeAgainText: TextView
+    private lateinit var placeListAdapter: PlaceListAdapter
 
     // private lateinit var placeNames : String -> 선택한 장소 이름
     private lateinit var timebtn: ImageButton
@@ -97,14 +98,14 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     private var myReceiver: MyReceiver? = null
     private var mService: LocationUpdatesService? = null
     private var mBound = false
-      
+
     private var latitude: Double? = null
     private var longitude: Double? = null
     private var address: String? = null
     private var placeData: PlaceData? = null
     private var placeDatas: ArrayList<PlaceData>? = null
 
-    private var placeList = arrayListOf(PlaceData("연세병원"), PlaceData("학교"), PlaceData("집"))
+    private var placeList = arrayListOf<PlaceData>()
 
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -302,7 +303,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         }
 
         //장소선택시 나오는 listview 어댑터
-        var placeListAdapter = PlaceListAdapter(this, placeList)
+        placeListAdapter = PlaceListAdapter(this, placeList)
         placeListView.adapter = placeListAdapter
         presenter.setTodoPlaceAdapterModel(placeListAdapter)
         presenter.setTodoPlaceAdapterView(placeListAdapter)
@@ -446,11 +447,14 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                     //장소 리스트 intent
                     placeDatas = data!!.getParcelableArrayListExtra("todoPlaceAlarm")
                     if (!placeDatas.isNullOrEmpty()) {
-                        for (i in placeDatas!!.iterator()) {
-                            Log.e("jieun", i.toString())
+                        for (placeData in placeDatas!!.iterator()) {
+                            placeList.add(placeData)
+                            Log.e("jieun", placeData.toString())
                         }
-
+                        placeListAdapter.notifyAdapter()
                     }
+
+
                 }
             }
         }
@@ -534,7 +538,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             finish()
             var cancel = intent.getBooleanExtra(BROADCAST, false)
             Log.v("seyuuuun", "repeat: " + cancel.toString())
-          
+
             if(cancel.equals(true)) {
                 notifyTime = false
                 timeSwitch.isChecked = false

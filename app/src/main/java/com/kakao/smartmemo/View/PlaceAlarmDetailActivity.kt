@@ -51,7 +51,6 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
     private var curLatitude: Double? = null
     private var curMarker: MapPOIItem? = null
     private var curAddress: String? = null
-    private var centerAddress: String? = null
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var locationAdapter: LocationAdapter
