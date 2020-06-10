@@ -4,6 +4,7 @@ import android.util.Log
 import com.kakao.smartmemo.Contract.TodoAdapterContract
 import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Model.TodoModel
 

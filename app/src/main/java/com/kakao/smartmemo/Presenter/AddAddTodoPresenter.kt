@@ -6,9 +6,9 @@ import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Model.TodoModel
-import java.util.*
+import kotlin.collections.ArrayList
 
-class AddTodoPresenter : AddTodoContract.Presenter {
+class AddAddTodoPresenter : AddTodoContract.Presenter, AddTodoContract.OnAddTodoListener {
 
     var view : AddTodoContract.View
     var model : TodoModel
@@ -19,7 +19,7 @@ class AddTodoPresenter : AddTodoContract.Presenter {
 
     constructor(view: AddTodoContract.View) {
         this.view =  view
-        this.model = TodoModel()
+        this.model = TodoModel(this)
     }
 
     override fun addTodo(todoData: TodoData, placeList: ArrayList<PlaceData>) {
@@ -44,5 +44,20 @@ class AddTodoPresenter : AddTodoContract.Presenter {
 
     override fun getList(): MutableList<PlaceData> {
         return placeAdapterModel.getList()
+    }
+
+    override fun getPlace(status : String) {
+        model.getPlaceTodo(status)
+    }
+
+    override fun onSuccess(placeList: MutableList<PlaceData>) {
+        view.onSuccess(placeList)
+    }
+
+    override fun onFailure() {
+    }
+
+    override fun onAddSuccess() {
+        view.onAddSuccess()
     }
 }

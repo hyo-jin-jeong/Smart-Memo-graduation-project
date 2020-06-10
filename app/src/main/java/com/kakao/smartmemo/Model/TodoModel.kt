@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Data.PlaceData
@@ -20,6 +21,7 @@ class TodoModel {
     private var firebaseTodoId = firebase.child("TodoId")
     private lateinit var onTodoListener: TodoContract.OnTodoListener
     private lateinit var onPlaceListener: MapContract.OnPlaceListener
+    private lateinit var onAddTodoListener : AddTodoContract.OnAddTodoListener
 
     constructor()
     constructor(onTodoListener: TodoContract.OnTodoListener) {
@@ -27,6 +29,9 @@ class TodoModel {
     }
     constructor(onPlaceListener: MapContract.OnPlaceListener) {
         this.onPlaceListener = onPlaceListener
+    }
+    constructor(onAddTodoListener: AddTodoContract.OnAddTodoListener) {
+        this.onAddTodoListener = onAddTodoListener
     }
     data class TodoTmp(
         var title: String = "",
@@ -44,13 +49,13 @@ class TodoModel {
         var placeAgain: Int = 0
     )
     fun addTodo(todoData: TodoData, placeList: ArrayList<PlaceData>) { // Todo create와 update를 모두 하는 함수
+        var i = 0
         var todoId = ""
         todoId = if (todoData.todoId == "") {
             todoData.title + System.currentTimeMillis()
         } else {
             todoData.todoId
         }
-        Log.e("placeList Model", placeList.toString())
         var todotmp = TodoTmp(todoData.title,todoData.groupId)
         var timeAlarm = TimeAlarm(todoData.setTimeAlarm,todoData.timeDate,todoData.timeAgain,todoData.timeTime)
         var placeAlarm = PlaceAlarm(todoData.setPlaceAlarm,todoData.placeDate,todoData.placeAgain)
@@ -69,8 +74,13 @@ class TodoModel {
                 child("PlaceId").setValue("${it.latitude}!${it.longitude}")
                 updateChildren(mapOf(todoId to todoId))
             }
-
+            if (placeList.size - 1 == i) {
+                onAddTodoListener.onAddSuccess()
+            } else {
+                i++
+            }
         }
+
     }
 
     fun getAllTodo() {
@@ -133,7 +143,7 @@ class TodoModel {
         }
     }
 
-    fun getPlaceTodo() {
+    fun getPlaceTodo(status: String) {
         var i = 0
         var j = 0
         var m = 0
@@ -154,8 +164,13 @@ class TodoModel {
 
                                     placeList.add(PlaceData(place.key.toString(), latitude.toDouble(), longitude.toDouble()))
                                     if(m == placeSnapshot.children.count()-1&&j==todoSnapshot.children.count()-1&&i==FolderObject.folderInfo.size-1){
-                                        Log.e("dddd", "FASDFASDF")
-                                        onPlaceListener.onSuccess(placeList, "todo")
+                                        if (status == "addTodo") {
+                                            Log.e("djdjdj",placeList.toString())
+                                            onAddTodoListener.onSuccess(placeList)
+                                        } else if (status == "map") {
+                                            onPlaceListener.onSuccess(placeList, "todo")
+                                        }
+
                                     }else if(m == placeSnapshot.children.count()-1&&j==todoSnapshot.children.count()-1){
                                         m=0
                                         j=0

@@ -25,8 +25,8 @@ class MapPresenter: MapContract.Presenter, MapContract.OnMapListener, MapContrac
         memoModel.getPlaceMemo()
     }
 
-    override fun getTodoPlaceAlarm() {
-        todoModel.getPlaceTodo()
+    override fun getTodoPlaceAlarm(status: String) {
+        todoModel.getPlaceTodo(status)
     }
 
     override fun onSuccess(mapPOIItem: MapPOIItem, locationName: String?) {

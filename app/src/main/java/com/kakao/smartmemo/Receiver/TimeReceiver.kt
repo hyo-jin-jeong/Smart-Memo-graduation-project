@@ -12,14 +12,13 @@ import com.kakao.smartmemo.R
 import com.kakao.smartmemo.View.AddTodo
 import com.kakao.smartmemo.View.MainActivity
 
-class AlarmReceiver : BroadcastReceiver() {
+class TimeReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val notificationManager: NotificationManager = context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val todoTitle = intent?.getStringExtra("todoTitle")
-        val todoPlace = intent?.getStringExtra("todoPlace")
         val id = intent?.getIntExtra("todoId", 0) as Int
-        Log.v("seyuuuun", "id: " + id.toString())
+        //Log.v("seyuuuun", "(id) in time : " + id.toString()) //없애지 말아주세요,,,
 
         val notificationIntent = Intent(context, MainActivity::class.java)
         notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -46,8 +45,6 @@ class AlarmReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setAutoCancel(true)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            //.addAction(R.drawable.bell_icon, "다시 알림", repeatpendingIntent)
-            //.addAction(R.drawable.delete_icon, "알림 해제", cancelpendingIntent)
             .setFullScreenIntent(pendingIntent,true) //헤드업알림
             .setContent(contentview)
 
@@ -63,13 +60,13 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         notificationManager?.notify(id, notificationbuilder.build())
-        Log.v("seyuuuun", "notificationID in broadcast " + id.toString())
+        //Log.v("seyuuuun", "notificationtimeID in broadcast " + id.toString()) 없애지 말아주세요,,,
     }
 
     companion object {
-        val CHANNEL_ID = "알람"
-        val CHANNEL_NAME = "알림채널"
-        val CHANNEL_DESCRITION = "알림채널 리시버"
+        val CHANNEL_ID = "시간알림"
+        val CHANNEL_NAME = "시간알림채널"
+        val CHANNEL_DESCRITION = "시간알림채널 리시버"
         private const val PACKAGE_NAME = "com.kakao.smartmemo"
         val BROADCAST = "$PACKAGE_NAME.broadcast"
     }

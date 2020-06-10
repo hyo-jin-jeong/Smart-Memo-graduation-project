@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_centerInParent="true"
-            android:text="@string/tab_text_3"
+            android:text="TODO LIST"
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>

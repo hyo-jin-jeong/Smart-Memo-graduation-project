@@ -187,7 +187,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         super.onStart()
         mapView.removeAllPOIItems()
         allMarkers.clear()
-        presenter.getTodoPlaceAlarm()
+        presenter.getTodoPlaceAlarm("map")
         presenter.getMemo()
     }
     override fun onPause() {
