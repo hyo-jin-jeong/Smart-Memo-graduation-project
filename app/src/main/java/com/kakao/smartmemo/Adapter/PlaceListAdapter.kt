@@ -17,12 +17,12 @@ class PlaceListAdapter(val context: Context, val placeList: ArrayList<PlaceData>
     @SuppressLint("ResourceType")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view: View = LayoutInflater.from(context).inflate(R.layout.alarm_settings_list_item, null)
-        val textView_place = view.findViewById<TextView>(R.id.textView_alarm_place_list)
+        val textViewPlace = view.findViewById<TextView>(R.id.textView_alarm_place_list)
         val deletePlace = view.findViewById(R.id.btn_place_delete) as ImageButton
 
-        val Place = placeList[position]
+        val place = placeList[position]
 
-        textView_place.text = Place.place
+        textViewPlace.text = place.place
 
         deletePlace.setOnClickListener {
             placeList.remove(getItem(position))
@@ -56,4 +56,7 @@ class PlaceListAdapter(val context: Context, val placeList: ArrayList<PlaceData>
 
     }
 
+    override fun getList(): ArrayList<PlaceData> {
+        return placeList
+    }
 }

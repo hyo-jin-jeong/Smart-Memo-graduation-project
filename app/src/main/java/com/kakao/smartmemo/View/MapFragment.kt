@@ -1,27 +1,22 @@
 package com.kakao.smartmemo.View
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import android.provider.Settings
 import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,7 +26,10 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.kakao.smartmemo.Adapter.LocationAdapter
-import com.kakao.smartmemo.ApiConnect.*
+import com.kakao.smartmemo.ApiConnect.ApiClient
+import com.kakao.smartmemo.ApiConnect.ApiInterface
+import com.kakao.smartmemo.ApiConnect.CategoryResult
+import com.kakao.smartmemo.ApiConnect.Document
 import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Presenter.MapPresenter
@@ -59,6 +57,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     private lateinit var locationAdapter: LocationAdapter
 
     private var documentList: ArrayList<Document> = ArrayList()
+    private var todo = mutableListOf<PlaceData>()
+    private var memo = mutableListOf<PlaceData>()
 
     private var isLongTouch: Boolean = false
 
@@ -180,6 +180,12 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        presenter.getTodoPlaceAlarm()
+        presenter.getMemo()
+
+    }
     override fun onPause() {
         super.onPause()
         usingMapView = false
@@ -557,6 +563,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun getLocationName(mapPOIItem: MapPOIItem, locationName: String?) {
         convertedAddress = locationName
+    }
+
+    override fun onSuccess(placeList: MutableList<PlaceData>, status: String) {
+        if (status == "todo") {
+            todo = placeList
+        } else {
+            memo = placeList
+        }
     }
 
 }

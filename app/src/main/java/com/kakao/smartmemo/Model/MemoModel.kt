@@ -1,22 +1,27 @@
 package com.kakao.smartmemo.Model
 
-import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Contract.MemoContract
 import com.kakao.smartmemo.Data.MemoData
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Object.FolderObject
 
 class MemoModel {
     private lateinit var onMemoListener: MemoContract.OnMemoListener
+    private lateinit var onPlaceListener: MapContract.OnPlaceListener
     private var firebaseMemo = FirebaseDatabase.getInstance().reference.child("Memo")
     private var firebaseGroup = FirebaseDatabase.getInstance().reference.child("Group")
 
     constructor()
     constructor(onMemoListener: MemoContract.OnMemoListener) {
         this.onMemoListener = onMemoListener
+    }
+    constructor(onPlaceListener: MapContract.OnPlaceListener) {
+        this.onPlaceListener = onPlaceListener
     }
 
     fun addMemo(memoData: MemoData) {
@@ -138,6 +143,40 @@ class MemoModel {
     fun deleteMemoInfo(groupId: String, memoId: String) {
 
 
+    }
+
+    fun getPlaceMemo() {
+        var i = 0
+        var j = 0
+        var placeList = mutableListOf<PlaceData>()
+        FolderObject.folderInfo.forEach {
+            firebaseGroup.child(it.key).child("MemoInfo").addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) { }
+
+                override fun onDataChange(memoSnapshot: DataSnapshot) {
+                    memoSnapshot.children.forEach {memoId ->
+                        firebaseMemo.child(memoId.value.toString()).addValueEventListener(object : ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) { }
+
+                            override fun onDataChange(placeSnapshot: DataSnapshot) {
+                                placeList.add(PlaceData(placeSnapshot.child("placeName").value.toString(),
+                                    placeSnapshot.child("latitude").value.toString().toDouble(),
+                                    placeSnapshot.child("longitude").value.toString().toDouble()))
+                                if (i == memoSnapshot.children.count()-1 && j ==FolderObject.folderInfo.size-1) {
+                                    onPlaceListener.onSuccess(placeList, "memo")
+                                } else if (i == memoSnapshot.children.count()-1) {
+                                    i = 0
+                                    j++
+                                } else {
+                                    i++
+                                }
+                            }
+
+                        })
+                    }
+                }
+            })
+        }
     }
 }
 

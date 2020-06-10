@@ -176,35 +176,25 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
 
         saveButton.setOnClickListener {
             curAddress = curMarker!!.itemName
+            val placeDatas = replaceWithData()
+            val placeData = PlaceData(curAddress!!, curLatitude!!, curLongitude!!)
             //long pressed 로 들어왔을 때
             if(intent.getStringExtra("mode") == "longPressed"){
                 val todoIntent = Intent(this.context, AddTodo::class.java)
-                val placeData = PlaceData(curAddress!!, curLatitude!!, curLongitude!!)
-                val placeDatas = replaceWithData()
                 todoIntent.putExtra("placeData", placeData)
                 todoIntent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
-                for (i in placeDatas.indices) {
-                    var placeData =
-                        PlaceData(locationNames[i], locations[i].latitude, locations[i].longitude)
-                    Log.e("jieun", "선택된 장소들 $placeData")
-                }
                 todoIntent.putExtra("mode", "longPressed")
-                startActivity(todoIntent)
                 finish()
+                startActivity(todoIntent)
+
             } else {    //(+)버튼으로 들어왔을 때
                 val intent = Intent()
-                val placeDatas = replaceWithData()
-                val placeData = PlaceData(curAddress!!, curLatitude!!, curLongitude!!)
                 intent.putExtra("placeData", placeData)
                 intent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
-                for (i in placeDatas.indices) {
-                    var placeData =
-                        PlaceData(locationNames[i], locations[i].latitude, locations[i].longitude)
-                    Log.e("jieun", "선택된 장소들 $placeData")
-                }
-                setResult(Activity.RESULT_OK, intent)
                 finish()
+                setResult(Activity.RESULT_OK, intent)
             }
+
         }
 
     }
