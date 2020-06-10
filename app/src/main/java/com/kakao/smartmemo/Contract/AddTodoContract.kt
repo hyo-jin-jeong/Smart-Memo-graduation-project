@@ -5,7 +5,8 @@ import com.kakao.smartmemo.Data.TodoData
 
 interface AddTodoContract {
     interface View {
-
+        fun onSuccess(placeList: MutableList<PlaceData>)
+        fun onAddSuccess()
     }
     interface Presenter {
         fun addTodo(todoData: TodoData, placeList: ArrayList<PlaceData>)
@@ -14,5 +15,11 @@ interface AddTodoContract {
         fun setTodoPlaceAdapterModel(adapterModel : TodoPlaceAdapterContract.Model)
         fun setTodoPlaceAdapterView(adapterView : TodoPlaceAdapterContract.View)
         fun getList(): MutableList<PlaceData>
+        fun getPlace(status: String)
+    }
+    interface OnAddTodoListener {
+        fun onSuccess(placeList: MutableList<PlaceData>)
+        fun onFailure()
+        fun onAddSuccess()
     }
 }

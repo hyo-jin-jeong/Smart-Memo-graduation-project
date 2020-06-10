@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.kakao.smartmemo.Contract.AddMemoContract
 import com.kakao.smartmemo.Data.MemoData
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Presenter.AddMemoPresenter
 import com.kakao.smartmemo.R
@@ -29,7 +30,8 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
     private lateinit var selectGroupBtn: Button
     private lateinit var groupName: TextView
     private lateinit var placeNameText: TextView
-    private lateinit var data: MemoData
+    private lateinit var memoData: MemoData
+    private lateinit var placeData: PlaceData
     private var groupId = ""
     private var originGroupId = ""
     private var memoId = ""
@@ -59,20 +61,26 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         val date = Date(System.currentTimeMillis())
         val formatDate = SimpleDateFormat("yyyy.MM.dd")
         var today = formatDate.format(date)
-        var memoData: MemoData
+
         dateText.text = today
 
         if (intent.hasExtra("memoData")) {
             hasData = true
-            data = intent.getParcelableExtra("memoData")
-            placeNameText.text = data.placeName
-            titleEdit.setText(data.title)
-            contentEdit.setText(data.content)
-            groupName.text = FolderObject.folderInfo[data.groupId]
-            originGroupId = data.groupId
-            memoId = data.memoId
+            this.memoData = intent.getParcelableExtra("memoData")
+            placeNameText.text = this.memoData.placeName
+            titleEdit.setText(this.memoData.title)
+            contentEdit.setText(this.memoData.content)
+            groupName.text = FolderObject.folderInfo[this.memoData.groupId]
+            originGroupId = this.memoData.groupId
+            memoId = this.memoData.memoId
 
         }
+
+        if (intent.hasExtra("placeData")) {
+            placeData = intent.getParcelableExtra("placeData")
+            placeNameText.text = placeData.place
+        }
+
         saveBtn.setOnClickListener {
             if (groupName.text == "[그룹 선택]" || contentEdit.text.toString() == "") {
                 if (groupName.text == "[그룹 선택]") {
@@ -96,8 +104,8 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
                     contentEdit.text.toString(),
                     originGroupId,
                     placeNameText.text.toString(),
-                    "",
-                    ""
+                    placeData.latitude.toString(),
+                    placeData.longitude.toString()
                 )
                 presenter.addMemo(memoData)
                 if (hasData) {
