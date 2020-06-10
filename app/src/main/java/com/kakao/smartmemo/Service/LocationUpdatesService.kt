@@ -371,15 +371,9 @@ class LocationUpdatesService : Service() {
     }
 
     fun calDistance(location: Location): Boolean {
-
-<<<<<<< HEAD
-        val curLatitude = 37.595743
-        val curLongitude = 127.020295
-=======
         //장소 바꿔놓음
         val curLatitude = 37.598985
         val curLongitude = 127.014712
->>>>>>> origin/naseyun
         val theta: Double
         var dist: Double
         theta = curLongitude - location.longitude
@@ -393,15 +387,9 @@ class LocationUpdatesService : Service() {
         dist *= 60 * 1.1515
         dist *= 1.609344 // 단위 mile 에서 km 변환.
         dist *= 1000.0 // 단위  km 에서 m 로 변환
-
-<<<<<<< HEAD
-        Log.e("jieun", "확인중 $dist")
-        return dist <= 300
-=======
         //Log.e("jieun", "확인중 $dist")
         Log.v("seyuuuun", "거리 : $dist")
         return dist <= 200
->>>>>>> origin/naseyun
     }
 
     // 주어진 도(degree) 값을 라디언으로 변환
