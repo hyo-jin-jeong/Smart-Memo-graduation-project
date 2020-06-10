@@ -103,7 +103,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     private var myReceiver: MyReceiver? = null
     private var mService: LocationUpdatesService? = null
     private var mBound = false
-
     private var placeData: PlaceData? = null
     private var placeList = arrayListOf<PlaceData>()
 
@@ -500,7 +499,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             finish()
             var cancel = intent.getBooleanExtra(BROADCAST, false)
             Log.v("seyuuuun", "repeat: " + cancel.toString())
-          
+
             if(cancel.equals(true)) {
                 notifyTime = false
                 timeSwitch.isChecked = false

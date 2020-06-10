@@ -32,6 +32,10 @@ class PlaceListAdapter(val context: Context, val placeList: ArrayList<PlaceData>
         return view
     }
 
+    fun addItem(item: PlaceData) {
+        placeList.add(item)
+    }
+
     override fun getItem(position: Int): Any {
         return placeList[position]
     }
