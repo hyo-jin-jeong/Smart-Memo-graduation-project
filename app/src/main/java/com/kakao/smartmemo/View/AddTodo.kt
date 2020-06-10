@@ -26,7 +26,7 @@ import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
-import com.kakao.smartmemo.Presenter.AddTodoPresenter
+import com.kakao.smartmemo.Presenter.AddAddTodoPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.AlarmReceiver
 import com.kakao.smartmemo.Receiver.DeviceBootAlarmReceiver
@@ -38,7 +38,6 @@ import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.ArrayList
 
 class AddTodo : AppCompatActivity(), AddTodoContract.View,
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -138,7 +137,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // presenter 초기화
-        presenter = AddTodoPresenter(this)
+        presenter = AddAddTodoPresenter(this)
         titleEdit = findViewById(R.id.edit_todolist)
         selectGroupBtn = findViewById(R.id.todo_select_group)
         timeSwitch = findViewById(R.id.switch_time)
@@ -830,5 +829,14 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                 )  //->True
             )*/
         }
+    }
+
+    override fun onSuccess(placeList: MutableList<PlaceData>) {
+        // Service로 위치 정보 넘기기 placeList가 PlaceData 형식이 들어있는 리스트에용
+        Log.e("Add Todo placeList", placeList.toString())
+    }
+
+    override fun onAddSuccess() {
+        presenter.getPlace("addTodo")
     }
 }

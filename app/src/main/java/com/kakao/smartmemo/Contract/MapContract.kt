@@ -14,7 +14,7 @@ interface MapContract {
     interface Presenter{
         fun convertAddressFromMapPOIItem(mapPOIItem: MapPOIItem)
         fun getMemo()
-        fun getTodoPlaceAlarm()
+        fun getTodoPlaceAlarm(status: String)
     }
     interface OnMapListener{
         fun onSuccess(mapPOIItem: MapPOIItem, locationName: String?)
