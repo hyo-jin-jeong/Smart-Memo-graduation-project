@@ -44,12 +44,14 @@
                     android:hint="TODO를 입력하세요"
                     android:inputType="textPersonName"
                     android:textColor="#817F7F" />
+
                 <Button
                     android:id="@+id/todo_select_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="그룹 선택"
-                    android:layout_alignRight="@+id/edit_todolist"/>
+                    android:layout_alignRight="@+id/edit_todolist"
+                    android:background="@null"
+                    android:text="그룹 선택" />
             </LinearLayout>
             <androidx.cardview.widget.CardView
                 android:id="@+id/time_alarm_layout"

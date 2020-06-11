@@ -4,6 +4,9 @@ import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
@@ -20,6 +23,8 @@ class TimeReceiver : BroadcastReceiver() {
         val id = intent?.getIntExtra("todoId", 0) as Int
         //Log.v("seyuuuun", "(id) in time : " + id.toString()) //없애지 말아주세요,,,
 
+        val IconNoti = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.bell_icon_on)
+
         val notificationIntent = Intent(context, MainActivity::class.java)
         notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
 
@@ -33,6 +38,7 @@ class TimeReceiver : BroadcastReceiver() {
         //헤드업알림
         val contentview = RemoteViews(context.packageName, R.layout.time_notification)
         contentview.setTextViewText(R.id.notification_Title, "TODOLIST 시간알림") //title
+        contentview.setImageViewBitmap(R.id.imageView_Time, IconNoti) //아이콘
         contentview.setTextViewText(R.id.textView_alarm, todoTitle)  //content
         contentview.setOnClickPendingIntent(R.id.cancel_notification, cancelpendingIntent)
 

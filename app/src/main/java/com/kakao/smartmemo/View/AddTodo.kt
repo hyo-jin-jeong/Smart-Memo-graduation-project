@@ -505,6 +505,16 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                 unsetTimeAlarm()
             }
         }
+        if(intent.hasExtra(BROADCASTPLACE)) {
+            finish()
+            var cancel = intent.getBooleanExtra(BROADCASTPLACE, false)
+            Log.v("seyuuuun", "repeat in place: " + cancel.toString())
+
+            if(cancel.equals(true)) {
+                placeSwitch.isChecked = false
+                unsetPlaceAlarm()
+            }
+        }
     }
 
     private fun todoAlarm() {
@@ -587,53 +597,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
         if(PendingIntent.getBroadcast(this, TimeNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {
             alarmManager.cancel(pendingIntent)
+            Log.v("seyuuuun", "알림해제 in time")
         }
 
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
-        Log.v("seyuuuun", "알림해제2 in time")
-    }
-
-    fun setPlaceAlarm(calendar: Calendar) {  //시간알람, 장소알람
-        val pm = applicationContext.packageManager
-        val placereceiver = ComponentName(this, DeviceBootPlaceReceiver::class.java)
-        val placealarmIntent = Intent(this, PlaceReceiver::class.java)
-
-        if (titleEdit.text!=null) {
-            val todoTitle = titleEdit.text.toString()
-            placealarmIntent.putExtra("todoTitle", todoTitle)
-        }
-
-        //DB작업끝난후 바꿔야함.
-        placealarmIntent.putExtra("todoPlace", "온누리 약국")
-
-        placealarmIntent.putExtra("todoId", PlaceNotificationID) //reqeustcode 때문에 넣어준 것!!
-        Log.v("seyuuuun", "notificationId in place" + PlaceNotificationID)
-
-        val pendingIntent = PendingIntent.getBroadcast(this, PlaceNotificationID, placealarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
-        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val interval = 1000*60*settingsPlaceMinutes
-
-        if(alarmManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.timeInMillis,
-                    pendingIntent
-                )
-                alarmManager.setRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.timeInMillis,
-                    interval.toLong(),
-                    pendingIntent
-                )
-            }
-            //부팅후 실행되는 리시버 사용가능하게 설정함.
-            pm.setComponentEnabledSetting(
-                placereceiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP
-            )
-        }
     }
 
     private fun unsetPlaceAlarm() {
@@ -649,7 +616,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             Log.v("seyuuuun", "알림해제 in place")
         }
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
-        Log.v("seyuuuun", "알림해제2 in place")
     }
 
     private fun setTodoAlarm(calendar: Calendar) {  // TODO 알람
@@ -715,6 +681,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     companion object {
         private const val PACKAGE_NAME = "com.kakao.smartmemo"
         val BROADCAST = "$PACKAGE_NAME.broadcast"
+        val BROADCASTPLACE = "$PACKAGE_NAME.broadcastplace"
         val NOTIFICATION = "$PACKAGE_NAME.notifiation"
         val NOTIFICATIONID = (System.currentTimeMillis()/1000).toInt()
         private val TAG = AddTodo::class.java.simpleName

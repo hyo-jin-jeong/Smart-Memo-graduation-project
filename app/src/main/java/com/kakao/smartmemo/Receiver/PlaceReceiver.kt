@@ -7,6 +7,8 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
@@ -22,7 +24,10 @@ class PlaceReceiver : BroadcastReceiver(){
         val todoTitle = intent?.getStringExtra("todoTitle")
         val todoPlace = intent?.getStringExtra("todoPlace")
         val id = intent?.getIntExtra("todoId", 0) as Int
+        val todoText = intent?.getStringExtra("todoText")
         Log.v("seyuuuun", "(id) in place : " + id.toString())
+
+        val IconNoti = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.bell_icon_on)
 
         val notificationIntent = Intent(context, MainActivity::class.java)
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -37,8 +42,9 @@ class PlaceReceiver : BroadcastReceiver(){
         //헤드업알림
         val contentview = RemoteViews(context.packageName, R.layout.location_notification)
         contentview.setTextViewText(R.id.notification_Title, "TODOLIST 장소알림") //title
+        contentview.setImageViewBitmap(R.id.imageView_Place, IconNoti) //아이콘
         contentview.setTextViewText(R.id.textView_alarm, todoTitle)  //content
-        contentview.setTextViewText(R.id.textView_alarmlocation, todoPlace)
+        contentview.setTextViewText(R.id.textView_alarmlocation, todoText)
         contentview.setOnClickPendingIntent(R.id.cancel_notification, cancelpendingIntent)
 
         val notificationbuilder  = NotificationCompat.Builder(context, CHANNEL_ID)
@@ -73,6 +79,6 @@ class PlaceReceiver : BroadcastReceiver(){
         val CHANNEL_NAME = "장소알림채널"
         val CHANNEL_DESCRITION = "장소알림채널 리시버"
         private const val PACKAGE_NAME = "com.kakao.smartmemo"
-        val BROADCASTPLACE = "$PACKAGE_NAME.broadcast"
+        val BROADCASTPLACE = "$PACKAGE_NAME.broadcastplace"
     }
 }
