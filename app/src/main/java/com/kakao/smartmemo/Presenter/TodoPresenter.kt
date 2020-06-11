@@ -57,4 +57,9 @@ class TodoPresenter : TodoContract.Presenter, TodoContract.OnTodoListener {
 
     }
 
+    override fun onGroupSuccess(todoList: MutableList<TodoData>, placeList: MutableList<PlaceData>) {
+        view.showAllTodo(todoList)
+        view.sendPlaceData(placeList)
+    }
+
 }

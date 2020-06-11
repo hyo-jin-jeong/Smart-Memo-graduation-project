@@ -28,8 +28,8 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
     lateinit var logoutLayout : RelativeLayout
     lateinit var nothingTextView : TextView
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         userEmail.text = UserObject.email
         userName.text = UserObject.user_name
         userAddr.text = UserObject.addr

@@ -157,10 +157,74 @@ class TodoModel {
     }
 
     fun getGroupTodo(groupId: String) {
-        var todoData = mutableListOf<TodoData>()
-        var groupColor: Long = 0
+        var todoList = mutableListOf<TodoData>()
+        var placeList = mutableListOf<PlaceData>()
+        var i = 0
+        var j = 0
+        var m = 0
 
-        onTodoListener.onSuccess(todoData)
+        firebaseGroup.child(groupId).child("TodoInfo").addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {  }
+            override fun onDataChange(todoSnapshot: DataSnapshot) {
+                todoSnapshot.children.forEach { todoId ->
+                    firebaseTodo.child(todoId.key.toString()).addValueEventListener(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) { }
+                        override fun onDataChange(todoDataSnapshot: DataSnapshot) {
+                            val placeAlarm = todoDataSnapshot.child("PlaceAlarm").getValue(PlaceAlarm::class.java)
+                            val timeAlarm = todoDataSnapshot.child("TimeAlarm").getValue(TimeAlarm::class.java)
+
+                            if (timeAlarm != null && placeAlarm != null) {
+                                todoList.add(i, TodoData(
+                                    todoId.key.toString(),
+                                    todoDataSnapshot.child("title").value.toString(),
+                                    groupId,
+                                    timeAlarm.setTimeAlarm, timeAlarm.timeDate, timeAlarm.timeTime, timeAlarm.timeAgain,
+                                    placeAlarm.setPlaceAlarm, placeAlarm.placeDate, placeAlarm.placeAgain
+                                ))
+                                Log.e("todoData1111", todoList.toString())
+                                if (todoList[i] != null) {
+                                    i++
+                                }
+                            }
+
+                            if (placeAlarm!!.setPlaceAlarm) {
+                                // Place 정보
+                                firebaseTodoId.child(todoId.key.toString()).addValueEventListener(object : ValueEventListener {
+                                    override fun onCancelled(p0: DatabaseError) {  }
+
+                                    override fun onDataChange(placeDataSnapshot: DataSnapshot) {
+
+                                            placeDataSnapshot.children.forEach {
+                                                placeList.add(
+                                                    m, PlaceData(
+                                                        it.key.toString(),
+                                                        it.value.toString().substringBefore("!").toDouble(),
+                                                        it.value.toString().substringAfter("!").toDouble()
+                                                    )
+                                                )
+                                                Log.e("asdfasdf", placeList.toString())
+                                                m++
+                                            }
+                                            if (placeDataSnapshot.children.count() == m && placeList[placeDataSnapshot.children.count() - 1] != null) {
+                                                Log.e("asdfa!!sdf", placeList.toString())
+                                                m = 0
+                                                j++
+                                            }
+                                            if (i == todoSnapshot.children.count() && j == todoSnapshot.children.count()) {
+                                                Log.e("asdfasd@#@$#f", placeList.toString())
+                                                onTodoListener.onGroupSuccess(todoList, placeList)
+                                            }
+                                    }
+                                })
+                            } else {
+                                onTodoListener.onSuccess(todoList)
+                            }
+                        }
+                    })
+
+                }
+            }
+        })
     }
 
     fun deleteTodo(deleteTodoList: MutableList<TodoData>) {

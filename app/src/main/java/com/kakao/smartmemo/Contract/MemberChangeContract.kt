@@ -7,6 +7,9 @@ interface MemberChangeContract {
         fun getProfile(){}
         fun updateUser(context: Activity, pw: String, name: String, addr: String, kakaoAlarmTime: String){}
         fun updatePassword(pw:String)
+        fun signOutUser() {}
+        fun checkPassword(confirmPassword: String) :Boolean{return true}
+        fun deleteUser(){}
     }
     interface  View{
         fun onSuccess()

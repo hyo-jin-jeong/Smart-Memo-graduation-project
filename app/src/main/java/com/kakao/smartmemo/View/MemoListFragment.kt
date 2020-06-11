@@ -86,9 +86,13 @@ class MemoListFragment : Fragment(), MemoContract.View {
     }
 
     override fun showAllMemo(memoList: MutableList<MemoData>) {
-        this.memoList.clear()
-        this.memoList = memoList
         count = 0
+        this.memoList.clear()
+        if (memoList.isEmpty()) {
+            memoList.clear()
+        } else {
+            this.memoList = memoList
+        }
         memoAdapter = MemoListAdapter(this.memoList)
         recyclerView1.adapter = memoAdapter
         presenter.setMemoAdapterModel(memoAdapter)
@@ -131,7 +135,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     private fun selectGroup() {
         var i = 1
         val value: Array<CharSequence> = Array(FolderObject.folderInfo.size + 1) { "" }
-        val key: Array<CharSequence> = Array(FolderObject.folderInfo.size + 1) { "" }
+        val key: Array<CharSequence> = Array(FolderObject.folderInfo.size + 1) { "" } // folderId
         value[0] = "전체메모"
         FolderObject.folderInfo.forEach {
             value[i] = it.value
@@ -150,7 +154,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
                 } else {
                     (activity as MainActivity).toolbar.title = value[which]
 //                    FolderObject.selectFolderInfo = key[which].toString()
-//                    presenter.getFolderMemo()
+                    presenter.getFolderMemo(key[which].toString())
                 }
 
             })
