@@ -1,11 +1,15 @@
 package com.kakao.smartmemo.Model
 
 import android.util.Log
-import android.view.ActionProvider
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.kakao.smartmemo.Contract.AddTodoContract
+import com.kakao.smartmemo.Contract.DialogContract
 import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Contract.TodoContract
+import com.kakao.smartmemo.Data.PlaceAlarmData
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.FolderObject
@@ -20,6 +24,7 @@ class TodoModel {
     private lateinit var onTodoListener: TodoContract.OnTodoListener
     private lateinit var onPlaceListener: MapContract.OnPlaceListener
     private lateinit var onAddTodoListener: AddTodoContract.OnAddTodoListener
+//    private lateinit var onDialogListener: DialogContract.OnDialogListener
 
     constructor()
     constructor(onTodoListener: TodoContract.OnTodoListener) {
@@ -33,6 +38,10 @@ class TodoModel {
     constructor(onAddTodoListener: AddTodoContract.OnAddTodoListener) {
         this.onAddTodoListener = onAddTodoListener
     }
+
+//    constructor(onDialogListener: DialogContract.OnDialogListener) {
+//        this.onDialogListener = onDialogListener
+//    }
 
     data class TodoTmp(
         var title: String = "",
@@ -313,4 +322,44 @@ class TodoModel {
                 })
         }
     }
+
+//    fun getTodoInfo(todoList: MutableList<PlaceData>) {
+//        var i = 0
+//        var j = 0
+//        var todoInfoList = mutableListOf<PlaceAlarmData>()
+//        todoList.forEach {
+//            firebasePlace.child(it.place).addValueEventListener(object : ValueEventListener {
+//                override fun onCancelled(p0: DatabaseError) { }
+//
+//                override fun onDataChange(todoSnapshot: DataSnapshot) {
+//                    todoSnapshot.children.forEach { todoId ->
+//                        if (todoId.key.toString() != "PlaceId") {
+//                            firebaseTodo.child(todoId.key.toString()).addValueEventListener(object : ValueEventListener {
+//                                override fun onCancelled(p0: DatabaseError) { }
+//                                override fun onDataChange(todoAlarmSnapshot: DataSnapshot) {
+//                                    var placeAlarm = todoAlarmSnapshot.getValue(PlaceAlarm::class.java)
+//                                    var groupId = todoAlarmSnapshot.child("groupId").value.toString()
+//                                    var title = todoAlarmSnapshot.child("title").value.toString()
+//                                    todoInfoList.add(
+//                                        PlaceAlarmData(todoId.key.toString(),it.place, placeAlarm!!.placeDate, title, placeAlarm!!.setPlaceAlarm, groupId))
+//
+//                                    if (todoSnapshot.children.count() - 1 == i && todoList.size - 1 == j) {
+//                                        onDialogListener.onTodoSuccess(todoInfoList)
+//                                    } else if (todoSnapshot.children.count() - 1 == i) {
+//                                        i = 0
+//                                        j++
+//                                    } else {
+//                                        i++
+//                                    }
+//                                }
+//                            })
+//                        }
+//
+//
+//                    }
+//                }
+//
+//            })
+//        }
+//    }
 }
