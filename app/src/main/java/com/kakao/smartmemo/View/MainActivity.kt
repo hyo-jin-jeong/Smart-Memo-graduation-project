@@ -3,7 +3,8 @@ package com.kakao.smartmemo.View
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.PorterDuf
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -13,8 +14,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager.widget.ViewPager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -79,6 +78,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         tabs.getTabAt(1)?.setIcon(R.drawable.memo)
         tabs.getTabAt(2)?.setIcon(R.drawable.todo)
         tabs.getTabAt(3)?.setIcon(R.drawable.more)
+
+        tabs.getTabAt(0)?.icon?.setColorFilter(Color.parseColor("#49628a"), PorterDuff.Mode.SRC_IN)
+
        // tabs.getTabAt(0)?.text = ""
 
 
