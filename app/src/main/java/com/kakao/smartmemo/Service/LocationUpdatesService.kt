@@ -4,6 +4,7 @@ import android.app.*
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.location.Location
 import android.os.*
@@ -14,7 +15,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.DeviceBootPlaceReceiver
+import com.kakao.smartmemo.Receiver.DeviceBootTimeReceiver
 import com.kakao.smartmemo.Receiver.PlaceReceiver
+import com.kakao.smartmemo.Receiver.TimeReceiver
 import com.kakao.smartmemo.Utils.Utils.getLocationText
 import com.kakao.smartmemo.Utils.Utils.getLocationTitle
 import com.kakao.smartmemo.Utils.Utils.requestingLocationUpdates
@@ -297,28 +300,63 @@ class LocationUpdatesService : Service() {
         AlarmNotificationManager?.notify(NOTIFICATION_ID_NOTIFICATION, notificationbuilder.build())
     }
 
-    /*private fun setPlaceAlarm(calendar : Calendar) {
+    private fun setPlaceAlarm(calendar : Calendar) {
         val text: CharSequence = getLocationText(mLocation)
 
         val pm = this.packageManager
         val placereceiver = ComponentName(this, DeviceBootPlaceReceiver::class.java)
         val placealarmIntent = Intent(this, PlaceReceiver::class.java)
 
-        if (titleEdit.text!=null) {
-            val todoTitle = titleEdit.text.toString()
-            placealarmIntent.putExtra("todoTitle", todoTitle)
-        }
+        placealarmIntent.putExtra("todoTitle", "약사러 가기")
 
         //DB작업끝난후 바꿔야함.
         placealarmIntent.putExtra("todoPlace", "온누리 약국")
+        placealarmIntent.putExtra("todoText", text)
 
         placealarmIntent.putExtra("todoId", PlaceNotificationID) //reqeustcode 때문에 넣어준 것!!
         Log.v("seyuuuun", "notificationId in place" + PlaceNotificationID)
 
         val pendingIntent = PendingIntent.getBroadcast(this, PlaceNotificationID, placealarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val interval = 1000*60*settingTime
-    }*/
+        val interval = 1000*60*3  //3분
+
+        if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    pendingIntent
+                )
+                alarmManager.setRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    interval.toLong(),
+                    pendingIntent
+                )
+            }
+            //부팅후 실행되는 리시버 사용가능하게 설정함.
+            pm.setComponentEnabledSetting(
+                placereceiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP
+            )
+        }
+    }
+
+    private fun unsetPlaceAlarm() {
+        val pm = this.packageManager
+        val receiver = ComponentName(this, DeviceBootTimeReceiver::class.java)
+        val alarmIntent = Intent(this, TimeReceiver::class.java)
+
+        val pendingIntent = PendingIntent.getBroadcast(this, PlaceNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
+        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        if(PendingIntent.getBroadcast(this, PlaceNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {
+            alarmManager.cancel(pendingIntent)
+            Log.v("seyuuuun", "알림해제 in place")
+        }
+        pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
+    }
 
     private fun getLastLocation() {
         try {
@@ -356,9 +394,12 @@ class LocationUpdatesService : Service() {
         if (serviceIsRunningInForeground(this)) {
             if (calDistance(mLocation!!)) {
                 Log.e("jieun", "이 지점에 300m 안이라 $locationtext")
-                receiver()
-                //placeCalendar.timeInMillis
-                //addTodo.setPlaceAlarm(placeCalendar)
+                //receiver()
+                placeCalendar.timeInMillis
+                Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.HOUR_OF_DAY))
+                Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.MINUTE))
+                Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.SECOND))
+                setPlaceAlarm(placeCalendar)
             }
 
             mNotificationManager!!.notify(
@@ -372,8 +413,8 @@ class LocationUpdatesService : Service() {
 
     fun calDistance(location: Location): Boolean {
         //장소 바꿔놓음
-        val curLatitude = 37.598985
-        val curLongitude = 127.014712
+        val curLatitude = 37.582431
+        val curLongitude = 127.009425
         val theta: Double
         var dist: Double
         theta = curLongitude - location.longitude
@@ -389,7 +430,7 @@ class LocationUpdatesService : Service() {
         dist *= 1000.0 // 단위  km 에서 m 로 변환
         //Log.e("jieun", "확인중 $dist")
         Log.v("seyuuuun", "거리 : $dist")
-        return dist <= 200
+        return dist <= 300
     }
 
     // 주어진 도(degree) 값을 라디언으로 변환
