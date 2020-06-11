@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">SmartMemo</string>
     <string name="tab_text_1">MAP</string>
-    <string name="tab_text_2">MEMO\nLIST</string>
-    <string name="tab_text_3">TODO\nLIST</string>
+    <string name="tab_text_2">MEMO LIST</string>
+    <string name="tab_text_3">TODO LIST</string>
     <string name="tab_text_4">알람 관리</string>
     <string name="tab_text_5">더보기</string>
 
