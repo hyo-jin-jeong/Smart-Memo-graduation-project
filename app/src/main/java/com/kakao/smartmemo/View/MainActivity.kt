@@ -2,6 +2,7 @@ package com.kakao.smartmemo.View
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -9,7 +10,6 @@ import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,7 +23,6 @@ import com.kakao.smartmemo.Adapter.SectionsPagerAdapter
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Model.MainLocationModel
-import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
 
@@ -88,6 +87,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
         // Toolbar
         myToolbar = findViewById(R.id.toolbar)
+
         setSupportActionBar(myToolbar)
 
         supportActionBar?.setDisplayShowTitleEnabled(false)

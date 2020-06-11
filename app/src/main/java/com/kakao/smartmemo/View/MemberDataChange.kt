@@ -1,19 +1,25 @@
 package com.kakao.smartmemo.View
 
+import android.app.AlertDialog
 import android.app.TimePickerDialog
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Contract.MemberChangeContract
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.MemberChangePresenter
+import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.member_change_view.*
 import java.util.*
 
@@ -31,6 +37,9 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
     private lateinit var showRetypePassword : ImageView
     private lateinit var hideRetypePassword : ImageView
     private lateinit var switchTodoAlarm: Switch
+    lateinit var memberExit : Button
+    lateinit var logoutLayout : RelativeLayout
+    lateinit var nothingTextView : TextView
     private val calendarTodo = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +58,10 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
         showRetypePassword = findViewById(R.id.showRetypePassword)
         hideRetypePassword = findViewById(R.id.hideRetypePassword)
         switchTodoAlarm = findViewById(R.id.switch_todo_alarm)
+        memberExit = findViewById(R.id.member_exit)
+        logoutLayout = findViewById(R.id.logout_layout)
+        nothingTextView = findViewById(R.id.nothing_text)
+        nothingTextView.isClickable = false
 
         if (UserObject != null) {
             emailText.text = UserObject.email
@@ -57,8 +70,12 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
             addrText.setText(UserObject.addr)
             if (UserObject.kakao_alarm_time != "") {
                 switchTodoAlarm.isChecked = true
+                kakaoAlarmTimeText.visibility = View.VISIBLE
                 kakaoAlarmTimeText.text = UserObject.kakao_alarm_time
-            } else switchTodoAlarm.isChecked = false
+            } else  {
+                switchTodoAlarm.isChecked = false
+                kakaoAlarmTimeText.visibility = View.GONE
+            }
         }
 
         memberToolbar = findViewById(R.id.member_toolbar)
@@ -114,10 +131,73 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
         switchTodoAlarm.setOnCheckedChangeListener { compoundButton, isChecked ->
             if (switchTodoAlarm.isChecked) {
                 kakaoAlarmTimeText.visibility = View.VISIBLE
+                if (UserObject.kakao_alarm_time == "") {
+                    kakaoAlarmTimeText.text = "시간 설정 안함"
+                } else {
+                    kakaoAlarmTimeText.text = UserObject.kakao_alarm_time
+                }
             } else {
-                kakaoAlarmTimeText.text = ""
                 kakaoAlarmTimeText.visibility = View.GONE
             }
+        }
+
+        logoutLayout.setOnClickListener {
+            var logoutBuilder = AlertDialog.Builder(this)
+            logoutBuilder.setTitle("로그아웃")
+            logoutBuilder.setMessage("정말 로그아웃을 하시겠습니까?")
+            logoutBuilder.setPositiveButton("로그아웃", DialogInterface.OnClickListener { dialog, which ->
+                presenter.signOutUser()
+                var intent = Intent(this, LoginActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                Toast.makeText(this, "로그아웃에 성공! 이용해주셔서 감사합니다.", Toast.LENGTH_SHORT).show()
+            })
+                .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+                .create()
+                .show()
+        }
+
+        memberExit.setOnClickListener {
+            var checkExitBuilder = AlertDialog.Builder(this)
+                .setTitle("회원 탈퇴")
+                .setMessage("탈퇴하시겠습니까?")
+                .setPositiveButton("예", DialogInterface.OnClickListener { checkExitDialog, i ->
+                    val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                    val view = inflater.inflate(R.layout.alert_dialog, null)
+                    var editText = view.findViewById<EditText>(R.id.type_password)
+                    var typePasswordBuilder = AlertDialog.Builder(this)
+                        .setView(view)
+                        .setTitle("알림")
+                        .setPositiveButton("예", DialogInterface.OnClickListener { typePasswordDialog, i ->
+                            if (editText.text.isEmpty()) {
+                                Toast.makeText(this, "비밀번호를 입력하시오", Toast.LENGTH_SHORT).show()
+                            } else {
+                                if (presenter.checkPassword(editText.text.toString())) {
+                                    presenter.deleteUser()
+                                    var finishBuilder = AlertDialog.Builder(this)
+                                        .setTitle("알림")
+                                        .setMessage("저희 서비스를 이용해 주셔서 감사합니다.")
+                                        .create()
+
+                                    val intent = Intent(this, LoginActivity::class.java)
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    val mHandler = Handler()
+                                    mHandler.postDelayed(Runnable {
+                                        startActivity(intent)
+                                        typePasswordDialog.dismiss()
+                                        finishBuilder.show()
+                                    }, 1000)
+                                } else {
+                                    Toast.makeText(this, "비밀번호가 틀렸습니다.\n다시 입력해주십시오", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        })
+                        .setNegativeButton("아니오", DialogInterface.OnClickListener() { dialog, which ->  dialog.cancel() })
+                        .create()
+                        .show() })
+                .setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+                .create()
+                .show()
         }
     }
 
@@ -144,7 +224,7 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
                         var name = nameText.text.toString()
                         var address = addrText.text.toString()
                         var kakaoAlarmTime = kakaoAlarmTimeText.text.toString()
-                        if (kakaoAlarmTime == "없음") {
+                        if (kakaoAlarmTime == "시간 설정 안함") {
                             kakaoAlarmTime = ""
                         }
                         presenter.updateUser(this, pw, name, address, kakaoAlarmTime)
@@ -155,6 +235,9 @@ class MemberDataChange :AppCompatActivity(),MemberChangeContract.View {
                     var name = nameText.text.toString()
                     var address = addrText.text.toString()
                     var kakaoAlarmTime = kakaoAlarmTimeText.text.toString()
+                    if (kakaoAlarmTime == "시간 설정 안함") {
+                        kakaoAlarmTime = ""
+                    }
                     presenter.updateUser(this, pw, name, address, kakaoAlarmTime)
                     finish()
                 }

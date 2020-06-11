@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -16,6 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kakao.smartmemo.Adapter.TodoAdapter
 import com.kakao.smartmemo.Adapter.TodoDeleteAdapter
 import com.kakao.smartmemo.Contract.TodoContract
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Presenter.TodoPresenter
@@ -33,6 +35,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var todoDeleteAdapter : TodoDeleteAdapter
     private lateinit var cont: Context
     private var todoArrayList = mutableListOf<TodoData>()
+    private var placeList = mutableListOf<PlaceData>()
     val date: LocalDateTime = LocalDateTime.now()
     private var count = 0
 
@@ -55,7 +58,10 @@ class TodoListFragment : Fragment(), TodoContract.View {
         todolist = view.findViewById(R.id.todolist) as ListView
         todolist.setOnItemClickListener { parent, view, position, id ->
             var intent = Intent(cont, AddTodo::class.java)
+
+            Log.e("placeData", placeList[position].toString())
             intent.putExtra("todoData", todoArrayList[position])
+            intent.putExtra("placeData", placeList[position])
             startActivity(intent)
         }
 
@@ -144,6 +150,11 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
         adapter.notifyAdapter()
+    }
+
+    override fun sendPlaceData(placeList: MutableList<PlaceData>) {
+        Log.e("sendPlaceDatatata", placeList.toString())
+        this.placeList = placeList
     }
 
     private fun deleteTodo() {

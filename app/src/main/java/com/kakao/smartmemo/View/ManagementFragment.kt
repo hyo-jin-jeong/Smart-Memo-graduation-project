@@ -86,21 +86,8 @@ class ManagementFragment : Fragment(), ManagementFragmentContract.View {
         (activity as MainActivity).fab.visibility = View.GONE
         (activity as MainActivity).fab_todo.visibility = View.INVISIBLE
         (activity as MainActivity).fab_memo.visibility = View.INVISIBLE
-        val menuInflater = menuInflater
-        menuInflater.inflate(R.menu.select_group_in_list, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item?.itemId) {
-            R.id.select_group -> {
-
-                return true
-            }
-
-            else ->
-                super.onOptionsItemSelected(item)
-        }
-    }
     private fun setAdapter(){
         FolderObject.folderInfo.forEach {
             folderList.add(it.key)
