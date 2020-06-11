@@ -1,11 +1,13 @@
 package com.kakao.smartmemo.Contract
 
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 
 interface TodoContract {
 
     interface View {
         fun showAllTodo(todoData: MutableList<TodoData>)
+        fun sendPlaceData(placeList: MutableList<PlaceData>)
     }
 
     interface Presenter {
@@ -21,5 +23,6 @@ interface TodoContract {
     interface OnTodoListener {
         fun onSuccess(todoData: MutableList<TodoData>)
         fun onFailure()
+        fun onGroupSuccess(todoList: MutableList<TodoData>, placeList: MutableList<PlaceData>)
     }
 }

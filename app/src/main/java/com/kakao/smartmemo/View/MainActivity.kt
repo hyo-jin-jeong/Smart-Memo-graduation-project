@@ -3,7 +3,7 @@ package com.kakao.smartmemo.View
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.PorterDuff
+import android.graphics.PorterDuf
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
         // Toolbar
         myToolbar = findViewById(R.id.toolbar)
+
         setSupportActionBar(myToolbar)
 
         supportActionBar?.setDisplayShowTitleEnabled(false)

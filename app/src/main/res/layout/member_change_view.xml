@@ -195,6 +195,7 @@
                     android:text="서울시 동선동4가 123" />
             </LinearLayout>
             <RelativeLayout
+                android:id="@+id/kakao_alarm_timelayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/addrView"
@@ -234,9 +235,46 @@
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="20dp"
                     android:visibility="gone"
-                    android:text="없음"
+                    android:text="시간 설정 안함"
                     android:gravity="right" />
             </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/logout_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_below="@+id/kakao_alarm_timelayout">
+                <TextView
+                    android:id="@+id/logout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="로그아웃"
+                    android:textSize="15dp"
+                    android:layout_alignParentLeft="true"/>
+
+                <TextView
+                    android:id="@+id/nothing_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=">"
+                    android:textSize="18dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"/>
+            </RelativeLayout>
+            <Button
+                android:id="@+id/member_exit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/logout_layout"
+                android:text="회원 탈퇴"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textColor="#ff0000"
+                android:textSize="20dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@color/colorWhite"/>
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 </RelativeLayout>

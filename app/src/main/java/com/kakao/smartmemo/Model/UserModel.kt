@@ -96,12 +96,17 @@ class UserModel {
         }
     }
 
-    fun updateFirestoreUser(pw: String, name: String, addr: String, kakaoAlarmTime: String) {
+    fun updateDatabaseUser(pw: String, name: String, addr: String, kakaoAlarmTime: String) {
         UserObject.password = pw
         UserObject.user_name = name
         UserObject.addr = addr
         UserObject.kakao_alarm_time = kakaoAlarmTime
-        firebaseUser.updateChildren(mapOf(UserObject.uid to UserObject))
+        with(firebaseUser.child(UserObject.uid)) {
+            this.child("password").setValue(pw)
+            this.child("user_name").setValue(name)
+            this.child("addr").setValue(addr)
+            this.child("kakao_")
+        }
     }
 
     fun deleteUser() { // collection에서 user 삭제하는 함수

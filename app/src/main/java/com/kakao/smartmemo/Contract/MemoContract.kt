@@ -11,6 +11,7 @@ interface MemoContract {
 
     interface  Presenter{
         fun getAllMemo()
+        fun getFolderMemo(folderId: String)
         fun setMemoAdapterModel(model: MemoAdapterContract.Model)
         fun setMemoAdapterView(view: MemoAdapterContract.View)
         fun setMemoDeleteAdapterModel(deleteAdapterModel : MemoDeleteAdapterContract.Model)

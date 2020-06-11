@@ -44,7 +44,9 @@ class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
         model.deleteMemo(deleteMemoList)
     }
 
-
+    override fun getFolderMemo(folderId: String) {
+        model.getFolderMemo(folderId)
+    }
 
     private fun onClickListener(position: Int){
         adapterModel.getMemo(position).let {
