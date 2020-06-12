@@ -35,6 +35,7 @@ class PlaceReceiver : BroadcastReceiver(){
         val cancelIntent = Intent(context, AddTodo::class.java)
         cancelIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         cancelIntent.putExtra(BROADCASTPLACE, true)
+        cancelIntent.putExtra("placeid", id)
 
         val pendingIntent = PendingIntent.getActivity(context, id, notificationIntent, 0)
         val cancelpendingIntent = PendingIntent.getActivity(context, id, cancelIntent, 0)
@@ -44,7 +45,7 @@ class PlaceReceiver : BroadcastReceiver(){
         contentview.setTextViewText(R.id.notification_Title, "TODOLIST 장소알림") //title
         contentview.setImageViewBitmap(R.id.imageView_Place, IconNoti) //아이콘
         contentview.setTextViewText(R.id.textView_alarm, todoTitle)  //content
-        contentview.setTextViewText(R.id.textView_alarmlocation, todoText)
+        contentview.setTextViewText(R.id.textView_alarmlocation, todoPlace)
         contentview.setOnClickPendingIntent(R.id.cancel_notification, cancelpendingIntent)
 
         val notificationbuilder  = NotificationCompat.Builder(context, CHANNEL_ID)

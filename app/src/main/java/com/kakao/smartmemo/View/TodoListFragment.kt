@@ -23,6 +23,7 @@ import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Presenter.TodoPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.todolist_fragment.*
 import java.time.LocalDateTime
 
 class TodoListFragment : Fragment(), TodoContract.View {
@@ -76,6 +77,9 @@ class TodoListFragment : Fragment(), TodoContract.View {
     override fun onStart() {
         super.onStart()
         presenter.getAllTodo()
+        if(navigationview_bottom.visibility == VISIBLE) {
+            navigationview_bottom.visibility = GONE
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -179,20 +183,20 @@ class TodoListFragment : Fragment(), TodoContract.View {
                                 }
                             }
                         }
-
                         presenter.deleteTodo(selectedItem)
                         todolist.clearChoices()
-                        bottomNavigationView.visibility = GONE //하단메뉴 안보이게
                         adapter = TodoAdapter(cont, todoArrayList)
+                        adapter.notifyAdapter()
                         todolist.adapter = adapter
+                        bottomNavigationView.visibility = GONE //하단메뉴 안보이게
                         presenter.setTodoAdapterModel(adapter)
                         presenter.setTodoAdapterView(adapter)
 
                         true
                     }
                     R.id.cancelItem -> {
-                        count = 0
                         showAllTodo(todoArrayList)
+                        bottomNavigationView.visibility = GONE //하단메뉴 안보이게
                         true
                     }
                 }
