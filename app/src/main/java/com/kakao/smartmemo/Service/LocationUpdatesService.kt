@@ -13,6 +13,7 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
+import com.google.firebase.database.FirebaseDatabase
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.DeviceBootPlaceReceiver
@@ -288,7 +289,8 @@ class LocationUpdatesService : Service() {
         val pm = this.packageManager
         val placereceiver = ComponentName(this, DeviceBootPlaceReceiver::class.java)
         val placealarmIntent = Intent(this, PlaceReceiver::class.java)
-
+        var firebaseTodoId = FirebaseDatabase.getInstance().reference.child("TodoId")
+//        firebaseTodoId.
         placealarmIntent.putExtra("todoTitle", "약사러 가기")
 
         //DB작업끝난후 바꿔야함.
@@ -363,6 +365,7 @@ class LocationUpdatesService : Service() {
                 Log.v("seyuuuun", "for문안에는 들어옴 if확인할 장소 $place")
                 if (calDistance(location, mLocation!!)) {
                     Log.e("jieun", "${place.place}가 이 지점에 300m 안이라 $locationtext")
+
                     placeCalendar.timeInMillis
                     PlaceNotificationID = ((System.currentTimeMillis()/1000).toInt()) * (allSelectedPlace.indexOf(place) +1)
                     setPlaceAlarm(placeCalendar, PlaceNotificationID)

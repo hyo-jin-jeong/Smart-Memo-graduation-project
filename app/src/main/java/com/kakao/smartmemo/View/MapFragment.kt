@@ -189,6 +189,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onStart() {
         super.onStart()
+        todoMapPoint.clear()
+        memoMapPoint.clear()
+
         presenter.getTodoPlaceAlarm("map")
         presenter.getMemo()
     }
@@ -582,10 +585,13 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onSuccess(placeList: MutableList<PlaceData>, status: String) {
         //여기에 로그는 가끔 로딩이 느리면 안들어 가는 경우가 있어서 로그가 찍히면 이제 마커 생성된거라 확인하려고 로그 안지웠습니다
+
         if (status == "todo") {
             todo = placeList
+            Log.e("todododododo", placeList.toString())
             for (i in todo) {
                 var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)
+
                 if(!containPoint(todoMapPoint, mapPoint)) {
                     todoMapPoint.add(mapPoint)
                     Log.e("jieun", "todo $i 가 들어감")
@@ -604,8 +610,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             }
         }
 
-        createMarkerAccordingType(todoMapPoint, memoMapPoint)
-
+        if (todo.size == todoMapPoint.size && memo.size == memoMapPoint.size) {
+            createMarkerAccordingType(todoMapPoint, memoMapPoint)
+        }
         Log.e("jieun", "구분점~~~~")
     }
 
