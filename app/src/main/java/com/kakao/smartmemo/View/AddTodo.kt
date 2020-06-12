@@ -29,10 +29,7 @@ import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.AddAddTodoPresenter
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.Receiver.DeviceBootTimeReceiver
-import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
-import com.kakao.smartmemo.Receiver.TimeReceiver
-import com.kakao.smartmemo.Receiver.TodoReceiver
+import com.kakao.smartmemo.Receiver.*
 import com.kakao.smartmemo.Service.LocationUpdatesService
 import com.kakao.smartmemo.Utils.Utils
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
@@ -141,7 +138,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         if (!checkPermissions()) {
             requestPermissions()
         } else {
-            mService?.requestLocationUpdates()
+            mService?.requestLocationUpdates(allSelectedPlace)
         }
         //mService!!.removeLocationUpdates()  과부하 방지를 위해 남겨놓음.일단은!!!!
 
