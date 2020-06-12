@@ -7,6 +7,7 @@ interface MemoContract {
      interface View  {
          fun showMemoItem(position: Int)
          fun showAllMemo(memoList: MutableList<MemoData>)
+         fun onSuccess()
      }
 
     interface  Presenter{
@@ -23,5 +24,6 @@ interface MemoContract {
     interface OnMemoListener{
         fun onSuccess(memoList: MutableList<MemoData>)
         fun onFailer()
+        fun onDeleteSuccess()
     }
 }

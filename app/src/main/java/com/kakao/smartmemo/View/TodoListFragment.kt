@@ -36,7 +36,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var todoDeleteAdapter : TodoDeleteAdapter
     private lateinit var cont: Context
     private var todoArrayList = mutableListOf<TodoData>()
-    private var placeList = mutableListOf<PlaceData>()
+    private var placeList = arrayListOf<PlaceData>()
     val date: LocalDateTime = LocalDateTime.now()
     private var count = 0
 
@@ -59,10 +59,12 @@ class TodoListFragment : Fragment(), TodoContract.View {
         todolist = view.findViewById(R.id.todolist) as ListView
         todolist.setOnItemClickListener { parent, view, position, id ->
             var intent = Intent(cont, AddTodo::class.java)
-
-            Log.e("placeData", placeList[position].toString())
+            if (todoArrayList[position].setPlaceAlarm) {
+                presenter.getOnePlaceTodo(todoArrayList[position].todoId)
+                intent.putExtra("placeList", placeList)
+            }
             intent.putExtra("todoData", todoArrayList[position])
-            intent.putExtra("placeData", placeList[position])
+
             startActivity(intent)
         }
 
@@ -154,11 +156,12 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
         adapter.notifyAdapter()
+        bottomNavigationView.visibility = GONE
     }
 
     override fun sendPlaceData(placeList: MutableList<PlaceData>) {
         Log.e("sendPlaceDatatata", placeList.toString())
-        this.placeList = placeList
+        this.placeList = placeList as ArrayList<PlaceData>
     }
 
     private fun deleteTodo() {

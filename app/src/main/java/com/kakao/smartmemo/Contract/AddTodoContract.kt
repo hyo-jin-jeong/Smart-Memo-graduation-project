@@ -16,6 +16,7 @@ interface AddTodoContract {
         fun setTodoPlaceAdapterView(adapterView : TodoPlaceAdapterContract.View)
         fun getList(): MutableList<PlaceData>
         fun getPlace(status: String)
+        fun deleteTodoInfo(groupId: String, todoId: String)
     }
     interface OnAddTodoListener {
         fun onSuccess(placeList: MutableList<PlaceData>)

@@ -1,5 +1,7 @@
 package com.kakao.smartmemo.Contract
 
+import com.kakao.smartmemo.Data.MemoData
+
 interface ShowMemoContract {
     interface View {
 
@@ -7,6 +9,6 @@ interface ShowMemoContract {
     interface Presenter{
         fun getMemo()
         fun updateMemo()
-        fun deleteMemo()
+        fun deleteMemo(memoData: MemoData)
     }
 }

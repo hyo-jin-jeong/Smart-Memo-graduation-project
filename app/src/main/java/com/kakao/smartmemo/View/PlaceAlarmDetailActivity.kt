@@ -43,6 +43,7 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
     private lateinit var myToolbar: Toolbar
     private lateinit var mapView: MapView
     private lateinit var mapViewContainer: ViewGroup
+    private var placeId = ""
     private val context: Context = this
 
     private var curLongitude: Double? = null
@@ -63,6 +64,7 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
     private var mapPOIItem: MapPOIItem? = null
     private var locationItems = ArrayList<MapPOIItem>()
     private var aroundLocationItems = ArrayList<MapPOIItem>()
+    private var placeList = arrayListOf<PlaceData>()
 
     private var isUp: Boolean = false
     private lateinit var translateUp: Animation
@@ -135,8 +137,9 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
         )
 
         listView.layoutManager = layoutManager2
-
+        // MapFragment에서 LongTouch로 들어왔을 때랑 fab로 생성했을 때 현재 위치 받기
         if(intent.getParcelableExtra<PlaceData>("placeData") != null) {
+            placeId = intent.getParcelableExtra<PlaceData>("placeData").placeId
             curLatitude = intent.getParcelableExtra<PlaceData>("placeData").latitude
             curLongitude = intent.getParcelableExtra<PlaceData>("placeData").longitude
             curAddress = intent.getParcelableExtra<PlaceData>("placeData").place
@@ -145,9 +148,12 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
             curLatitude = 37.582276
             curLongitude = 127.009850
         }
-        var placeDatas: ArrayList<PlaceData>? = intent.getParcelableArrayListExtra("todoPlaceAlarm")
-        if (!placeDatas.isNullOrEmpty()) {
-            for (placeData in placeDatas!!.iterator()) {
+        // 생성된 Todo에서(AddTodo에서) 값 넘겨 받은 경우
+        if (intent.hasExtra("todoPlaceAlarm")) {
+            placeList = intent.getParcelableArrayListExtra("todoPlaceAlarm")
+        }
+        if (!placeList.isNullOrEmpty()) {
+            for (placeData in placeList!!.iterator()) {
                 var location = Location("")
                 location.longitude = placeData.longitude
                 location.latitude = placeData.latitude
@@ -191,21 +197,21 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
                 builder.show()
             } else {
                 curAddress = curMarker!!.itemName
-                val placeDatas = replaceWithData()
-                val placeData = PlaceData(curAddress!!, curLatitude!!, curLongitude!!)
-                //long pressed 로 들어왔을 때
+                replaceWithData()
+                val placeData = PlaceData(placeId, curAddress!!, curLatitude!!, curLongitude!!)
+                //long pressed 로 들어왔을 때 AddTodo로 넘기기
                 if (intent.getStringExtra("mode") == "longPressed") {
                     val todoIntent = Intent(this.context, AddTodo::class.java)
                     todoIntent.putExtra("placeData", placeData)
-                    todoIntent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
+                    todoIntent.putParcelableArrayListExtra("todoPlaceAlarm", placeList)
                     todoIntent.putExtra("mode", "longPressed")
                     startActivity(todoIntent)
                     finish()
 
-                } else {    //(+)버튼으로 들어왔을 때
+                } else {  // fab 버튼으로 들어왔을 때 AddTodo로 넘김
                     val intent = Intent()
                     intent.putExtra("placeData", placeData)
-                    intent.putParcelableArrayListExtra("todoPlaceAlarm", placeDatas)
+                    intent.putParcelableArrayListExtra("todoPlaceAlarm", placeList)
                     setResult(Activity.RESULT_OK, intent)
                     finish()
                 }
@@ -215,16 +221,14 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
 
     }
 
-    private fun replaceWithData(): ArrayList<PlaceData> {
-        var placeDatas = ArrayList<PlaceData>()
+    private fun replaceWithData() {
+        placeList.clear()
 
         for (i in locations.indices) {
             var placeData =
-                PlaceData(locationNames[i], locations[i].latitude, locations[i].longitude)
-            placeDatas.add(placeData)
+                PlaceData(placeId, locationNames[i], locations[i].latitude, locations[i].longitude)
+            placeList.add(placeData)
         }
-
-        return placeDatas
     }
 
     override fun onPause() {

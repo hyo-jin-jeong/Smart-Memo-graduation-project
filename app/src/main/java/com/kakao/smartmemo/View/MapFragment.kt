@@ -373,7 +373,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                                 val addMemoIntent = Intent(this.context, AddMemo::class.java)
                                 val point = curLocationMarker.mapPoint.mapPointGeoCoord
                                 val placeData =
-                                    PlaceData(convertedAddress!!, point.latitude, point.longitude)
+                                    PlaceData("", convertedAddress!!, point.latitude, point.longitude)
                                 addMemoIntent.putExtra("placeData", placeData)
                                 Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                                 startActivity(addMemoIntent)
@@ -385,7 +385,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                                     Intent(this.context, PlaceAlarmDetailActivity::class.java)
                                 val point = curLocationMarker.mapPoint.mapPointGeoCoord
                                 val placeData =
-                                    PlaceData(convertedAddress!!, point.latitude, point.longitude)
+                                    PlaceData("", convertedAddress!!, point.latitude, point.longitude)
                                 addTodoIntent.putExtra("placeData", placeData)
                                 addTodoIntent.putExtra("mode", "longPressed")
                                 Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
@@ -488,7 +488,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 when (which) {
                     0 -> {
                         val addMemoIntent = Intent(this.context, AddMemo::class.java)
-                        val placeData = PlaceData(convertedAddress!!, latitude, longitude)
+                        val placeData = PlaceData("", convertedAddress!!, latitude, longitude)
                         addMemoIntent.putExtra("placeData", placeData)
                         Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                         startActivity(addMemoIntent)
@@ -498,7 +498,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                     1 -> {
                         val addTodoIntent =
                             Intent(this.context, PlaceAlarmDetailActivity::class.java)
-                        val placeData = PlaceData(convertedAddress!!, latitude, longitude)
+                        val placeData = PlaceData("", convertedAddress!!, latitude, longitude)
                         addTodoIntent.putExtra("placeData", placeData)
                         addTodoIntent.putExtra("mode", "longPressed")
                         Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")

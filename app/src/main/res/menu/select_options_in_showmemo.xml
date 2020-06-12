@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_modification"
-        android:orderInCategory="100"
         android:title="수정하기"
-        app:showAsAction="never" />
+        app:showAsAction="always"/>
     <item
         android:id="@+id/action_deletion"
-        android:orderInCategory="100"
         android:title="삭제하기"
-        app:showAsAction="never" />
+        android:icon="@drawable/delete"
+        app:showAsAction="always"/>
 </menu>

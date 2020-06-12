@@ -34,7 +34,8 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
     private lateinit var placeData: PlaceData
     private var groupId = ""
     private var originGroupId = ""
-    private var memoId = ""
+    private var memoId = (System.currentTimeMillis() * 3000).toInt().toString()
+    private var placeId = (System.currentTimeMillis() * 6000).toInt().toString()
     private var hasData = false
     private var groupCheck = false
 
@@ -67,12 +68,12 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         if (intent.hasExtra("memoData")) {
             hasData = true
             this.memoData = intent.getParcelableExtra("memoData")
-            placeNameText.text = this.memoData.placeName
             titleEdit.setText(this.memoData.title)
             contentEdit.setText(this.memoData.content)
             groupName.text = FolderObject.folderInfo[this.memoData.groupId]
             originGroupId = this.memoData.groupId
             memoId = this.memoData.memoId
+            placeId = this.memoData.placeId
 
         }
 
@@ -103,10 +104,12 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
                     today,
                     contentEdit.text.toString(),
                     originGroupId,
-                    placeNameText.text.toString(),
+                    placeId,
+                    placeData.place,
                     placeData.latitude.toString(),
                     placeData.longitude.toString()
                 )
+
                 presenter.addMemo(memoData)
                 if (hasData) {
                     hasData = false

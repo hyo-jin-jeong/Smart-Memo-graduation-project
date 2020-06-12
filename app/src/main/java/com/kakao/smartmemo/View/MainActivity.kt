@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 anim()
                 val addMemoIntent = Intent(this.context, AddMemo::class.java)
                 if (mainLocationModel.checkValue()) {
-                    val placeData = PlaceData(mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
+                    val placeData = PlaceData("", mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
                     addMemoIntent.putExtra("placeData", placeData)
                     Log.e("jieun", "placeData = $placeData")
                 }
@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 anim()
                 val addTodoIntent = Intent(this, AddTodo::class.java)
                 if(mainLocationModel.checkValue()) {
-                    val placeData = PlaceData(mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
+                    val placeData = PlaceData("", mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
                     addTodoIntent.putExtra("placeData", placeData)
                     addTodoIntent.putExtra("mode", "fromMain")
                     Log.e("jieun", "placeData = $placeData")

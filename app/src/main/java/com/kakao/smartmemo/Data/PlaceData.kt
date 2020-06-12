@@ -3,15 +3,17 @@ package com.kakao.smartmemo.Data
 import android.os.Parcel
 import android.os.Parcelable
 
-data class PlaceData(var place : String, var latitude : Double = 0.0, var longitude : Double = 0.0):
+data class PlaceData(var placeId: String = "", var place : String = "", var latitude : Double = 0.0, var longitude : Double = 0.0):
     Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readDouble(),
         parcel.readDouble()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(placeId)
         parcel.writeString(place)
         parcel.writeDouble(latitude)
         parcel.writeDouble(longitude)
