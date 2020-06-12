@@ -9,6 +9,7 @@ import android.content.res.Configuration
 import android.location.Location
 import android.os.*
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
@@ -386,8 +387,6 @@ class LocationUpdatesService : Service() {
                     setPlaceAlarm(placeCalendar)
                 }
             }
-            val distance = calDistance(mLocation!!) //반경내에 들어오면 true,아니면 false
-            intent.putExtra("distance", distance)
 
             mNotificationManager!!.notify(
                 NOTIFICATION_ID,
