@@ -8,7 +8,7 @@ import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Model.TodoModel
 import kotlin.collections.ArrayList
 
-class AddAddTodoPresenter : AddTodoContract.Presenter, AddTodoContract.OnAddTodoListener {
+class AddTodoPresenter : AddTodoContract.Presenter, AddTodoContract.OnAddTodoListener {
 
     var view : AddTodoContract.View
     var model : TodoModel
@@ -48,6 +48,10 @@ class AddAddTodoPresenter : AddTodoContract.Presenter, AddTodoContract.OnAddTodo
 
     override fun getPlace(status : String) {
         model.getPlaceTodo(status)
+    }
+
+    override fun deleteTodoInfo(groupId: String, todoId: String) {
+        model.deleteTodoInfo(groupId, todoId)
     }
 
     override fun onSuccess(placeList: MutableList<PlaceData>) {

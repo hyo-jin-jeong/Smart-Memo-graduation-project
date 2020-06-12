@@ -18,11 +18,13 @@ interface TodoContract {
         fun setTodoDeleteAdapterView(deleteAdapterView : TodoDeleteAdapterContract.View)
         fun getAllTodo()
         fun deleteTodo(todoData: MutableList<TodoData>)
+        fun getOnePlaceTodo(todoId: String)
     }
 
     interface OnTodoListener {
         fun onSuccess(todoData: MutableList<TodoData>)
         fun onFailure()
-        fun onGroupSuccess(todoList: MutableList<TodoData>, placeList: MutableList<PlaceData>)
+        fun onGroupSuccess(todoList: MutableList<TodoData>)
+        fun onOnePlaceSuccess(placeList: MutableList<PlaceData>)
     }
 }

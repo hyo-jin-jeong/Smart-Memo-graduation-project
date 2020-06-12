@@ -66,7 +66,8 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
                 return true
             }
             R.id.action_deletion -> {
-                Toast.makeText(applicationContext, "삭제하기", Toast.LENGTH_SHORT).show()
+                presenter.deleteMemo(memoData)
+                finish()
                 return true
             }
         }

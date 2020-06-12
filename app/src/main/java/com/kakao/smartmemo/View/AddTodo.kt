@@ -26,7 +26,7 @@ import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
-import com.kakao.smartmemo.Presenter.AddAddTodoPresenter
+import com.kakao.smartmemo.Presenter.AddTodoPresenter
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.*
 import com.kakao.smartmemo.Service.LocationUpdatesService
@@ -134,7 +134,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // presenter 초기화
-        presenter = AddAddTodoPresenter(this)
+        presenter = AddTodoPresenter(this)
         titleEdit = findViewById(R.id.edit_todolist)
         selectGroupBtn = findViewById(R.id.todo_select_group)
         timeSwitch = findViewById(R.id.switch_time)
@@ -307,7 +307,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
 //        this.placeList = placeListAdapter.getList() // delete 후 값 가져오기
 
-        if (intent.hasExtra("todoData")) {  //intent값을 가지고 있을때
+        if (intent.hasExtra("todoData")) {  // TodoListFragment에서 넘어온 경우
             data = intent.getParcelableExtra("todoData")
             when (data.timeAgain) {
                 0 -> timePosition = 0
@@ -340,6 +340,12 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             placeSpinner.adapter = timeAgainAdapter
             placeSpinner.setSelection(placePosition, true)
         }
+
+        if (intent.hasExtra("placeList")) { // TodoListFragment에서 넘어온 경우
+            placeList.clear()
+            placeList = intent.getParcelableArrayListExtra("placeList")
+        }
+
         savebtn.setOnClickListener {
             when {
                 groupName == "" -> {
@@ -348,10 +354,13 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                 titleEdit.text.isEmpty() -> {
                     Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
                 }
+                placeSwitch.isChecked && placeList.isEmpty() -> {
+                    Toast.makeText(applicationContext, "장소 설정을 해주세요.", Toast.LENGTH_SHORT).show()
+                }
                 else -> {
                     if (groupCheck){
                         if(hasData) {
-                            //presenter.deleteMemoInfo(originGroupId,memoId)
+                            presenter.deleteTodoInfo(originGroupId,todoId)
                         }
                         originGroupId = groupId
                     }
@@ -389,16 +398,19 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             selectGroup()
         }
 
-        if (intent.getStringExtra("mode") == "longPressed") {
+        if (intent.getStringExtra("mode") == "longPressed") { // LongTouch후 PlaceAlarmDetailActivity에서 넘어온 경우
             placeSwitch.isChecked = true
             todoStubLocation.visibility = VISIBLE
             placeData = intent.getParcelableExtra<PlaceData>("placeData")
             placeList = intent.getParcelableArrayListExtra("todoPlaceAlarm")
             setPlaceListAdapter()
         } else {
+            // fab로 생성한 경우
             placeData = intent.getParcelableExtra<PlaceData>("placeData")
             setPlaceListAdapter()
         }
+
+
 
     }
 
@@ -406,7 +418,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                200 -> {
+                200 -> { // fab로 등록 -> PlaceAlarmDetailActivity에서 장소리스트 받아오는 것
                     placeData = data!!.getParcelableExtra("placeData")
                     placeList = data!!.getParcelableArrayListExtra("todoPlaceAlarm")
                     setPlaceListAdapter()

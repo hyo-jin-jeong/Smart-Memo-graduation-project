@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.Presenter
 
-import android.util.Log
 import com.kakao.smartmemo.Contract.TodoAdapterContract
 import com.kakao.smartmemo.Contract.TodoContract
 import com.kakao.smartmemo.Contract.TodoDeleteAdapterContract
@@ -49,6 +48,10 @@ class TodoPresenter : TodoContract.Presenter, TodoContract.OnTodoListener {
         todoModel.deleteTodo(todoData)
     }
 
+    override fun getOnePlaceTodo(todoId: String) {
+        todoModel.getOnePlaceTodo(todoId)
+    }
+
     override fun onSuccess(todoData: MutableList<TodoData>) {
         view.showAllTodo(todoData)
     }
@@ -57,8 +60,11 @@ class TodoPresenter : TodoContract.Presenter, TodoContract.OnTodoListener {
 
     }
 
-    override fun onGroupSuccess(todoList: MutableList<TodoData>, placeList: MutableList<PlaceData>) {
+    override fun onGroupSuccess(todoList: MutableList<TodoData>) {
         view.showAllTodo(todoList)
+    }
+
+    override fun onOnePlaceSuccess(placeList: MutableList<PlaceData>) {
         view.sendPlaceData(placeList)
     }
 

@@ -62,5 +62,9 @@ class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
 
     }
 
+    override fun onDeleteSuccess() {
+        view.onSuccess()
+    }
+
 
 }

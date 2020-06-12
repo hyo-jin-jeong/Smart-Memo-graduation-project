@@ -99,7 +99,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
         presenter.setMemoAdapterView(memoAdapter)
         recyclerView1.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        bottomNavigationView.visibility = View.INVISIBLE
+        bottomNavigationView.visibility = View.GONE
         memoAdapter.notifyAdapter()
     }
 
@@ -115,7 +115,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
                         true
                     }
                     R.id.cancelItem -> {
-                        // showAllMemo(memoList)
+                        showAllMemo(memoList)
                         true
                     }
                 }
@@ -159,6 +159,10 @@ class MemoListFragment : Fragment(), MemoContract.View {
 
             })
             .show()
+    }
+
+    override fun onSuccess() {
+        showAllMemo(memoList)
     }
 
 }
