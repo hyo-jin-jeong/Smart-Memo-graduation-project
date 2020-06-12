@@ -182,6 +182,7 @@ class LocationUpdatesService : Service() {
     fun requestLocationUpdates(allSelectedPlaceList: ArrayList<PlaceData>) {
         Log.i(TAG, "Requesting location updates")
         setRequestingLocationUpdates(this, true)
+
         val intent = Intent(applicationContext, LocationUpdatesService::class.java)
         intent.putExtra("allSelectedPlaceList", allSelectedPlaceList)
 //        startService(Intent(applicationContext, LocationUpdatesService::class.java))
@@ -204,7 +205,7 @@ class LocationUpdatesService : Service() {
      * Removes location updates. Note that in this sample we merely log the
      * [SecurityException].
      */
-    fun removeLocationUpdates() {
+    private fun removeLocationUpdates() {
         Log.i(TAG, "Removing location updates")
         try {
             mFusedLocationClient!!.removeLocationUpdates(mLocationCallback)
@@ -225,7 +226,7 @@ class LocationUpdatesService : Service() {
     private fun getNotification(): Notification {
         val intent = Intent(this, LocationUpdatesService::class.java)
         val text: CharSequence = getLocationText(mLocation)
-        val contentText = "앱의 장소 알람 기능을 사용하시려 알람을 유지해주세요.\\n이 알림을 끄면 장소 알림이 제대로 실행되지 않을 수 있습니다."
+        val contentText = "앱의 장소 알람 기능을 사용하시려 알람을 유지해주세요.\n이 알림을 끄면 장소 알림이 제대로 실행되지 않을 수 있습니다."
 
         // Extra to help us figure out if we arrived in onStartCommand via the notification or not.
         intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true)
@@ -250,62 +251,34 @@ class LocationUpdatesService : Service() {
 //        builder.setPriority(Notification.PRIORITY_LOW)
 //        builder.setVisibility(Notification.VISIBILITY_SECRET)
 
-        //val remoteViews = RemoteViews(packageName, R.layout.custom_notif)
+        val contentview = RemoteViews(applicationContext.packageName, R.layout.custom_notif)
+        contentview.setTextViewText(R.id.notification_Title, "백그라운드에서 대기 중")
+        contentview.setTextViewText(R.id.textView_alarm, "앱의 장소 알람 기능을 사용하시려면 알람을 유지해주세요.\n이 알림을 끄면 장소 알림이 제대로 실행되지 않을 수 있습니다.")
         val builder =
             NotificationCompat.Builder(this)
-                .setContentTitle("백그라운드에서 대기 중")
                 .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-                //.setCustomContentView(remoteViews)
                 .setContentIntent(activityPendingIntent)
                 .setContentText(contentText)
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setSmallIcon(R.mipmap.app_icon)
                 .setWhen(System.currentTimeMillis())
+                .setContent(contentview)
 
         // Set the Channel ID for Android O.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setChannelId(CHANNEL_ID) // Channel ID
-        }
-        return builder.build()
-    }
-
-    private fun receiver() {
-        val text: CharSequence = getLocationText(mLocation)
-
-        val notificationIntent = Intent(this, LocationUpdatesService::class.java)
-        //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        notificationIntent.putExtra(EXTRA_START_FROM_NOTIFICATION, true)
-
-        val pendingIntent =
-            PendingIntent.getService(this, 5, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val notificationbuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .addAction(R.drawable.ic_cancel, "알림 해제", pendingIntent)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentIntent(pendingIntent) // 알림을 눌렀을때 실행할 작업 인텐트 설정
-            .setWhen(System.currentTimeMillis()) //miliSecond단위로 넣어주면 내부적으로 파싱함.
-            .setDefaults(Notification.DEFAULT_VIBRATE)
-            .setContentTitle("장소 알람")
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setAutoCancel(true)
-            .setContentText(text)
-            .setTicker(text)
-            .setOngoing(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            .setFullScreenIntent(pendingIntent, true) //헤드업알림
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { //Oreo 버전 이후부터 channel설정해줘야함.
             val serviceChannel = NotificationChannel(
                 CHANNEL_ID,
                 CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_LOW
             ).apply { description = CHANNEL_DESCRITION }
+            serviceChannel.vibrationPattern = longArrayOf(0) //진동 무음 설정
+            serviceChannel.enableVibration(true) //
+            mNotificationManager?.createNotificationChannel(serviceChannel)
 
-            AlarmNotificationManager?.createNotificationChannel(serviceChannel)
+            builder.setChannelId(CHANNEL_ID) // Channel ID
         }
-
-        AlarmNotificationManager?.notify(NOTIFICATION_ID_NOTIFICATION, notificationbuilder.build())
+        return builder.build()
     }
 
     private fun setPlaceAlarm(calendar : Calendar) {
@@ -372,6 +345,7 @@ class LocationUpdatesService : Service() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful && task.result != null) {
                         mLocation = task.result
+                        //Log.v("seyuuuun", "Location: " + mLocation)
                     } else {
                         Log.w(
                             TAG,
@@ -391,53 +365,49 @@ class LocationUpdatesService : Service() {
         Log.i(TAG, "New location: $location")
         mLocation = location
         val locationtext: CharSequence = getLocationText(mLocation)
-        Log.v("seyuuuun", "위치확인 " + locationtext.toString())
+        Log.v("seyuuuun", "위치확인" + locationtext.toString())
 
         // Notify anyone listening for broadcasts about the new location.
         val intent = Intent(ACTION_BROADCAST)
         intent.putExtra(EXTRA_LOCATION, location)
-        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+
+        val placeIntent = Intent(applicationContext, AddTodo::class.java)
 
         // Update notification content if running as a foreground service.
         if (serviceIsRunningInForeground(this)) {
+
             for (place in allSelectedPlace) {
                 val location = Location("")
                 location.longitude = place.longitude
                 location.latitude = place.latitude
                 if (calDistance(location, mLocation!!)) {
                     Log.e("jieun", "${place.place}가 이 지점에 300m 안이라 $locationtext")
-                    //receiver()
                     placeCalendar.timeInMillis
-                    Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.HOUR_OF_DAY))
-                    Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.MINUTE))
-                    Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.SECOND))
                     setPlaceAlarm(placeCalendar)
                 }
             }
+            val distance = calDistance(mLocation!!) //반경내에 들어오면 true,아니면 false
+            intent.putExtra("distance", distance)
 
             mNotificationManager!!.notify(
                 NOTIFICATION_ID,
                 getNotification()
             )
         }
-
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
     }
 
     fun calDistance(placeAlarmLocation: Location, curLocation: Location): Boolean {
-        //장소 바꿔놓음
-//        val curLatitude = 37.582431
-//        val curLongitude = 127.009425
+
         val curLatitude = placeAlarmLocation.latitude
         val curLongitude = placeAlarmLocation.longitude
+
         val theta: Double
         var dist: Double
         theta = curLongitude - curLocation.longitude
-        dist =
-            sin(deg2rad(curLatitude)) * sin(deg2rad(curLocation.latitude)) + (cos(
-                deg2rad(curLatitude)
-            )
-                    * cos(deg2rad(curLocation.latitude)) * cos(deg2rad(theta)))
+        dist = sin(deg2rad(curLatitude)) * sin(deg2rad(curLocation.latitude)) + (cos(
+                deg2rad(curLatitude))* cos(deg2rad(curLocation.latitude)) * cos(deg2rad(theta)))
         dist = acos(dist)
         dist = rad2deg(dist)
         dist *= 60 * 1.1515
@@ -506,9 +476,9 @@ class LocationUpdatesService : Service() {
         /**
          * The name of the channel for notifications.
          */
-        private const val CHANNEL_ID = "알람"
-        private const val CHANNEL_NAME = "알림채널"
-        private const val CHANNEL_DESCRITION = "알림채널 리시버"
+        private const val CHANNEL_ID = "백그라운드"
+        private const val CHANNEL_NAME = "백그라운드채널"
+        private const val CHANNEL_DESCRITION = "백그라운드채널 리시버"
         const val ACTION_BROADCAST =
             "$PACKAGE_NAME.broadcast"
         const val EXTRA_LOCATION =
