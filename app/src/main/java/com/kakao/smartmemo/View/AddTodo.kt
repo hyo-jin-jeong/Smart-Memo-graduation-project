@@ -6,14 +6,15 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.IBinder
+import android.os.*
 import android.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
-import android.view.*
-import android.view.View.*
+import android.view.MenuItem
+import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.view.ViewStub
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -28,7 +29,10 @@ import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.AddAddTodoPresenter
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.Receiver.*
+import com.kakao.smartmemo.Receiver.DeviceBootTimeReceiver
+import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
+import com.kakao.smartmemo.Receiver.TimeReceiver
+import com.kakao.smartmemo.Receiver.TodoReceiver
 import com.kakao.smartmemo.Service.LocationUpdatesService
 import com.kakao.smartmemo.Utils.Utils
 import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
@@ -105,10 +109,13 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     private var myReceiver: MyReceiver? = null
     private var mService: LocationUpdatesService? = null
+    private var mServiceMessenger: Messenger? = null
     private var mBound = false
     private var distance = false
     private var placeData: PlaceData? = null
     private var placeList = arrayListOf<PlaceData>()
+
+    private var allSelectedPlace = arrayListOf<PlaceData>()
 
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -122,6 +129,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             mBound = false
         }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -363,6 +371,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             placeSpinner.adapter = timeAgainAdapter
             placeSpinner.setSelection(placePosition, true)
         }
+
+        //원래 여기 savebutton
         savebtn.setOnClickListener {
             when {
                 groupName == "" -> {
@@ -397,31 +407,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                     } else {
                         unsetTimeAlarm(TimeNotificationID) //시간알람 해제
                     }
-
-                    if(placeSwitch.isChecked) {
-                        //다시 한번 해줌.
-                        PreferenceManager.getDefaultSharedPreferences(this)
-                            .registerOnSharedPreferenceChangeListener(this)
-
-                        if (!checkPermissions()) {
-                            requestPermissions()
-                        } else {
-                            mService?.requestLocationUpdates()
-                        }
-                        //mService!!.removeLocationUpdates()  과부하 방지를 위해 남겨놓음.일단은!!!!
-
-                        bindService(
-                            Intent(this, LocationUpdatesService::class.java), mServiceConnection,
-                            Context.BIND_AUTO_CREATE
-                        )
-                    }
-
-
-                    //if (placeSwitch.isChecked) {
-                    //      placeCalendar.set(Calendar.MINUTE, Calendar.MINUTE+settingsPlaceMinutes)
-                    //      setTimeLocationAlarm(placeCalendar, settingsPlaceMinutes)
-                    //}
-
+                  
                     finish()
                 }
             }
@@ -795,8 +781,13 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     override fun onStart() {
         super.onStart()
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .registerOnSharedPreferenceChangeListener(this)
 
-
+        bindService(
+            Intent(this, LocationUpdatesService::class.java), mServiceConnection,
+            Context.BIND_AUTO_CREATE
+        )
     }
 
     override fun onResume() {
@@ -888,7 +879,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                 Log.i(TAG, "User interaction was cancelled.")
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted.
-                mService?.requestLocationUpdates()
+                mService?.requestLocationUpdates(allSelectedPlace)
                 Log.v("seyuuuun", "reqeustLocationUpdates in onRequestPermissions")
             } else {
                 // Permission denied.
@@ -953,6 +944,18 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     }
 
     override fun onSuccess(placeList: MutableList<PlaceData>) {
+        for (place in placeList) {
+            allSelectedPlace.add(place)
+            Log.e("jieun", "담긴 place = $place")
+        }
+
+        if (!checkPermissions()) {
+            requestPermissions()
+        } else {
+            mService?.requestLocationUpdates(allSelectedPlace)
+        }
+        //mService!!.removeLocationUpdates()  과부하 방지를 위해 남겨놓음.일단은!!!!
+
         // Service로 위치 정보 넘기기 placeList가 PlaceData 형식이 들어있는 리스트에용
         Log.e("Add Todo placeList", placeList.toString())
     }
