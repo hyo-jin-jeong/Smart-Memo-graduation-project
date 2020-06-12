@@ -45,10 +45,8 @@ class LocationUpdatesService : Service() {
      */
     private var mLocationRequest: LocationRequest? = null
 
-    private val PlaceNotificationID = (System.currentTimeMillis()/1000).toInt()
+    private var PlaceNotificationID  = 0
     private val placeCalendar = Calendar.getInstance()
-    private var addTodo : AddTodo = AddTodo()
-    private var settingsTime = 0
 
     /**
      * Provides access to the Fused Location Provider API.
@@ -67,6 +65,7 @@ class LocationUpdatesService : Service() {
      */
     private var mLocation: Location? = null
     private var allSelectedPlace = arrayListOf<PlaceData>()
+    private var handler = Handler()
 
     override fun onCreate() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -186,6 +185,7 @@ class LocationUpdatesService : Service() {
 
         val intent = Intent(applicationContext, LocationUpdatesService::class.java)
         intent.putExtra("allSelectedPlaceList", allSelectedPlaceList)
+        Log.v("seyuuuun", "서비스로 넘겨온 장소들 : $allSelectedPlaceList")
 //        startService(Intent(applicationContext, LocationUpdatesService::class.java))
         startService(intent)
         try {
@@ -282,7 +282,7 @@ class LocationUpdatesService : Service() {
         return builder.build()
     }
 
-    private fun setPlaceAlarm(calendar : Calendar) {
+    private fun setPlaceAlarm(calendar : Calendar, placeId:Int) {
         val text: CharSequence = getLocationText(mLocation)
 
         val pm = this.packageManager
@@ -295,12 +295,11 @@ class LocationUpdatesService : Service() {
         placealarmIntent.putExtra("todoPlace", "온누리 약국")
         placealarmIntent.putExtra("todoText", text)
 
-        placealarmIntent.putExtra("todoId", PlaceNotificationID) //reqeustcode 때문에 넣어준 것!!
-        Log.v("seyuuuun", "notificationId in place" + PlaceNotificationID)
+        placealarmIntent.putExtra("todoId", placeId) //reqeustcode 때문에 넣어준 것!!
+        Log.v("seyuuuun", "notificationId in place" + placeId)
 
-        val pendingIntent = PendingIntent.getBroadcast(this, PlaceNotificationID, placealarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
+        val pendingIntent = PendingIntent.getBroadcast(this, placeId, placealarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val interval = 1000*60*3  //3분
 
         if (alarmManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -309,35 +308,14 @@ class LocationUpdatesService : Service() {
                     calendar.timeInMillis,
                     pendingIntent
                 )
-                alarmManager.setRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.timeInMillis,
-                    interval.toLong(),
-                    pendingIntent
-                )
             }
-            //부팅후 실행되는 리시버 사용가능하게 설정함.
+           /* //부팅후 실행되는 리시버 사용가능하게 설정함.
             pm.setComponentEnabledSetting(
                 placereceiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP
-            )
+            )*/
         }
-    }
-
-    private fun unsetPlaceAlarm() {
-        val pm = this.packageManager
-        val receiver = ComponentName(this, DeviceBootTimeReceiver::class.java)
-        val alarmIntent = Intent(this, TimeReceiver::class.java)
-
-        val pendingIntent = PendingIntent.getBroadcast(this, PlaceNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
-        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        if(PendingIntent.getBroadcast(this, PlaceNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {
-            alarmManager.cancel(pendingIntent)
-            Log.v("seyuuuun", "알림해제 in place")
-        }
-        pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
     }
 
     private fun getLastLocation() {
@@ -373,6 +351,7 @@ class LocationUpdatesService : Service() {
         intent.putExtra(EXTRA_LOCATION, location)
 
         val placeIntent = Intent(applicationContext, AddTodo::class.java)
+        var placeItems : ArrayList<PlaceData> = arrayListOf()
 
         // Update notification content if running as a foreground service.
         if (serviceIsRunningInForeground(this)) {
@@ -381,11 +360,24 @@ class LocationUpdatesService : Service() {
                 val location = Location("")
                 location.longitude = place.longitude
                 location.latitude = place.latitude
+                Log.v("seyuuuun", "for문안에는 들어옴 if확인할 장소 $place")
                 if (calDistance(location, mLocation!!)) {
                     Log.e("jieun", "${place.place}가 이 지점에 300m 안이라 $locationtext")
                     placeCalendar.timeInMillis
-                    setPlaceAlarm(placeCalendar)
+                    PlaceNotificationID = ((System.currentTimeMillis()/1000).toInt()) * (allSelectedPlace.indexOf(place) +1)
+                    setPlaceAlarm(placeCalendar, PlaceNotificationID)
+                    placeItems.add(place)
+                   /* handler.postDelayed({
+                        allSelectedPlace.add(place)
+                        Log.i("jieun", "$place 다시 생김")
+                    }, 10000L)*/
                 }
+            }
+
+            for(placeItem in placeItems) {
+                allSelectedPlace.remove(placeItem)
+                Log.v("seyuuuun", "지워진 장소 확인 $placeItem")
+                Log.v("seyuuuun", "남은 장소들 $allSelectedPlace")
             }
 
             mNotificationManager!!.notify(

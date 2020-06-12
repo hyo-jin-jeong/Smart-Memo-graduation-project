@@ -132,10 +132,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.time_location_settings)
 
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .registerOnSharedPreferenceChangeListener(this)
+        /*PreferenceManager.getDefaultSharedPreferences(this)
+            .registerOnSharedPreferenceChangeListener(this)*/
 
-        if (!checkPermissions()) {
+        /*if (!checkPermissions()) {
             requestPermissions()
         } else {
             mService?.requestLocationUpdates(allSelectedPlace)
@@ -145,7 +145,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         bindService(
             Intent(this, LocationUpdatesService::class.java), mServiceConnection,
             Context.BIND_AUTO_CREATE
-        )
+        )*/
 
         myReceiver = MyReceiver()
 
@@ -329,8 +329,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
         todoAlarm()
         receiverData()
-        distanceToPlace()
-
         setPlaceListAdapter()
 
 //        this.placeList = placeListAdapter.getList() // delete 후 값 가져오기
@@ -521,19 +519,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         presenter.setTodoPlaceAdapterView(placeListAdapter)
     }
 
-    private fun distanceToPlace() {
-        val distance = intent.getBooleanExtra("distance", false)
-        Log.v("seyuuuun", "distance확인 : " + distance)
-        if(distance.equals(true)) {
-            placeCalendar.timeInMillis
-            Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.HOUR_OF_DAY))
-            Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.MINUTE))
-            Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.SECOND))
-            setPlaceAlarm(notifyPlace, placeCalendar, settingsPlaceMinutes)
-            Log.v("seyuuuun", "distance확인")
-        }
-    }
-
     private fun receiverData() {  //브로드캐스트에서 intent넘겨받기
         if (intent.hasExtra(BROADCAST)) {
             finish()
@@ -550,6 +535,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             finish()
             var cancel = intent.getBooleanExtra(BROADCASTPLACE, false)
             placeId = intent.getIntExtra("placeid", 0)
+            Log.v("seyuuuun", "취소됨 $cancel")
+            Log.v("seyuuuun", "취소된 id $placeId")
 
             if (cancel.equals(true)) {
                 notifyPlace = false
@@ -647,63 +634,20 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
     }
 
-    fun setPlaceAlarm(notifyPlace: Boolean, calendar: Calendar, settingPlace: Int) {  //시간알람, 장소알람
-        val pm = applicationContext.packageManager
-        val placereceiver = ComponentName(this, DeviceBootPlaceReceiver::class.java)
-        val placealarmIntent = Intent(this, PlaceReceiver::class.java)
-
-        if (titleEdit.text != null) {
-            val todoTitle = titleEdit.text.toString()
-            placealarmIntent.putExtra("todoTitle", todoTitle)
-        }
-
-        //DB작업끝난후 바꿔야함.
-        placealarmIntent.putExtra("todoPlace", "임시로,,")
-
-        placealarmIntent.putExtra("todoId", PlaceNotificationID) //reqeustcode 때문에 넣어준 것!!
-        Log.v("seyuuuun", "notificationId in place" + PlaceNotificationID)
-
-        val pendingIntent = PendingIntent.getBroadcast(this, PlaceNotificationID, placealarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
-        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val interval = 1000 * 60 * settingPlace
-
-        if(notifyPlace) {
-            if (alarmManager != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.timeInMillis,
-                        pendingIntent
-                    )
-                    alarmManager.setRepeating(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.timeInMillis,
-                        interval.toLong(),
-                        pendingIntent
-                    )
-                }
-                //부팅후 실행되는 리시버 사용가능하게 설정함.
-                pm.setComponentEnabledSetting(
-                    placereceiver,
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP
-                )
-            }
-        }
-    }
-
     private fun unsetPlaceAlarm(id: Int) {
         val pm = this.packageManager
         val receiver = ComponentName(this, DeviceBootTimeReceiver::class.java)
         val alarmIntent = Intent(this, TimeReceiver::class.java)
         val notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val pendingIntent = PendingIntent.getBroadcast(this, PlaceNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
+        val pendingIntent = PendingIntent.getBroadcast(this, id, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        if(PendingIntent.getBroadcast(this, PlaceNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null) {
+        if(PendingIntent.getBroadcast(this, id, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null) {
+            alarmManager.cancel(pendingIntent)
             notificationManager.cancel(id)
             Log.v("seyuuuun", "알림해제 in place")
+            Log.v("seyuuuuun", "알림 해제id:  $id")
         }
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
     }
@@ -941,9 +885,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     }
 
     override fun onSuccess(placeList: MutableList<PlaceData>) {
+        allSelectedPlace.clear()
         for (place in placeList) {
             allSelectedPlace.add(place)
-            Log.e("jieun", "담긴 place = $place")
+            Log.e("seyuuuun", "담긴 place = $place")
         }
 
         if (!checkPermissions()) {
@@ -951,7 +896,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         } else {
             mService?.requestLocationUpdates(allSelectedPlace)
         }
-        //mService!!.removeLocationUpdates()  과부하 방지를 위해 남겨놓음.일단은!!!!
+        //mSer vice!!.removeLocationUpdates()  과부하 방지를 위해 남겨놓음.일단은!!!!
 
         // Service로 위치 정보 넘기기 placeList가 PlaceData 형식이 들어있는 리스트에용
         Log.e("Add Todo placeList", placeList.toString())
