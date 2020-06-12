@@ -31,6 +31,7 @@ class TimeReceiver : BroadcastReceiver() {
         val cancelIntent = Intent(context, AddTodo::class.java)
         cancelIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         cancelIntent.putExtra(BROADCAST, true)
+        cancelIntent.putExtra("timeid", id)
 
         val pendingIntent = PendingIntent.getActivity(context, id, notificationIntent, 0)
         val cancelpendingIntent = PendingIntent.getActivity(context, id, cancelIntent, 0)
