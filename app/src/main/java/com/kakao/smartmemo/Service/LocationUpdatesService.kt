@@ -9,21 +9,21 @@ import android.content.res.Configuration
 import android.location.Location
 import android.os.*
 import android.util.Log
-import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
+import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.DeviceBootPlaceReceiver
 import com.kakao.smartmemo.Receiver.DeviceBootTimeReceiver
 import com.kakao.smartmemo.Receiver.PlaceReceiver
 import com.kakao.smartmemo.Receiver.TimeReceiver
 import com.kakao.smartmemo.Utils.Utils.getLocationText
-import com.kakao.smartmemo.Utils.Utils.getLocationTitle
 import com.kakao.smartmemo.Utils.Utils.requestingLocationUpdates
 import com.kakao.smartmemo.Utils.Utils.setRequestingLocationUpdates
 import com.kakao.smartmemo.View.AddTodo
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.acos
 import kotlin.math.cos
 import kotlin.math.sin
@@ -65,6 +65,7 @@ class LocationUpdatesService : Service() {
      * The current location.
      */
     private var mLocation: Location? = null
+    private var allSelectedPlace = arrayListOf<PlaceData>()
 
     override fun onCreate() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -106,6 +107,10 @@ class LocationUpdatesService : Service() {
         startId: Int
     ): Int { //startService()를 호출해 서비스가 시작되면 메소드 호출
         Log.i(TAG, "Service started")
+
+        allSelectedPlace = intent.getParcelableArrayListExtra("allSelectedPlaceList")
+        Log.e("jieun", "서비스로 전달 전달된 값 : ${allSelectedPlace.toString()}")
+
         val startedFromNotification = intent.getBooleanExtra(
             EXTRA_STARTED_FROM_NOTIFICATION,
             false
@@ -174,10 +179,13 @@ class LocationUpdatesService : Service() {
      * Makes a request for location updates. Note that in this sample we merely log the
      * [SecurityException].
      */
-    fun requestLocationUpdates() {
+    fun requestLocationUpdates(allSelectedPlaceList: ArrayList<PlaceData>) {
         Log.i(TAG, "Requesting location updates")
         setRequestingLocationUpdates(this, true)
-        startService(Intent(applicationContext, LocationUpdatesService::class.java))
+        val intent = Intent(applicationContext, LocationUpdatesService::class.java)
+        intent.putExtra("allSelectedPlaceList", allSelectedPlaceList)
+//        startService(Intent(applicationContext, LocationUpdatesService::class.java))
+        startService(intent)
         try {
             mFusedLocationClient!!.requestLocationUpdates(
                 mLocationRequest,
@@ -392,14 +400,19 @@ class LocationUpdatesService : Service() {
 
         // Update notification content if running as a foreground service.
         if (serviceIsRunningInForeground(this)) {
-            if (calDistance(mLocation!!)) {
-                Log.e("jieun", "이 지점에 300m 안이라 $locationtext")
-                //receiver()
-                placeCalendar.timeInMillis
-                Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.HOUR_OF_DAY))
-                Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.MINUTE))
-                Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.SECOND))
-                setPlaceAlarm(placeCalendar)
+            for (place in allSelectedPlace) {
+                val location = Location("")
+                location.longitude = place.longitude
+                location.latitude = place.latitude
+                if (calDistance(location, mLocation!!)) {
+                    Log.e("jieun", "${place.place}가 이 지점에 300m 안이라 $locationtext")
+                    //receiver()
+                    placeCalendar.timeInMillis
+                    Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.HOUR_OF_DAY))
+                    Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.MINUTE))
+                    Log.v("seyuuuun", "장소 알람 시간 확인 : " + placeCalendar.get(Calendar.SECOND))
+                    setPlaceAlarm(placeCalendar)
+                }
             }
 
             mNotificationManager!!.notify(
@@ -411,24 +424,26 @@ class LocationUpdatesService : Service() {
 
     }
 
-    fun calDistance(location: Location): Boolean {
+    fun calDistance(placeAlarmLocation: Location, curLocation: Location): Boolean {
         //장소 바꿔놓음
-        val curLatitude = 37.582431
-        val curLongitude = 127.009425
+//        val curLatitude = 37.582431
+//        val curLongitude = 127.009425
+        val curLatitude = placeAlarmLocation.latitude
+        val curLongitude = placeAlarmLocation.longitude
         val theta: Double
         var dist: Double
-        theta = curLongitude - location.longitude
+        theta = curLongitude - curLocation.longitude
         dist =
-            sin(deg2rad(curLatitude)) * sin(deg2rad(location.latitude)) + (cos(
+            sin(deg2rad(curLatitude)) * sin(deg2rad(curLocation.latitude)) + (cos(
                 deg2rad(curLatitude)
             )
-                    * cos(deg2rad(location.latitude)) * cos(deg2rad(theta)))
+                    * cos(deg2rad(curLocation.latitude)) * cos(deg2rad(theta)))
         dist = acos(dist)
         dist = rad2deg(dist)
         dist *= 60 * 1.1515
         dist *= 1.609344 // 단위 mile 에서 km 변환.
         dist *= 1000.0 // 단위  km 에서 m 로 변환
-        //Log.e("jieun", "확인중 $dist")
+        Log.e("jieun", "확인중 $dist")
         Log.v("seyuuuun", "거리 : $dist")
         return dist <= 300
     }
@@ -522,5 +537,6 @@ class LocationUpdatesService : Service() {
          */
         private val NOTIFICATION_ID_NOTIFICATION = 123
         private val NOTIFICATION_ID = 12345678
+        const val MSG_SEND_TO_SERVICE = 3
     }
 }
