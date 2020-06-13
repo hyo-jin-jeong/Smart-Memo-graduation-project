@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -24,6 +25,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var memoAdapter: MemoListAdapter
     private lateinit var memoDeleteAdapter: MemoListDeleteAdapter
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var memoProgressDialog : ProgressDialog
     private var memoList: MutableList<MemoData> = mutableListOf()
     private var count = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,10 +33,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
         setHasOptionsMenu(true)
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenter.getAllMemo()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,9 +41,18 @@ class MemoListFragment : Fragment(), MemoContract.View {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.memo_list_fragment, container, false)
         presenter = MemoPresenter(this)
+        memoProgressDialog = ProgressDialog(view.context)
         recyclerView1 = view.findViewById(R.id.rv_memo_list!!) as RecyclerView
         bottomNavigationView = view.findViewById(R.id.navigationview_bottom)
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        presenter.getAllMemo()
+        memoProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        memoProgressDialog.setMessage("메모 가져오는 중")
+        memoProgressDialog.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -163,6 +170,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
 
     override fun onSuccess() {
         showAllMemo(memoList)
+        memoProgressDialog.dismiss()
     }
 
 }

@@ -2,14 +2,13 @@ package com.kakao.smartmemo.View
 
 import android.Manifest
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
-
 import android.provider.Settings
-
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -21,12 +20,13 @@ import androidx.core.content.ContextCompat
 import com.kakao.smartmemo.Contract.LoginContract
 import com.kakao.smartmemo.Presenter.LoginPresenter
 import com.kakao.smartmemo.R
-import net.daum.mf.map.api.MapView
 
 class LoginActivity: AppCompatActivity(), LoginContract.View {
     private lateinit var email: EditText
     private lateinit var pw: EditText
+    private lateinit var loginDialog : ProgressDialog
     lateinit var presenter : LoginContract.Presenter
+    private var loginCount = 0
 
     private val GPS_ENABLE_REQUEST_CODE: Int = 2001
     private val PERMISSIONS_REQUEST_CODE: Int = 100
@@ -36,19 +36,26 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_page)
         presenter = LoginPresenter(this)
+        loginDialog = ProgressDialog(this)
 
         val loginButton = findViewById<CardView>(R.id.login_button)
         email = findViewById(R.id.email)
         pw = findViewById(R.id.pw)
 
         loginButton.setOnClickListener {
-            if (email.text.toString() != "" && pw.text.toString() != "") {
+            loginCount++
+            if (email.text.toString() != "" && pw.text.toString() != "" && loginCount == 1) {
+                loginDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+                loginDialog.setMessage("로그인 하는 중")
+                loginDialog.show()
                 presenter.checkUser(this, email.text.toString(), pw.text.toString())
+            } else {
+                Toast.makeText(applicationContext, "로그인 중입니다. 잠시만 기다려주십시오.", Toast.LENGTH_SHORT).show()
             }
-            else {
-                Toast.makeText(this, "다시 입력해주세요.", Toast.LENGTH_SHORT).show()
+            //else {
+                //Toast.makeText(this, "다시 입력해주세요.", Toast.LENGTH_SHORT).show()
                 // 나중에 애니메이션 넣기
-            }
+            //}
         }
 
         val searchInfoButton = findViewById<Button>(R.id.search_id_pw)
@@ -85,11 +92,14 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
     }
 
     override fun onLoginSuccess(message : String) {
-        Log.e("dd","이거아냐")
+        loginCount = 0
         presenter.getProfile()
+        loginDialog.dismiss()
         startMainActivity()
     }
     override fun onLoginFailure(message: String) {
+        loginCount = 0
+        loginDialog.dismiss()
         Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
     }
 

@@ -103,23 +103,27 @@ class MemoModel {
                                     .addListenerForSingleValueEvent(object : ValueEventListener {
                                         override fun onCancelled(p0: DatabaseError) {}
                                         override fun onDataChange(memoSnapshot: DataSnapshot) {
-                                            placeList.add(
-                                                PlaceData(
-                                                    memoSnapshot.child("placeId").value.toString(),
-                                                    memoSnapshot.child("placeName").value.toString(),
-                                                    memoSnapshot.child("latitude").value.toString().toDouble(),
-                                                    memoSnapshot.child("longitude").value.toString().toDouble()
+                                            if(memoSnapshot.hasChildren()){
+                                                placeList.add(
+                                                    PlaceData(
+                                                        memoSnapshot.child("placeId").value.toString(),
+                                                        memoSnapshot.child("placeName").value.toString(),
+                                                        memoSnapshot.child("latitude").value.toString().toDouble(),
+                                                        memoSnapshot.child("longitude").value.toString().toDouble()
+                                                    )
                                                 )
-                                            )
-                                            if (i == FolderObject.folderInfo.size - 1 && j == memoIdSnapshot.children.count() - 1) {
-                                                onPlaceListener.onSuccess(placeList, "memo")
-                                                i = 0
-                                            } else if (j == memoIdSnapshot.children.count() - 1) {
-                                                j = 0
-                                                i++
-                                            } else {
-                                                j++
+                                                if (i == FolderObject.folderInfo.size - 1 && j == memoIdSnapshot.children.count() - 1
+                                                    && placeList[memoIdSnapshot.children.count()-1] != null) {
+                                                    onPlaceListener.onSuccess(placeList, "memo")
+                                                    i = 0
+                                                } else if (j == memoIdSnapshot.children.count() - 1) {
+                                                    j = 0
+                                                    i++
+                                                } else {
+                                                    j++
+                                                }
                                             }
+
                                         }
                                     })
                             }

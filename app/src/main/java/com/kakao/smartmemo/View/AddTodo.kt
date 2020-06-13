@@ -408,7 +408,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                     } else {
                         unsetTimeAlarm(TimeNotificationID) //시간알람 해제
                     }
-                  
                     finish()
                 }
             }
@@ -913,5 +912,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     override fun onAddSuccess() {
         presenter.getPlace("addTodo")
+        finish()
     }
 }

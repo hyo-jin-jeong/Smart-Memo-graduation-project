@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -31,6 +32,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var presenter : TodoContract.Presenter
     private lateinit var todolist : ListView
     private lateinit var bottomNavigationView : BottomNavigationView
+    private lateinit var todoProgressDialog : ProgressDialog
     private lateinit var textViewTodoList : TextView
     private lateinit var adapter : TodoAdapter
     private lateinit var todoDeleteAdapter : TodoDeleteAdapter
@@ -53,6 +55,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         cont = view.context // view의 컨텍스트
         bottomNavigationView = view.findViewById(R.id.navigationview_bottom)
         textViewTodoList = view.findViewById(R.id.textView_todolist)
+        todoProgressDialog = ProgressDialog(view.context)
 
         presenter = TodoPresenter(this)
 
@@ -77,6 +80,10 @@ class TodoListFragment : Fragment(), TodoContract.View {
     override fun onStart() {
         super.onStart()
         presenter.getAllTodo()
+        todoProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        todoProgressDialog.setMessage("Todo 목록 가져오는 중")
+        todoProgressDialog.show()
+
         if(navigationview_bottom.visibility == VISIBLE) {
             navigationview_bottom.visibility = GONE
         }
@@ -157,6 +164,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         presenter.setTodoAdapterView(adapter)
         adapter.notifyAdapter()
         bottomNavigationView.visibility = GONE
+        todoProgressDialog.dismiss()
     }
 
     override fun sendPlaceData(placeList: MutableList<PlaceData>) {

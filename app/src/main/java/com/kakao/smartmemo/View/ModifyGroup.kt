@@ -61,9 +61,7 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
             folderId = intent.getStringExtra("folderId")
             folderNameEdit.setText(FolderObject.folderInfo[folderId])
             folderNameText.text = FolderObject.folderInfo[folderId].toString()
-            FolderObject.folderColor[folderId]?.toInt()?.let {
-                themeColor.setBackgroundColor(it)
-            }
+            themeColor.setBackgroundColor(FolderObject.folderColor[folderId]!!.toInt())
         }
 
         folderMemberSet.text = resources.getString(R.string.group_member)
