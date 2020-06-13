@@ -1,16 +1,13 @@
 package com.kakao.smartmemo.Model
 
-import android.renderscript.Sampler
 import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kakao.smartmemo.Contract.AddTodoContract
-import com.kakao.smartmemo.Contract.DialogContract
 import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Contract.TodoContract
-import com.kakao.smartmemo.Data.PlaceAlarmData
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.FolderObject
@@ -69,6 +66,9 @@ class TodoModel {
         var i = 0
         var todoId = ""
         todoId = if (todoData.todoId == "") {
+            placeList.forEach {
+                it.todoId = todoId
+            }
             (System.currentTimeMillis() * 5000).toInt().toString()
         } else {
             todoData.todoId
@@ -227,7 +227,7 @@ class TodoModel {
                                     placeAlarm.setPlaceAlarm, placeAlarm.placeDate, placeAlarm.placeAgain
                                 ))
                                 Log.e("todoData1111", todoList.toString())
-                                if (todoSnapshot.children.count() - 1 == i && todoList[todoSnapshot.children.count()-1] != null) {
+                                if (todoSnapshot.children.count() - 1 == i) {
                                     onTodoListener.onGroupSuccess(todoList)
                                 }
                             }
@@ -267,28 +267,26 @@ class TodoModel {
                                                     placeList.add(
                                                         it1
                                                     )
-
-                                                    if (m == placeSnapshot.children.count()-1 && j == todoSnapshot.children.count()-1
-                                                        && i == FolderObject.folderInfo.size - 1 && placeList[placeSnapshot.children.count()-1] != null) {
-                                                        if (status == "addTodo") {
-                                                            onAddTodoListener.onSuccess(placeList)
-                                                        } else {
-                                                            Log.e("MAP", placeList.toString())
-                                                            onPlaceListener.onSuccess(placeList, "todo")
-                                                        }
-
-                                                    } else if (m == placeSnapshot.children.count() - 1 && j == todoSnapshot.children.count() - 1) {
-                                                        m = 0
-                                                        j = 0
-                                                        i++
-                                                    } else if (m == placeSnapshot.children.count() - 1) {
-                                                        m =0
-                                                        j++
-                                                    }
-                                                    else {
-                                                        m++
+                                                }
+                                                if (m == placeSnapshot.children.count()-1 && j == todoSnapshot.children.count()-1
+                                                    && i == FolderObject.folderInfo.size - 1 && placeList[placeSnapshot.children.count()-1] != null) {
+                                                    if (status == "addTodo") {
+                                                        onAddTodoListener.onSuccess(placeList)
+                                                    } else if (status == "map") {
+                                                        Log.e("MAP", placeList.toString())
+                                                        onPlaceListener.onSuccess(placeList, "todo")
                                                     }
 
+                                                } else if (m == placeSnapshot.children.count() - 1 && j == todoSnapshot.children.count() - 1) {
+                                                    m = 0
+                                                    j = 0
+                                                    i++
+                                                } else if (m == placeSnapshot.children.count() - 1) {
+                                                    m =0
+                                                    j++
+                                                }
+                                                else {
+                                                    m++
                                                 }
                                             } else {
                                                 if (j == todoSnapshot.children.count() - 1 && i == FolderObject.folderInfo.size - 1) {
@@ -299,6 +297,7 @@ class TodoModel {
                                                         onPlaceListener.onSuccess(placeList, "todo")
                                                     }
                                                 } else if (j == todoSnapshot.children.count() - 1) {
+                                                    j=0
                                                     i++
                                                 } else {
                                                     j++

@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -77,6 +78,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     override fun onStart() {
         super.onStart()
         presenter.getAllTodo()
+
         if(navigationview_bottom.visibility == VISIBLE) {
             navigationview_bottom.visibility = GONE
         }

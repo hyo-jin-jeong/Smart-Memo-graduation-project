@@ -28,9 +28,7 @@ class FolderModel {
         //그룹 관련된 DB작업
         var groupId = (System.currentTimeMillis()*10000).toInt().toString()
         var folderData = FolderData(groupName,color)
-        Log.e("으어어어", "ㅇㅇ")
         firebaseUser.child(UserObject.uid).child("GroupInfo").updateChildren(mapOf(groupId to groupName))
-        Log.e("우아아아이", "ㅇㅇㅇㅇ")
         with(firebaseFolder.child(groupId)) {
             setValue(folderData)
             child("MemberInfo").setValue(mapOf(UserObject.uid to UserObject.email))
@@ -41,7 +39,6 @@ class FolderModel {
 
     fun updateGroup(groupId:String, groupName: String, color: Long?) {
         firebaseUser.child(UserObject.uid).child("GroupInfo").child(groupId).setValue(groupName)
-
         with(firebaseFolder.child(groupId)) {
             updateChildren(mapOf("folderName" to groupName))
             updateChildren(mapOf("folderColor" to color))
@@ -50,7 +47,6 @@ class FolderModel {
         if (color != null) {
             FolderObject.folderColor[groupId] = color.toLong()
         }
-
     }
 
     fun getGroupInfo() {
@@ -71,7 +67,7 @@ class FolderModel {
                                     FolderObject.folderColor[it.key!!] = snapShot.child("folderColor").value.toString().toLong()
                                     FolderObject.folderId.add(it.key!!)
                                     groupIdList.add(it.key!!)
-                                    if(i == folderSnapshot.children.count()&&FolderObject.folderShare[it.key!!]!=null&&FolderObject.folderColor[it.key!!]!=null){
+                                    if(i == folderSnapshot.children.count()-1&&FolderObject.folderShare[it.key!!]!=null&&FolderObject.folderColor[it.key!!]!=null){
                                         onGetGroupInfoListener.onSuccess(groupIdList)
                                     }
                                     i++
@@ -93,9 +89,5 @@ class FolderModel {
         FolderObject.folderInfo.remove(groupId)
         FolderObject.folderColor.remove(groupId)
     }
-
-
-
-
 
 }

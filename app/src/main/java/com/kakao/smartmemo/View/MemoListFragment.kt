@@ -1,6 +1,8 @@
 package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -24,6 +26,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var memoAdapter: MemoListAdapter
     private lateinit var memoDeleteAdapter: MemoListDeleteAdapter
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var memoProgressDialog : ProgressDialog
     private var memoList: MutableList<MemoData> = mutableListOf()
     private var count = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,10 +34,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
         setHasOptionsMenu(true)
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenter.getAllMemo()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,9 +42,16 @@ class MemoListFragment : Fragment(), MemoContract.View {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.memo_list_fragment, container, false)
         presenter = MemoPresenter(this)
-        recyclerView1 = view.findViewById(R.id.rv_memo_list!!) as RecyclerView
+        recyclerView1 = view.findViewById(R.id.rv_memo_list) as RecyclerView
         bottomNavigationView = view.findViewById(R.id.navigationview_bottom)
         return view
+    }
+
+
+
+    override fun onStart() {
+        super.onStart()
+        presenter.getAllMemo()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -54,12 +60,11 @@ class MemoListFragment : Fragment(), MemoContract.View {
         (activity as MainActivity).fab.visibility = View.VISIBLE
         (activity as MainActivity).fab_todo.visibility = View.VISIBLE
         (activity as MainActivity).fab_memo.visibility = View.VISIBLE
-        val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_group_in_list, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item?.itemId) {
+        return when (item.itemId) {
             R.id.select_group -> {
                 selectGroup()
                 return true
@@ -80,7 +85,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     }
 
     override fun showMemoItem(position: Int) {
-        var intent = Intent(view?.context, ShowMemo::class.java)
+        val intent = Intent(view?.context, ShowMemo::class.java)
         intent.putExtra("memoData", memoList[position])
         startActivity(intent)
     }
@@ -101,26 +106,13 @@ class MemoListFragment : Fragment(), MemoContract.View {
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         bottomNavigationView.visibility = View.GONE
         memoAdapter.notifyAdapter()
+
     }
 
     private fun deleteMemo() {
         if (memoList.size != 0) {
             //하단 메뉴
-            bottomNavigationView.setOnNavigationItemSelectedListener {
-                when (it.itemId) {
-                    R.id.removeItem -> {
-                        var deleteMemoList = memoDeleteAdapter.deleteMemo()
-                        presenter.deleteMemo(deleteMemoList)
-                        presenter.getAllMemo()
-                        true
-                    }
-                    R.id.cancelItem -> {
-                        showAllMemo(memoList)
-                        true
-                    }
-                }
-                true
-            }
+
             memoDeleteAdapter = MemoListDeleteAdapter(memoList)
             recyclerView1.adapter = memoDeleteAdapter
             presenter.setMemoDeleteAdapterModel(memoDeleteAdapter)
@@ -128,6 +120,20 @@ class MemoListFragment : Fragment(), MemoContract.View {
             recyclerView1.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             bottomNavigationView.visibility = View.VISIBLE
+            bottomNavigationView.setOnNavigationItemSelectedListener {
+                when (it.itemId) {
+                    R.id.removeItem -> {
+                        val deleteMemoList = memoDeleteAdapter.deleteMemo()
+                        presenter.deleteMemo(deleteMemoList)
+                        presenter.getAllMemo()
+
+                    }
+                    R.id.cancelItem -> {
+                        showAllMemo(memoList)
+                    }
+                }
+                true
+            }
         }
 
     }
@@ -162,7 +168,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     }
 
     override fun onSuccess() {
-        showAllMemo(memoList)
+       // presenter.getAllMemo()
     }
 
 }

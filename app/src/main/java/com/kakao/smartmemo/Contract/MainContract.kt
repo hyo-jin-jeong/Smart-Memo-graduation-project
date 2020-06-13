@@ -8,6 +8,7 @@ interface MainContract {
 
     }
     interface View {
+       fun onSuccess(action: MutableList<String>)
     }
 
     interface onGetGroupInfoListener {

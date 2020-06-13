@@ -43,7 +43,6 @@ class UserModel {
     }
 
     fun getProfile() { // user 정보 받아오는 함수
-        Log.e("uid", UserObject.uid)
         firebaseUser.child(UserObject.uid).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(snapShot: DataSnapshot) {
@@ -55,6 +54,7 @@ class UserModel {
                 UserObject.kakao_connected =
                     snapShot.child("kakao_connected").value.toString().toBoolean()
                 UserObject.kakao_alarm_time = snapShot.child("kakao_alarm_time").value.toString()
+                onLoginListener.onSuccess()
             }
         })
 
@@ -148,7 +148,7 @@ class UserModel {
                 auth.currentUser
                 UserObject.uid = auth.uid.toString()
                 UserObject.email = email
-                onLoginListener.onSuccess(task.result.toString())
+                getProfile()
             } else {
                 onLoginListener.onFailure(task.exception.toString())
             }

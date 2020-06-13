@@ -87,7 +87,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     private var todoMinute = 0
     private var currentHour = 0
     private var currentMinute = 0
-    private var todoId = ""
+    private var todoId = (System.currentTimeMillis() * 5000).toInt().toString()
     val interval = AlarmManager.INTERVAL_DAY
     private var notifyTime = false
     private var notifyPlace = false
@@ -368,8 +368,13 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         }
 
         if (intent.hasExtra("placeList")) { // TodoListFragment에서 넘어온 경우
+            var i = 0
             placeList.clear()
             placeList = intent.getParcelableArrayListExtra("placeList")
+            placeList.forEach{
+                it.todoId = todoId
+            }
+
         }
         savebtn.setOnClickListener {
             when {
@@ -408,7 +413,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                     } else {
                         unsetTimeAlarm(TimeNotificationID) //시간알람 해제
                     }
-                  
                     finish()
                 }
             }
@@ -419,11 +423,19 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         }
 
         if (intent.getStringExtra("mode") == "longPressed") { // LongTouch후 PlaceAlarmDetailActivity에서 넘어온 경우
+            var i = 0
+            placeList.clear()
             placeSwitch.isChecked = true
             todoStubLocation.visibility = VISIBLE
             placeData = intent.getParcelableExtra<PlaceData>("placeData")
             placeList = intent.getParcelableArrayListExtra("todoPlaceAlarm")
-            setPlaceListAdapter()
+            placeList.forEach {
+                it.todoId = todoId
+                if(placeList.size-1 == i){
+                    setPlaceListAdapter()
+                }
+            }
+
         } else {
             // fab로 생성한 경우
             placeData = intent.getParcelableExtra<PlaceData>("placeData")
@@ -436,12 +448,22 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        var i = 0
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 200 -> { // fab로 등록 -> PlaceAlarmDetailActivity에서 장소리스트 받아오는 것
+                    placeList.clear()
                     placeData = data!!.getParcelableExtra("placeData")
                     placeList = data!!.getParcelableArrayListExtra("todoPlaceAlarm")
-                    setPlaceListAdapter()
+                    placeList.forEach{
+                        it.todoId = todoId
+                        if(placeList.size-1 == i){
+                            setPlaceListAdapter()
+                        }
+                        i++
+                    }
+
+
                 }
             }
         }
@@ -913,5 +935,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     override fun onAddSuccess() {
         presenter.getPlace("addTodo")
+        finish()
     }
 }

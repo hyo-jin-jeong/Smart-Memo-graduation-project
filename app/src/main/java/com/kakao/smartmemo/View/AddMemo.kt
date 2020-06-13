@@ -118,10 +118,7 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     setResult(RESULT_OK, intent)
                 }
-
                 finish()
-
-
         }
     }
 
