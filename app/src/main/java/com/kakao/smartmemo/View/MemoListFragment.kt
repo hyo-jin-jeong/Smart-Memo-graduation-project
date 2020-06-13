@@ -42,7 +42,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
         val view = inflater.inflate(R.layout.memo_list_fragment, container, false)
         presenter = MemoPresenter(this)
         memoProgressDialog = ProgressDialog(view.context)
-        recyclerView1 = view.findViewById(R.id.rv_memo_list!!) as RecyclerView
+        recyclerView1 = view.findViewById(R.id.rv_memo_list) as RecyclerView
         bottomNavigationView = view.findViewById(R.id.navigationview_bottom)
         return view
     }
@@ -61,12 +61,11 @@ class MemoListFragment : Fragment(), MemoContract.View {
         (activity as MainActivity).fab.visibility = View.VISIBLE
         (activity as MainActivity).fab_todo.visibility = View.VISIBLE
         (activity as MainActivity).fab_memo.visibility = View.VISIBLE
-        val menuInflater = menuInflater
         menuInflater.inflate(R.menu.select_group_in_list, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item?.itemId) {
+        return when (item.itemId) {
             R.id.select_group -> {
                 selectGroup()
                 return true
@@ -87,7 +86,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     }
 
     override fun showMemoItem(position: Int) {
-        var intent = Intent(view?.context, ShowMemo::class.java)
+        val intent = Intent(view?.context, ShowMemo::class.java)
         intent.putExtra("memoData", memoList[position])
         startActivity(intent)
     }
@@ -108,6 +107,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         bottomNavigationView.visibility = View.GONE
         memoAdapter.notifyAdapter()
+        memoProgressDialog.dismiss()
     }
 
     private fun deleteMemo() {
@@ -116,14 +116,12 @@ class MemoListFragment : Fragment(), MemoContract.View {
             bottomNavigationView.setOnNavigationItemSelectedListener {
                 when (it.itemId) {
                     R.id.removeItem -> {
-                        var deleteMemoList = memoDeleteAdapter.deleteMemo()
+                        val deleteMemoList = memoDeleteAdapter.deleteMemo()
                         presenter.deleteMemo(deleteMemoList)
                         presenter.getAllMemo()
-                        true
                     }
                     R.id.cancelItem -> {
                         showAllMemo(memoList)
-                        true
                     }
                 }
                 true
@@ -170,7 +168,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
 
     override fun onSuccess() {
         showAllMemo(memoList)
-        memoProgressDialog.dismiss()
     }
 
 }
