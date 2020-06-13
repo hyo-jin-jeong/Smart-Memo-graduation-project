@@ -2,6 +2,7 @@ package com.kakao.smartmemo.View
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.app.SearchManager
 import android.content.Context
 import android.content.DialogInterface
@@ -56,7 +57,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var locationAdapter: LocationAdapter
-
     private var documentList: ArrayList<Document> = ArrayList()
     private var todo = mutableListOf<PlaceData>()
     private var memo = mutableListOf<PlaceData>()
@@ -149,6 +149,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onStart() {
         super.onStart()
+
         Log.e("onStart","onStart")
         if (!usingMapView) {
             mapView = MapView(v.context)
@@ -160,7 +161,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             mapView.setMapViewEventListener(this)
             mapView.setCurrentLocationEventListener(this)
             mapView.setOpenAPIKeyAuthenticationResultListener(this)
-
         }
         usingMapView = true
         memoMapPoint.clear()

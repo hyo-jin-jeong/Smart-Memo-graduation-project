@@ -10,12 +10,12 @@ interface LoginContract {
 
     interface View {
         fun startMainActivity()
-        fun onLoginSuccess(message: String)
+        fun onLoginSuccess()
         fun onLoginFailure(message: String)
     }
 
     interface OnLoginListener{
-        fun onSuccess(message:String)
+        fun onSuccess()
         fun onFailure(message:String)
     }
 }

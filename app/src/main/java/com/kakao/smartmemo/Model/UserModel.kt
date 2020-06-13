@@ -54,6 +54,7 @@ class UserModel {
                 UserObject.kakao_connected =
                     snapShot.child("kakao_connected").value.toString().toBoolean()
                 UserObject.kakao_alarm_time = snapShot.child("kakao_alarm_time").value.toString()
+                onLoginListener.onSuccess()
             }
         })
 
@@ -147,7 +148,7 @@ class UserModel {
                 auth.currentUser
                 UserObject.uid = auth.uid.toString()
                 UserObject.email = email
-                onLoginListener.onSuccess(task.result.toString())
+                getProfile()
             } else {
                 onLoginListener.onFailure(task.exception.toString())
             }

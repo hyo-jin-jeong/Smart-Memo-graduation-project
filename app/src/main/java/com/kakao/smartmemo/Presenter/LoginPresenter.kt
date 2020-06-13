@@ -21,8 +21,8 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.OnLoginListener {
         userModel.getProfile()
     }
 
-    override fun onSuccess(message: String) {
-        view.onLoginSuccess(message)
+    override fun onSuccess() {
+        view.onLoginSuccess()
     }
 
     override fun onFailure(message: String) {

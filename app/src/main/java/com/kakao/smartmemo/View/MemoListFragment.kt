@@ -2,6 +2,7 @@ package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -41,18 +42,16 @@ class MemoListFragment : Fragment(), MemoContract.View {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.memo_list_fragment, container, false)
         presenter = MemoPresenter(this)
-        memoProgressDialog = ProgressDialog(view.context)
         recyclerView1 = view.findViewById(R.id.rv_memo_list) as RecyclerView
         bottomNavigationView = view.findViewById(R.id.navigationview_bottom)
         return view
     }
 
+
+
     override fun onStart() {
         super.onStart()
         presenter.getAllMemo()
-        memoProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        memoProgressDialog.setMessage("메모 가져오는 중")
-        memoProgressDialog.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -107,25 +106,13 @@ class MemoListFragment : Fragment(), MemoContract.View {
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         bottomNavigationView.visibility = View.GONE
         memoAdapter.notifyAdapter()
-        memoProgressDialog.dismiss()
+
     }
 
     private fun deleteMemo() {
         if (memoList.size != 0) {
             //하단 메뉴
-            bottomNavigationView.setOnNavigationItemSelectedListener {
-                when (it.itemId) {
-                    R.id.removeItem -> {
-                        val deleteMemoList = memoDeleteAdapter.deleteMemo()
-                        presenter.deleteMemo(deleteMemoList)
-                        presenter.getAllMemo()
-                    }
-                    R.id.cancelItem -> {
-                        showAllMemo(memoList)
-                    }
-                }
-                true
-            }
+
             memoDeleteAdapter = MemoListDeleteAdapter(memoList)
             recyclerView1.adapter = memoDeleteAdapter
             presenter.setMemoDeleteAdapterModel(memoDeleteAdapter)
@@ -133,6 +120,20 @@ class MemoListFragment : Fragment(), MemoContract.View {
             recyclerView1.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             bottomNavigationView.visibility = View.VISIBLE
+            bottomNavigationView.setOnNavigationItemSelectedListener {
+                when (it.itemId) {
+                    R.id.removeItem -> {
+                        val deleteMemoList = memoDeleteAdapter.deleteMemo()
+                        presenter.deleteMemo(deleteMemoList)
+                        presenter.getAllMemo()
+
+                    }
+                    R.id.cancelItem -> {
+                        showAllMemo(memoList)
+                    }
+                }
+                true
+            }
         }
 
     }
@@ -167,7 +168,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     }
 
     override fun onSuccess() {
-        showAllMemo(memoList)
+       // presenter.getAllMemo()
     }
 
 }

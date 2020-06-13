@@ -91,9 +91,8 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         finish()
     }
 
-    override fun onLoginSuccess(message : String) {
+    override fun onLoginSuccess() {
         loginCount = 0
-        presenter.getProfile()
         loginDialog.dismiss()
         startMainActivity()
     }

@@ -66,6 +66,9 @@ class TodoModel {
         var i = 0
         var todoId = ""
         todoId = if (todoData.todoId == "") {
+            placeList.forEach {
+                it.todoId = todoId
+            }
             (System.currentTimeMillis() * 5000).toInt().toString()
         } else {
             todoData.todoId
@@ -224,7 +227,7 @@ class TodoModel {
                                     placeAlarm.setPlaceAlarm, placeAlarm.placeDate, placeAlarm.placeAgain
                                 ))
                                 Log.e("todoData1111", todoList.toString())
-                                if (todoSnapshot.children.count() - 1 == i && todoList[todoSnapshot.children.count()-1] != null) {
+                                if (todoSnapshot.children.count() - 1 == i) {
                                     onTodoListener.onGroupSuccess(todoList)
                                 }
                             }

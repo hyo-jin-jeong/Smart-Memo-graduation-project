@@ -1,6 +1,7 @@
 package com.kakao.smartmemo.View
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -48,16 +49,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private var mFusedLocationClient: FusedLocationProviderClient? = null
     private var mServiceHandler: Handler? = null
 
-    override fun onStart() {
-        super.onStart()
-        presenter.getGroupInfo()
-    }
+
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         presenter = MainPresenter(this)
+        presenter.getGroupInfo()
 
         val sectionsPagerAdapter =
             SectionsPagerAdapter(
@@ -66,7 +65,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             )
 
         val viewPager: ViewPager = findViewById(R.id.view_pager)
+
         viewPager.adapter = sectionsPagerAdapter
+
         presenter.setMainAdapterModel(sectionsPagerAdapter)
         presenter.setMainAdapterView(sectionsPagerAdapter)
         mDrawerLayout = findViewById(R.id.drawer_layout)
@@ -219,6 +220,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         }
     }
 
+    override fun onSuccess(action: MutableList<String>) {
+
+    }
 
 
 }

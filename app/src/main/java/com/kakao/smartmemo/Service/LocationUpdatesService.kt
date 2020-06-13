@@ -4,7 +4,6 @@ import android.app.*
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.location.Location
 import android.os.*
@@ -13,13 +12,14 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Receiver.DeviceBootPlaceReceiver
-import com.kakao.smartmemo.Receiver.DeviceBootTimeReceiver
 import com.kakao.smartmemo.Receiver.PlaceReceiver
-import com.kakao.smartmemo.Receiver.TimeReceiver
 import com.kakao.smartmemo.Utils.Utils.getLocationText
 import com.kakao.smartmemo.Utils.Utils.requestingLocationUpdates
 import com.kakao.smartmemo.Utils.Utils.setRequestingLocationUpdates
@@ -67,7 +67,7 @@ class LocationUpdatesService : Service() {
     private var mLocation: Location? = null
     private var allSelectedPlace = arrayListOf<PlaceData>()
     private var handler = Handler()
-
+    private var todoIdList = mutableListOf<String>()
     override fun onCreate() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -283,24 +283,32 @@ class LocationUpdatesService : Service() {
         return builder.build()
     }
 
-    private fun setPlaceAlarm(calendar : Calendar, placeId:Int) {
+    private fun setPlaceAlarm(calendar: Calendar, placeData: PlaceData) {
         val text: CharSequence = getLocationText(mLocation)
-
+        var title:String = ""
         val pm = this.packageManager
         val placereceiver = ComponentName(this, DeviceBootPlaceReceiver::class.java)
         val placealarmIntent = Intent(this, PlaceReceiver::class.java)
-        var firebaseTodoId = FirebaseDatabase.getInstance().reference.child("TodoId")
-//        firebaseTodoId.
-        placealarmIntent.putExtra("todoTitle", "약사러 가기")
 
-        //DB작업끝난후 바꿔야함.
-        placealarmIntent.putExtra("todoPlace", "온누리 약국")
-        placealarmIntent.putExtra("todoText", text)
 
-        placealarmIntent.putExtra("todoId", placeId) //reqeustcode 때문에 넣어준 것!!
-        Log.v("seyuuuun", "notificationId in place" + placeId)
+        var firebaseTodo = FirebaseDatabase.getInstance().reference.child("Todo")
+        firebaseTodo.child(placeData.todoId).addValueEventListener(object :ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                title = dataSnapshot.child("title").value.toString()
+                placealarmIntent.putExtra("todoTitle", title)
+                placealarmIntent.putExtra("todoPlace", placeData.place)
+                placealarmIntent.putExtra("todoText", text)
+                placealarmIntent.putExtra("todoId", placeData.placeId) //reqeustcode 때문에 넣어준 것!!
+                Log.v("seyuuuun", "notificationId in place" + placeData)
+                setAlarm(placealarmIntent,placeData,calendar)
+            }
 
-        val pendingIntent = PendingIntent.getBroadcast(this, placeId, placealarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
+        })
+    }
+    private fun setAlarm(intent: Intent,placeData: PlaceData,calendar: Calendar){
+
+        val pendingIntent = PendingIntent.getBroadcast(baseContext, placeData.placeId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         if (alarmManager != null) {
@@ -311,12 +319,12 @@ class LocationUpdatesService : Service() {
                     pendingIntent
                 )
             }
-           /* //부팅후 실행되는 리시버 사용가능하게 설정함.
-            pm.setComponentEnabledSetting(
-                placereceiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP
-            )*/
+            /* //부팅후 실행되는 리시버 사용가능하게 설정함.
+             pm.setComponentEnabledSetting(
+                 placereceiver,
+                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                 PackageManager.DONT_KILL_APP
+             )*/
         }
     }
 
@@ -368,7 +376,7 @@ class LocationUpdatesService : Service() {
 
                     placeCalendar.timeInMillis
                     PlaceNotificationID = ((System.currentTimeMillis()/1000).toInt()) * (allSelectedPlace.indexOf(place) +1)
-                    setPlaceAlarm(placeCalendar, PlaceNotificationID)
+                    setPlaceAlarm(placeCalendar, place)
                     placeItems.add(place)
                    /* handler.postDelayed({
                         allSelectedPlace.add(place)

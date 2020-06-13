@@ -42,26 +42,17 @@ class MemoModel {
                     override fun onCancelled(p0: DatabaseError) {}
                     override fun onDataChange(memoIdSnapshot: DataSnapshot) {
                         if (memoIdSnapshot.children.count() != 0) {
-                            j = 0
-                            for (memoId in memoIdSnapshot.children) {
+                            memoIdSnapshot.children.forEach { memoId->
                                 firebaseMemo.child(memoId.value.toString())
                                     .addValueEventListener(object : ValueEventListener {
                                         override fun onCancelled(p0: DatabaseError) {}
                                         override fun onDataChange(memoSnapshot: DataSnapshot) {
-                                            memoList.add(
-                                                MemoData(
-                                                    memoId.value.toString(),
-                                                    memoSnapshot.child("title").value.toString(),
-                                                    memoSnapshot.child("date").value.toString(),
-                                                    memoSnapshot.child("content").value.toString(),
-                                                    memoSnapshot.child("groupId").value.toString(),
-                                                    memoSnapshot.child("placeId").value.toString(),
-                                                    memoSnapshot.child("placeName").value.toString(),
-                                                    memoSnapshot.child("latitude").value.toString(),
-                                                    memoSnapshot.child("longitude").value.toString()
+                                            memoSnapshot.getValue(MemoData::class.java)?.let { it1 ->
+                                                memoList.add(
+                                                    it1
                                                 )
-                                            )
-                                            if (i == FolderObject.folderInfo.size - 1 && j == memoIdSnapshot.children.count() - 1) {
+                                            }
+                                            if (i == FolderObject.folderInfo.size - 1 && j == memoIdSnapshot.children.count()-1) {
                                                 onMemoListener.onSuccess(memoList)
                                                 i = 0
                                             } else if (j == memoIdSnapshot.children.count() - 1) {
@@ -97,7 +88,6 @@ class MemoModel {
                     override fun onCancelled(p0: DatabaseError) {}
                     override fun onDataChange(memoIdSnapshot: DataSnapshot) {
                         if (memoIdSnapshot.children.count() != 0) {
-                            j = 0
                             for (memoId in memoIdSnapshot.children) {
                                 firebaseMemo.child(memoId.value.toString())
                                     .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -112,8 +102,7 @@ class MemoModel {
                                                         memoSnapshot.child("longitude").value.toString().toDouble()
                                                     )
                                                 )
-                                                if (i == FolderObject.folderInfo.size - 1 && j == memoIdSnapshot.children.count() - 1
-                                                    && placeList[memoIdSnapshot.children.count()-1] != null) {
+                                                if (i == FolderObject.folderInfo.size - 1 && j == memoIdSnapshot.children.count() - 1) {
                                                     onPlaceListener.onSuccess(placeList, "memo")
                                                     i = 0
                                                 } else if (j == memoIdSnapshot.children.count() - 1) {
@@ -168,19 +157,8 @@ class MemoModel {
 
                                 override fun onDataChange(groupMemoSnapshot: DataSnapshot) {
                                     with(groupMemoSnapshot) {
-                                        memoList.add(
-                                            MemoData(
-                                                memoId.key.toString(),
-                                                this.child("title").value.toString(),
-                                                this.child("date").value.toString(),
-                                                this.child("content").value.toString(),
-                                                this.child("groupId").value.toString(),
-                                                this.child("placeId").value.toString(),
-                                                this.child("placeName").value.toString(),
-                                                this.child("latitude").value.toString(),
-                                                this.child("longitude").value.toString()
-                                            )
-                                        )
+                                        this.getValue(MemoData::class.java)?.let { memoList.add(it) }
+
                                         if (memoList.size == memoIdSnapshot.children.count()) {
                                             onMemoListener.onSuccess(memoList)
                                         }
