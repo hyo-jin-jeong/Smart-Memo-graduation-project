@@ -316,9 +316,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                     locationAdapter.notifyDataSetChanged()
                     val apiClient: ApiClient =
                         ApiClient()
-                    val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(
-                        ApiInterface::class.java
-                    )
+                    val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(ApiInterface::class.java)
                     val callKeyword: Call<CategoryResult?>? = apiInterface.getSearchLocation(
                         getString(R.string.kakao_restapi_key),
                         "$newText ",
@@ -327,10 +325,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                     val callbackKeyword: Callback<CategoryResult?> =
                         object : Callback<CategoryResult?> {
                             //리스폰 시, 대응할 구현체
-                            override fun onResponse(
-                                call: Call<CategoryResult?>,
-                                response: Response<CategoryResult?>
-                            ) {
+                            override fun onResponse(call: Call<CategoryResult?>, response: Response<CategoryResult?>) {
                                 if (response.isSuccessful) { //check for Response status
                                     assert(response.body() != null)
                                     for (document in response.body()?.getDocuments()!!) {
@@ -345,11 +340,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                                 }
                             }
 
-                            override fun onFailure(
-                                call: Call<CategoryResult?>,
-                                t: Throwable
-                            ) {
-                            }
+                            override fun onFailure( call: Call<CategoryResult?>, t: Throwable) { }
                         }
                     callKeyword!!.enqueue(callbackKeyword)
 
@@ -470,7 +461,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onMapViewMoveFinished(mapView: MapView?, p1: MapPoint?) {
-
+        mapView?.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOff
     }
 
     override fun onMapViewCenterPointMoved(mapView: MapView?, p1: MapPoint?) {
