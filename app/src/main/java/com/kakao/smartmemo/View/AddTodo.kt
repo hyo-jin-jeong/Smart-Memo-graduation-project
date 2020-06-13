@@ -353,6 +353,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             todoId = data.todoId
             groupId = data.groupId
             titleEdit.setText(data.title)
+            selectGroupBtn.text = FolderObject.folderInfo[data.groupId]
             timeSwitch.isChecked = data.setTimeAlarm
             timeDateText.text = data.timeDate
             timeText.text = data.timeTime
