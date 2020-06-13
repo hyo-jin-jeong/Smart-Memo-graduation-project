@@ -10,11 +10,9 @@ import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_view.view.*
 
-class MemoDialogAdapter: RecyclerView.Adapter<MemoDialogAdapter.DialogViewHolder>(), MemoDialogAdapterContract.View, MemoDialogAdapterContract.Model {
+class MemoDialogAdapter(memo: MutableList<MemoData>): RecyclerView.Adapter<MemoDialogAdapter.DialogViewHolder>(), MemoDialogAdapterContract.View, MemoDialogAdapterContract.Model {
 
-    private var datas: MutableList<MemoData> = mutableListOf(
-        MemoData("","","","","","","","")
-    )
+    private var datas: MutableList<MemoData> = memo
     //View Holder생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = DialogViewHolder(parent)
 

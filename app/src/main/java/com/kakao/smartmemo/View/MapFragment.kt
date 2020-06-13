@@ -86,7 +86,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e("onCreate", "onCreate")
+        Log.e("jieun", "onCreate")
         setHasOptionsMenu(true)
     }
 
@@ -94,12 +94,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.e("jieun", "onCreateView")
+      
         val view = inflater.inflate(R.layout.map_fragment, container, false)
         Log.e("onCreateView", "onCreateView")
         v= view
         cont = view.context
+      
         presenter = MapPresenter(this)
-
         mapView = MapView(view.context)
         usingMapView = true
 
@@ -140,38 +142,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         recyclerView.layoutManager = layoutManager
         return view
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        Log.e("onActivityCreated", "onActivityCreated")
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        Log.e("onStart","onStart")
-        if (!usingMapView) {
-            mapView = MapView(v.context)
-            mapViewContainer = v.map_view as ViewGroup
-            mapViewContainer.addView(mapView)
-            mapView.currentLocationTrackingMode =
-                MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
-            mapView.setPOIItemEventListener(this)
-            mapView.setMapViewEventListener(this)
-            mapView.setCurrentLocationEventListener(this)
-            mapView.setOpenAPIKeyAuthenticationResultListener(this)
-        }
-        usingMapView = true
-        memoMapPoint.clear()
-        todoMapPoint.clear()
-        presenter.getTodoPlaceAlarm("map")
-        presenter.getMemo()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.e("onResume", "onResume")
     }
 
     private fun locationSetting() {
@@ -216,28 +186,65 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             )
         }
     }
+  
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        Log.e("jieun", "onActivityCreated")
+    }
+      
+    override fun onStart() {
+        super.onStart()
 
-    override fun onPause() {
-        super.onPause()
-        Log.e("onPause","onPause")
-        mapView.removeAllPOIItems()
-        usingMapView = false
-        mapViewContainer.removeAllViews()
+        Log.e("jieun", "onStart")
+        if (!usingMapView) {
+            mapView = MapView(v.context)
+            mapViewContainer = v.map_view as ViewGroup
+            mapViewContainer.addView(mapView)
+            mapView.currentLocationTrackingMode =
+                MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
+            mapView.setPOIItemEventListener(this)
+            mapView.setMapViewEventListener(this)
+            mapView.setCurrentLocationEventListener(this)
+            mapView.setOpenAPIKeyAuthenticationResultListener(this)
+        }
+        usingMapView = true
+        memoMapPoint.clear()
+        todoMapPoint.clear()
+        presenter.getTodoPlaceAlarm("map")
+        presenter.getMemo()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("jieun", "onResume")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.e("onStop", "onStop")
+        Log.e("jieun", "onStop")
+    }
+      
+    override fun onPause() {
+        super.onPause()
+        Log.e("jieun", "onPause")
+        mapView.removeAllPOIItems()
+        usingMapView = false
+      mapViewContainer.removeAllViews()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.e("onDestroyView", "onDestroyView")
+        Log.e("jieun", "onDestroyView")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("jieun", "onDestroy")
     }
 
     override fun onDetach() {
         super.onDetach()
-        Log.e("onDetach", "onDetach")
+        Log.e("jieun", "onDetach")
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -386,18 +393,24 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     //marker 선택 시
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
+        val latitude = p1!!.mapPoint.mapPointGeoCoord.latitude
+        val longitude = p1!!.mapPoint.mapPointGeoCoord.longitude
         val dialog = DialogFragment()
         //type은 memo만이면 0, todo만이면 1, 둘다면 2
         when (p1?.customImageResourceId) {
             R.drawable.memo_icon -> {
+                dialog.setMemoList(memo, latitude, longitude)
                 dialog.setCurType(0)
                 dialog.show(super.getChildFragmentManager(), "show dialog")
             }
             R.drawable.todo_icon -> {
+                dialog.setTodoList(todo, latitude, longitude)
                 dialog.setCurType(1)
                 dialog.show(super.getChildFragmentManager(), "show dialog")
             }
             R.drawable.memo_todo_icon -> {
+                dialog.setMemoList(memo, latitude, longitude)
+                dialog.setTodoList(todo, latitude, longitude)
                 dialog.setCurType(2)
                 dialog.show(super.getChildFragmentManager(), "show dialog")
             }
@@ -544,8 +557,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                         startActivity(addTodoIntent)
                         usingMapView = false
-                        mapViewContainer.removeAllViews()
-                        mapView.removePOIItem(curLocationMarker)
+
                     }
                 }
             })

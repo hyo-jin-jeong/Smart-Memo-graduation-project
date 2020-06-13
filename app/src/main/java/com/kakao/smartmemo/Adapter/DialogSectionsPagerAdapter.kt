@@ -5,27 +5,31 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.kakao.smartmemo.Contract.DialogAdapterContract
-import com.kakao.smartmemo.View.DialogFragment
+import com.kakao.smartmemo.Data.MemoData
+import com.kakao.smartmemo.Data.PlaceAlarmData
+import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.View.MemoDialog
 import com.kakao.smartmemo.View.PlaceAlarmDialog
 
-class DialogSectionsPagerAdapter(private val context: DialogFragment, fm: FragmentManager) : FragmentPagerAdapter(fm), DialogAdapterContract.View, DialogAdapterContract.Model {
+class DialogSectionsPagerAdapter(memo: MutableList<MemoData>, todo: MutableList<PlaceAlarmData>, fm: FragmentManager) : FragmentPagerAdapter(fm), DialogAdapterContract.View, DialogAdapterContract.Model {
     private var type: Int? = null
+    private var memoList = memo
+    private var todoList = todo
 
     override fun getItem(position: Int): Fragment {
         when (type) {
-            0 -> return MemoDialog()
-            1 -> return PlaceAlarmDialog()
+            0 -> return MemoDialog(memoList)
+            1 -> return PlaceAlarmDialog(todoList)
             else -> {
                 when (position) {
                     0 -> {
-                        return MemoDialog()
+                        return MemoDialog(memoList)
                     }
                     1 -> {
-                        return PlaceAlarmDialog()
+                        return PlaceAlarmDialog(todoList)
                     }
                 }
-                return MemoDialog()
+                return MemoDialog(memoList)
             }
         }
     }

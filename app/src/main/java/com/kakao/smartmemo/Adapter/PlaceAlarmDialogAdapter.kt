@@ -9,9 +9,9 @@ import com.kakao.smartmemo.Data.PlaceAlarmData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.alarm_list_item.view.*
 
-class PlaceAlarmDialogAdapter: RecyclerView.Adapter<PlaceAlarmDialogAdapter.DialogViewHolder>(), TodoDialogAdapterContract.View, TodoDialogAdapterContract.Model {
+class PlaceAlarmDialogAdapter(todo: MutableList<PlaceAlarmData>): RecyclerView.Adapter<PlaceAlarmDialogAdapter.DialogViewHolder>(), TodoDialogAdapterContract.View, TodoDialogAdapterContract.Model {
 
-    var data:MutableList<PlaceAlarmData> = mutableListOf(PlaceAlarmData("한성대학교", "2020.03.14", "도서관 책 ", true), PlaceAlarmData("녹십자약국", "2020.03.15", "마스크 사기", false))
+    var data:MutableList<PlaceAlarmData> = todo
     //View Holder생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = DialogViewHolder(parent)
 
