@@ -18,7 +18,6 @@ class LoginPresenter : LoginContract.Presenter, LoginContract.OnLoginListener {
         userModel.checkUser(context, email, password)
     }
     override fun getProfile() {
-        Log.e("그만해","ㅇㅇ")
         userModel.getProfile()
     }
 

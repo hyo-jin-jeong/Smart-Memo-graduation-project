@@ -131,9 +131,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="그룹 탈퇴"
+        android:text="폴더 나가기"
         android:textAlignment="center"
         android:textSize="20dp"
+        android:textColor="#ff0000"
+        android:textStyle="bold"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:background="@color/colorWhite"/>

@@ -43,7 +43,6 @@ class UserModel {
     }
 
     fun getProfile() { // user 정보 받아오는 함수
-        Log.e("uid", UserObject.uid)
         firebaseUser.child(UserObject.uid).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(snapShot: DataSnapshot) {

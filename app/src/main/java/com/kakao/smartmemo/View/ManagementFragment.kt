@@ -95,7 +95,11 @@ class ManagementFragment : Fragment(), ManagementFragmentContract.View {
         userEmail.text = UserObject.email
         userName.text = UserObject.user_name
         userAddr.text = UserObject.addr
-        kakaoAlarmTime.text = UserObject.kakao_alarm_time
+        if (UserObject.kakao_alarm_time == "") {
+            kakaoAlarmTime.text = "시간 설정 안함"
+        } else {
+            kakaoAlarmTime.text = UserObject.kakao_alarm_time
+        }
 
         adapter = ManagementAdapter(cont,folderList)
         folderListView.adapter = adapter

@@ -39,7 +39,7 @@
                     android:padding="3dp"
                     android:color="@color/colorPrimary"
                     android:layout_gravity="center"
-                    android:src="@drawable/dog" />
+                    android:src="@drawable/profile" />
                 <ImageView
                     android:id="@+id/camera_icon"
                     android:layout_width="50dp"
