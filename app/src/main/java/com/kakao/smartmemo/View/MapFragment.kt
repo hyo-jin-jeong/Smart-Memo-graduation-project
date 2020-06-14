@@ -618,8 +618,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onSuccess(placeList: MutableList<PlaceData>, status: String) {
+        var m = 0
+        var j = 0
         if(status == "todo"){
             todo = placeList
+            Log.e("todododododo", placeList.toString())
             for(i in todo){
                 var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)
                 if(!containPoint(todoMapPoint, mapPoint)) {
@@ -627,6 +630,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
                     Log.e("jieun", "todo $i 가 들어감")
                 }
+                m++
             }
         }else{
             memo = placeList
@@ -638,9 +642,10 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
                     Log.e("jieun", "memo $i 가 들어감")
                 }
+                j++
             }
         }
-        if (todoMapPoint.isNotEmpty() && memoMapPoint.isNotEmpty()) {
+        if ((todoMapPoint.isNotEmpty() && todo.size == m) || (memoMapPoint.isNotEmpty() && memo.size == j)) {
             createMarkerAccordingType(todoMapPoint, memoMapPoint)
         }
         Log.e("jieun", "구분점~~~~")
