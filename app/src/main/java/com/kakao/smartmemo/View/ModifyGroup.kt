@@ -27,7 +27,6 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
     lateinit var themeColor : View
     lateinit var folderMemberSet:TextView
     lateinit var colorPicker: ImageView
-    lateinit var saveBtn: Button
     lateinit var groupExitBtn : Button
     lateinit var kakaoImg : ImageView
     lateinit var kakaoText : TextView
@@ -51,7 +50,6 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         folderNameText = findViewById(R.id.textGroupName)
         themeColor = findViewById(R.id.selected_color)
         colorPicker = findViewById(R.id.color_picker)
-        saveBtn = findViewById(R.id.save_group)
         folderMemberSet = findViewById(R.id.group_invitation)
         groupExitBtn = findViewById(R.id.group_member_exit)
         kakaoImg = findViewById(R.id.kakao_icon)
@@ -62,6 +60,7 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
             folderNameEdit.setText(FolderObject.folderInfo[folderId])
             folderNameText.text = FolderObject.folderInfo[folderId].toString()
             themeColor.setBackgroundColor(FolderObject.folderColor[folderId]!!.toInt())
+            this.color = FolderObject.folderColor[folderId]!!.toInt()
         }
 
         folderMemberSet.text = resources.getString(R.string.group_member)
@@ -76,16 +75,16 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
                 .setAllowPresets(true)
                 .show(this)
         }
-
-        saveBtn.setOnClickListener {
-            count = 0
-            groupSetting()
-            presenter.updateGroup(folderId,folderNameEdit.text.toString(),color.toLong())
-        }
         groupExitBtn.setOnClickListener {
             presenter.deleteGroup(folderId)
             finish()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val menuInflater = menuInflater
+        menuInflater.inflate(R.menu.select_options_in_modifygroup, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     // 뒤로가기 버튼 누르면 이전 액티비티로 돌아가는 것을 판단해주는 함수
@@ -102,23 +101,15 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
             R.id.update_group -> {
                 count++
                 if(count%2 == 0){
-                    count = 0
                     groupSetting()
                     presenter.updateGroup(folderId,folderNameEdit.text.toString(),color.toLong())
-
-                }else{
+                } else{
                     groupModify()
                 }
 
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val menuInflater = menuInflater
-        menuInflater.inflate(R.menu.select_options_in_modifygroup, menu)
-        return super.onCreateOptionsMenu(menu)
     }
 
     private fun groupSetting(){
@@ -128,7 +119,6 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         colorPicker.visibility = View.GONE
         kakaoImg.visibility = View.VISIBLE
         kakaoText.visibility = View.VISIBLE
-        saveBtn.visibility = View.INVISIBLE
         groupExitBtn.visibility = View.VISIBLE
         folderMemberSet.visibility = View.VISIBLE
     }
@@ -140,7 +130,6 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         colorPicker.visibility = View.VISIBLE
         kakaoImg.visibility = View.INVISIBLE
         kakaoText.visibility = View.INVISIBLE
-        saveBtn.visibility = View.VISIBLE
         groupExitBtn.visibility = View.GONE
         folderMemberSet.visibility = View.INVISIBLE
     }

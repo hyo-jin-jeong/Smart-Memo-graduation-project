@@ -23,7 +23,7 @@
 
     <string name="group_name">폴더 이름</string>
     <string name="group_color">테마 컬러</string>
-    <string name="group_invitation">그룹 멤버 초대</string>
+    <string name="group_invitation">폴더에 멤버 초대</string>
     <string name="group_member">폴더 참여 멤버</string>
 
     <string name="write_memo">메모 작성</string>
