@@ -70,6 +70,7 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
             this.memoData = intent.getParcelableExtra("memoData")
             titleEdit.setText(this.memoData.title)
             contentEdit.setText(this.memoData.content)
+            placeNameText.text = this.memoData.placeName
             groupName.text = FolderObject.folderInfo[this.memoData.groupId]
             originGroupId = this.memoData.groupId
             memoId = this.memoData.memoId

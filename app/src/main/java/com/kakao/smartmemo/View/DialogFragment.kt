@@ -12,12 +12,11 @@ import com.kakao.smartmemo.Contract.DialogContract
 import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.Data.PlaceAlarmData
 import com.kakao.smartmemo.Data.PlaceData
-import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Presenter.DialogPresenter
 import com.kakao.smartmemo.R
 
 class DialogFragment : DialogFragment(), DialogContract.View {
-    private lateinit var presenter : DialogPresenter
+    private lateinit var presenter : DialogContract.Presenter
     private lateinit var adapter: DialogSectionsPagerAdapter
     private lateinit var viewPager: ViewPager
     private lateinit var myDialog: Dialog

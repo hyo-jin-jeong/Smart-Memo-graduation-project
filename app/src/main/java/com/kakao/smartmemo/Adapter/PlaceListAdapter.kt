@@ -1,4 +1,4 @@
-package com.kakao.smartmemo.com.kakao.smartmemo.Adapter
+package com.kakao.smartmemo.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Context

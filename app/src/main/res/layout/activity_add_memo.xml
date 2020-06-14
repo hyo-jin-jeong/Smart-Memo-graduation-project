@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/writing_location"
+            android:maxLines="1"
             android:textSize="@dimen/font_size"
             android:layout_marginLeft="5dp"
             android:layout_weight="1"/>
@@ -71,14 +71,6 @@
             android:paddingLeft="3dp"
             android:layout_marginBottom="10dp"
             />
-        <ImageButton
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/camera"
-            android:scaleType="centerInside"
-            android:background="@null"
-            android:layout_gravity="right"
-            android:layout_marginBottom="10dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -96,10 +88,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:gravity="right"
-                android:text="click"
-                android:textAlignment="center"
-                layout:ignore="RtlCompat" />
+                android:text="그룹 선택"
+                android:background="@null" />
         </LinearLayout>
     </LinearLayout>
     <Button

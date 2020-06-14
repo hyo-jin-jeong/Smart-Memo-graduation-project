@@ -94,7 +94,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
         count = 0
         this.memoList.clear()
         if (memoList.isEmpty()) {
-            memoList.clear()
+            this.memoList.clear()
         } else {
             this.memoList = memoList
         }
@@ -159,7 +159,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
                     presenter.getAllMemo()
                 } else {
                     (activity as MainActivity).toolbar.title = value[which]
-//                    FolderObject.selectFolderInfo = key[which].toString()
                     presenter.getFolderMemo(key[which].toString())
                 }
 

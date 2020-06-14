@@ -265,7 +265,6 @@
                 android:id="@+id/member_exit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_below="@+id/logout_layout"
                 android:text="회원 탈퇴"
                 android:textAlignment="center"
@@ -274,6 +273,7 @@
                 android:textSize="20dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
+                android:layout_marginBottom="10dp"
                 android:background="@color/colorWhite"/>
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
