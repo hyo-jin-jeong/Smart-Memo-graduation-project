@@ -145,13 +145,4 @@
             </androidx.cardview.widget.CardView>
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
-    <Button
-        android:id="@+id/saveTodoAlarmButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/save_button"
-        android:text="S A V E"
-        android:textColor="#FFFFFF"
-        android:layout_margin="10dp"
-        android:layout_alignParentBottom="true"/>
 </RelativeLayout>

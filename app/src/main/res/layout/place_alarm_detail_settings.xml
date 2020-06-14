@@ -12,17 +12,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+
         <androidx.appcompat.widget.Toolbar
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:background="@color/colorWhite"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:layout_constraintTop_toTopOf="parent"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
         <FrameLayout
             android:id="@+id/frame_map"
@@ -46,16 +46,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
             </LinearLayout>
-
-            <Button
-                android:id="@+id/saveButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:layout_margin="10dp"
-                android:background="@drawable/save_button"
-                android:text="S A V E"
-                android:textColor="#FFFFFF" />
 
             <LinearLayout
                 android:id="@+id/listLayout"
