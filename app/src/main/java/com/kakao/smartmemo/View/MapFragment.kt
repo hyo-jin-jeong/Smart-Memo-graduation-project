@@ -392,7 +392,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         val latitude = p1!!.mapPoint.mapPointGeoCoord.latitude
         val longitude = p1!!.mapPoint.mapPointGeoCoord.longitude
         val dialog = DialogFragment()
-        //type은 memo만이면 0, todo만이면 1, 둘다면 2
+        dialog.setPresenter()
+
         when (p1?.customImageResourceId) {
             R.drawable.memo_icon -> {
                 dialog.setMemoList(memo, latitude, longitude)

@@ -5,7 +5,6 @@ import com.kakao.smartmemo.Contract.DialogContract
 import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.Data.PlaceAlarmData
 import com.kakao.smartmemo.Data.PlaceData
-import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Model.MemoModel
 import com.kakao.smartmemo.Model.TodoModel
 
@@ -19,7 +18,8 @@ class DialogPresenter : DialogContract.Presenter , DialogContract.OnDialogListen
     constructor(view : DialogContract.View) {
         this.view = view
         this.memoModel = MemoModel()
-        this.todoModel = TodoModel()
+        this.todoModel = TodoModel(this)
+        this.memoModel = MemoModel(this)
     }
     override fun setDialogAdapterModel(adapterModel: DialogAdapterContract.Model) {
         this.adapterModel = adapterModel
@@ -36,7 +36,6 @@ class DialogPresenter : DialogContract.Presenter , DialogContract.OnDialogListen
     override fun getTodoList(todo: MutableList<PlaceData>) {
         todoModel.getMapDialogTodo(todo)
     }
-
 
     override fun onSuccessMemo(memoList: MutableList<MemoData>) {
         view.onSuccessMemo(memoList)

@@ -1,5 +1,6 @@
 package com.kakao.smartmemo.Model
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -25,6 +26,10 @@ class MemoModel {
 
     constructor(onPlaceListener: MapContract.OnPlaceListener) {
         this.onPlaceListener = onPlaceListener
+    }
+
+    constructor(onDialogListener: DialogContract.OnDialogListener) {
+        this.onDialogListener = onDialogListener
     }
 
     fun addMemo(memoData: MemoData) {
@@ -191,15 +196,16 @@ class MemoModel {
         memo.forEach {
             firebaseMemo.child(it.id).addValueEventListener(object: ValueEventListener{
                 override fun onCancelled(p0: DatabaseError) {}
-
                 override fun onDataChange(memoSnapshot: DataSnapshot) {
-                    memoSnapshot.getValue(MemoData::class.java)?.let { it1 -> memoList.add(it1) }
-                    if(memo.size==i){
+                    val memoAlarm = memoSnapshot.getValue(MemoData::class.java)
+                    if (memoAlarm != null) {
+                        memoList.add(memoAlarm)
+                    }
+                    if(memo.size-1 == i){
                         onDialogListener.onSuccessMemo(memoList)
                     }
                     i++
                 }
-
             })
         }
     }

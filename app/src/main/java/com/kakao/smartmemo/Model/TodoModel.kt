@@ -25,7 +25,6 @@ class TodoModel {
     private lateinit var onPlaceListener: MapContract.OnPlaceListener
     private lateinit var onAddTodoListener: AddTodoContract.OnAddTodoListener
     private lateinit var onDialogListener : DialogContract.OnDialogListener
-//    private lateinit var onDialogListener: DialogContract.OnDialogListener
 
     constructor()
     constructor(onTodoListener: TodoContract.OnTodoListener) {
@@ -39,13 +38,10 @@ class TodoModel {
     constructor(onAddTodoListener: AddTodoContract.OnAddTodoListener) {
         this.onAddTodoListener = onAddTodoListener
     }
+
     constructor(onDialogListener: DialogContract.OnDialogListener) {
         this.onDialogListener = onDialogListener
     }
-
-//    constructor(onDialogListener: DialogContract.OnDialogListener) {
-//        this.onDialogListener = onDialogListener
-//    }
 
     data class TodoTmp(
         var title: String = "",
@@ -232,7 +228,6 @@ class TodoModel {
                                     timeAlarm.setTimeAlarm, timeAlarm.timeDate, timeAlarm.timeTime, timeAlarm.timeAgain,
                                     placeAlarm.setPlaceAlarm, placeAlarm.placeDate, placeAlarm.placeAgain
                                 ))
-                                Log.e("todoData1111", todoList.toString())
                                 if (todoSnapshot.children.count() - 1 == i) {
                                     onTodoListener.onGroupSuccess(todoList)
                                 }
@@ -279,7 +274,6 @@ class TodoModel {
                                                     if (status == "addTodo") {
                                                         onAddTodoListener.onSuccess(placeList)
                                                     } else if (status == "map") {
-                                                        Log.e("MAP", placeList.toString())
                                                         onPlaceListener.onSuccess(placeList, "todo")
                                                     }
 
@@ -299,7 +293,6 @@ class TodoModel {
                                                     if (status == "addTodo") {
                                                         onAddTodoListener.onSuccess(placeList)
                                                     } else if (status == "map") {
-                                                        Log.e("MAP", placeList.toString())
                                                         onPlaceListener.onSuccess(placeList, "todo")
                                                     }
                                                 } else if (j == todoSnapshot.children.count() - 1) {
@@ -333,12 +326,16 @@ class TodoModel {
             firebaseTodo.child(it.id).addValueEventListener(object :ValueEventListener{
                 override fun onCancelled(p0: DatabaseError) {}
                 override fun onDataChange(todoSnapshot: DataSnapshot) {
-                    var placeAlarm = todoSnapshot.getValue(PlaceAlarm::class.java)
+                    var placeAlarm = todoSnapshot.child("PlaceAlarm").getValue(PlaceAlarm::class.java)
                     if (placeAlarm != null) {
-                            todoList.add(
-                                PlaceAlarmData(it.id,it.placeId,it.place,placeAlarm.placeDate,todoSnapshot.child("title").value.toString()
-                            ,placeAlarm.setPlaceAlarm)
-                            )
+                        todoList.add(PlaceAlarmData(
+                            it.id,
+                            it.placeId,
+                            it.place,
+                            placeAlarm.placeDate,
+                            todoSnapshot.child("title").value.toString(),
+                            placeAlarm.setPlaceAlarm)
+                        )
                     }
                     if(todo.size-1 == i){
                         onDialogListener.onSuccessTodo(todoList)
