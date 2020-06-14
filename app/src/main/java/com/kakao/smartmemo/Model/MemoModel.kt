@@ -4,6 +4,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.kakao.smartmemo.Contract.DialogContract
 import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Contract.MemoContract
 import com.kakao.smartmemo.Data.MemoData
@@ -13,6 +14,7 @@ import com.kakao.smartmemo.Object.FolderObject
 class MemoModel {
     private lateinit var onMemoListener: MemoContract.OnMemoListener
     private lateinit var onPlaceListener: MapContract.OnPlaceListener
+    private lateinit var onDialogListener : DialogContract.OnDialogListener
     private var firebaseMemo = FirebaseDatabase.getInstance().reference.child("Memo")
     private var firebaseGroup = FirebaseDatabase.getInstance().reference.child("Group")
 
@@ -182,5 +184,26 @@ class MemoModel {
         firebaseMemo.child(memoData.memoId).removeValue()
         firebaseGroup.child(memoData.groupId).child("MemoInfo").child(memoData.memoId).removeValue()
     }
+
+    fun getMapDialogMemo(memo: MutableList<PlaceData>) {
+        var i = 0
+        var memoList = mutableListOf<MemoData>()
+        memo.forEach {
+            firebaseMemo.child(it.id).addValueEventListener(object: ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {}
+
+                override fun onDataChange(memoSnapshot: DataSnapshot) {
+                    memoSnapshot.getValue(MemoData::class.java)?.let { it1 -> memoList.add(it1) }
+                    if(memo.size==i){
+                        onDialogListener.onSuccessMemo(memoList)
+                    }
+                    i++
+                }
+
+            })
+        }
+    }
+
+
 }
 

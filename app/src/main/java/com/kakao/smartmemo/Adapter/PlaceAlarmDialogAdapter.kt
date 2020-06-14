@@ -3,6 +3,7 @@ package com.kakao.smartmemo.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Switch
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.TodoDialogAdapterContract
 import com.kakao.smartmemo.Data.PlaceAlarmData
@@ -22,9 +23,9 @@ class PlaceAlarmDialogAdapter(todo: MutableList<PlaceAlarmData>): RecyclerView.A
     override fun onBindViewHolder(holder: DialogViewHolder, position: Int) {
         data[position].let {
             with(holder) {
-                alarm_place.text = it.place
-                alarm_date.text = it.date
-                alarm_content.text = it.content
+                alarmPlace.text = it.place
+                alarmDate.text = it.date
+                alarmContent.text = it.content
                 switch.isChecked = it.onoff
             }
         }
@@ -42,9 +43,9 @@ class PlaceAlarmDialogAdapter(todo: MutableList<PlaceAlarmData>): RecyclerView.A
     inner class DialogViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.alarm_list_item, parent, false)) {
 
-        val alarm_place = itemView.textView_alarm_place
-        val alarm_date = itemView.textView_date
-        val alarm_content = itemView.textView_alarm_content
+        val alarmPlace: TextView = itemView.textView_alarm_place
+        val alarmDate: TextView = itemView.textView_date
+        val alarmContent: TextView = itemView.textView_alarm_content
         val switch: Switch = itemView.switch_alarm_settings
     }
 

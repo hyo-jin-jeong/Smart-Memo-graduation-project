@@ -1,8 +1,6 @@
 package com.kakao.smartmemo.View
 
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
