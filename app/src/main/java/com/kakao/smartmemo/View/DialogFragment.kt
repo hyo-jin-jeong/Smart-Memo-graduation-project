@@ -91,34 +91,41 @@ class DialogFragment : DialogFragment(), DialogContract.View {
 
         return view
     }
-
+    override fun onSuccessMemo(memoList: MutableList<MemoData>){
+        memoDataList = memoList
+    }
+    override fun onSuccessTodo(todoList: MutableList<PlaceAlarmData>){
+        todoDataList = todoList
+    }
     fun setCurType(type: Int) {
         this.type = type
     }
 
     fun setMemoList(memo: MutableList<PlaceData>, latitude: Double, longitude: Double) {
+        var j = 0
         for (i in memo) {
             if(i.latitude == latitude && i.longitude === longitude) {
                 this.memo.add(i)
                 Log.e("jieun", "현재 위도 경도의 placeData = $i")
             }
+            if(memo.size-1 == j){
+                presenter.getMemoList(memo)
+            }
         }
-        //presenter.~ 부르고
-        //memoDataList를 넣어주시면,,? 투두도 비슷하게..
 
-        //지금은 임의로
-        memoDataList.add(MemoData("id", "title", "data", "content", "group id", "place id", "place name", "latitude", "longitude"))
     }
 
     fun setTodoList(todo: MutableList<PlaceData>, latitude: Double, longitude: Double) {
+        var j = 0
         for (i in todo) {
             if(i.latitude == latitude && i.longitude === longitude) {
                 this.todo.add(i)
                 Log.e("jieun", "현재 위도 경도의 placeData = $i")
             }
+            if(todo.size-1 == j){
+                presenter.getTodoList(todo)
+            }
         }
 
-        //임의로
-        todoDataList.add(PlaceAlarmData("place", "data", "content", true))
     }
 }

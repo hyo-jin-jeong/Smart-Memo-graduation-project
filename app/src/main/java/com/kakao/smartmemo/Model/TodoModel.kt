@@ -6,8 +6,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kakao.smartmemo.Contract.AddTodoContract
+import com.kakao.smartmemo.Contract.DialogContract
 import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Contract.TodoContract
+import com.kakao.smartmemo.Data.PlaceAlarmData
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.FolderObject
@@ -22,6 +24,7 @@ class TodoModel {
     private lateinit var onTodoListener: TodoContract.OnTodoListener
     private lateinit var onPlaceListener: MapContract.OnPlaceListener
     private lateinit var onAddTodoListener: AddTodoContract.OnAddTodoListener
+    private lateinit var onDialogListener : DialogContract.OnDialogListener
 //    private lateinit var onDialogListener: DialogContract.OnDialogListener
 
     constructor()
@@ -35,6 +38,9 @@ class TodoModel {
 
     constructor(onAddTodoListener: AddTodoContract.OnAddTodoListener) {
         this.onAddTodoListener = onAddTodoListener
+    }
+    constructor(onDialogListener: DialogContract.OnDialogListener) {
+        this.onDialogListener = onDialogListener
     }
 
 //    constructor(onDialogListener: DialogContract.OnDialogListener) {
@@ -67,7 +73,7 @@ class TodoModel {
         var todoId = ""
         todoId = if (todoData.todoId == "") {
             placeList.forEach {
-                it.todoId = todoId
+                it.id = todoId
             }
             (System.currentTimeMillis() * 5000).toInt().toString()
         } else {
@@ -318,6 +324,30 @@ class TodoModel {
 
     fun deleteTodoInfo(groupId: String, todoId: String) {
         firebaseGroup.child(groupId).child("TodoInfo").child(todoId).removeValue()
+    }
+
+    fun getMapDialogTodo(todo: MutableList<PlaceData>) {
+        var todoList = mutableListOf<PlaceAlarmData>()
+        var i = 0
+        todo.forEach {
+            firebaseTodo.child(it.id).addValueEventListener(object :ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {}
+                override fun onDataChange(todoSnapshot: DataSnapshot) {
+                    var placeAlarm = todoSnapshot.getValue(PlaceAlarm::class.java)
+                    if (placeAlarm != null) {
+                            todoList.add(
+                                PlaceAlarmData(it.id,it.placeId,it.place,placeAlarm.placeDate,todoSnapshot.child("title").value.toString()
+                            ,placeAlarm.setPlaceAlarm)
+                            )
+                    }
+                    if(todo.size-1 == i){
+                        onDialogListener.onSuccessTodo(todoList)
+                    }
+                    i++
+                }
+
+            })
+        }
     }
 
 //    fun getTodoInfo(todoList: MutableList<PlaceData>) {
