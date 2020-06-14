@@ -101,7 +101,8 @@ class MemoModel {
                                                         memoSnapshot.child("placeId").value.toString(),
                                                         memoSnapshot.child("placeName").value.toString(),
                                                         memoSnapshot.child("latitude").value.toString().toDouble(),
-                                                        memoSnapshot.child("longitude").value.toString().toDouble()
+                                                        memoSnapshot.child("longitude").value.toString().toDouble(),
+                                                        memoSnapshot.child("memoId").value.toString()
                                                     )
                                                 )
                                                 if (i == FolderObject.folderInfo.size - 1 && j == memoIdSnapshot.children.count() - 1) {

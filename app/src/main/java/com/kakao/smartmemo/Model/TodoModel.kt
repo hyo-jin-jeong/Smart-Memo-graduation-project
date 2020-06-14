@@ -267,7 +267,7 @@ class TodoModel {
                                     override fun onCancelled(p0: DatabaseError) {}
                                     override fun onDataChange(placeSnapshot: DataSnapshot) {
                                         placeSnapshot.children.forEach { placeId ->
-                                            Log.e("djdjdj", placeList.toString())
+
                                             if(placeId.hasChildren()){
                                                 placeId.getValue(PlaceData::class.java)?.let { it1 ->
                                                     placeList.add(
