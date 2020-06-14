@@ -297,7 +297,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             placeList = intent.getParcelableArrayListExtra("placeList")
             placeList.forEach{
                 Log.e("jieun", "현재 intent 값 $it")
-                it.todoId = todoId
+                it.id = todoId
                 placeData = it
                 Log.e("jieun", "현재 placeData에 들어간 intent 값 $placeData")
             }
@@ -379,7 +379,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             placeData = intent.getParcelableExtra<PlaceData>("placeData")
             placeList = intent.getParcelableArrayListExtra("todoPlaceAlarm")
             placeList.forEach {
-                it.todoId = todoId
+                it.id = todoId
                 i++
                 if(placeList.size == i){
                     setPlaceListAdapter()
@@ -402,7 +402,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                     placeData = data!!.getParcelableExtra("placeData")
                     placeList = data!!.getParcelableArrayListExtra("todoPlaceAlarm")
                     placeList.forEach{
-                        it.todoId = todoId
+                        it.id = todoId
                         if(placeList.size-1 == i){
                             setPlaceListAdapter()
                         }
