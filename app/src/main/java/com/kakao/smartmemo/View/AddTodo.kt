@@ -10,6 +10,7 @@ import android.os.*
 import android.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
@@ -75,7 +76,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     private lateinit var placebtn: ImageButton
     private lateinit var placeLayout: ConstraintLayout
     private lateinit var placeListView: ListView
-    private lateinit var savebtn: Button
     private val timeCalendar = Calendar.getInstance()
     private val placeCalendar = Calendar.getInstance()
     private val todoCalendar = Calendar.getInstance()
@@ -132,21 +132,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.time_location_settings)
 
-        /*PreferenceManager.getDefaultSharedPreferences(this)
-            .registerOnSharedPreferenceChangeListener(this)*/
-
-        /*if (!checkPermissions()) {
-            requestPermissions()
-        } else {
-            mService?.requestLocationUpdates(allSelectedPlace)
-        }
-        //mService!!.removeLocationUpdates()  과부하 방지를 위해 남겨놓음.일단은!!!!
-
-        bindService(
-            Intent(this, LocationUpdatesService::class.java), mServiceConnection,
-            Context.BIND_AUTO_CREATE
-        )*/
-
         myReceiver = MyReceiver()
 
         if (Utils.requestingLocationUpdates(this)) {
@@ -169,7 +154,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         todoStubLocation = findViewById(R.id.stub_alarm_location)
 
         placeSwitch = findViewById(R.id.switch_location)
-        savebtn = findViewById(R.id.saveTodoAlarmButton)
 
         viewTime = todoStubTime.inflate()
         todoStubTime.visibility = GONE
@@ -305,6 +289,17 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             }
         }
 
+        if (intent.hasExtra("placeList")) { // TodoListFragment에서 넘어온 경우
+            placeList.clear()
+            placeList = intent.getParcelableArrayListExtra("placeList")
+            placeList.forEach{
+                Log.e("jieun", "현재 intent 값 $it")
+                it.todoId = todoId
+                placeData = it
+                Log.e("jieun", "현재 placeData에 들어간 intent 값 $placeData")
+            }
+        }
+
         placeSwitch.setOnCheckedChangeListener { compoundButton, isChecked ->
             if (isChecked) {
                 todoStubLocation.visibility = VISIBLE
@@ -313,6 +308,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                         Intent(it.context, PlaceAlarmDetailActivity::class.java)
 
                     placechoiceIntent.putExtra("placeData", placeData)
+                    Log.e("jieun", "PlaceAlarmDetailActivity에 넘어간 placeData = $placeData")
                     placechoiceIntent.putExtra("todoPlaceAlarm", placeList)
                     startActivityForResult(placechoiceIntent, 200)
 
@@ -367,57 +363,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             placeSpinner.setSelection(placePosition, true)
         }
 
-        if (intent.hasExtra("placeList")) { // TodoListFragment에서 넘어온 경우
-            var i = 0
-            placeList.clear()
-            placeList = intent.getParcelableArrayListExtra("placeList")
-            placeList.forEach{
-                it.todoId = todoId
-            }
-
-        }
-        savebtn.setOnClickListener {
-            when {
-                groupName == "" -> {
-                    Toast.makeText(applicationContext, "그룹을 선택해주세요", Toast.LENGTH_SHORT).show()
-                }
-                titleEdit.text.isEmpty() -> {
-                    Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
-                }
-                placeSwitch.isChecked && placeList.isEmpty() -> {
-                    Toast.makeText(applicationContext, "장소 설정을 해주세요.", Toast.LENGTH_SHORT).show()
-                }
-                else -> {
-                    if (groupCheck){
-                        if(hasData) {
-                            presenter.deleteTodoInfo(originGroupId,todoId)
-                        }
-                        originGroupId = groupId
-                    }
-                    var todoData = TodoData(
-                        todoId,
-                        titleEdit.text.toString(),
-                        groupId,
-                        timeSwitch.isChecked,
-                        "${timeDateText.text}",
-                        timeText.text.toString(),
-                        settingsTimeMinutes,
-                        placeSwitch.isChecked,
-                        "${placeDateText.text}",
-                        settingsPlaceMinutes
-                    )
-                    presenter.addTodo(todoData, placeList)
-                    if (timeSwitch.isChecked) {
-                        // 지정한 시간에 울리게 알람을 세팅
-                        setTimeAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
-                    } else {
-                        unsetTimeAlarm(TimeNotificationID) //시간알람 해제
-                    }
-                    finish()
-                }
-            }
-        }
-
         selectGroupBtn.setOnClickListener {
             selectGroup()
         }
@@ -469,6 +414,10 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_save, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
 
     //툴바의 뒤로가기 버튼
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -476,6 +425,47 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             android.R.id.home -> {
                 finish()
                 return true
+            }
+            R.id.menu_save -> {
+                when {
+                    groupName == "" -> {
+                        Toast.makeText(applicationContext, "그룹을 선택해주세요", Toast.LENGTH_SHORT).show()
+                    }
+                    titleEdit.text.isEmpty() -> {
+                        Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    }
+                    placeSwitch.isChecked && placeList.isEmpty() -> {
+                        Toast.makeText(applicationContext, "장소 설정을 해주세요.", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        if (groupCheck){
+                            if(hasData) {
+                                presenter.deleteTodoInfo(originGroupId,todoId)
+                            }
+                            originGroupId = groupId
+                        }
+                        var todoData = TodoData(
+                            todoId,
+                            titleEdit.text.toString(),
+                            groupId,
+                            timeSwitch.isChecked,
+                            "${timeDateText.text}",
+                            timeText.text.toString(),
+                            settingsTimeMinutes,
+                            placeSwitch.isChecked,
+                            "${placeDateText.text}",
+                            settingsPlaceMinutes
+                        )
+                        presenter.addTodo(todoData, placeList)
+                        if (timeSwitch.isChecked) {
+                            // 지정한 시간에 울리게 알람을 세팅
+                            setTimeAlarm(notifyTime, timeCalendar, settingsTimeMinutes)
+                        } else {
+                            unsetTimeAlarm(TimeNotificationID) //시간알람 해제
+                        }
+                        finish()
+                    }
+                }
             }
         }
         return super.onOptionsItemSelected(item)

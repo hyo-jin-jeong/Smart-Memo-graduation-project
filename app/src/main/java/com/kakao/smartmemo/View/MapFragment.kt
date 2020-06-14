@@ -208,6 +208,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             mapView.setOpenAPIKeyAuthenticationResultListener(this)
         }
         usingMapView = true
+        memo.clear()
+        todo.clear()
         memoMapPoint.clear()
         todoMapPoint.clear()
         presenter.getTodoPlaceAlarm("map")
@@ -229,7 +231,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         Log.e("jieun", "onPause")
         mapView.removeAllPOIItems()
         usingMapView = false
-      mapViewContainer.removeAllViews()
+        mapViewContainer.removeAllViews()
     }
 
     override fun onDestroyView() {
@@ -257,6 +259,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         val menuInflater = menuInflater
         menuInflater.inflate(R.menu.search_view_in_map, menu)
+
+        val saveBtn = menu.findItem(R.id.menu_save)
+        saveBtn.isVisible = false
 
         val searchItem: MenuItem? = menu.findItem(R.id.search)
         val searchView = searchItem!!.actionView as SearchView
@@ -600,15 +605,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         return marker
     }
-
-    private fun checkLocationServicesStatus(): Boolean {
-        val locationManager: LocationManager? = this@MapFragment.requireActivity().getSystemService(
-            Context.LOCATION_SERVICE
-        ) as LocationManager?
-        return (locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-    }
-
     override fun onDaumMapOpenAPIKeyAuthenticationResult(p0: MapView?, p1: Int, p2: String?) {
 
     }
@@ -631,9 +627,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onSuccess(placeList: MutableList<PlaceData>, status: String) {
-        var m = 0
-        var j = 0
-        //여기에 로그는 가끔 로딩이 느리면 안들어 가는 경우가 있어서 로그가 찍히면 이제 마커 생성된거라 확인하려고 로그 안지웠습니다
         if(status == "todo"){
             todo = placeList
             for(i in todo){
@@ -643,7 +636,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
                     Log.e("jieun", "todo $i 가 들어감")
                 }
-                m++
             }
         }else{
             memo = placeList
@@ -655,10 +647,9 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
                     Log.e("jieun", "memo $i 가 들어감")
                 }
-                j++
             }
         }
-        if ((todoMapPoint.isNotEmpty()&&todo.size== m )||(memoMapPoint.isNotEmpty()&&memo.size == j)) {
+        if (todoMapPoint.isNotEmpty() && memoMapPoint.isNotEmpty()) {
             createMarkerAccordingType(todoMapPoint, memoMapPoint)
         }
         Log.e("jieun", "구분점~~~~")
@@ -681,11 +672,14 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         Log.e("checkchekck", "asldkfsdfadf")
         if(todoList.isNotEmpty()){
             for (todo in todoList) {
+                Log.e("jieun", "현재 $todo")
                 if(containPoint(memoList, todo)) {
                     val memoAddTodo = createMarker("", todo, R.drawable.memo_todo_icon)
+                    Log.e("jieun", "$todo 이것은 메모와 투두 둘다 있다.")
                     mapView.addPOIItem(memoAddTodo)
                 } else {
                     val todo = createMarker("", todo, R.drawable.todo_icon)
+                    Log.e("jieun", "$todo 이것은 투두에 있다.")
                     mapView.addPOIItem(todo)
                 }
             }
@@ -694,6 +688,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             for (memo in memoList) {
                 if(!containPoint(todoList, memo)) {
                     val memo = createMarker("", memo, R.drawable.memo_icon)
+                    Log.e("jieun", "$memo 이것은 메모에 있다.")
                     mapView.addPOIItem(memo)
                 }
             }

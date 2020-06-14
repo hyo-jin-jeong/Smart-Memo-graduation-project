@@ -12,6 +12,8 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -56,7 +58,6 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
     private var documentList: ArrayList<Document> = ArrayList()
 
     private lateinit var listAdapter: LocationListAdapter
-    private lateinit var saveButton: Button
     private lateinit var addButton: Button
     private lateinit var locationTextView: TextView
     private val locationNames = ArrayList<String>()
@@ -81,14 +82,13 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
         myToolbar = findViewById(R.id.toolbar)
         setSupportActionBar(myToolbar)
 
-        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         mapView = MapView(context)
         mapViewContainer = findViewById<ViewGroup>(R.id.map_view)
         mapViewContainer.addView(mapView)
 
-        saveButton = findViewById(R.id.saveButton)
         addButton = findViewById(R.id.addButton)
         locationTextView = findViewById(R.id.location)
 
@@ -144,9 +144,15 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
             curLongitude = intent.getParcelableExtra<PlaceData>("placeData").longitude
             curAddress = intent.getParcelableExtra<PlaceData>("placeData").place
         } else {
-            curAddress = "한성대학교"
-            curLatitude = 37.582276
-            curLongitude = 127.009850
+            if (intent.hasExtra("todoPlaceAlarm")) {
+                placeList = intent.getParcelableArrayListExtra("todoPlaceAlarm")
+                curAddress = this.placeList[0].place
+                curLatitude = this.placeList[0].latitude
+                curLongitude = this.placeList[0].longitude
+            }
+//            curAddress = "한성대학교"
+//            curLatitude = 37.582276
+//            curLongitude = 127.009850
         }
         // 생성된 Todo에서(AddTodo에서) 값 넘겨 받은 경우
         if (intent.hasExtra("todoPlaceAlarm")) {
@@ -180,45 +186,6 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
         if (!locationNames.contains(initialItem.itemName)) {
             mapView.addPOIItem(initialItem)
         }
-
-        saveButton.setOnClickListener {
-            if(locations.isEmpty()) {
-                val builder: AlertDialog.Builder = AlertDialog.Builder(
-                    ContextThemeWrapper(
-                        context,
-                        R.style.Theme_AppCompat_Light_Dialog_Alert
-                    )
-                )
-                builder.setTitle("장소 미 선택")
-                builder.setMessage("알람을 설정할 장소가 선택 되어 있지 않습니다. 장소를 선택해주세요.")
-                builder.setPositiveButton("확인") { dialog, id ->
-
-                }
-                builder.show()
-            } else {
-                curAddress = curMarker!!.itemName
-                replaceWithData()
-                val placeData = PlaceData(placeId, curAddress!!, curLatitude!!, curLongitude!!)
-                //long pressed 로 들어왔을 때 AddTodo로 넘기기
-                if (intent.getStringExtra("mode") == "longPressed") {
-                    val todoIntent = Intent(this.context, AddTodo::class.java)
-                    todoIntent.putExtra("placeData", placeData)
-                    todoIntent.putParcelableArrayListExtra("todoPlaceAlarm", placeList)
-                    todoIntent.putExtra("mode", "longPressed")
-                    startActivity(todoIntent)
-                    finish()
-
-                } else {  // fab 버튼으로 들어왔을 때 AddTodo로 넘김
-                    val intent = Intent()
-                    intent.putExtra("placeData", placeData)
-                    intent.putParcelableArrayListExtra("todoPlaceAlarm", placeList)
-                    setResult(Activity.RESULT_OK, intent)
-                    finish()
-                }
-
-            }
-        }
-
     }
 
     private fun replaceWithData() {
@@ -242,6 +209,43 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
                 //toolbar의 back키 눌렀을 때 동작
                 finish()
                 return true
+            }
+            R.id.menu_save -> {
+                if(locations.isEmpty()) {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(
+                        ContextThemeWrapper(
+                            context,
+                            R.style.Theme_AppCompat_Light_Dialog_Alert
+                        )
+                    )
+                    builder.setTitle("장소 미 선택")
+                    builder.setMessage("알람을 설정할 장소가 선택 되어 있지 않습니다. 장소를 선택해주세요.")
+                    builder.setPositiveButton("확인") { dialog, id ->
+
+                    }
+                    builder.show()
+                } else {
+                    curAddress = curMarker!!.itemName
+                    replaceWithData()
+                    val placeData = PlaceData(placeId, curAddress!!, curLatitude!!, curLongitude!!)
+                    //long pressed 로 들어왔을 때 AddTodo로 넘기기
+                    if (intent.getStringExtra("mode") == "longPressed") {
+                        val todoIntent = Intent(this.context, AddTodo::class.java)
+                        todoIntent.putExtra("placeData", placeData)
+                        todoIntent.putParcelableArrayListExtra("todoPlaceAlarm", placeList)
+                        todoIntent.putExtra("mode", "longPressed")
+                        startActivity(todoIntent)
+                        finish()
+
+                    } else {  // fab 버튼으로 들어왔을 때 AddTodo로 넘김
+                        val intent = Intent()
+                        intent.putExtra("placeData", placeData)
+                        intent.putParcelableArrayListExtra("todoPlaceAlarm", placeList)
+                        setResult(Activity.RESULT_OK, intent)
+                        finish()
+                    }
+
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -267,18 +271,15 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
         var firstY: String? = null
 
         searchView.setOnCloseListener {
-            saveButton.visibility = Button.VISIBLE
             false
         }
         searchView.setOnSearchClickListener {
-            saveButton.visibility = Button.INVISIBLE
             listLayout.visibility = LinearLayout.INVISIBLE
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean { // do your logic here
                 locationAdapter.notifyDataSetChanged()
-                saveButton.visibility = Button.VISIBLE
                 recyclerView.visibility = View.GONE
 
                 Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
@@ -377,7 +378,6 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
                     recyclerView.visibility = View.VISIBLE
                 } else {
                     recyclerView.visibility = View.GONE
-                    saveButton.visibility = Button.INVISIBLE
                 }
                 return false
             }
@@ -416,7 +416,6 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
         allMapItemShow()
         if (isUp) {
-            saveButton.visibility = Button.VISIBLE
             listLayout.visibility = View.INVISIBLE
             listLayout.startAnimation(translateDown)
             isUp = false
@@ -440,7 +439,6 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
         presenter.convertAddressFromMapPOIItem(mapPOIItem!!)
         mapView.addPOIItem(mapPOIItem)
         if (!isUp) {
-            saveButton.visibility = Button.INVISIBLE
             listLayout.visibility = View.VISIBLE
             listLayout.startAnimation(translateUp)
             isUp = true
@@ -498,7 +496,6 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
         location.longitude = p1!!.mapPoint.mapPointGeoCoord.longitude
 
         if (!isUp) {
-            saveButton.visibility = Button.INVISIBLE
             listLayout.visibility = View.VISIBLE
             listLayout.startAnimation(translateUp)
             isUp = true

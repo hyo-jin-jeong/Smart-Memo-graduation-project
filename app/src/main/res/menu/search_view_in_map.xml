@@ -7,4 +7,8 @@
         android:icon="@drawable/search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_save"
+        android:title="저장"
+        app:showAsAction="always"/>
 </menu>
