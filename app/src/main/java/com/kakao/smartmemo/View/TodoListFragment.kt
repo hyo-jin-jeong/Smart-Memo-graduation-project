@@ -119,7 +119,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         var i = 1
         val groupValues:Array<CharSequence> = Array(FolderObject.folderInfo.size+1) {""}
         val groupIds:Array<CharSequence> = Array(FolderObject.folderInfo.size+1) {""}
-        groupValues[0] = "전체메모"
+        groupValues[0] = "전체 TodoList"
         FolderObject.folderInfo.forEach {
             groupIds[i] = it.key
             groupValues[i] = it.value

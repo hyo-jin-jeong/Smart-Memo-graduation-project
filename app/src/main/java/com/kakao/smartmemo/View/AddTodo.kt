@@ -6,7 +6,10 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.IBinder
+import android.os.Messenger
 import android.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
@@ -22,6 +25,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.snackbar.Snackbar
+import com.kakao.smartmemo.Adapter.PlaceListAdapter
 import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
@@ -29,16 +33,15 @@ import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.AddTodoPresenter
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.Receiver.*
+import com.kakao.smartmemo.Receiver.DeviceBootTimeReceiver
+import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
+import com.kakao.smartmemo.Receiver.TimeReceiver
+import com.kakao.smartmemo.Receiver.TodoReceiver
 import com.kakao.smartmemo.Service.LocationUpdatesService
 import com.kakao.smartmemo.Utils.Utils
-import com.kakao.smartmemo.com.kakao.smartmemo.Adapter.PlaceListAdapter
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.math.acos
-import kotlin.math.cos
-import kotlin.math.sin
 
 class AddTodo : AppCompatActivity(), AddTodoContract.View,
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -432,19 +435,16 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             placeList = intent.getParcelableArrayListExtra("todoPlaceAlarm")
             placeList.forEach {
                 it.todoId = todoId
-                if(placeList.size-1 == i){
+                i++
+                if(placeList.size == i){
                     setPlaceListAdapter()
                 }
             }
-
         } else {
             // fab로 생성한 경우
             placeData = intent.getParcelableExtra<PlaceData>("placeData")
             setPlaceListAdapter()
         }
-
-
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
