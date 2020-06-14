@@ -10,23 +10,29 @@ import com.kakao.smartmemo.Data.PlaceAlarmData
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.alarm_list_item.view.*
 
-class PlaceAlarmDialogAdapter(todo: MutableList<PlaceAlarmData>): RecyclerView.Adapter<PlaceAlarmDialogAdapter.DialogViewHolder>(), TodoDialogAdapterContract.View, TodoDialogAdapterContract.Model {
+class PlaceAlarmDialogAdapter(private var todo: MutableList<PlaceAlarmData>): RecyclerView.Adapter<PlaceAlarmDialogAdapter.DialogViewHolder>(), TodoDialogAdapterContract.View, TodoDialogAdapterContract.Model {
 
-    var data:MutableList<PlaceAlarmData> = todo
     //View Holder생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = DialogViewHolder(parent)
 
     //Recycler View에 표시할 갯수
-    override fun getItemCount(): Int = data.size
+    override fun getItemCount(): Int = todo.size
 
     //View가 Bind되었을때의 설정
     override fun onBindViewHolder(holder: DialogViewHolder, position: Int) {
-        data[position].let {
+        todo[position].let {
             with(holder) {
+                if (it.date == "[기본] 날짜 미설정") {
+                    alarmDate.text = "날짜 설정 안함"
+                } else {
+                    it.date = it.date.replace("년", "/")
+                    it.date = it.date.replace(" ", "")
+                    it.date = it.date.replace("월","/")
+                    it.date = it.date.replace("일", " ")
+                    alarmDate.text = it.date
+                }
                 alarmPlace.text = it.place
-                alarmDate.text = it.date
                 alarmContent.text = it.content
-                switch.isChecked = it.onoff
             }
         }
 
@@ -37,16 +43,15 @@ class PlaceAlarmDialogAdapter(todo: MutableList<PlaceAlarmData>): RecyclerView.A
         if (dataList == null) {
             return
         }
-        this@PlaceAlarmDialogAdapter.data = dataList.toMutableList()
+        this@PlaceAlarmDialogAdapter.todo = dataList.toMutableList()
     }
 
     inner class DialogViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.alarm_list_item, parent, false)) {
-
+        var layout = itemView.alarm_list_item_layout
         val alarmPlace: TextView = itemView.textView_alarm_place
         val alarmDate: TextView = itemView.textView_date
         val alarmContent: TextView = itemView.textView_alarm_content
-        val switch: Switch = itemView.switch_alarm_settings
     }
 
     override fun notifyAdapter() {

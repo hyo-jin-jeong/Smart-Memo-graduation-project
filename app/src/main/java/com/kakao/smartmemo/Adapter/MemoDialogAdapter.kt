@@ -7,6 +7,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.MemoDialogAdapterContract
 import com.kakao.smartmemo.Data.MemoData
+import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_view.view.*
 
@@ -26,21 +27,16 @@ class MemoDialogAdapter(memo: MutableList<MemoData>): RecyclerView.Adapter<MemoD
                 memoTitle.text = item.title
                 memoContent.text = item.content
                 memoDate.text =item.date
-                if(item.title=="학교"){
-                    memoBackground.setBackgroundColor(android.graphics.Color.parseColor("#FCE3FF"))
-                }
-                else if(item.title=="내메모"){
-                    memoBackground.setBackgroundColor(android.graphics.Color.parseColor("#FCECC0"))
-                }
-                else if(item.title=="여행"){
-                    memoBackground.setBackgroundColor(android.graphics.Color.parseColor("#AEC0F2"))
+                FolderObject.folderColor[item.groupId]?.toInt()?.let {
+                    memoBackground.setCardBackgroundColor(
+                        it
+                    )
                 }
             }
         }
 
     }
 
-    //데이터들 업데이트
     fun setDataList(dataList: List<MemoData>?) {
         if (dataList == null) {
             return

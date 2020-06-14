@@ -29,7 +29,7 @@ class PlaceAlarmDialog(todo: MutableList<PlaceAlarmData>) : Fragment(), TodoDial
 
         presenter = TodoDialogPresenter(this)
         var todoDialogAdapter =  PlaceAlarmDialogAdapter(todo)
-        placeAlarmList = view.findViewById<RecyclerView?>(R.id.alarm_settings_view) as RecyclerView
+        placeAlarmList = view.findViewById(R.id.alarm_settings_view) as RecyclerView
         placeAlarmList.adapter = todoDialogAdapter
         presenter.setTodoDialogAdapterView(todoDialogAdapter)
         presenter.setTodoDialogAdapterModel(todoDialogAdapter)
