@@ -1,6 +1,10 @@
 package com.kakao.smartmemo.View
 
+import android.R.id.message
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -18,6 +22,8 @@ import com.kakao.network.callback.ResponseCallback
 import com.kakao.smartmemo.Contract.AddGroupContract
 import com.kakao.smartmemo.Presenter.AddGroupPresenter
 import com.kakao.smartmemo.R
+import com.kakao.util.helper.log.Logger
+
 
 class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
 
@@ -28,11 +34,39 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
     lateinit var colorPicker: ImageView
     lateinit var groupExitBtn : Button
     var color = (System.currentTimeMillis()*1000).toInt()
+    var value = "1"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_bar_add_group)
         presenter = AddGroupPresenter(this)
+
+        if(intent.hasExtra("value")) {
+            val value = intent.getStringExtra("value")
+            Log.i("jieun", "AddFolder value=$value")
+            if(value == "1") {
+                val dialog = AlertDialog.Builder(this@AddFolder, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert)
+                dialog.setTitle("초대")
+                dialog.setMessage("@@폴더를 공유하시겠습니까?")
+                dialog.setNegativeButton("CANCEL", null)
+
+                dialog.setPositiveButton(
+                    "OK"
+                ) { dialog, which ->
+
+                }
+                dialog.show()
+
+            }
+        }
+
+        if(intent.action == Intent.ACTION_VIEW) {
+            val receivedValue = intent.data!!.getQueryParameter("value")
+            val intent = Intent(this, LoginActivity::class.java)
+            Log.i("jieun", "AddFolder value=$receivedValue")
+            intent.putExtra("value", receivedValue)
+            startActivity(intent)
+        }
 
         toolbar= findViewById(R.id.addGroupToolbar)
         toolbar.title = resources.getString(R.string.add_group)
@@ -122,8 +156,7 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
                     "앱에서 보기", LinkObject.newBuilder()
                         .setWebUrl("'https://developers.kakao.com")
                         .setMobileWebUrl("https://smartmemo.page.link/invite")
-                        .setAndroidExecutionParams("key1=value1")
-                        .setIosExecutionParams("key1=value1")
+                        .setAndroidExecutionParams("value=$value")
                         .build()
                 )
             )
@@ -134,34 +167,34 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
         serverCallbackArgs["user_id"] = "\${current_user_id}"
         serverCallbackArgs["product_id"] = "\${shared_product_id}"
 
-//        KakaoLinkService.getInstance().sendDefault(
-//            this,
-//            params,
-//            serverCallbackArgs,
-//            object : ResponseCallback<KakaoLinkResponse?>() {
-//                override fun onFailure(errorResult: ErrorResult) {
-//                    Logger.e(errorResult.toString())
-//                }
-//
-//                override fun onSuccess(result: KakaoLinkResponse?) { // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
-//                }
-//            })
-
-        val url = "https://smartmemo.page.link/invite"
-        KakaoLinkService.getInstance()
-            .sendScrap(this, url, null, object : ResponseCallback<KakaoLinkResponse>() {
+        KakaoLinkService.getInstance().sendDefault(
+            this,
+            params,
+            serverCallbackArgs,
+            object : ResponseCallback<KakaoLinkResponse?>() {
                 override fun onFailure(errorResult: ErrorResult) {
-                    Log.e("KAKAO_API", "카카오링크 공유 실패: $errorResult")
+                    Logger.e(errorResult.toString())
                 }
 
-                override fun onSuccess(result: KakaoLinkResponse) {
-                    Log.i("KAKAO_API", "카카오링크 공유 성공")
-
-                    // 카카오링크 보내기에 성공했지만 아래 경고 메시지가 존재할 경우 일부 컨텐츠가 정상 동작하지 않을 수 있습니다.
-                    Log.w("KAKAO_API", "warning messages: " + result.warningMsg)
-                    Log.w("KAKAO_API", "argument messages: " + result.argumentMsg)
+                override fun onSuccess(result: KakaoLinkResponse?) { // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
                 }
             })
+
+//        val url = "https://smartmemo.page.link/invite"
+//        KakaoLinkService.getInstance()
+//            .sendScrap(this, url, null, object : ResponseCallback<KakaoLinkResponse>() {
+//                override fun onFailure(errorResult: ErrorResult) {
+//                    Log.e("KAKAO_API", "카카오링크 공유 실패: $errorResult")
+//                }
+//
+//                override fun onSuccess(result: KakaoLinkResponse) {
+//                    Log.i("KAKAO_API", "카카오링크 공유 성공")
+//
+//                    // 카카오링크 보내기에 성공했지만 아래 경고 메시지가 존재할 경우 일부 컨텐츠가 정상 동작하지 않을 수 있습니다.
+//                    Log.w("KAKAO_API", "warning messages: " + result.warningMsg)
+//                    Log.w("KAKAO_API", "argument messages: " + result.argumentMsg)
+//                }
+//            })
     }
 
 }

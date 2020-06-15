@@ -27,6 +27,7 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
     private lateinit var loginDialog : ProgressDialog
     lateinit var presenter : LoginContract.Presenter
     private var loginCount = 0
+    private lateinit var value:String
 
     private val GPS_ENABLE_REQUEST_CODE: Int = 2001
     private val PERMISSIONS_REQUEST_CODE: Int = 100
@@ -87,8 +88,20 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
 //    }
 
     override fun startMainActivity() {
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+        if(intent.hasExtra("value")) {
+            value = intent.getStringExtra("value")
+            if (value != null) {
+                val intent = Intent(this, AddFolder::class.java)
+                intent.putExtra("value", value)
+                Log.i("jieun", "LoginActivity value=$value")
+                startActivity(intent)
+                finish()
+            }
+        }
+        else {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
     }
 
     override fun onLoginSuccess() {
