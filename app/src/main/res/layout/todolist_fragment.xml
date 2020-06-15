@@ -20,6 +20,15 @@
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>
+    <TextView
+        android:id="@+id/textView_non_todo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:text="아직 작성된 TodoList가 없습니다."
+        android:textSize="20dp"
+        android:textAlignment="center"
+        tools:ignore="RtlCompat" />
     <ListView
         android:id="@+id/todolist"
         android:layout_width="match_parent"

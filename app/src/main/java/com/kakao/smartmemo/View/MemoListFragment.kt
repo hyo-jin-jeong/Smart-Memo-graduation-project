@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -24,6 +25,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var memoAdapter: MemoListAdapter
     private lateinit var memoDeleteAdapter: MemoListDeleteAdapter
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var noMemoTextView: TextView
     private var memoList: MutableList<MemoData> = mutableListOf()
     private var count = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +43,7 @@ class MemoListFragment : Fragment(), MemoContract.View {
         presenter = MemoPresenter(this)
         recyclerView1 = view.findViewById(R.id.rv_memo_list) as RecyclerView
         bottomNavigationView = view.findViewById(R.id.navigationview_bottom)
+        noMemoTextView = view.findViewById(R.id.textView_non_memo)
         return view
     }
 
@@ -89,11 +92,15 @@ class MemoListFragment : Fragment(), MemoContract.View {
 
     override fun showAllMemo(memoList: MutableList<MemoData>) {
         count = 0
-        this.memoList.clear()
+
         if (memoList.isEmpty()) {
             this.memoList.clear()
+            recyclerView1.visibility = View.GONE
+            noMemoTextView.visibility = View.VISIBLE
         } else {
             this.memoList = memoList
+            recyclerView1.visibility = View.VISIBLE
+            noMemoTextView.visibility = View.GONE
         }
         memoAdapter = MemoListAdapter(this.memoList)
         recyclerView1.adapter = memoAdapter

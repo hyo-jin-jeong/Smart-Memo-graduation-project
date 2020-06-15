@@ -23,7 +23,7 @@ class PlaceAlarmDialogAdapter(private var todo: MutableList<PlaceAlarmData>): Re
         todo[position].let {
             with(holder) {
                 if (it.date == "[기본] 날짜 미설정") {
-                    alarmDate.text = "날짜 설정 안함"
+                    alarmDate.text = "날짜 없음"
                 } else {
                     it.date = it.date.replace("년", "/")
                     it.date = it.date.replace(" ", "")

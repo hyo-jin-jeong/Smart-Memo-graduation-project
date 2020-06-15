@@ -19,6 +19,19 @@
         app:layout_constraintRight_toRightOf="parent"
         android:splitMotionEvents="false"/>
 
+    <TextView
+        android:id="@+id/textView_non_memo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="아직 작성된 메모가 없습니다."
+        android:textSize="20dp"
+        android:textAlignment="center"
+        tools:ignore="RtlCompat" />
+
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigationview_bottom"
         android:layout_width="match_parent"

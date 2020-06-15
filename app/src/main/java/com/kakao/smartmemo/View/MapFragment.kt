@@ -95,12 +95,12 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         savedInstanceState: Bundle?
     ): View? {
         Log.e("jieun", "onCreateView")
-      
+
         val view = inflater.inflate(R.layout.map_fragment, container, false)
         Log.e("onCreateView", "onCreateView")
         v= view
         cont = view.context
-      
+
         presenter = MapPresenter(this)
         mapView = MapView(view.context)
         usingMapView = true
@@ -186,12 +186,12 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             )
         }
     }
-  
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         Log.e("jieun", "onActivityCreated")
     }
-      
+
     override fun onStart() {
         super.onStart()
 
@@ -225,7 +225,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         super.onStop()
         Log.e("jieun", "onStop")
     }
-      
+
     override fun onPause() {
         super.onPause()
         Log.e("jieun", "onPause")
@@ -428,7 +428,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                                 addMemoIntent.putExtra("placeData", placeData)
                                 Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                                 startActivity(addMemoIntent)
-                               mapView.removePOIItem(curLocationMarker)
+                                mapView.removePOIItem(curLocationMarker)
                             }
                             1 -> {
                                 val addTodoIntent =
@@ -442,7 +442,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                                 startActivity(addTodoIntent)
                                 usingMapView = false
                                 mapViewContainer.removeAllViews()
-                               mapView.removePOIItem(curLocationMarker)
+                                mapView.removePOIItem(curLocationMarker)
                             }
                         }
                     })
@@ -450,7 +450,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             }
         }
     }
-
 
     //setMapViewEventListener override method
     override fun onMapViewDoubleTapped(mapView: MapView?, p1: MapPoint?) {
@@ -475,11 +474,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onMapViewDragEnded(mapView: MapView?, p1: MapPoint?) {
-        //mapView?.removePOIItem(curLocationMarker)
+        mapView?.removePOIItem(curLocationMarker)
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
-        //recyclerView.visibility = View.GONE
+        recyclerView.visibility = View.GONE
     }
 
     override fun onMapViewZoomLevelChanged(p0: MapView?, p1: Int) {
@@ -526,7 +525,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             else -> mapView.removePOIItem(curLocationMarker)
         }
         curLocationMarker = createMarker("current marker", p1!!, R.drawable.cur_location_icon)
-        curLocationMarker.markerType = MapPOIItem.MarkerType.BluePin
         mapView.addPOIItem(curLocationMarker)
         presenter.convertAddressFromMapPOIItem(curLocationMarker)
 
@@ -647,10 +645,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 j++
             }
         }
-
-        if (todoMapPoint.isNotEmpty() && memoMapPoint.isNotEmpty()) {
-            Log.e("jieun", "마커 생성 시작!!")
- //       if ((todoMapPoint.isNotEmpty() && todo.size == m) || (memoMapPoint.isNotEmpty() && memo.size == j)) {
+        if ((todoMapPoint.isNotEmpty() && todo.size == m) || (memoMapPoint.isNotEmpty() && memo.size == j)) {
             createMarkerAccordingType(todoMapPoint, memoMapPoint)
         }
         Log.e("jieun", "구분점~~~~")
@@ -697,7 +692,3 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
 }
-
-
-
-
