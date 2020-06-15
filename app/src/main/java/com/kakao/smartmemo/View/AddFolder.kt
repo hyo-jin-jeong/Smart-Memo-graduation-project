@@ -40,25 +40,6 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
         setContentView(R.layout.app_bar_add_group)
         presenter = AddGroupPresenter(this)
 
-        if(intent.hasExtra("value")) {
-            val value = intent.getStringExtra("value")
-            Log.i("jieun", "AddFolder value=$value")
-            if(value == "1") {
-                val dialog = AlertDialog.Builder(this@AddFolder, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert)
-                dialog.setTitle("초대")
-                dialog.setMessage("@@폴더를 공유하시겠습니까?")
-                dialog.setNegativeButton("CANCEL", null)
-
-                dialog.setPositiveButton(
-                    "OK"
-                ) { dialog, which ->
-
-                }
-                dialog.show()
-
-            }
-        }
-
         if(intent.action == Intent.ACTION_VIEW) {
             val receivedValue = intent.data!!.getQueryParameter("value")
             val intent = Intent(this, LoginActivity::class.java)

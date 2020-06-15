@@ -57,6 +57,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if(intent.hasExtra("value")) {
+            val value = intent.getStringExtra("value")
+            Log.i("jieun", "MainActivity value=$value")
+            if(value == "1") {
+                val dialog = AlertDialog.Builder(this@MainActivity, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert)
+                dialog.setTitle("초대")
+                dialog.setMessage("@@폴더를 공유하시겠습니까?")
+                dialog.setNegativeButton("CANCEL", null)
+
+                dialog.setPositiveButton(
+                    "OK"
+                ) { dialog, which ->
+
+                }
+                dialog.show()
+
+            }
+        }
+
         presenter = MainPresenter(this)
         presenter.getGroupInfo()
 
