@@ -38,14 +38,6 @@ class PlaceAlarmDialogAdapter(private var todo: MutableList<PlaceAlarmData>): Re
 
     }
 
-    //데이터들 업데이트
-    fun setDataList(dataList: List<PlaceAlarmData>?) {
-        if (dataList == null) {
-            return
-        }
-        this@PlaceAlarmDialogAdapter.todo = dataList.toMutableList()
-    }
-
     inner class DialogViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.alarm_list_item, parent, false)) {
         var layout = itemView.alarm_list_item_layout

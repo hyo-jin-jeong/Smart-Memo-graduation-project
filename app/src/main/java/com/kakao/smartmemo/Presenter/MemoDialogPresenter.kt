@@ -18,5 +18,12 @@ class MemoDialogPresenter : MemoDialogContract.Presenter {
 
     override fun setMemoDialogAdatperView(view: MemoDialogAdapterContract.View) {
         adapterView = view
+        adapterView.onClickFunc = {onClickListener(it)}
+    }
+
+    private fun onClickListener(position: Int){
+        adapterModel.getMemo(position).let {
+            view.showMemoItem(position)
+        }
     }
 }

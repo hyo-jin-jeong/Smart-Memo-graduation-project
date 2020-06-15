@@ -82,10 +82,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         tabs.getTabAt(2)?.setIcon(R.drawable.todo)
         tabs.getTabAt(3)?.setIcon(R.drawable.more)
 
-        tabs.getTabAt(0)?.icon?.setColorFilter(Color.parseColor("#49628a"), PorterDuff.Mode.SRC_IN)
-
-       // tabs.getTabAt(0)?.text = ""
-
+        tabs.getTabAt(2)?.icon?.setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN)
 
         // Toolbar
         myToolbar = findViewById(R.id.toolbar)
