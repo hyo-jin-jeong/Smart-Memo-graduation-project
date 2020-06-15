@@ -13,19 +13,18 @@ import com.kakao.smartmemo.Object.UserObject
 
 
 class FolderModel {
-    private lateinit var onGetGroupInfoListener: MainContract.onGetGroupInfoListener
+    private lateinit var onMainListener: MainContract.onMainListener
     private var firebaseUser = FirebaseDatabase.getInstance().reference.child("User")
     private var firebaseFolder = FirebaseDatabase.getInstance().reference.child("Group")
 
     constructor()
 
-    constructor(onGetGroupInfoListener: MainContract.onGetGroupInfoListener) {
-        this.onGetGroupInfoListener = onGetGroupInfoListener
+    constructor(onMainListener: MainContract.onMainListener) {
+        this.onMainListener = onMainListener
     }
 
-    fun addGroup(groupName: String, color: Int) {
+    fun addGroup(groupId:String, groupName: String, color: Int) {
         //그룹 관련된 DB작업
-        var groupId = (System.currentTimeMillis()*10000).toInt().toString()
         var folderData = FolderData(groupName,color)
         firebaseUser.child(UserObject.uid).child("GroupInfo").updateChildren(mapOf(groupId to groupName))
         with(firebaseFolder.child(groupId)) {
@@ -34,7 +33,6 @@ class FolderModel {
         }
         FolderObject.folderInfo[groupId] = groupName
         FolderObject.folderColor[groupId] = color.toLong()
-
     }
 
     fun updateGroup(groupId:String, groupName: String, color: Long?) {
@@ -54,7 +52,7 @@ class FolderModel {
         var groupIdList = mutableListOf<String>()
         FolderObject.folderId.clear()
         Log.e("groupName", FolderObject.folderInfo.size.toString())
-            firebaseUser.child(UserObject.uid).child("GroupInfo").addValueEventListener(object : ValueEventListener {
+            firebaseUser.child(UserObject.uid).child("GroupInfo").addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {}
                 override fun onDataChange(folderSnapshot: DataSnapshot) {
                     folderSnapshot.children.forEach {

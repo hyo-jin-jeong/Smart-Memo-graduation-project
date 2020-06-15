@@ -4,17 +4,20 @@ import android.util.Log
 import com.kakao.smartmemo.Contract.MainAdapterContract
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Model.FolderModel
+import com.kakao.smartmemo.Model.UserModel
 
-class MainPresenter : MainContract.Presenter,MainContract.onGetGroupInfoListener{
+class MainPresenter : MainContract.Presenter,MainContract.onMainListener{
 
     private var view : MainContract.View
     var folderModel: FolderModel
+    var userModel:UserModel
     private lateinit var adapterView: MainAdapterContract.View
     private lateinit var adapterModel: MainAdapterContract.Model
 
     constructor(view: MainContract.View){
         this.view = view
         this.folderModel = FolderModel(this)
+        this.userModel = UserModel(this)
     }
 
     override fun setMainAdapterModel(model: MainAdapterContract.Model) {
@@ -29,8 +32,14 @@ class MainPresenter : MainContract.Presenter,MainContract.onGetGroupInfoListener
         folderModel.getGroupInfo()
     }
 
-    override fun onSuccess(groupInfoList: MutableList<String>) {
-        view.onSuccess(groupInfoList)
+    override fun checkFolderMember(groupId: String?, groupName: String?) {
+        userModel.checkFolderMember(groupId,groupName)
+    }
+
+
+
+    override fun onSuccess() {
+        view.onSuccess()
     }
 
     override fun onFailure() {

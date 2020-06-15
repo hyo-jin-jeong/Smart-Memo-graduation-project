@@ -5,14 +5,14 @@ interface MainContract {
         fun setMainAdapterModel(model: MainAdapterContract.Model)
         fun setMainAdapterView(view: MainAdapterContract.View)
         fun getGroupInfo()
-
+        fun checkFolderMember(groupId: String?, groupName: String?)
     }
     interface View {
-       fun onSuccess(action: MutableList<String>)
+       fun onSuccess()
     }
 
-    interface onGetGroupInfoListener {
-        fun onSuccess(groupInfoList: MutableList<String>)
+    interface onMainListener {
+        fun onSuccess()
         fun onFailure()
     }
 

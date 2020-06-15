@@ -43,11 +43,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private val context: Context = this
     var openFlag:Boolean = false
 
+
     private lateinit var mainLocationModel: MainLocationModel
     private var mLocationRequest: LocationRequest? = null
     private var mFusedLocationClient: FusedLocationProviderClient? = null
     private var mServiceHandler: Handler? = null
-
+    lateinit var dialog : InvitedDialog
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,12 +58,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         if(intent.hasExtra("value")) {
             val value = intent.getStringExtra("value")
             val groupName = intent.getStringExtra("group_name")
+            val groupId = intent.getStringExtra("groupId")
             Log.i("jieun", "MainActivity value=$value")
             if(value == "1") {
-                val dialog = InvitedDialog(this)
+                dialog = InvitedDialog(this)
                 dialog.setOnOKClickedListener { content->
                     if (content == "ok"){
-                        //공유 초대 확인 눌렀을 경우
+                        presenter.checkFolderMember(groupId,groupName)
+
                     }
                     else {
                         //공유 초대 취소 눌렀을 경우
@@ -234,8 +237,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         }
     }
 
-    override fun onSuccess(action: MutableList<String>) {
-
+    override fun onSuccess() {
+        dialog.dialogDismiss()
     }
 
 

@@ -91,11 +91,13 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         if(intent.hasExtra("value")) {
             value = intent.getStringExtra("value")
             val groupName = intent.getStringExtra("group_name")
+            val groupId =  intent.getStringExtra("groupId")
             Log.i("jieun", "groupName=$groupName")
             if (value != null && groupName != null) {
                 val intent = Intent(this, MainActivity::class.java)
                 intent.putExtra("value", value)
                 intent.putExtra("group_name", groupName)
+                intent.putExtra("groupId",groupId)
                 Log.i("jieun", "LoginActivity value=$value")
                 startActivity(intent)
                 finish()

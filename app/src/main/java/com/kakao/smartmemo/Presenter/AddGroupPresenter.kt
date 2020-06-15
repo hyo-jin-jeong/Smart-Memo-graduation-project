@@ -15,9 +15,9 @@ class AddGroupPresenter : AddGroupContract.Presenter{
         this.folderModel = FolderModel()
     }
 
-    override fun addGroup(group_name: String, color: Int) {
+    override fun addGroup(groupId:String,group_name: String, color: Int) {
         //GroupObject에 데이터 세팅
-       folderModel.addGroup(group_name, color)
+       folderModel.addGroup(groupId,group_name, color)
     }
 
 

@@ -30,6 +30,7 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
     lateinit var themeColor : View
     lateinit var colorPicker: ImageView
     lateinit var groupExitBtn : Button
+    var groupId = (System.currentTimeMillis()*10000).toInt().toString()
     var color = (System.currentTimeMillis()*1000).toInt()
     var value = "1"
     private var mode = ""
@@ -42,11 +43,13 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
         if(intent.action == Intent.ACTION_VIEW) {
             val receivedValue = intent.data!!.getQueryParameter("value")
             val groupName = intent.data!!.getQueryParameter("group_name")
+            val groupId = intent.data!!.getQueryParameter("groupId")
             Log.i("jieun", groupName)
             val intent = Intent(this, LoginActivity::class.java)
             Log.i("jieun", "AddFolder value=$receivedValue")
             intent.putExtra("value", receivedValue)
             intent.putExtra("group_name", groupName)
+            intent.putExtra("groupId", groupId)
             startActivity(intent)
         }
 
@@ -93,11 +96,11 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
                         mode = content
                         if (mode == "ok"){
                             kakaoLink()
-                            presenter.addGroup(groupName.text.toString(), color)
+                            presenter.addGroup(groupId,groupName.text.toString(), color)
                         }
                         else {
                             Log.e("jieun", "공유 안누름.")
-                            presenter.addGroup(groupName.text.toString(), color)
+                            presenter.addGroup(groupId,groupName.text.toString(), color)
                         }
                     }
                     dialog.startDialog("https://smartmemo.page.link/invite")
@@ -133,7 +136,7 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
                     "앱에서 보기", LinkObject.newBuilder()
                         .setWebUrl("'https://developers.kakao.com")
                         .setMobileWebUrl("https://smartmemo.page.link/invite")
-                        .setAndroidExecutionParams("value=$value&group_name=${groupName.text}")
+                        .setAndroidExecutionParams("value=$value&group_name=${groupName.text}&groupId=$groupId")
                         .build()
                 )
             )
