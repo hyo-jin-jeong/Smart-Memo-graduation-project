@@ -98,7 +98,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
     var amPm = "오전"
     var min = 0
     var timeId = 0
-    var placeId = 0
+    var placeAlarmTodoId = 0
     private lateinit var data : TodoData
     private var groupCheck = false
     private var hasData = false
@@ -553,21 +553,22 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         if (intent.hasExtra(BROADCASTPLACE)) {
             finish()
             var cancel = intent.getBooleanExtra(BROADCASTPLACE, false)
-            placeId = intent.getIntExtra("placeid", 0)
+            placeAlarmTodoId = intent.getIntExtra("placeid", 0)
             Log.v("seyuuuun", "취소됨 $cancel")
-            Log.v("seyuuuun", "취소된 id $placeId")
+            Log.v("seyuuuun", "취소된 id $placeAlarmTodoId")
 
             if (cancel.equals(true)) {
                 notifyPlace = false
                 placeSwitch.isChecked = false
-                unsetPlaceAlarm(placeId)
+                unsetPlaceAlarm(placeAlarmTodoId)
+                presenter.cancelPlaceAlarm(placeAlarmTodoId)
             }
         }
     }
 
     private fun todoAlarm() {
         val todoTime = UserObject.kakao_alarm_time
-        if (!todoTime.equals("")) {
+        if (todoTime != "null") {
             var Todo = todoTime.split(" ")
             when (Todo.get(0)) { //오전 오후 구분
                 "오후" ->

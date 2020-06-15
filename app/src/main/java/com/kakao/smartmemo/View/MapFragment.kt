@@ -139,8 +139,12 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 DividerItemDecoration.VERTICAL
             )
         ) //아래구분선 세팅
-
         recyclerView.layoutManager = layoutManager
+
+        todo.clear()
+        memo.clear()
+        todoMapPoint.clear()
+        memoMapPoint.clear()
         return view
     }
 

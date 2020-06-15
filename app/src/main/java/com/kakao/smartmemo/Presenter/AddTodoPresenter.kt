@@ -54,6 +54,10 @@ class AddTodoPresenter : AddTodoContract.Presenter, AddTodoContract.OnAddTodoLis
         model.deleteTodoInfo(groupId, todoId)
     }
 
+    override fun cancelPlaceAlarm(placeAlarmTodoId: Int) {
+        model.cancelPlaceAlarm(placeAlarmTodoId)
+    }
+
     override fun onSuccess(placeList: MutableList<PlaceData>) {
         view.onSuccess(placeList)
     }

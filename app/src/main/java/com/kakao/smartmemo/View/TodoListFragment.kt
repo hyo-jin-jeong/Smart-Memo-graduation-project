@@ -63,11 +63,12 @@ class TodoListFragment : Fragment(), TodoContract.View {
             onePlaceIntent = Intent(cont, AddTodo::class.java)
             if (todoArrayList[position].setPlaceAlarm) {
                 presenter.getOnePlaceTodo(todoArrayList[position].todoId)
+                onePlaceIntent.putExtra("todoData", todoArrayList[position])
+            } else {
+                onePlaceIntent.putExtra("todoData", todoArrayList[position])
+                startActivity(onePlaceIntent)
             }
-            onePlaceIntent.putExtra("todoData", todoArrayList[position])
         }
-
-
         bottomNavigationView.visibility = GONE; //하단메뉴 안보이게
 
         return view
@@ -148,6 +149,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
             noTodoTextView.visibility = VISIBLE
             todolist.visibility = GONE
         } else {
+            todoArrayList.clear()
             todoArrayList = todoData
             noTodoTextView.visibility = GONE
             todolist.visibility = VISIBLE

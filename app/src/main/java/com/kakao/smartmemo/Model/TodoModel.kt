@@ -267,7 +267,6 @@ class TodoModel {
                             override fun onCancelled(p0: DatabaseError) {}
                             override fun onDataChange(placeSnapshot: DataSnapshot) {
                                 placeSnapshot.children.forEach { placeId ->
-
                                     if(placeId.hasChildren()){
                                         placeId.getValue(PlaceData::class.java)?.let { it1 ->
                                             placeList.add(
@@ -350,6 +349,20 @@ class TodoModel {
 
             })
         }
+    }
+
+    fun cancelPlaceAlarm(placeAlarmTodoId: Int) {
+        firebaseTodo.child(placeAlarmTodoId.toString()).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {  }
+            override fun onDataChange(placeAlarmSnapshot: DataSnapshot) {
+                var placeAlarm = placeAlarmSnapshot.child("PlaceAlarm").getValue(PlaceAlarm::class.java)
+                if (placeAlarm != null) {
+                    placeAlarm.setPlaceAlarm = false
+                    placeAlarmSnapshot.ref.child("PlaceAlarm").setValue(placeAlarm)
+                    firebaseTodoId.child(placeAlarmTodoId.toString()).removeValue()
+                }
+            }
+        })
     }
 
 //    fun getTodoInfo(todoList: MutableList<PlaceData>) {
