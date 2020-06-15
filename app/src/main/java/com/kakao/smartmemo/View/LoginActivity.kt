@@ -91,7 +91,7 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         if(intent.hasExtra("value")) {
             value = intent.getStringExtra("value")
             if (value != null) {
-                val intent = Intent(this, AddFolder::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 intent.putExtra("value", value)
                 Log.i("jieun", "LoginActivity value=$value")
                 startActivity(intent)

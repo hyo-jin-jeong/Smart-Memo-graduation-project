@@ -13,7 +13,6 @@ import com.kakao.smartmemo.Object.UserObject
 
 
 class FolderModel {
-
     private lateinit var onGetGroupInfoListener: MainContract.onGetGroupInfoListener
     private var firebaseUser = FirebaseDatabase.getInstance().reference.child("User")
     private var firebaseFolder = FirebaseDatabase.getInstance().reference.child("Group")
