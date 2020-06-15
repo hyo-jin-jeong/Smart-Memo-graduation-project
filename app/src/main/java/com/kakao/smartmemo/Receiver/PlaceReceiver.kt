@@ -16,6 +16,7 @@ import androidx.core.app.NotificationCompat
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.View.AddTodo
 import com.kakao.smartmemo.View.MainActivity
+import java.util.*
 
 class PlaceReceiver : BroadcastReceiver(){
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -27,7 +28,7 @@ class PlaceReceiver : BroadcastReceiver(){
         val todoText = intent?.getStringExtra("todoText")
         Log.v("seyuuuun", "(id) in place : " + id.toString())
 
-        val IconNoti = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.bell_icon_on)
+        val icon_noti = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.bell_icon_on)
 
         val notificationIntent = Intent(context, MainActivity::class.java)
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -43,13 +44,13 @@ class PlaceReceiver : BroadcastReceiver(){
         //헤드업알림
         val contentview = RemoteViews(context.packageName, R.layout.location_notification)
         contentview.setTextViewText(R.id.notification_Title, "TODOLIST 장소알림") //title
-        contentview.setImageViewBitmap(R.id.imageView_Place, IconNoti) //아이콘
         contentview.setTextViewText(R.id.textView_alarm, todoTitle)  //content
         contentview.setTextViewText(R.id.textView_alarmlocation, todoPlace)
         contentview.setOnClickPendingIntent(R.id.cancel_notification, cancelpendingIntent)
 
         val notificationbuilder  = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
+            .setLargeIcon(icon_noti)
             .setContentIntent(pendingIntent) // 알림을 눌렀을때 실행할 작업 인텐트 설정
             .setWhen(System.currentTimeMillis()) //miliSecond단위로 넣어주면 내부적으로 파싱함.
             .setDefaults(Notification.DEFAULT_VIBRATE)
