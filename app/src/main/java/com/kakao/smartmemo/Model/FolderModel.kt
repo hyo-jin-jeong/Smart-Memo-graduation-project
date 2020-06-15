@@ -6,7 +6,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.kakao.smartmemo.Contract.AddGroupContract
 import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Data.FolderData
 import com.kakao.smartmemo.Object.FolderObject
@@ -16,7 +15,6 @@ import com.kakao.smartmemo.Object.UserObject
 class FolderModel {
 
     private lateinit var onGetGroupInfoListener: MainContract.onGetGroupInfoListener
-    private lateinit var onAddFolderListener:AddGroupContract.OnAddFolderListener
     private var firebaseUser = FirebaseDatabase.getInstance().reference.child("User")
     private var firebaseFolder = FirebaseDatabase.getInstance().reference.child("Group")
 
@@ -24,9 +22,6 @@ class FolderModel {
 
     constructor(onGetGroupInfoListener: MainContract.onGetGroupInfoListener) {
         this.onGetGroupInfoListener = onGetGroupInfoListener
-    }
-    constructor(onAddFolderListener:AddGroupContract.OnAddFolderListener){
-        this.onAddFolderListener = onAddFolderListener
     }
 
     fun addGroup(groupName: String, color: Int) {
@@ -37,7 +32,6 @@ class FolderModel {
         with(firebaseFolder.child(groupId)) {
             setValue(folderData)
             child("MemberInfo").setValue(mapOf(UserObject.uid to UserObject.email))
-            Log.e("확인","확인")
         }
         FolderObject.folderInfo[groupId] = groupName
         FolderObject.folderColor[groupId] = color.toLong()
