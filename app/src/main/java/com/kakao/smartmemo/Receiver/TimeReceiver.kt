@@ -42,7 +42,6 @@ class TimeReceiver : BroadcastReceiver() {
             //헤드업알림
             val contentview = RemoteViews(context.packageName, R.layout.time_notification)
             contentview.setTextViewText(R.id.notification_Title, "TODOLIST 시간알림") //title
-            contentview.setImageViewBitmap(R.id.imageView_Time, IconNoti) //아이콘
             contentview.setTextViewText(R.id.textView_alarm, todoTitle)  //content
             contentview.setOnClickPendingIntent(R.id.cancel_notification, cancelpendingIntent)
 

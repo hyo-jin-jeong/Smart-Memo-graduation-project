@@ -67,7 +67,6 @@ class LocationUpdatesService : Service() {
     private var mLocation: Location? = null
     private var allSelectedPlace = arrayListOf<PlaceData>()
     private var handler = Handler()
-    private var todoIdList = mutableListOf<String>()
     override fun onCreate() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -285,7 +284,9 @@ class LocationUpdatesService : Service() {
 
     private fun setPlaceAlarm(calendar: Calendar, placeData: PlaceData) {
         val text: CharSequence = getLocationText(mLocation)
-        var title:String = ""
+        var title:String
+        var date :String
+        var again :Int = 0
         val pm = this.packageManager
         val placereceiver = ComponentName(this, DeviceBootPlaceReceiver::class.java)
         val placealarmIntent = Intent(this, PlaceReceiver::class.java)
@@ -295,18 +296,37 @@ class LocationUpdatesService : Service() {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 title = dataSnapshot.child("title").value.toString()
+                dataSnapshot.child("PlaceAlarm").children.forEach {
+                    if(it.key == "placeAgain"){
+                        again = it.value.toString().toInt()
+                    }else if(it.key =="placeDate"){
+                        date = it.value.toString()
+                        Log.v("seyuuuun", "DB날짜 확인 : $date")
+                    }
+                   /* placealarmIntent.putExtra("todoTitle", title)
+                    placealarmIntent.putExtra("todoPlace", placeData.place)
+                    placealarmIntent.putExtra("todoText", text)
+                    placealarmIntent.putExtra("todoId", placeData.placeId.toInt()) //reqeustcode 때문에 넣어준 것!!
+                    setAlarm(placealarmIntent,placeData,calendar, again)
+                    Log.v("seyuuuun", "반복 간격확인 : $again")*/
+                }
                 placealarmIntent.putExtra("todoTitle", title)
                 placealarmIntent.putExtra("todoPlace", placeData.place)
                 placealarmIntent.putExtra("todoText", text)
                 placealarmIntent.putExtra("todoId", placeData.placeId.toInt()) //reqeustcode 때문에 넣어준 것!!
-                setAlarm(placealarmIntent,placeData,calendar)
+                setAlarm(placealarmIntent,placeData,calendar, again)
+                Log.v("seyuuuun", "반복 간격확인 : $again")
             }
         })
     }
-    private fun setAlarm(intent: Intent,placeData: PlaceData,calendar: Calendar){
+    private fun setAlarm(intent: Intent,placeData: PlaceData,calendar: Calendar, again: Int){
 
         val pendingIntent = PendingIntent.getBroadcast(applicationContext, placeData.placeId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        Log.v("seyuuuun", "시간확인 " + calendar.get(Calendar.HOUR_OF_DAY).toString())
+        Log.v("seyuuuun", "시간확인 " + calendar.get(Calendar.MINUTE).toString())
+        Log.v("seyuuuun", "시간확인 " + calendar.get(Calendar.SECOND).toString())
+        val intervalTime = 1000*60*again
 
         if (alarmManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -315,6 +335,9 @@ class LocationUpdatesService : Service() {
                     calendar.timeInMillis,
                     pendingIntent
                 )
+                if(again != 0) {
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, intervalTime.toLong(), pendingIntent)
+                }
             }
             /* //부팅후 실행되는 리시버 사용가능하게 설정함.
              pm.setComponentEnabledSetting(
@@ -371,14 +394,10 @@ class LocationUpdatesService : Service() {
                 if (calDistance(location, mLocation!!)) {
                     Log.e("jieun", "${place.place}가 이 지점에 300m 안이라 $locationtext")
 
-                    placeCalendar.timeInMillis
+                    placeCalendar.timeInMillis //날짜DB에서 불러오면 적용시켜줘야함
                     PlaceNotificationID = ((System.currentTimeMillis()/1000).toInt()) * (allSelectedPlace.indexOf(place) +1)
                     setPlaceAlarm(placeCalendar, place)
                     placeItems.add(place)
-                   /* handler.postDelayed({
-                        allSelectedPlace.add(place)
-                        Log.i("jieun", "$place 다시 생김")
-                    }, 10000L)*/
                 }
             }
 
@@ -394,7 +413,6 @@ class LocationUpdatesService : Service() {
             )
         }
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-
     }
 
     fun calDistance(placeAlarmLocation: Location, curLocation: Location): Boolean {

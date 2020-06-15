@@ -37,7 +37,7 @@ class TodoReceiver : BroadcastReceiver(){
         //헤드업알림
         val contentview = RemoteViews(context.packageName, R.layout.todolist_headup_alarm)
         contentview.setTextViewText(R.id.notification_Title, "T O D O L I S T")
-        contentview.setTextViewText(R.id.todolist_textView, "1. 영양제 먹기\n2. 학교 가기")
+        contentview.setTextViewText(R.id.todolist_textView, "1. 영양제 먹기\n2. 학교 가기\n3. 병원가기\n4. 비타민 사기\n5. 카페")
         contentview.setTextViewText(R.id.todolist_location, "● 삼성약국/녹십자약국/온누리약국")
         notificationbuilder.setContent(contentview)
 
