@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.View
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -42,9 +41,12 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
 
         if(intent.action == Intent.ACTION_VIEW) {
             val receivedValue = intent.data!!.getQueryParameter("value")
+            val groupName = intent.data!!.getQueryParameter("group_name")
+            Log.i("jieun", groupName)
             val intent = Intent(this, LoginActivity::class.java)
             Log.i("jieun", "AddFolder value=$receivedValue")
             intent.putExtra("value", receivedValue)
+            intent.putExtra("group_name", groupName)
             startActivity(intent)
         }
 
@@ -58,11 +60,6 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
         colorPicker = findViewById(R.id.color_picker)
         groupExitBtn = findViewById(R.id.group_member_exit)
         groupExitBtn.visibility = View.GONE
-        //val kakao_member
-        val kakaoLink = findViewById<LinearLayout>(R.id.kakao_link)
-        kakaoLink.setOnClickListener {
-            kakaoLink()
-        }
 
         themeColor.setBackgroundColor(color)
 
@@ -124,23 +121,19 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
             .newBuilder(
                 ContentObject.newBuilder(
                         "Smart Memo",
-                        "https://github.com/hyo-jin-jeong/GraduationPortfolio/blob/master/app/src/main/res/drawable/app_logo_icon.png?raw=true",
+                        "https://github.com/hyo-jin-jeong/GraduationPortfolio/blob/master/app/src/main/res/drawable/app_logo_no_title.jpeg?raw=true",
                         LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
                             .setMobileWebUrl("https://developers.kakao.com").build()
                     )
                     .setDescrption("초대 링크를 누르면 공유 폴더에 참가할 수 있습니다.")
                     .build()
             )
-//            .setSocial(
-//                SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
-//                    .setSharedCount(30).setViewCount(40).build()
-//            )
             .addButton(
                 ButtonObject(
                     "앱에서 보기", LinkObject.newBuilder()
                         .setWebUrl("'https://developers.kakao.com")
                         .setMobileWebUrl("https://smartmemo.page.link/invite")
-                        .setAndroidExecutionParams("value=$value")
+                        .setAndroidExecutionParams("value=$value&group_name=${groupName.text}")
                         .build()
                 )
             )
@@ -164,21 +157,6 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
                 }
             })
 
-//        val url = "https://smartmemo.page.link/invite"
-//        KakaoLinkService.getInstance()
-//            .sendScrap(this, url, null, object : ResponseCallback<KakaoLinkResponse>() {
-//                override fun onFailure(errorResult: ErrorResult) {
-//                    Log.e("KAKAO_API", "카카오링크 공유 실패: $errorResult")
-//                }
-//
-//                override fun onSuccess(result: KakaoLinkResponse) {
-//                    Log.i("KAKAO_API", "카카오링크 공유 성공")
-//
-//                    // 카카오링크 보내기에 성공했지만 아래 경고 메시지가 존재할 경우 일부 컨텐츠가 정상 동작하지 않을 수 있습니다.
-//                    Log.w("KAKAO_API", "warning messages: " + result.warningMsg)
-//                    Log.w("KAKAO_API", "argument messages: " + result.argumentMsg)
-//                }
-//            })
     }
 
 }

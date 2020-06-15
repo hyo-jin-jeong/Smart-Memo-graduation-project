@@ -90,9 +90,12 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
     override fun startMainActivity() {
         if(intent.hasExtra("value")) {
             value = intent.getStringExtra("value")
-            if (value != null) {
+            val groupName = intent.getStringExtra("group_name")
+            Log.i("jieun", "groupName=$groupName")
+            if (value != null && groupName != null) {
                 val intent = Intent(this, MainActivity::class.java)
                 intent.putExtra("value", value)
+                intent.putExtra("group_name", groupName)
                 Log.i("jieun", "LoginActivity value=$value")
                 startActivity(intent)
                 finish()

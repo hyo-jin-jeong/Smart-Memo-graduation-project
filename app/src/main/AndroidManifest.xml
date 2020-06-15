@@ -137,6 +137,20 @@
             android:name=".View.ModifyGroup"
             android:label="그룹 설정"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="smartmemo.page.link/invite"
+                    android:scheme="http" />
+                <data
+                    android:host="smartmemo.page.link/invite"
+                    android:scheme="https" />
+                <data android:scheme="@string/kakao_scheme"
+                    android:host="@string/kakaolink_host" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".View.PlaceAlarmDetailActivity"

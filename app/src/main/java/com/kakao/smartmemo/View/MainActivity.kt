@@ -1,10 +1,7 @@
 package com.kakao.smartmemo.View
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -59,20 +56,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
         if(intent.hasExtra("value")) {
             val value = intent.getStringExtra("value")
+            val groupName = intent.getStringExtra("group_name")
             Log.i("jieun", "MainActivity value=$value")
             if(value == "1") {
-                val dialog = AlertDialog.Builder(this@MainActivity, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert)
-                dialog.setTitle("초대")
-                dialog.setMessage("@@폴더를 공유하시겠습니까?")
-                dialog.setNegativeButton("CANCEL", null)
-
-                dialog.setPositiveButton(
-                    "OK"
-                ) { dialog, which ->
-
+                val dialog = InvitedDialog(this)
+                dialog.setOnOKClickedListener { content->
+                    if (content == "ok"){
+                        //공유 초대 확인 눌렀을 경우
+                    }
+                    else {
+                        //공유 초대 취소 눌렀을 경우
+                    }
                 }
-                dialog.show()
-
+                dialog.startDialog(groupName)
             }
         }
 
