@@ -290,7 +290,6 @@ class LocationUpdatesService : Service() {
         val placereceiver = ComponentName(this, DeviceBootPlaceReceiver::class.java)
         val placealarmIntent = Intent(this, PlaceReceiver::class.java)
 
-
         var firebaseTodo = FirebaseDatabase.getInstance().reference.child("Todo")
         firebaseTodo.child(placeData.id).addValueEventListener(object :ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {}
@@ -299,16 +298,14 @@ class LocationUpdatesService : Service() {
                 placealarmIntent.putExtra("todoTitle", title)
                 placealarmIntent.putExtra("todoPlace", placeData.place)
                 placealarmIntent.putExtra("todoText", text)
-                placealarmIntent.putExtra("todoId", placeData.placeId) //reqeustcode 때문에 넣어준 것!!
-                Log.v("seyuuuun", "notificationId in place" + placeData)
+                placealarmIntent.putExtra("todoId", placeData.placeId.toInt()) //reqeustcode 때문에 넣어준 것!!
                 setAlarm(placealarmIntent,placeData,calendar)
             }
-
         })
     }
     private fun setAlarm(intent: Intent,placeData: PlaceData,calendar: Calendar){
 
-        val pendingIntent = PendingIntent.getBroadcast(baseContext, placeData.placeId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, placeData.placeId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         if (alarmManager != null) {
