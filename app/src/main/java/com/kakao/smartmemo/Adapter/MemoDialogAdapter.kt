@@ -13,35 +13,34 @@ import kotlinx.android.synthetic.main.memo_list_view.view.*
 
 class MemoDialogAdapter(memo: MutableList<MemoData>): RecyclerView.Adapter<MemoDialogAdapter.DialogViewHolder>(), MemoDialogAdapterContract.View, MemoDialogAdapterContract.Model {
 
+
     private var datas: MutableList<MemoData> = memo
     //View Holder생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = DialogViewHolder(parent)
 
     //Recycler View에 표시할 갯수
     override fun getItemCount(): Int = datas.size
-
+    override var onClickFunc: ((Int) -> Unit)? = null
     //View가 Bind되었을때의 설정
     override fun onBindViewHolder(holder: DialogViewHolder, position: Int) {
         datas[position].let { item ->
             with(holder) {
+                groupName.text = FolderObject.folderInfo[item.groupId]
                 memoTitle.text = item.title
                 memoContent.text = item.content
-                memoDate.text =item.date
+                memoDate.text = item.date
+                memoBackground.isClickable = true
                 FolderObject.folderColor[item.groupId]?.toInt()?.let {
-                    memoBackground.setCardBackgroundColor(
+                    memoBackground.setBackgroundColor(
                         it
                     )
+                }
+                memoBackground.setOnClickListener {
+                    onClickFunc?.invoke(position)
                 }
             }
         }
 
-    }
-
-    fun setDataList(dataList: List<MemoData>?) {
-        if (dataList == null) {
-            return
-        }
-        this@MemoDialogAdapter.datas = dataList.toMutableList()
     }
 
     inner class DialogViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
@@ -51,14 +50,12 @@ class MemoDialogAdapter(memo: MutableList<MemoData>): RecyclerView.Adapter<MemoD
         val memoContent: TextView = itemView.memo_content
         val memoDate: TextView = itemView.memo_date
         val memoBackground: CardView = itemView.memo_list_view
-
+        val groupName : TextView = itemView.group_name
     }
 
     override fun notifyAdapter() {
         notifyDataSetChanged()
     }
 
-    override fun getMemo() {
-
-    }
+    override fun getMemo(position: Int)= position
 }

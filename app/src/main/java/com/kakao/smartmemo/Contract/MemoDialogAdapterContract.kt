@@ -2,10 +2,11 @@ package com.kakao.smartmemo.Contract
 
 interface MemoDialogAdapterContract {
     interface Model {
-        fun getMemo()
+        fun getMemo(position :Int) :Int
     }
 
     interface View {
+        var onClickFunc : ((Int) ->Unit)?
         fun notifyAdapter()
     }
 
