@@ -34,10 +34,7 @@ import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.AddTodoPresenter
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.Receiver.DeviceBootTimeReceiver
-import com.kakao.smartmemo.Receiver.DeviceBootTodoReceiver
-import com.kakao.smartmemo.Receiver.TimeReceiver
-import com.kakao.smartmemo.Receiver.TodoReceiver
+import com.kakao.smartmemo.Receiver.*
 import com.kakao.smartmemo.Service.LocationUpdatesService
 import com.kakao.smartmemo.Utils.Utils
 import java.time.LocalDate
@@ -658,12 +655,19 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     private fun unsetPlaceAlarm(id: Int) {
         val pm = this.packageManager
-        val receiver = ComponentName(this, DeviceBootTimeReceiver::class.java)
-        val alarmIntent = Intent(this, TimeReceiver::class.java)
+        val receiver = ComponentName(this, DeviceBootPlaceReceiver::class.java)
+        val alarmIntent = Intent(this, PlaceReceiver::class.java)
         val notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val pendingIntent = PendingIntent.getBroadcast(this, id, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            placeCalendar.timeInMillis,
+            0,
+            pendingIntent
+        )
 
         if(PendingIntent.getBroadcast(this, id, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null) {
             alarmManager.cancel(pendingIntent)
