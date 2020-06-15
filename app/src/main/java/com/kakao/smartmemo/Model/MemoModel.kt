@@ -156,24 +156,28 @@ class MemoModel {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {}
                 override fun onDataChange(memoIdSnapshot: DataSnapshot) {
-                    memoIdSnapshot.children.forEach { memoId ->
-                        firebaseMemo.child(memoId.key.toString())
-                            .addValueEventListener(object : ValueEventListener {
-                                override fun onCancelled(p0: DatabaseError) {}
+                    if(memoIdSnapshot.hasChildren()){
+                        memoIdSnapshot.children.forEach { memoId ->
+                            firebaseMemo.child(memoId.key.toString())
+                                .addValueEventListener(object : ValueEventListener {
+                                    override fun onCancelled(p0: DatabaseError) {}
+                                    override fun onDataChange(groupMemoSnapshot: DataSnapshot) {
+                                        with(groupMemoSnapshot) {
+                                            this.getValue(MemoData::class.java)?.let { memoList.add(it) }
 
-                                override fun onDataChange(groupMemoSnapshot: DataSnapshot) {
-                                    with(groupMemoSnapshot) {
-                                        this.getValue(MemoData::class.java)?.let { memoList.add(it) }
-
-                                        if (memoList.size == memoIdSnapshot.children.count()) {
-                                            onMemoListener.onSuccess(memoList)
+                                            if (memoList.size == memoIdSnapshot.children.count()) {
+                                                onMemoListener.onSuccess(memoList)
+                                            }
                                         }
+
                                     }
+                                })
 
-                                }
-                            })
-
+                        }
+                    }else{
+                        onMemoListener.onSuccess(memoList)
                     }
+
                 }
             })
     }
