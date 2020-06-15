@@ -150,9 +150,11 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
                 curLatitude = this.placeList[0].latitude
                 curLongitude = this.placeList[0].longitude
             }
-//            curAddress = "한성대학교"
-//            curLatitude = 37.582276
-//            curLongitude = 127.009850
+            else {
+                curAddress = "한성대학교"
+                curLatitude = 37.582276
+                curLongitude = 127.009850
+            }
         }
         // 생성된 Todo에서(AddTodo에서) 값 넘겨 받은 경우
         if (intent.hasExtra("todoPlaceAlarm")) {

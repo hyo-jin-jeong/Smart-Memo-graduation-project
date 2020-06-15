@@ -40,7 +40,7 @@
         android:layout_below="@id/layout_todo"
         android:text="비상용 약 사기"
         android:textAlignment="center"
-        android:textSize="25sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/textView_alarmlocation"
@@ -52,7 +52,7 @@
         android:layout_below="@id/textView_alarm"
         android:text=""
         android:textAlignment="center"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
