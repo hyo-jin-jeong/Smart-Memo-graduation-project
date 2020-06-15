@@ -1,10 +1,8 @@
 package com.kakao.smartmemo.View
 
-import android.R.id.message
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -35,6 +33,7 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
     lateinit var groupExitBtn : Button
     var color = (System.currentTimeMillis()*1000).toInt()
     var value = "1"
+    private var mode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,8 +109,20 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
             }
             R.id.menu_save -> {
                 if(groupName.text.toString() != ""){
-                    finish()
-                    presenter.addGroup(groupName.text.toString(),color)
+                    Log.e("jieun", "이제 다이얼로그 띄울거임!")
+                    val dialog = InviteDialog(this)
+                    dialog.setOnOKClickedListener { content->
+                        mode = content
+                        if (mode == "ok"){
+                            kakaoLink()
+                            presenter.addGroup(groupName.text.toString(), color)
+                        }
+                        else {
+                            Log.e("jieun", "공유 안누름.")
+                            presenter.addGroup(groupName.text.toString(), color)
+                        }
+                    }
+                    dialog.startDialog("https://smartmemo.page.link/invite")
                 }else{
                     Toast.makeText(this,"그룹이름을 작성하세요",Toast.LENGTH_SHORT).show()
                 }
@@ -132,7 +143,7 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
             .newBuilder(
                 ContentObject.newBuilder(
                         "Smart Memo",
-                        "http://mud-kage.kakao.co.kr/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg",
+                        "https://github.com/hyo-jin-jeong/GraduationPortfolio/blob/master/app/src/main/res/drawable/app_logo_icon.png?raw=true",
                         LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
                             .setMobileWebUrl("https://developers.kakao.com").build()
                     )
