@@ -54,8 +54,8 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
                 Toast.makeText(applicationContext, "로그인 중입니다. 잠시만 기다려주십시오.", Toast.LENGTH_SHORT).show()
             }
             //else {
-                //Toast.makeText(this, "다시 입력해주세요.", Toast.LENGTH_SHORT).show()
-                // 나중에 애니메이션 넣기
+            //Toast.makeText(this, "다시 입력해주세요.", Toast.LENGTH_SHORT).show()
+            // 나중에 애니메이션 넣기
             //}
         }
 

@@ -887,11 +887,11 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                 Log.v("seyuuuun", "getLocation :" + location)
 
             }
-           /* if(calDistance(location!!) <= 200) {
-                placeCalendar.timeInMillis
-                setPlaceAlarm(notifyPlace, placeCalendar, settingsPlaceMinutes)
-                Log.v("seyuuuun", "distance확인")
-            }*/
+            /* if(calDistance(location!!) <= 200) {
+                 placeCalendar.timeInMillis
+                 setPlaceAlarm(notifyPlace, placeCalendar, settingsPlaceMinutes)
+                 Log.v("seyuuuun", "distance확인")
+             }*/
         }
     }
 
