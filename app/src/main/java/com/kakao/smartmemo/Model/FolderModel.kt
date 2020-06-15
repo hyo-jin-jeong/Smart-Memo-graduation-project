@@ -16,7 +16,6 @@ import com.kakao.smartmemo.Object.UserObject
 class FolderModel {
 
     private lateinit var onGetGroupInfoListener: MainContract.onGetGroupInfoListener
-    private lateinit var onAddFolderListener:AddGroupContract.OnAddFolderListener
     private var firebaseUser = FirebaseDatabase.getInstance().reference.child("User")
     private var firebaseFolder = FirebaseDatabase.getInstance().reference.child("Group")
 
@@ -24,9 +23,6 @@ class FolderModel {
 
     constructor(onGetGroupInfoListener: MainContract.onGetGroupInfoListener) {
         this.onGetGroupInfoListener = onGetGroupInfoListener
-    }
-    constructor(onAddFolderListener:AddGroupContract.OnAddFolderListener){
-        this.onAddFolderListener = onAddFolderListener
     }
 
     fun addGroup(groupName: String, color: Int) {
