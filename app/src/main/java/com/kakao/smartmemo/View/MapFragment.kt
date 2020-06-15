@@ -526,6 +526,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             else -> mapView.removePOIItem(curLocationMarker)
         }
         curLocationMarker = createMarker("current marker", p1!!, R.drawable.cur_location_icon)
+        curLocationMarker.markerType = MapPOIItem.MarkerType.BluePin
         mapView.addPOIItem(curLocationMarker)
         presenter.convertAddressFromMapPOIItem(curLocationMarker)
 
