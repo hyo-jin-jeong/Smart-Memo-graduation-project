@@ -312,7 +312,7 @@ class LocationUpdatesService : Service() {
                 placealarmIntent.putExtra("todoTitle", title)
                 placealarmIntent.putExtra("todoPlace", placeData.place)
                 placealarmIntent.putExtra("todoText", text)
-                placealarmIntent.putExtra("todoId", placeData.placeId.toInt()) //reqeustcode 때문에 넣어준 것!!
+                placealarmIntent.putExtra("todoId", placeData.id.toInt()) //reqeustcode 때문에 넣어준 것!!
                 setAlarm(placealarmIntent,placeData,calendar, again)
                 Log.v("seyuuuun", "반복 간격확인 : $again")
             }

@@ -17,6 +17,7 @@ interface AddTodoContract {
         fun getList(): MutableList<PlaceData>
         fun getPlace(status: String)
         fun deleteTodoInfo(groupId: String, todoId: String)
+        fun cancelPlaceAlarm(placeAlarmTodoId: Int)
     }
     interface OnAddTodoListener {
         fun onSuccess(placeList: MutableList<PlaceData>)
