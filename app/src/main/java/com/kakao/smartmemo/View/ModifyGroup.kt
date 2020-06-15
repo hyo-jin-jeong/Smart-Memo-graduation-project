@@ -1,21 +1,29 @@
 package com.kakao.smartmemo.View
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import com.kakao.kakaolink.v2.KakaoLinkResponse
+import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.message.template.ButtonObject
+import com.kakao.message.template.ContentObject
+import com.kakao.message.template.FeedTemplate
+import com.kakao.message.template.LinkObject
+import com.kakao.network.ErrorResult
+import com.kakao.network.callback.ResponseCallback
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Contract.ModifyGroupContract
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Presenter.ModifyGroupPresenter
+import com.kakao.util.helper.log.Logger
 
 class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupContract.View{
 
@@ -34,9 +42,22 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
 
     private var count = 0
     private var color = 0
+
+    private var value = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.app_bar_add_group)
+        setContentView(R.layout.app_bar_modify_group)
+
+        if(intent.action == Intent.ACTION_VIEW) {
+            val receivedValue = intent.data!!.getQueryParameter("value")
+            val groupName = intent.data!!.getQueryParameter("group_name")
+            Log.i("jieun", groupName)
+            val intent = Intent(this, LoginActivity::class.java)
+            Log.i("jieun", "AddFolder value=$receivedValue")
+            intent.putExtra("value", receivedValue)
+            intent.putExtra("group_name", groupName)
+            startActivity(intent)
+        }
 
         presenter = ModifyGroupPresenter(this)
 
@@ -54,6 +75,11 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         groupExitBtn = findViewById(R.id.group_member_exit)
         kakaoImg = findViewById(R.id.kakao_icon)
         kakaoText = findViewById(R.id.kakao_text)
+
+        val kakaoLink = findViewById<LinearLayout>(R.id.kakao_link)
+        kakaoLink.setOnClickListener {
+            kakaoLink()
+        }
 
         if (intent.hasExtra("folderId")) {
             folderId = intent.getStringExtra("folderId")
@@ -140,5 +166,46 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         themeColor.setBackgroundColor(color)
     }
 
+    fun kakaoLink() {
+        val params = FeedTemplate
+            .newBuilder(
+                ContentObject.newBuilder(
+                    "Smart Memo",
+                    "https://github.com/hyo-jin-jeong/GraduationPortfolio/blob/master/app/src/main/res/drawable/app_logo_no_title.jpeg?raw=true",
+                    LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
+                        .setMobileWebUrl("https://developers.kakao.com").build()
+                )
+                    .setDescrption("초대 링크를 누르면 공유 폴더에 참가할 수 있습니다.")
+                    .build()
+            )
+            .addButton(
+                ButtonObject(
+                    "앱에서 보기", LinkObject.newBuilder()
+                        .setWebUrl("'https://developers.kakao.com")
+                        .setMobileWebUrl("https://smartmemo.page.link/invite")
+                        .setAndroidExecutionParams("value=$value&group_name=${folderNameText.text}")
+                        .build()
+                )
+            )
+            .build()
+
+        val serverCallbackArgs: MutableMap<String, String> =
+            HashMap()
+        serverCallbackArgs["user_id"] = "\${current_user_id}"
+        serverCallbackArgs["product_id"] = "\${shared_product_id}"
+
+        KakaoLinkService.getInstance().sendDefault(
+            this,
+            params,
+            serverCallbackArgs,
+            object : ResponseCallback<KakaoLinkResponse?>() {
+                override fun onFailure(errorResult: ErrorResult) {
+                    Logger.e(errorResult.toString())
+                }
+
+                override fun onSuccess(result: KakaoLinkResponse?) { // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
+                }
+            })
+    }
 
 }
