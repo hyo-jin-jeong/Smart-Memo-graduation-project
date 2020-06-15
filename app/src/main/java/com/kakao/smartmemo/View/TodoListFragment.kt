@@ -1,7 +1,6 @@
 package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -12,7 +11,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ListView
 import android.widget.TextView
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kakao.smartmemo.Adapter.TodoAdapter
@@ -39,6 +37,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var noTodoTextView: TextView
     private var todoArrayList = mutableListOf<TodoData>()
     private var placeList = arrayListOf<PlaceData>()
+    private lateinit var onePlaceIntent:Intent
     val date: LocalDateTime = LocalDateTime.now()
     private var count = 0
 
@@ -61,14 +60,11 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
         todolist = view.findViewById(R.id.todolist) as ListView
         todolist.setOnItemClickListener { parent, view, position, id ->
-            var intent = Intent(cont, AddTodo::class.java)
+            onePlaceIntent = Intent(cont, AddTodo::class.java)
             if (todoArrayList[position].setPlaceAlarm) {
                 presenter.getOnePlaceTodo(todoArrayList[position].todoId)
-                intent.putExtra("placeList", placeList)
             }
-            intent.putExtra("todoData", todoArrayList[position])
-
-            startActivity(intent)
+            onePlaceIntent.putExtra("todoData", todoArrayList[position])
         }
 
 
@@ -169,7 +165,11 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
     override fun sendPlaceData(placeList: MutableList<PlaceData>) {
         Log.e("sendPlaceDatatata", placeList.toString())
+        this.placeList.clear()
         this.placeList = placeList as ArrayList<PlaceData>
+        onePlaceIntent.putExtra("placeList", this.placeList)
+
+        startActivity(onePlaceIntent)
     }
 
     private fun deleteTodo() {

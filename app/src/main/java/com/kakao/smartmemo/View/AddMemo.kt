@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
@@ -84,49 +84,18 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         }
 
         saveBtn.setOnClickListener {
-            if (groupName.text == "[그룹 선택]" || contentEdit.text.toString() == "") {
-                if (groupName.text == "[그룹 선택]") {
-                    Toast.makeText(this, "그룹을 선택하세요!", Toast.LENGTH_SHORT).show()
-                } else if (contentEdit.text.toString() == "") {
-                    Toast.makeText(this, "내용을 입력하세요!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "그룹을 선택하고, 내용을입력하세요!", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                if (groupCheck){
-                    if(hasData) {
-                        presenter.deleteMemoInfo(originGroupId,memoId)
-                    }
-                    originGroupId = groupId
-                }//그룹이 바뀌면 저장되었던 그룹에서 memo정보를 지워야한다.
-                memoData = MemoData(
-                    memoId,
-                    titleEdit.text.toString(),
-                    today,
-                    contentEdit.text.toString(),
-                    originGroupId,
-                    placeId,
-                    placeData.place,
-                    placeData.latitude.toString(),
-                    placeData.longitude.toString()
-                )
 
-                presenter.addMemo(memoData)
-                if (hasData) {
-                    hasData = false
-                    var intent = Intent()
-                    intent.putExtra("memoData", memoData)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    setResult(RESULT_OK, intent)
-                }
-                finish()
-        }
     }
 
 
         selectGroupBtn.setOnClickListener {
             selectGroup()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_save, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
 
@@ -136,6 +105,45 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
             android.R.id.home -> {
                 finish()
                 return true
+            }
+            R.id.menu_save -> {
+                if (groupName.text == "[그룹 선택]" || contentEdit.text.toString() == "") {
+                    if (groupName.text == "[그룹 선택]") {
+                        Toast.makeText(this, "그룹을 선택하세요!", Toast.LENGTH_SHORT).show()
+                    } else if (contentEdit.text.toString() == "") {
+                        Toast.makeText(this, "내용을 입력하세요!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "그룹을 선택하고, 내용을입력하세요!", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    if (groupCheck){
+                        if(hasData) {
+                            presenter.deleteMemoInfo(originGroupId,memoId)
+                        }
+                        originGroupId = groupId
+                    }//그룹이 바뀌면 저장되었던 그룹에서 memo정보를 지워야한다.
+                    memoData = MemoData(
+                        memoId,
+                        titleEdit.text.toString(),
+                        dateText.text.toString(),
+                        contentEdit.text.toString(),
+                        originGroupId,
+                        placeId,
+                        placeData.place,
+                        placeData.latitude.toString(),
+                        placeData.longitude.toString()
+                    )
+
+                    presenter.addMemo(memoData)
+                    if (hasData) {
+                        hasData = false
+                        var intent = Intent()
+                        intent.putExtra("memoData", memoData)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        setResult(RESULT_OK, intent)
+                    }
+                    finish()
+                }
             }
         }
         return super.onOptionsItemSelected(item)

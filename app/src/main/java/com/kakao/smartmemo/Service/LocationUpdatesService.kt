@@ -25,7 +25,6 @@ import com.kakao.smartmemo.Utils.Utils.requestingLocationUpdates
 import com.kakao.smartmemo.Utils.Utils.setRequestingLocationUpdates
 import com.kakao.smartmemo.View.AddTodo
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.acos
 import kotlin.math.cos
 import kotlin.math.sin
@@ -303,12 +302,12 @@ class LocationUpdatesService : Service() {
                         date = it.value.toString()
                         Log.v("seyuuuun", "DB날짜 확인 : $date")
                     }
-                   /* placealarmIntent.putExtra("todoTitle", title)
-                    placealarmIntent.putExtra("todoPlace", placeData.place)
-                    placealarmIntent.putExtra("todoText", text)
-                    placealarmIntent.putExtra("todoId", placeData.placeId.toInt()) //reqeustcode 때문에 넣어준 것!!
-                    setAlarm(placealarmIntent,placeData,calendar, again)
-                    Log.v("seyuuuun", "반복 간격확인 : $again")*/
+                    /* placealarmIntent.putExtra("todoTitle", title)
+                     placealarmIntent.putExtra("todoPlace", placeData.place)
+                     placealarmIntent.putExtra("todoText", text)
+                     placealarmIntent.putExtra("todoId", placeData.placeId.toInt()) //reqeustcode 때문에 넣어준 것!!
+                     setAlarm(placealarmIntent,placeData,calendar, again)
+                     Log.v("seyuuuun", "반복 간격확인 : $again")*/
                 }
                 placealarmIntent.putExtra("todoTitle", title)
                 placealarmIntent.putExtra("todoPlace", placeData.place)
@@ -424,7 +423,7 @@ class LocationUpdatesService : Service() {
         var dist: Double
         theta = curLongitude - curLocation.longitude
         dist = sin(deg2rad(curLatitude)) * sin(deg2rad(curLocation.latitude)) + (cos(
-                deg2rad(curLatitude))* cos(deg2rad(curLocation.latitude)) * cos(deg2rad(theta)))
+            deg2rad(curLatitude))* cos(deg2rad(curLocation.latitude)) * cos(deg2rad(theta)))
         dist = acos(dist)
         dist = rad2deg(dist)
         dist *= 60 * 1.1515

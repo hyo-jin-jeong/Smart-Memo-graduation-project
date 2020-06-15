@@ -123,11 +123,11 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
         val params = FeedTemplate
             .newBuilder(
                 ContentObject.newBuilder(
-                        "Smart Memo",
-                        "https://github.com/hyo-jin-jeong/GraduationPortfolio/blob/master/app/src/main/res/drawable/app_logo_icon.png?raw=true",
-                        LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
-                            .setMobileWebUrl("https://developers.kakao.com").build()
-                    )
+                    "Smart Memo",
+                    "https://github.com/hyo-jin-jeong/GraduationPortfolio/blob/master/app/src/main/res/drawable/app_logo_icon.png?raw=true",
+                    LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
+                        .setMobileWebUrl("https://developers.kakao.com").build()
+                )
                     .setDescrption("초대 링크를 누르면 공유 폴더에 참가할 수 있습니다.")
                     .build()
             )

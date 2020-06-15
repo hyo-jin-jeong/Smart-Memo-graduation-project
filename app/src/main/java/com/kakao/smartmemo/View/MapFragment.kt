@@ -451,6 +451,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         }
     }
 
+
     //setMapViewEventListener override method
     override fun onMapViewDoubleTapped(mapView: MapView?, p1: MapPoint?) {
     }
@@ -525,6 +526,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             else -> mapView.removePOIItem(curLocationMarker)
         }
         curLocationMarker = createMarker("current marker", p1!!, R.drawable.cur_location_icon)
+        curLocationMarker.markerType = MapPOIItem.MarkerType.BluePin
         mapView.addPOIItem(curLocationMarker)
         presenter.convertAddressFromMapPOIItem(curLocationMarker)
 
@@ -645,7 +647,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 j++
             }
         }
+
+//        if (todoMapPoint.isNotEmpty() && memoMapPoint.isNotEmpty()) {
+
         if ((todoMapPoint.isNotEmpty() && todo.size == m) || (memoMapPoint.isNotEmpty() && memo.size == j)) {
+            Log.e("jieun", "마커 생성 시작!!")
             createMarkerAccordingType(todoMapPoint, memoMapPoint)
         }
         Log.e("jieun", "구분점~~~~")
