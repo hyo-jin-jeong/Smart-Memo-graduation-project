@@ -213,29 +213,34 @@ class TodoModel {
         firebaseGroup.child(groupId).child("TodoInfo").addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {  }
             override fun onDataChange(todoSnapshot: DataSnapshot) {
-                todoSnapshot.children.forEach { todoId ->
-                    firebaseTodo.child(todoId.key.toString()).addValueEventListener(object : ValueEventListener {
-                        override fun onCancelled(p0: DatabaseError) { }
-                        override fun onDataChange(todoDataSnapshot: DataSnapshot) {
-                            val placeAlarm = todoDataSnapshot.child("PlaceAlarm").getValue(PlaceAlarm::class.java)
-                            val timeAlarm = todoDataSnapshot.child("TimeAlarm").getValue(TimeAlarm::class.java)
+                if(todoSnapshot.hasChildren()){
+                    todoSnapshot.children.forEach { todoId ->
+                        firebaseTodo.child(todoId.key.toString()).addValueEventListener(object : ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) { }
+                            override fun onDataChange(todoDataSnapshot: DataSnapshot) {
+                                val placeAlarm = todoDataSnapshot.child("PlaceAlarm").getValue(PlaceAlarm::class.java)
+                                val timeAlarm = todoDataSnapshot.child("TimeAlarm").getValue(TimeAlarm::class.java)
 
-                            if (timeAlarm != null && placeAlarm != null) {
-                                todoList.add(i, TodoData(
-                                    todoId.key.toString(),
-                                    todoDataSnapshot.child("title").value.toString(),
-                                    groupId,
-                                    timeAlarm.setTimeAlarm, timeAlarm.timeDate, timeAlarm.timeTime, timeAlarm.timeAgain,
-                                    placeAlarm.setPlaceAlarm, placeAlarm.placeDate, placeAlarm.placeAgain
-                                ))
-                                if (todoSnapshot.children.count() - 1 == i) {
-                                    onTodoListener.onGroupSuccess(todoList)
+                                if (timeAlarm != null && placeAlarm != null) {
+                                    todoList.add(i, TodoData(
+                                        todoId.key.toString(),
+                                        todoDataSnapshot.child("title").value.toString(),
+                                        groupId,
+                                        timeAlarm.setTimeAlarm, timeAlarm.timeDate, timeAlarm.timeTime, timeAlarm.timeAgain,
+                                        placeAlarm.setPlaceAlarm, placeAlarm.placeDate, placeAlarm.placeAgain
+                                    ))
+                                    if (todoSnapshot.children.count() - 1 == i) {
+                                        onTodoListener.onGroupSuccess(todoList)
+                                    }
                                 }
                             }
-                        }
-                    })
+                        })
 
+                    }
+                }else{
+                    onTodoListener.onGroupSuccess(todoList)
                 }
+
             }
         })
     }

@@ -140,13 +140,11 @@ class MemoModel {
         var i = 0
         deleteMemoList.forEach { memoId ->
             firebaseGroup.child(memoId.groupId).child("MemoInfo").child(memoId.memoId).removeValue()
-            firebaseGroup.child(memoId.groupId).child("MemoInfo").child(memoId.memoId).removeValue()
             firebaseMemo.child(memoId.memoId).removeValue()
             if (i == deleteMemoList.size -1) {
                 onMemoListener.onDeleteSuccess()
-            } else {
-                i++
             }
+            i++
         }
     }
 

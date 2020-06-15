@@ -36,6 +36,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
     private lateinit var adapter : TodoAdapter
     private lateinit var todoDeleteAdapter : TodoDeleteAdapter
     private lateinit var cont: Context
+    private lateinit var noTodoTextView: TextView
     private var todoArrayList = mutableListOf<TodoData>()
     private var placeList = arrayListOf<PlaceData>()
     val date: LocalDateTime = LocalDateTime.now()
@@ -54,6 +55,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
         cont = view.context // view의 컨텍스트
         bottomNavigationView = view.findViewById(R.id.navigationview_bottom)
         textViewTodoList = view.findViewById(R.id.textView_todolist)
+        noTodoTextView = view.findViewById(R.id.textView_non_todo)
 
         presenter = TodoPresenter(this)
 
@@ -147,8 +149,12 @@ class TodoListFragment : Fragment(), TodoContract.View {
         count = 0
         if (todoData.isEmpty()) {
             todoArrayList.clear()
+            noTodoTextView.visibility = VISIBLE
+            todolist.visibility = GONE
         } else {
             todoArrayList = todoData
+            noTodoTextView.visibility = GONE
+            todolist.visibility = VISIBLE
         }
 
         adapter = TodoAdapter(cont, todoArrayList)
@@ -176,7 +182,6 @@ class TodoListFragment : Fragment(), TodoContract.View {
                         var selectedItem = mutableListOf<TodoData>()
                         var count = todoDeleteAdapter.count
                         var checkedItems = todoDeleteAdapter.selectedTodo()
-                        var keys = checkedItems
                         for( i in count-1 downTo 0) {
                             for (item in checkedItems) {
                                 if(i == item.key) {
@@ -188,12 +193,11 @@ class TodoListFragment : Fragment(), TodoContract.View {
                         presenter.deleteTodo(selectedItem)
                         todolist.clearChoices()
                         adapter = TodoAdapter(cont, todoArrayList)
-                        adapter.notifyAdapter()
                         todolist.adapter = adapter
                         bottomNavigationView.visibility = GONE //하단메뉴 안보이게
                         presenter.setTodoAdapterModel(adapter)
                         presenter.setTodoAdapterView(adapter)
-
+                        adapter.notifyAdapter()
                         true
                     }
                     R.id.cancelItem -> {
