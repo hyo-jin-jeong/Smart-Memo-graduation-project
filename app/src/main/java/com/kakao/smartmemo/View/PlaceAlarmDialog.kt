@@ -1,8 +1,6 @@
 package com.kakao.smartmemo.View
 
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,7 +29,7 @@ class PlaceAlarmDialog(todo: MutableList<PlaceAlarmData>) : Fragment(), TodoDial
 
         presenter = TodoDialogPresenter(this)
         var todoDialogAdapter =  PlaceAlarmDialogAdapter(todo)
-        placeAlarmList = view.findViewById<RecyclerView?>(R.id.alarm_settings_view) as RecyclerView
+        placeAlarmList = view.findViewById(R.id.alarm_settings_view) as RecyclerView
         placeAlarmList.adapter = todoDialogAdapter
         presenter.setTodoDialogAdapterView(todoDialogAdapter)
         presenter.setTodoDialogAdapterModel(todoDialogAdapter)

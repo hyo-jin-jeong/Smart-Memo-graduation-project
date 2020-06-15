@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
@@ -75,7 +76,6 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
             originGroupId = this.memoData.groupId
             memoId = this.memoData.memoId
             placeId = this.memoData.placeId
-
         }
 
         if (intent.hasExtra("placeData")) {

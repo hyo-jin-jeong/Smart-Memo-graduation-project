@@ -1,8 +1,6 @@
 package com.kakao.smartmemo.View
 
 import android.app.AlertDialog
-import android.app.ProgressDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -26,7 +24,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
     private lateinit var memoAdapter: MemoListAdapter
     private lateinit var memoDeleteAdapter: MemoListDeleteAdapter
     private lateinit var bottomNavigationView: BottomNavigationView
-    private lateinit var memoProgressDialog : ProgressDialog
     private var memoList: MutableList<MemoData> = mutableListOf()
     private var count = 0
     override fun onCreate(savedInstanceState: Bundle?) {

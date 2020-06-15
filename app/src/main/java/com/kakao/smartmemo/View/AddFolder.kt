@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
@@ -31,7 +32,6 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
     lateinit var groupName : EditText
     lateinit var themeColor : View
     lateinit var colorPicker: ImageView
-    lateinit var saveBtn:Button
     lateinit var groupExitBtn : Button
     var color = (System.currentTimeMillis()*1000).toInt()
     var value = "1"
@@ -76,7 +76,6 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
         groupName = findViewById(R.id.editGroupName)
         themeColor = findViewById(R.id.selected_color)
         colorPicker = findViewById(R.id.color_picker)
-        saveBtn = findViewById(R.id.save_group)
         groupExitBtn = findViewById(R.id.group_member_exit)
         groupExitBtn.visibility = View.GONE
         //val kakao_member
@@ -95,30 +94,27 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
                 .setAllowPresets(true)
                 .show(this)
         }
-
-
-        saveBtn.setOnClickListener {
-            if(groupName.text.toString() != ""){
-                finish()
-                presenter.addGroup(groupName.text.toString(),color)
-
-            }else{
-                Toast.makeText(this,"그룹이름을 작성하세요",Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_save, menu)
+        return super.onCreateOptionsMenu(menu)
 
     }
-
     // 뒤로가기 버튼 누르면 이전 액티비티로 돌아가는 것을 판단해주는 함수
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true
+            }
+            R.id.menu_save -> {
+                if(groupName.text.toString() != ""){
+                    finish()
+                    presenter.addGroup(groupName.text.toString(),color)
+                }else{
+                    Toast.makeText(this,"그룹이름을 작성하세요",Toast.LENGTH_SHORT).show()
+                }
             }
         }
         return super.onOptionsItemSelected(item)

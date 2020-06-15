@@ -1,9 +1,11 @@
 package com.kakao.smartmemo.Model
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.kakao.smartmemo.Contract.DialogContract
 import com.kakao.smartmemo.Contract.MapContract
 import com.kakao.smartmemo.Contract.MemoContract
 import com.kakao.smartmemo.Data.MemoData
@@ -13,6 +15,7 @@ import com.kakao.smartmemo.Object.FolderObject
 class MemoModel {
     private lateinit var onMemoListener: MemoContract.OnMemoListener
     private lateinit var onPlaceListener: MapContract.OnPlaceListener
+    private lateinit var onDialogListener : DialogContract.OnDialogListener
     private var firebaseMemo = FirebaseDatabase.getInstance().reference.child("Memo")
     private var firebaseGroup = FirebaseDatabase.getInstance().reference.child("Group")
 
@@ -23,6 +26,10 @@ class MemoModel {
 
     constructor(onPlaceListener: MapContract.OnPlaceListener) {
         this.onPlaceListener = onPlaceListener
+    }
+
+    constructor(onDialogListener: DialogContract.OnDialogListener) {
+        this.onDialogListener = onDialogListener
     }
 
     fun addMemo(memoData: MemoData) {
@@ -99,7 +106,8 @@ class MemoModel {
                                                         memoSnapshot.child("placeId").value.toString(),
                                                         memoSnapshot.child("placeName").value.toString(),
                                                         memoSnapshot.child("latitude").value.toString().toDouble(),
-                                                        memoSnapshot.child("longitude").value.toString().toDouble()
+                                                        memoSnapshot.child("longitude").value.toString().toDouble(),
+                                                        memoSnapshot.child("memoId").value.toString()
                                                     )
                                                 )
                                                 if (i == FolderObject.folderInfo.size - 1 && j == memoIdSnapshot.children.count() - 1) {
@@ -181,5 +189,27 @@ class MemoModel {
         firebaseMemo.child(memoData.memoId).removeValue()
         firebaseGroup.child(memoData.groupId).child("MemoInfo").child(memoData.memoId).removeValue()
     }
+
+    fun getMapDialogMemo(memo: MutableList<PlaceData>) {
+        var i = 0
+        var memoList = mutableListOf<MemoData>()
+        memo.forEach {
+            firebaseMemo.child(it.id).addValueEventListener(object: ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {}
+                override fun onDataChange(memoSnapshot: DataSnapshot) {
+                    val memoAlarm = memoSnapshot.getValue(MemoData::class.java)
+                    if (memoAlarm != null) {
+                        memoList.add(memoAlarm)
+                    }
+                    if(memo.size-1 == i){
+                        onDialogListener.onSuccessMemo(memoList)
+                    }
+                    i++
+                }
+            })
+        }
+    }
+
+
 }
 

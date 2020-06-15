@@ -292,7 +292,7 @@ class LocationUpdatesService : Service() {
 
 
         var firebaseTodo = FirebaseDatabase.getInstance().reference.child("Todo")
-        firebaseTodo.child(placeData.todoId).addValueEventListener(object :ValueEventListener{
+        firebaseTodo.child(placeData.id).addValueEventListener(object :ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 title = dataSnapshot.child("title").value.toString()

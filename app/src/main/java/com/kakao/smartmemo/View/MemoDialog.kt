@@ -30,7 +30,7 @@ class MemoDialog(memo: MutableList<MemoData>) : Fragment(), MemoDialogContract.V
         val view = inflater.inflate(R.layout.memo_dialog, container, false)
         presenter = MemoDialogPresenter(this)
         var memoAdapter = MemoDialogAdapter(memo)
-        memoList = view.findViewById<RecyclerView?>(R.id.alarm_settings_view) as RecyclerView
+        memoList = view.findViewById(R.id.alarm_settings_view) as RecyclerView
         memoList.adapter = memoAdapter
         presenter.setMemoDialogAdatperView(memoAdapter)
         presenter.setMemoDialogAdatperModel(memoAdapter)

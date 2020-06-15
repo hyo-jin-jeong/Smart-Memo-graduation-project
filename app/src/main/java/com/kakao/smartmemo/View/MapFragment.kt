@@ -392,7 +392,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         val latitude = p1!!.mapPoint.mapPointGeoCoord.latitude
         val longitude = p1!!.mapPoint.mapPointGeoCoord.longitude
         val dialog = DialogFragment()
-        //type은 memo만이면 0, todo만이면 1, 둘다면 2
+        dialog.setPresenter()
+
         when (p1?.customImageResourceId) {
             R.drawable.memo_icon -> {
                 dialog.setMemoList(memo, latitude, longitude)
@@ -618,8 +619,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onSuccess(placeList: MutableList<PlaceData>, status: String) {
+        var m = 0
+        var j = 0
         if(status == "todo"){
             todo = placeList
+            Log.e("todododododo", placeList.toString())
             for(i in todo){
                 var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)
                 if(!containPoint(todoMapPoint, mapPoint)) {
@@ -627,6 +631,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
                     Log.e("jieun", "todo $i 가 들어감")
                 }
+                m++
             }
         }else{
             memo = placeList
@@ -638,10 +643,13 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
                     Log.e("jieun", "memo $i 가 들어감")
                 }
+                j++
             }
         }
+
         if (todoMapPoint.isNotEmpty() && memoMapPoint.isNotEmpty()) {
             Log.e("jieun", "마커 생성 시작!!")
+ //       if ((todoMapPoint.isNotEmpty() && todo.size == m) || (memoMapPoint.isNotEmpty() && memo.size == j)) {
             createMarkerAccordingType(todoMapPoint, memoMapPoint)
         }
         Log.e("jieun", "구분점~~~~")
