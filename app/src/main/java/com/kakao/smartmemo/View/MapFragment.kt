@@ -474,11 +474,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     override fun onMapViewDragEnded(mapView: MapView?, p1: MapPoint?) {
-        mapView?.removePOIItem(curLocationMarker)
+        //mapView?.removePOIItem(curLocationMarker)
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
-        recyclerView.visibility = View.GONE
+        //recyclerView.visibility = View.GONE
     }
 
     override fun onMapViewZoomLevelChanged(p0: MapView?, p1: Int) {
@@ -641,6 +641,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             }
         }
         if (todoMapPoint.isNotEmpty() && memoMapPoint.isNotEmpty()) {
+            Log.e("jieun", "마커 생성 시작!!")
             createMarkerAccordingType(todoMapPoint, memoMapPoint)
         }
         Log.e("jieun", "구분점~~~~")
