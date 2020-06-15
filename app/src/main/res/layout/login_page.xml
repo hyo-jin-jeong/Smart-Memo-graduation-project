@@ -6,12 +6,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
-        android:layout_width="200dp"
-        android:layout_height="130dp"
+        android:layout_width="250dp"
+        android:layout_height="180dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/app_logo"
-        android:layout_above="@+id/login_bar"
-        android:layout_marginVertical="20dp"/>
+        android:src="@drawable/app_logo_no_title"
+        android:layout_above="@+id/login_bar"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/login_bar"
@@ -52,7 +51,6 @@
                     android:layout_marginRight="10dp"
                     android:layout_gravity="center_vertical"
                     android:background="@null"
-                    android:text="gaya309@naver.com"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:inputType="textEmailAddress"/>
@@ -89,7 +87,6 @@
                     android:layout_gravity="center_vertical"
                     android:background="@null"
                     android:textSize="15sp"
-                    android:text="1111111"
                     android:textStyle="bold"
                     android:inputType="textPassword"/>
             </LinearLayout>
