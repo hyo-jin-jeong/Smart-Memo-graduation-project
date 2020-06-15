@@ -213,29 +213,34 @@ class TodoModel {
         firebaseGroup.child(groupId).child("TodoInfo").addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {  }
             override fun onDataChange(todoSnapshot: DataSnapshot) {
-                todoSnapshot.children.forEach { todoId ->
-                    firebaseTodo.child(todoId.key.toString()).addValueEventListener(object : ValueEventListener {
-                        override fun onCancelled(p0: DatabaseError) { }
-                        override fun onDataChange(todoDataSnapshot: DataSnapshot) {
-                            val placeAlarm = todoDataSnapshot.child("PlaceAlarm").getValue(PlaceAlarm::class.java)
-                            val timeAlarm = todoDataSnapshot.child("TimeAlarm").getValue(TimeAlarm::class.java)
+                if(todoSnapshot.hasChildren()){
+                    todoSnapshot.children.forEach { todoId ->
+                        firebaseTodo.child(todoId.key.toString()).addValueEventListener(object : ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) { }
+                            override fun onDataChange(todoDataSnapshot: DataSnapshot) {
+                                val placeAlarm = todoDataSnapshot.child("PlaceAlarm").getValue(PlaceAlarm::class.java)
+                                val timeAlarm = todoDataSnapshot.child("TimeAlarm").getValue(TimeAlarm::class.java)
 
-                            if (timeAlarm != null && placeAlarm != null) {
-                                todoList.add(i, TodoData(
-                                    todoId.key.toString(),
-                                    todoDataSnapshot.child("title").value.toString(),
-                                    groupId,
-                                    timeAlarm.setTimeAlarm, timeAlarm.timeDate, timeAlarm.timeTime, timeAlarm.timeAgain,
-                                    placeAlarm.setPlaceAlarm, placeAlarm.placeDate, placeAlarm.placeAgain
-                                ))
-                                if (todoSnapshot.children.count() - 1 == i) {
-                                    onTodoListener.onGroupSuccess(todoList)
+                                if (timeAlarm != null && placeAlarm != null) {
+                                    todoList.add(i, TodoData(
+                                        todoId.key.toString(),
+                                        todoDataSnapshot.child("title").value.toString(),
+                                        groupId,
+                                        timeAlarm.setTimeAlarm, timeAlarm.timeDate, timeAlarm.timeTime, timeAlarm.timeAgain,
+                                        placeAlarm.setPlaceAlarm, placeAlarm.placeDate, placeAlarm.placeAgain
+                                    ))
+                                    if (todoSnapshot.children.count() - 1 == i) {
+                                        onTodoListener.onGroupSuccess(todoList)
+                                    }
                                 }
                             }
-                        }
-                    })
+                        })
 
+                    }
+                }else{
+                    onTodoListener.onGroupSuccess(todoList)
                 }
+
             }
         })
     }
@@ -255,63 +260,63 @@ class TodoModel {
         var placeList = mutableListOf<PlaceData>()
         FolderObject.folderInfo.forEach {
             firebaseGroup.child(it.key).child("TodoInfo").addValueEventListener(object : ValueEventListener {
-                    override fun onCancelled(p0: DatabaseError) {}
-                    override fun onDataChange(todoSnapshot: DataSnapshot) {
-                        todoSnapshot.children.forEach { todoId ->
-                            firebaseTodoId.child(todoId.value.toString()).addValueEventListener(object : ValueEventListener {
-                                    override fun onCancelled(p0: DatabaseError) {}
-                                    override fun onDataChange(placeSnapshot: DataSnapshot) {
-                                        placeSnapshot.children.forEach { placeId ->
+                override fun onCancelled(p0: DatabaseError) {}
+                override fun onDataChange(todoSnapshot: DataSnapshot) {
+                    todoSnapshot.children.forEach { todoId ->
+                        firebaseTodoId.child(todoId.value.toString()).addValueEventListener(object : ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) {}
+                            override fun onDataChange(placeSnapshot: DataSnapshot) {
+                                placeSnapshot.children.forEach { placeId ->
 
-                                            if(placeId.hasChildren()){
-                                                placeId.getValue(PlaceData::class.java)?.let { it1 ->
-                                                    placeList.add(
-                                                        it1
-                                                    )
-                                                }
-                                                if (m == placeSnapshot.children.count()-1 && j == todoSnapshot.children.count()-1
-                                                    && i == FolderObject.folderInfo.size - 1 && placeList[placeSnapshot.children.count()-1] != null) {
-                                                    if (status == "addTodo") {
-                                                        onAddTodoListener.onSuccess(placeList)
-                                                    } else if (status == "map") {
-                                                        onPlaceListener.onSuccess(placeList, "todo")
-                                                    }
-
-                                                } else if (m == placeSnapshot.children.count() - 1 && j == todoSnapshot.children.count() - 1) {
-                                                    m = 0
-                                                    j = 0
-                                                    i++
-                                                } else if (m == placeSnapshot.children.count() - 1) {
-                                                    m =0
-                                                    j++
-                                                }
-                                                else {
-                                                    m++
-                                                }
-                                            } else {
-                                                if (j == todoSnapshot.children.count() - 1 && i == FolderObject.folderInfo.size - 1) {
-                                                    if (status == "addTodo") {
-                                                        onAddTodoListener.onSuccess(placeList)
-                                                    } else if (status == "map") {
-                                                        onPlaceListener.onSuccess(placeList, "todo")
-                                                    }
-                                                } else if (j == todoSnapshot.children.count() - 1) {
-                                                    j=0
-                                                    i++
-                                                } else {
-                                                    j++
-                                                }
+                                    if(placeId.hasChildren()){
+                                        placeId.getValue(PlaceData::class.java)?.let { it1 ->
+                                            placeList.add(
+                                                it1
+                                            )
+                                        }
+                                        if (m == placeSnapshot.children.count()-1 && j == todoSnapshot.children.count()-1
+                                            && i == FolderObject.folderInfo.size - 1 && placeList[placeSnapshot.children.count()-1] != null) {
+                                            if (status == "addTodo") {
+                                                onAddTodoListener.onSuccess(placeList)
+                                            } else if (status == "map") {
+                                                onPlaceListener.onSuccess(placeList, "todo")
                                             }
 
+                                        } else if (m == placeSnapshot.children.count() - 1 && j == todoSnapshot.children.count() - 1) {
+                                            m = 0
+                                            j = 0
+                                            i++
+                                        } else if (m == placeSnapshot.children.count() - 1) {
+                                            m =0
+                                            j++
                                         }
-
+                                        else {
+                                            m++
+                                        }
+                                    } else {
+                                        if (j == todoSnapshot.children.count() - 1 && i == FolderObject.folderInfo.size - 1) {
+                                            if (status == "addTodo") {
+                                                onAddTodoListener.onSuccess(placeList)
+                                            } else if (status == "map") {
+                                                onPlaceListener.onSuccess(placeList, "todo")
+                                            }
+                                        } else if (j == todoSnapshot.children.count() - 1) {
+                                            j=0
+                                            i++
+                                        } else {
+                                            j++
+                                        }
                                     }
 
-                                })
-                        }
-                    }
+                                }
 
-                })
+                            }
+
+                        })
+                    }
+                }
+
+            })
         }
     }
 
