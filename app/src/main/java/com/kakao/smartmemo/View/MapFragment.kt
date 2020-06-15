@@ -629,7 +629,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)
                 if(!containPoint(todoMapPoint, mapPoint)) {
                     todoMapPoint.add(mapPoint)
-
                     Log.e("jieun", "todo $i 가 들어감")
                 }
                 m++

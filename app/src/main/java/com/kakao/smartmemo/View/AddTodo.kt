@@ -292,12 +292,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         if (intent.hasExtra("placeList")) { // TodoListFragment에서 넘어온 경우
             placeList.clear()
             placeList = intent.getParcelableArrayListExtra("placeList")
-            placeList.forEach{
-                Log.e("jieun", "현재 intent 값 $it")
-                it.id = todoId
-                placeData = it
-                Log.e("jieun", "현재 placeData에 들어간 intent 값 $placeData")
-            }
+            setPlaceListAdapter( )
+
         }
 
         placeSwitch.setOnCheckedChangeListener { compoundButton, isChecked ->
@@ -322,6 +318,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                 notifyPlace = false //알람 끔.
             }
         }
+
 
         todoAlarm()
         receiverData()
@@ -567,7 +564,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     private fun todoAlarm() {
         val todoTime = UserObject.kakao_alarm_time
-        if (!todoTime.equals("")) {
+        if (todoTime != "null") {
             var Todo = todoTime.split(" ")
             when (Todo.get(0)) { //오전 오후 구분
                 "오후" ->

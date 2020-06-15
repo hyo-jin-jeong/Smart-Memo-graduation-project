@@ -2,6 +2,7 @@ package com.kakao.smartmemo.View
 
 import android.app.Dialog
 import android.content.Context
+import android.util.Log
 import android.view.Window
 import android.widget.Button
 import android.widget.TextView
@@ -44,6 +45,10 @@ class InvitedDialog(context: Context) {
 
     interface MyDialogOKClickedListener {
         fun onOKClicked(content : String)
+    }
+    fun dialogDismiss(){
+        dialog.dismiss()
+        Log.e("dd","finish")
     }
 
 }

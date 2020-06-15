@@ -7,10 +7,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.kakao.smartmemo.Contract.LoginContract
-import com.kakao.smartmemo.Contract.MemberChangeContract
-import com.kakao.smartmemo.Contract.MemberDataContract
-import com.kakao.smartmemo.Contract.SignUpContract
+import com.kakao.smartmemo.Contract.*
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 
@@ -20,6 +17,7 @@ class UserModel {
     private lateinit var onSignUpListener: SignUpContract.onSignUpListener
     private lateinit var onPasswordChangeListener: MemberChangeContract.OnPasswordChangeSuccessListener
     private lateinit var onDeleteUserListener: MemberDataContract.OnDeleteUserListener
+    private lateinit var onMainListener: MainContract.onMainListener
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var firebaseUser = FirebaseDatabase.getInstance().reference.child("User")
     private var firebaseGroup = FirebaseDatabase.getInstance().reference.child("Group")
@@ -40,6 +38,9 @@ class UserModel {
 
     constructor(onDeleteUserListener: MemberDataContract.OnDeleteUserListener) {
         this.onDeleteUserListener = onDeleteUserListener
+    }
+    constructor(onMainListener:MainContract.onMainListener) {
+        this.onMainListener = onMainListener
     }
 
     fun getProfile() { // user 정보 받아오는 함수
@@ -192,5 +193,23 @@ class UserModel {
                 onPasswordChangeListener.onFailure()
             }
         }
+    }
+
+    fun checkFolderMember(groupId: String?, groupName: String?) {
+        firebaseGroup.child(groupId.toString()).child("MemberInfo").addListenerForSingleValueEvent(object:ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {}
+
+            override fun onDataChange(memberSnapshot: DataSnapshot) {
+                memberSnapshot.children.forEach {userEmail->
+                    if(userEmail.value != UserObject.email){
+                        memberSnapshot.ref.updateChildren(mapOf(UserObject.uid to UserObject.email))
+                        firebaseUser.child(UserObject.uid).child("GroupInfo").updateChildren(mapOf(groupId to groupName))
+                        onMainListener.onSuccess()
+                    }
+
+                }
+            }
+
+        })
     }
 }
