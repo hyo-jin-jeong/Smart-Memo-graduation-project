@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.location.Location
 import android.os.*
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -105,10 +104,8 @@ class LocationUpdatesService : Service() {
         flags: Int,
         startId: Int
     ): Int { //startService()를 호출해 서비스가 시작되면 메소드 호출
-        Log.i(TAG, "Service started")
 
         allSelectedPlace = intent.getParcelableArrayListExtra("allSelectedPlaceList")
-        Log.e("jieun", "서비스로 전달 전달된 값 : ${allSelectedPlace.toString()}")
 
         val startedFromNotification = intent.getBooleanExtra(
             EXTRA_STARTED_FROM_NOTIFICATION,
@@ -141,7 +138,6 @@ class LocationUpdatesService : Service() {
         // Called when a client (MainActivity in case of this sample) comes to the foreground
         // and binds with this service. The service should cease to be a foreground service
         // when that happens.
-        Log.i(TAG, "in onBind()")
         stopForeground(true)  //상태 표시줄 알림 제거
         mChangingConfiguration = false
         return mBinder
@@ -151,20 +147,17 @@ class LocationUpdatesService : Service() {
         // Called when a client (MainActivity in case of this sample) returns to the foreground
         // and binds once again with this service. The service should cease to be a foreground
         // service when that happens.
-        Log.i(TAG, "in onRebind()")
         stopForeground(true) //상태 표시줄 알림 제거
         mChangingConfiguration = false
         super.onRebind(intent)
     }
 
     override fun onUnbind(intent: Intent): Boolean { //bindService종료 꼭 해줘야 제대로 종료됨!
-        Log.i(TAG, "Last client unbound from service")
 
         // Called when the last client (MainActivity in case of this sample) unbinds from this
         // service. If this method is called due to a configuration change in MainActivity, we
         // do nothing. Otherwise, we make this service a foreground service.
         if (!mChangingConfiguration && requestingLocationUpdates(this)) {
-            Log.i(TAG, "Starting foreground service")
             startForeground(NOTIFICATION_ID, getNotification()) //서비스가 실행되는 동안에 상태 표시줄에 알림 표시
         }
         return true // Ensures onRebind() is called when a client re-binds.
@@ -179,12 +172,10 @@ class LocationUpdatesService : Service() {
      * [SecurityException].
      */
     fun requestLocationUpdates(allSelectedPlaceList: ArrayList<PlaceData>) {
-        Log.i(TAG, "Requesting location updates")
         setRequestingLocationUpdates(this, true)
 
         val intent = Intent(applicationContext, LocationUpdatesService::class.java)
         intent.putExtra("allSelectedPlaceList", allSelectedPlaceList)
-        Log.v("seyuuuun", "서비스로 넘겨온 장소들 : $allSelectedPlaceList")
 //        startService(Intent(applicationContext, LocationUpdatesService::class.java))
         startService(intent)
         try {
@@ -194,10 +185,6 @@ class LocationUpdatesService : Service() {
             )
         } catch (unlikely: SecurityException) {
             setRequestingLocationUpdates(this, false)
-            Log.e(
-                TAG,
-                "Lost location permission. Could not request updates. $unlikely"
-            )
         }
     }
 
@@ -206,17 +193,12 @@ class LocationUpdatesService : Service() {
      * [SecurityException].
      */
     private fun removeLocationUpdates() {
-        Log.i(TAG, "Removing location updates")
         try {
             mFusedLocationClient!!.removeLocationUpdates(mLocationCallback)
             setRequestingLocationUpdates(this, false)
             stopSelf()
         } catch (unlikely: SecurityException) {
             setRequestingLocationUpdates(this, true)
-            Log.e(
-                TAG,
-                "Lost location permission. Could not remove updates. $unlikely"
-            )
         }
     }
 
@@ -242,14 +224,6 @@ class LocationUpdatesService : Service() {
             this, 0,
             Intent(this, AddTodo::class.java), 0
         )
-
-//        val builder = Notification.Builder(this)
-//        val remoteViews = RemoteViews(packageName, R.layout.custom_notif)
-//        builder.setCustomContentView(remoteViews)
-//        //builder.setSmallIcon(R.mipmap.ic_launcher)
-//        builder.setSmallIcon(R.mipmap.app_icon)
-//        builder.setPriority(Notification.PRIORITY_LOW)
-//        builder.setVisibility(Notification.VISIBILITY_SECRET)
 
         val contentview = RemoteViews(applicationContext.packageName, R.layout.custom_notif)
         contentview.setTextViewText(R.id.notification_Title, "백그라운드에서 대기 중")
@@ -300,21 +274,13 @@ class LocationUpdatesService : Service() {
                         again = it.value.toString().toInt()
                     }else if(it.key =="placeDate"){
                         date = it.value.toString()
-                        Log.v("seyuuuun", "DB날짜 확인 : $date")
                     }
-                    /* placealarmIntent.putExtra("todoTitle", title)
-                     placealarmIntent.putExtra("todoPlace", placeData.place)
-                     placealarmIntent.putExtra("todoText", text)
-                     placealarmIntent.putExtra("todoId", placeData.placeId.toInt()) //reqeustcode 때문에 넣어준 것!!
-                     setAlarm(placealarmIntent,placeData,calendar, again)
-                     Log.v("seyuuuun", "반복 간격확인 : $again")*/
                 }
                 placealarmIntent.putExtra("todoTitle", title)
                 placealarmIntent.putExtra("todoPlace", placeData.place)
                 placealarmIntent.putExtra("todoText", text)
                 placealarmIntent.putExtra("todoId", placeData.id.toInt()) //reqeustcode 때문에 넣어준 것!!
                 setAlarm(placealarmIntent,placeData,calendar, again)
-                Log.v("seyuuuun", "반복 간격확인 : $again")
             }
         })
     }
@@ -322,9 +288,6 @@ class LocationUpdatesService : Service() {
 
         val pendingIntent = PendingIntent.getBroadcast(applicationContext, placeData.placeId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        Log.v("seyuuuun", "시간확인 " + calendar.get(Calendar.HOUR_OF_DAY).toString())
-        Log.v("seyuuuun", "시간확인 " + calendar.get(Calendar.MINUTE).toString())
-        Log.v("seyuuuun", "시간확인 " + calendar.get(Calendar.SECOND).toString())
         val intervalTime = 1000*60*again
 
         if (alarmManager != null) {
@@ -338,12 +301,6 @@ class LocationUpdatesService : Service() {
                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, intervalTime.toLong(), pendingIntent)
                 }
             }
-            /* //부팅후 실행되는 리시버 사용가능하게 설정함.
-             pm.setComponentEnabledSetting(
-                 placereceiver,
-                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                 PackageManager.DONT_KILL_APP
-             )*/
         }
     }
 
@@ -355,25 +312,15 @@ class LocationUpdatesService : Service() {
                         mLocation = task.result
                         //Log.v("seyuuuun", "Location: " + mLocation)
                     } else {
-                        Log.w(
-                            TAG,
-                            "Failed to get location."
-                        )
                     }
                 }
         } catch (unlikely: SecurityException) {
-            Log.e(
-                TAG,
-                "Lost location permission.$unlikely"
-            )
         }
     }
 
     private fun onNewLocation(location: Location) {
-        Log.i(TAG, "New location: $location")
         mLocation = location
         val locationtext: CharSequence = getLocationText(mLocation)
-        Log.v("seyuuuun", "위치확인" + locationtext.toString())
 
         // Notify anyone listening for broadcasts about the new location.
         val intent = Intent(ACTION_BROADCAST)
@@ -389,9 +336,7 @@ class LocationUpdatesService : Service() {
                 val location = Location("")
                 location.longitude = place.longitude
                 location.latitude = place.latitude
-                Log.v("seyuuuun", "for문안에는 들어옴 if확인할 장소 $place")
                 if (calDistance(location, mLocation!!)) {
-                    Log.e("jieun", "${place.place}가 이 지점에 300m 안이라 $locationtext")
 
                     placeCalendar.timeInMillis //날짜DB에서 불러오면 적용시켜줘야함
                     PlaceNotificationID = ((System.currentTimeMillis()/1000).toInt()) * (allSelectedPlace.indexOf(place) +1)
@@ -402,8 +347,6 @@ class LocationUpdatesService : Service() {
 
             for(placeItem in placeItems) {
                 allSelectedPlace.remove(placeItem)
-                Log.v("seyuuuun", "지워진 장소 확인 $placeItem")
-                Log.v("seyuuuun", "남은 장소들 $allSelectedPlace")
             }
 
             mNotificationManager!!.notify(
@@ -429,9 +372,7 @@ class LocationUpdatesService : Service() {
         dist *= 60 * 1.1515
         dist *= 1.609344 // 단위 mile 에서 km 변환.
         dist *= 1000.0 // 단위  km 에서 m 로 변환
-        Log.e("jieun", "확인중 $dist")
-        Log.v("seyuuuun", "거리 : $dist")
-        return dist <= 300
+        return dist <= 100
     }
 
     // 주어진 도(degree) 값을 라디언으로 변환

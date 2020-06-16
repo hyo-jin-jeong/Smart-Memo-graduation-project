@@ -25,7 +25,7 @@ class SplashActivity: Activity() {
     fun checkInternetState() {
         var connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (connectivityManager.activeNetwork != null) {
-            Toast.makeText(applicationContext, "네트워크 연결 되어있음.", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(applicationContext, "네트워크 연결 되어있음.", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(applicationContext, "네트워크 연결이 안되어있습니다. 네트워크를 연결해주십시오.", Toast.LENGTH_SHORT).show()
         }

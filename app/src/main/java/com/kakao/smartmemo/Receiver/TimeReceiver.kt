@@ -6,15 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Icon
 import android.os.Build
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import com.google.firebase.database.FirebaseDatabase
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.View.AddTodo
-import com.kakao.smartmemo.View.AddTodo.Companion.BROADCAST
 import com.kakao.smartmemo.View.MainActivity
 
 class TimeReceiver : BroadcastReceiver() {
@@ -23,7 +19,6 @@ class TimeReceiver : BroadcastReceiver() {
 
         val todoTitle = intent?.getStringExtra("todoTitle")
         val id = intent?.getIntExtra("todoId", 0) as Int
-        //Log.v("seyuuuun", "(id) in time : " + id.toString()) //없애지 말아주세요,,,
 
         val IconNoti = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.bell_icon_on)
 
@@ -69,7 +64,6 @@ class TimeReceiver : BroadcastReceiver() {
             }
 
             notificationManager?.notify(id, notificationbuilder.build())
-            //Log.v("seyuuuun", "notificationtimeID in broadcast " + id.toString()) 없애지 말아주세요,,,
 
     }
 

@@ -10,13 +10,11 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.BitmapFactory
 import android.os.Build
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.kakao.smartmemo.R
 import com.kakao.smartmemo.View.AddTodo
 import com.kakao.smartmemo.View.MainActivity
-import java.util.*
 
 class PlaceReceiver : BroadcastReceiver(){
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -26,7 +24,6 @@ class PlaceReceiver : BroadcastReceiver(){
         val todoPlace = intent?.getStringExtra("todoPlace")
         val id = intent?.getIntExtra("todoId", 0) as Int
         val todoText = intent?.getStringExtra("todoText")
-        Log.v("seyuuuun", "(id) in place : " + id.toString())
 
         val icon_noti = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.bell_icon_on)
 
@@ -73,7 +70,6 @@ class PlaceReceiver : BroadcastReceiver(){
         }
 
         notificationManager?.notify(id, notificationbuilder.build())
-        Log.v("seyuuuun", "notificationplaceID in broadcast " + id.toString())
     }
 
     companion object {

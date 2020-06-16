@@ -1,18 +1,14 @@
 package com.kakao.smartmemo.Adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.kakao.smartmemo.Contract.ManagementAdapterContract
-import com.kakao.smartmemo.Contract.TodoAdapterContract
-import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.folder_list_view.view.*
-import kotlinx.android.synthetic.main.todo_list_item.view.*
 
 class ManagementAdapter(val context: Context, private val folderList: MutableList<String>) : BaseAdapter(), ManagementAdapterContract.Model, ManagementAdapterContract.View {
 

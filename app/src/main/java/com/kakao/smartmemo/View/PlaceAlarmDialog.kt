@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Adapter.PlaceAlarmDialogAdapter
 import com.kakao.smartmemo.Contract.TodoDialogContract
 import com.kakao.smartmemo.Data.PlaceAlarmData
-import com.kakao.smartmemo.Data.PlaceData
-import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Presenter.TodoDialogPresenter
 import com.kakao.smartmemo.R
 

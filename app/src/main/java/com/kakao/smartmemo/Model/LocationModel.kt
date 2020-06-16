@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.Model
 
-import android.util.Log
 import com.kakao.smartmemo.ApiConnect.AddressResult
 import com.kakao.smartmemo.ApiConnect.ApiClient
 import com.kakao.smartmemo.ApiConnect.ApiInterface
@@ -81,7 +80,6 @@ class LocationModel {
                     }
                 } else {
                     val statusCode = response.code()
-                    Log.i("jieun", "실패 이유 코드 $statusCode")
                 }
             }
 

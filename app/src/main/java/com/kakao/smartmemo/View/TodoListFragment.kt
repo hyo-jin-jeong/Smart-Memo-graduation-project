@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -166,7 +165,6 @@ class TodoListFragment : Fragment(), TodoContract.View {
     }
 
     override fun sendPlaceData(placeList: MutableList<PlaceData>) {
-        Log.e("sendPlaceDatatata", placeList.toString())
         this.placeList.clear()
         this.placeList = placeList as ArrayList<PlaceData>
         onePlaceIntent.putExtra("placeList", this.placeList)

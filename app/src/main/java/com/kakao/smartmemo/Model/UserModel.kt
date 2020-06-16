@@ -1,7 +1,6 @@
 package com.kakao.smartmemo.Model
 
 import android.app.Activity
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -120,7 +119,6 @@ class UserModel {
             if (task.isSuccessful) {
                 auth.signOut()
             } else {
-                Log.e("auth delete Result", task.exception.toString())
                 //onDeleteUserListener.onSuccess()
             }
 
@@ -173,7 +171,6 @@ class UserModel {
             }
             auth.signOut()
         } else {
-            Log.e("Logout", "logout failed")
         }
     }
 
@@ -186,10 +183,8 @@ class UserModel {
 
         user?.updatePassword(pw)?.addOnCompleteListener {
             if (it.isSuccessful) {
-                Log.i("auth password changed", "successful")
                 onPasswordChangeListener.onSuccess()
             } else {
-                Log.e("auth password changed", "failed")
                 onPasswordChangeListener.onFailure()
             }
         }

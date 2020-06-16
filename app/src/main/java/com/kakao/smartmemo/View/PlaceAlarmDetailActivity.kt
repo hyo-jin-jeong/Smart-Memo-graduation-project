@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -284,8 +283,6 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
                 locationAdapter.notifyDataSetChanged()
                 recyclerView.visibility = View.GONE
 
-                Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
-
                 if (locationAdapter.clicked) {
 
                     //해당 요소만 찍고 위치 이동.
@@ -303,7 +300,7 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
                     val call: Call<CategoryResult?>? = apiInterface.getSearchAroundLocation(
                         getString(R.string.kakao_restapi_key),
                         query,
-                        7, 500, curLongitude.toString(), curLatitude.toString()
+                        7, 300, curLongitude.toString(), curLatitude.toString()
                     )
                     val callback: Callback<CategoryResult?> = object : Callback<CategoryResult?> {
                         override fun onResponse(
@@ -321,7 +318,6 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
                             } else {
                                 val statusCode = response.code()
                                 val responseBody = response.body()
-                                Log.e("jieun", statusCode.toString())
                             }
                         }
 

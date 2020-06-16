@@ -1,7 +1,5 @@
 package com.kakao.smartmemo.Model
 
-
-import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -51,7 +49,6 @@ class FolderModel {
         var i = 0
         var groupIdList = mutableListOf<String>()
         FolderObject.folderId.clear()
-        Log.e("groupName", FolderObject.folderInfo.size.toString())
             firebaseUser.child(UserObject.uid).child("GroupInfo").addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {}
                 override fun onDataChange(folderSnapshot: DataSnapshot) {
@@ -61,7 +58,6 @@ class FolderModel {
                             firebaseFolder.child(it1).addValueEventListener(object : ValueEventListener {
                                 override fun onCancelled(p0: DatabaseError) {}
                                 override fun onDataChange(snapShot: DataSnapshot) {
-                                    Log.e("확인11","확인")
                                     FolderObject.folderShare[it.key!!] = snapShot.child("MemberInfo").children.count()>1
                                     FolderObject.folderColor[it.key!!] = snapShot.child("folderColor").value.toString().toLong()
                                     FolderObject.folderId.add(it.key!!)

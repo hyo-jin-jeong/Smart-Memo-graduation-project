@@ -1,17 +1,12 @@
 package com.kakao.smartmemo.com.kakao.smartmemo.Adapter
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.TodoDateAdapterContract
 import com.kakao.smartmemo.Data.DayData
-import com.kakao.smartmemo.Model.TimeAlarmModel
 import com.kakao.smartmemo.R
 
 import kotlinx.android.synthetic.main.repeat_day_item.view.*
@@ -32,7 +27,6 @@ class DayRepeatAdapter(val context: Context, val dayList: MutableList<DayData>):
 
         holder.day_btn.setOnClickListener(View.OnClickListener {
             DateList.add(it.btn_day_repeat.text)
-            Toast.makeText(context, holder.day_btn.text, Toast.LENGTH_SHORT).show()
 
         })
     }

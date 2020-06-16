@@ -2,7 +2,6 @@ package com.kakao.smartmemo.View
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -44,9 +43,7 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
             val receivedValue = intent.data!!.getQueryParameter("value")
             val groupName = intent.data!!.getQueryParameter("group_name")
             val groupId = intent.data!!.getQueryParameter("groupId")
-            Log.i("jieun", groupName)
             val intent = Intent(this, LoginActivity::class.java)
-            Log.i("jieun", "AddFolder value=$receivedValue")
             intent.putExtra("value", receivedValue)
             intent.putExtra("group_name", groupName)
             intent.putExtra("groupId", groupId)
@@ -90,7 +87,6 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
             }
             R.id.menu_save -> {
                 if(groupName.text.toString() != ""){
-                    Log.e("jieun", "이제 다이얼로그 띄울거임!")
                     val dialog = InviteDialog(this)
                     dialog.setOnOKClickedListener { content->
                         mode = content
@@ -99,7 +95,6 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
                             presenter.addGroup(groupId,groupName.text.toString(), color)
                         }
                         else {
-                            Log.e("jieun", "공유 안누름.")
                             presenter.addGroup(groupId,groupName.text.toString(), color)
                         }
                     }

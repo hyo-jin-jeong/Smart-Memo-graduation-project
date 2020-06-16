@@ -12,7 +12,6 @@ import android.os.IBinder
 import android.os.Messenger
 import android.preference.PreferenceManager
 import android.provider.Settings
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -25,7 +24,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.material.snackbar.Snackbar
 import com.kakao.smartmemo.Adapter.PlaceListAdapter
 import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Data.PlaceData
@@ -304,7 +302,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
                         Intent(it.context, PlaceAlarmDetailActivity::class.java)
 
                     placechoiceIntent.putExtra("placeData", placeData)
-                    Log.e("jieun", "PlaceAlarmDetailActivity에 넘어간 placeData = $placeData")
                     placechoiceIntent.putExtra("todoPlaceAlarm", placeList)
                     startActivityForResult(placechoiceIntent, 200)
 
@@ -551,8 +548,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             finish()
             var cancel = intent.getBooleanExtra(BROADCASTPLACE, false)
             placeAlarmTodoId = intent.getIntExtra("placeid", 0)
-            Log.v("seyuuuun", "취소됨 $cancel")
-            Log.v("seyuuuun", "취소된 id $placeAlarmTodoId")
 
             if (cancel.equals(true)) {
                 notifyPlace = false
@@ -601,7 +596,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         }
 
         timealarmIntent.putExtra("todoId", TimeNotificationID) //reqeustcode 때문에 넣어준 것!!
-        Log.v("seyuuuun", "notificationId in time" + TimeNotificationID)
 
         val pendingIntent = PendingIntent.getBroadcast(this, TimeNotificationID, timealarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)  //Broadcast Receiver시작
         val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -645,7 +639,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         if(PendingIntent.getBroadcast(this, TimeNotificationID, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null && alarmManager!=null) {
             alarmManager.cancel(pendingIntent)
             notificationManager.cancel(id)
-            Log.v("seyuuuun", "알림해제 in time")
         }
 
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
@@ -670,8 +663,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         if(PendingIntent.getBroadcast(this, id, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)!=null) {
             alarmManager.cancel(pendingIntent)
             notificationManager.cancel(id)
-            Log.v("seyuuuun", "알림해제 in place")
-            Log.v("seyuuuuun", "알림 해제id:  $id")
         }
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
     }
@@ -799,25 +790,8 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         // Provide an additional rationale to the user. This would happen if the user denied the
         // request previously, but didn't check the "Don't ask again" checkbox.
         if (shouldProvideRationale) {
-            Log.i(
-                TAG,
-                "Displaying permission rationale to provide additional context."
-            )
-            Snackbar.make(
-                findViewById(R.id.time_location_settings_layout),
-                R.string.permission_rationale,
-                Snackbar.LENGTH_INDEFINITE
-            )
-                .setAction(R.string.ok) { // Request permission
-                    ActivityCompat.requestPermissions(
-                        this@AddTodo,
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        REQUEST_PERMISSIONS_REQUEST_CODE
-                    )
-                }
-                .show()
+
         } else {
-            Log.i(TAG, "Requesting permission")
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
@@ -836,36 +810,16 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         requestCode: Int, permissions: Array<String>,
         grantResults: IntArray
     ) {
-        Log.i(TAG, "onRequestPermissionResult")
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.size <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
-                Log.i(TAG, "User interaction was cancelled.")
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted.
                 mService?.requestLocationUpdates(allSelectedPlace)
-                Log.v("seyuuuun", "reqeustLocationUpdates in onRequestPermissions")
             } else {
                 // Permission denied.
                 //setButtonsState(false)   !!!
-                Snackbar.make(
-                    findViewById(R.id.time_location_settings_layout),
-                    R.string.permission_denied_explanation,
-                    Snackbar.LENGTH_INDEFINITE
-                )
-                    .setAction(R.string.settings) { // Build intent that displays the App settings screen.
-                        val intent = Intent()
-                        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                        val uri = Uri.fromParts(
-                            "package",
-                            "com.kakao.smartmemo", null
-                        )
-                        intent.data = uri
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        startActivity(intent)
-                    }
-                    .show()
             }
         }
     }
@@ -878,11 +832,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
             val location =
                 intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
             if (location != null) {
-                Toast.makeText(
-                    this@AddTodo, Utils.getLocationText(location),
-                    Toast.LENGTH_SHORT
-                ).show()
-                Log.v("seyuuuun", "getLocation :" + location)
+
 
             }
             /* if(calDistance(location!!) <= 200) {
@@ -912,7 +862,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         allSelectedPlace.clear()
         for (place in placeList) {
             allSelectedPlace.add(place)
-            Log.e("seyuuuun", "담긴 place = $place")
         }
 
         if (!checkPermissions()) {
@@ -923,7 +872,6 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
         //mSer vice!!.removeLocationUpdates()  과부하 방지를 위해 남겨놓음.일단은!!!!
 
         // Service로 위치 정보 넘기기 placeList가 PlaceData 형식이 들어있는 리스트에용
-        Log.e("Add Todo placeList", placeList.toString())
     }
 
     override fun onAddSuccess() {

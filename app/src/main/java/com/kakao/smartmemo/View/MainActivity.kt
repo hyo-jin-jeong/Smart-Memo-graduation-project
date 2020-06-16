@@ -8,7 +8,6 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -59,7 +58,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
             val value = intent.getStringExtra("value")
             val groupName = intent.getStringExtra("group_name")
             val groupId = intent.getStringExtra("groupId")
-            Log.i("jieun", "MainActivity value=$value")
             if(value == "1") {
                 dialog = InvitedDialog(this)
                 dialog.setOnOKClickedListener { content->
@@ -140,21 +138,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                     if (task.isSuccessful && task.result != null) {
                         var location = task.result
                         mainLocationModel.setLocation(location!!)
-                        Log.e("check", "current location : $location")
                         mainLocationModel.convertAddressFromPoint(location.longitude.toString(), location.latitude.toString())
                         //mLocation = task.result
                     } else {
-                        Log.w(
-                            "check",
-                            "Failed to get location."
-                        )
                     }
                 }
         } catch (unlikely: SecurityException) {
-            Log.e(
-                "check",
-                "Lost location permission.$unlikely"
-            )
         }
     }
 
@@ -197,7 +186,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                 if (mainLocationModel.checkValue()) {
                     val placeData = PlaceData("", mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
                     addMemoIntent.putExtra("placeData", placeData)
-                    Log.e("jieun", "placeData = $placeData")
                 }
                 startActivity(addMemoIntent)
             }
@@ -208,7 +196,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
                     val placeData = PlaceData("", mainLocationModel.locationAddress!!, mainLocationModel.latitude!!.toDouble(), mainLocationModel.longitude!!.toDouble())
                     addTodoIntent.putExtra("placeData", placeData)
                     addTodoIntent.putExtra("mode", "fromMain")
-                    Log.e("jieun", "placeData = $placeData")
                 }
                 startActivity(addTodoIntent)
             }
