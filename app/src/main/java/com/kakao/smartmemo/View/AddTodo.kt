@@ -565,7 +565,7 @@ class AddTodo : AppCompatActivity(), AddTodoContract.View,
 
     private fun todoAlarm() {
         val todoTime = UserObject.kakao_alarm_time
-        if (todoTime != "null") {
+        if (todoTime != "") {
             var Todo = todoTime.split(" ")
             when (Todo.get(0)) { //오전 오후 구분
                 "오후" ->
