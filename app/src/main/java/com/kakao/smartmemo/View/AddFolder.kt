@@ -119,7 +119,7 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
             .newBuilder(
                 ContentObject.newBuilder(
                         "Smart Memo",
-                        "https://github.com/hyo-jin-jeong/GraduationPortfolio/blob/master/app/src/main/res/drawable/app_logo_no_title.jpeg?raw=true",
+                        "https://raw.githubusercontent.com/hyo-jin-jeong/GraduationPortfolio/6359866c66c6f14ca923d9bfb17568252c836bd3/app/src/main/res/drawable/app_logo_no_title_kakao_icon.png",
                         LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
                             .setMobileWebUrl("https://developers.kakao.com").build()
                     )
