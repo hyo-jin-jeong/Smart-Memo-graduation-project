@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.kakao.smartmemo.Contract.DialogAdapterContract
 import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.Data.PlaceAlarmData
-import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.View.MemoDialog
 import com.kakao.smartmemo.View.PlaceAlarmDialog
 
@@ -36,7 +35,6 @@ class DialogSectionsPagerAdapter(memo: MutableList<MemoData>, todo: MutableList<
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         super.destroyItem(container, position, `object`)
-        //Log.e("FragmentPagerAdapter", "destroyItem position : $position")
     }
 
     override fun getCount(): Int {

@@ -1,6 +1,5 @@
 package com.kakao.smartmemo.Model
 
-import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase

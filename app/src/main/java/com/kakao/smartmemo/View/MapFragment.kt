@@ -2,13 +2,11 @@ package com.kakao.smartmemo.View
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.app.SearchManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -16,7 +14,6 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -79,14 +76,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     private lateinit var v:View
     private var btnClickCount = 0
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        Log.e("onAttach", "onAttach")
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e("jieun", "onCreate")
         setHasOptionsMenu(true)
     }
 
@@ -94,10 +85,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.e("jieun", "onCreateView")
 
         val view = inflater.inflate(R.layout.map_fragment, container, false)
-        Log.e("onCreateView", "onCreateView")
         v= view
         cont = view.context
 
@@ -109,7 +98,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             LocationServices.getFusedLocationProviderClient(this.requireActivity())
         locationSetting()
 
-        Log.e("onCreateView","onCreateView")
         mapViewContainer = view.map_view as ViewGroup
         mapViewContainer.addView(mapView)
         mapView.setPOIItemEventListener(this)
@@ -193,13 +181,11 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Log.e("jieun", "onActivityCreated")
     }
 
     override fun onStart() {
         super.onStart()
 
-        Log.e("jieun", "onStart")
         if (!usingMapView) {
             mapView = MapView(v.context)
             mapViewContainer = v.map_view as ViewGroup
@@ -220,38 +206,13 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         presenter.getMemo()
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.e("jieun", "onResume")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.e("jieun", "onStop")
-    }
-
     override fun onPause() {
         super.onPause()
-        Log.e("jieun", "onPause")
         mapView.removeAllPOIItems()
         usingMapView = false
         mapViewContainer.removeAllViews()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.e("jieun", "onDestroyView")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e("jieun", "onDestroy")
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        Log.e("jieun", "onDetach")
-    }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
@@ -292,7 +253,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 plusButton.visibility = Button.VISIBLE
                 goCurLocation.visibility = FloatingActionButton.VISIBLE
                 recyclerView.visibility = View.GONE
-                Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
                 if (locationAdapter.clicked) {
                     changeMapCenterPoint(locationAdapter.selectedX, locationAdapter.selectedY)
                     val point: MapPoint = MapPoint.mapPointWithGeoCoord(
@@ -430,7 +390,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                                 val placeData =
                                     PlaceData("", convertedAddress!!, point.latitude, point.longitude)
                                 addMemoIntent.putExtra("placeData", placeData)
-                                Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                                 startActivity(addMemoIntent)
                                 mapView.removePOIItem(curLocationMarker)
                             }
@@ -442,7 +401,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                                     PlaceData("", convertedAddress!!, point.latitude, point.longitude)
                                 addTodoIntent.putExtra("placeData", placeData)
                                 addTodoIntent.putExtra("mode", "longPressed")
-                                Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                                 startActivity(addTodoIntent)
                                 usingMapView = false
                                 mapViewContainer.removeAllViews()
@@ -494,7 +452,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
         val handler = Handler()
         val then: Long = 0
-        Log.i("jieun", "LongPress 시작")
 
         //이거는 확인하고 시간있으면 고쳐야해서 둠
         p0!!.setOnTouchListener(object : View.OnTouchListener {
@@ -503,7 +460,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 if (event?.action == MotionEvent.ACTION_UP) {
                     if ((System.currentTimeMillis() - then) > longClickDuration) {
-                        Log.i("jieun", "클릭을 뗌!")
                         startLongPress(p1!!)
                     }
                 }
@@ -513,7 +469,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         handler.postDelayed({
             p0!!.setOnTouchListener(null)
-            Log.i("jieun", "삭제 ㅠ")
         }, 2000L)
 
     }
@@ -546,7 +501,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         val addMemoIntent = Intent(this.context, AddMemo::class.java)
                         val placeData = PlaceData("", convertedAddress!!, latitude, longitude)
                         addMemoIntent.putExtra("placeData", placeData)
-                        Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                         startActivity(addMemoIntent)
                         mapView.removePOIItem(curLocationMarker)
                     }
@@ -556,7 +510,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                         val placeData = PlaceData("", convertedAddress!!, latitude, longitude)
                         addTodoIntent.putExtra("placeData", placeData)
                         addTodoIntent.putExtra("mode", "longPressed")
-                        Log.e("jieun", "long press한 위치의 주소는 $convertedAddress")
                         startActivity(addTodoIntent)
                         usingMapView = false
 
@@ -628,24 +581,19 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         var j = 0
         if(status == "todo"){
             todo = placeList
-            Log.e("todododododo", placeList.toString())
             for(i in todo){
                 var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)
                 if(!containPoint(todoMapPoint, mapPoint)) {
                     todoMapPoint.add(mapPoint)
-                    Log.e("jieun", "todo $i 가 들어감")
                 }
                 m++
             }
         }else{
             memo = placeList
-            Log.e("memememmememememe", placeList.toString())
             for (i in memo) {
                 var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)
                 if(!containPoint(memoMapPoint, mapPoint)) {
                     memoMapPoint.add(mapPoint)
-
-                    Log.e("jieun", "memo $i 가 들어감")
                 }
                 j++
             }
@@ -654,10 +602,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 //        if (todoMapPoint.isNotEmpty() && memoMapPoint.isNotEmpty()) {
 
         if ((todoMapPoint.isNotEmpty() && todo.size == m) || (memoMapPoint.isNotEmpty() && memo.size == j)) {
-            Log.e("jieun", "마커 생성 시작!!")
             createMarkerAccordingType(todoMapPoint, memoMapPoint)
         }
-        Log.e("jieun", "구분점~~~~")
     }
 
     private fun containPoint(list: ArrayList<MapPoint>, item: MapPoint): Boolean {
@@ -674,10 +620,8 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
     private fun createMarkerAccordingType(todoList: ArrayList<MapPoint>, memoList: ArrayList<MapPoint>) {
-        Log.e("checkchekck", "asldkfsdfadf")
         if(todoList.isNotEmpty()){
             for (todo in todoList) {
-                Log.e("jieun", "현재 $todo")
                 if(containPoint(memoList, todo)) {
                     val memoAddTodo = createMarker("", todo, R.drawable.memo_todo_icon)
                     Log.e("jieun", "$todo 이것은 메모와 투두 둘다 있다.")

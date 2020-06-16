@@ -2,7 +2,6 @@ package com.kakao.smartmemo.Adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kakao.smartmemo.Contract.TodoDialogAdapterContract

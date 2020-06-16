@@ -2,7 +2,6 @@ package com.kakao.smartmemo.View
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -51,9 +50,7 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         if(intent.action == Intent.ACTION_VIEW) {
             val receivedValue = intent.data!!.getQueryParameter("value")
             val groupName = intent.data!!.getQueryParameter("group_name")
-            Log.i("jieun", groupName)
             val intent = Intent(this, LoginActivity::class.java)
-            Log.i("jieun", "AddFolder value=$receivedValue")
             intent.putExtra("value", receivedValue)
             intent.putExtra("group_name", groupName)
             startActivity(intent)

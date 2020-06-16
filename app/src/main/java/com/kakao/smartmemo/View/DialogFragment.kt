@@ -3,7 +3,6 @@ package com.kakao.smartmemo.View
 import android.app.Dialog
 import android.graphics.Point
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
@@ -121,7 +120,6 @@ class DialogFragment : DialogFragment(), DialogContract.View {
         for (i in memo) {
             if(i.latitude == latitude && i.longitude == longitude) {
                 this.memo.add(i)
-                Log.e("jieun", "현재 위도 경도의 placeData = $i")
             }
             if(memo.size-1 == j){
                 presenter.getMemoList(this.memo)
@@ -135,7 +133,6 @@ class DialogFragment : DialogFragment(), DialogContract.View {
         for (i in todoList) {
             if(i.latitude == latitude && i.longitude == longitude) {
                 this.todo.add(i)
-                Log.e("jieun", "현재 위도 경도의 placeData = $i")
             }
             if(todoList.size-1 == j){
                 presenter.getTodoList(todo)

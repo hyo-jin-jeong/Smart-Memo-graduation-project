@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.*
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.kakao.smartmemo.Adapter.ManagementAdapter
 import com.kakao.smartmemo.Contract.ManagementFragmentContract
@@ -14,8 +13,6 @@ import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.ManagementFragmentPresenter
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.management_fragment.*
-import java.time.LocalDateTime
 
 class ManagementFragment : Fragment(), ManagementFragmentContract.View {
 

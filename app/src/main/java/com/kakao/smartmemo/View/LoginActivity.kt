@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -92,13 +91,11 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
             value = intent.getStringExtra("value")
             val groupName = intent.getStringExtra("group_name")
             val groupId =  intent.getStringExtra("groupId")
-            Log.i("jieun", "groupName=$groupName")
             if (value != null && groupName != null) {
                 val intent = Intent(this, MainActivity::class.java)
                 intent.putExtra("value", value)
                 intent.putExtra("group_name", groupName)
                 intent.putExtra("groupId",groupId)
-                Log.i("jieun", "LoginActivity value=$value")
                 startActivity(intent)
                 finish()
             }
@@ -140,7 +137,6 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
                 }
             }
             if (check_result) {
-                Log.d("@@@", "start")
 
             } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
@@ -247,7 +243,6 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
                 //사용자가 GPS 활성 시켰는지 검사
                 if (checkLocationServicesStatus()) {
                     if (checkLocationServicesStatus()) {
-                        Log.d("@@@", "onActivityResult : GPS 활성화 되있음")
                         checkRunTimePermission()
                         return
                     }

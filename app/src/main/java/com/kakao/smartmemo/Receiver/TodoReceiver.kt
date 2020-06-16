@@ -11,7 +11,6 @@ import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.kakao.smartmemo.R
-import com.kakao.smartmemo.View.AddTodo
 import com.kakao.smartmemo.View.MainActivity
 
 class TodoReceiver : BroadcastReceiver(){
