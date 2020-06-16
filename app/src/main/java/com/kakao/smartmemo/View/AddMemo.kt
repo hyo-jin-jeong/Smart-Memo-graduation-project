@@ -24,7 +24,6 @@ import java.util.*
 class AddMemo : AppCompatActivity(), AddMemoContract.View {
     lateinit var presenter: AddMemoPresenter
     private lateinit var memoToolbar: Toolbar
-    private lateinit var saveBtn: Button
     private lateinit var titleEdit: EditText
     private lateinit var dateText: TextView
     private lateinit var contentEdit: EditText
@@ -51,7 +50,6 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
 
         //presenter 초기화
         presenter = AddMemoPresenter(this)
-        saveBtn = findViewById(R.id.save_button)
         titleEdit = findViewById(R.id.memo_title)
         dateText = findViewById(R.id.memo_date)
         contentEdit = findViewById(R.id.memo_content)
@@ -82,11 +80,6 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
             placeData = intent.getParcelableExtra("placeData")
             placeNameText.text = placeData.place
         }
-
-        saveBtn.setOnClickListener {
-
-    }
-
 
         selectGroupBtn.setOnClickListener {
             selectGroup()
