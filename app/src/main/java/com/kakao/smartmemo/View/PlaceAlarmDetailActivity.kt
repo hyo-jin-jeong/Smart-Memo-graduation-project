@@ -225,7 +225,11 @@ class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.V
                     }
                     builder.show()
                 } else {
-                    curAddress = curMarker!!.itemName
+                    if(curMarker == null) {
+                        curAddress = ""
+                    } else {
+                        curAddress = curMarker!!.itemName
+                    }
                     replaceWithData()
                     val placeData = PlaceData(placeId, curAddress!!, curLatitude!!, curLongitude!!)
                     //long pressed 로 들어왔을 때 AddTodo로 넘기기
