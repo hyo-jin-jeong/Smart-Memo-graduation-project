@@ -9,20 +9,18 @@ import com.kakao.smartmemo.Data.FolderData
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 
-
 class FolderModel {
-    private lateinit var onMainListener: MainContract.onMainListener
+    private lateinit var onMainListener: MainContract.OnMainListener
     private var firebaseUser = FirebaseDatabase.getInstance().reference.child("User")
     private var firebaseFolder = FirebaseDatabase.getInstance().reference.child("Group")
 
     constructor()
 
-    constructor(onMainListener: MainContract.onMainListener) {
+    constructor(onMainListener: MainContract.OnMainListener) {
         this.onMainListener = onMainListener
     }
 
     fun addGroup(groupId:String, groupName: String, color: Int) {
-        //그룹 관련된 DB작업
         var folderData = FolderData(groupName,color)
         firebaseUser.child(UserObject.uid).child("GroupInfo").updateChildren(mapOf(groupId to groupName))
         with(firebaseFolder.child(groupId)) {
@@ -49,33 +47,29 @@ class FolderModel {
         var i = 0
         var groupIdList = mutableListOf<String>()
         FolderObject.folderId.clear()
-            firebaseUser.child(UserObject.uid).child("GroupInfo").addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {}
-                override fun onDataChange(folderSnapshot: DataSnapshot) {
-                    folderSnapshot.children.forEach {
-                        it.key?.let { it1 ->
-                            FolderObject.folderInfo[it.key!!] = it.value.toString()
-                            firebaseFolder.child(it1).addValueEventListener(object : ValueEventListener {
-                                override fun onCancelled(p0: DatabaseError) {}
-                                override fun onDataChange(snapShot: DataSnapshot) {
-                                    FolderObject.folderShare[it.key!!] = snapShot.child("MemberInfo").children.count()>1
-                                    FolderObject.folderColor[it.key!!] = snapShot.child("folderColor").value.toString().toLong()
-                                    FolderObject.folderId.add(it.key!!)
-                                    groupIdList.add(it.key!!)
-                                    if(i == folderSnapshot.children.count()-1&&FolderObject.folderShare[it.key!!]!=null&&FolderObject.folderColor[it.key!!]!=null){
+        firebaseUser.child(UserObject.uid).child("GroupInfo").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(folderSnapshot: DataSnapshot) {
+                folderSnapshot.children.forEach {
+                    it.key?.let { it1 ->
+                        FolderObject.folderInfo[it.key!!] = it.value.toString()
+                        firebaseFolder.child(it1).addValueEventListener(object : ValueEventListener {
+                            override fun onCancelled(p0: DatabaseError) {}
+                            override fun onDataChange(snapShot: DataSnapshot) {
+                                FolderObject.folderShare[it.key!!] = snapShot.child("MemberInfo").children.count()>1
+                                FolderObject.folderColor[it.key!!] = snapShot.child("folderColor").value.toString().toLong()
+                                FolderObject.folderId.add(it.key!!)
+                                groupIdList.add(it.key!!)
+                                if(i == folderSnapshot.children.count()-1&&FolderObject.folderShare[it.key!!]!=null&&FolderObject.folderColor[it.key!!]!=null){
                                        // onGetGroupInfoListener.onSuccess(groupIdList)
-                                    }
-                                    i++
                                 }
-                            })
-                        }
+                                i++
+                            }
+                        })
                     }
-
                 }
-
-            })
-
-
+            }
+        })
     }
 
     fun deleteGroup(groupId: String) {
@@ -84,5 +78,4 @@ class FolderModel {
         FolderObject.folderInfo.remove(groupId)
         FolderObject.folderColor.remove(groupId)
     }
-
 }

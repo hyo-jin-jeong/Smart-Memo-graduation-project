@@ -15,12 +15,8 @@ class DeviceBootPlaceReceiver : BroadcastReceiver() {
 
         val manager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val current_cal = Calendar.getInstance()
+        val currentCal = Calendar.getInstance()
 
-        if(manager != null) {
-            manager.setRepeating(AlarmManager.RTC_WAKEUP, current_cal.timeInMillis , AlarmManager.INTERVAL_DAY, pendingIntent)
-            //여러번 알람, 24*60*60*1000 하루에 한번 계속 알람.
-            // manager.setRepeating(AlarmManager.RTC, current_cal.timeInMillis, pendingIntent) -> 한번 알람.
-        }
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, currentCal.timeInMillis , AlarmManager.INTERVAL_DAY, pendingIntent)
     }
 }

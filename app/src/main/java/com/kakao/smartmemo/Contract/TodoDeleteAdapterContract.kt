@@ -5,6 +5,5 @@ interface TodoDeleteAdapterContract {
         fun notifyAdapter()
     }
 
-    interface Model {
-    }
+    interface Model {  }
 }

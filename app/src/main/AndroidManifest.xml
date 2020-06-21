@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kakao.smartmemo">
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
@@ -13,14 +13,27 @@
         android:allowBackup="true"
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:networkSecurityConfig="@xml/network_security_config">
-        <meta-data android:name="com.kakao.sdk.AppKey" android:value="a74a781e501d031236f6ee1960b4d00e"/>
-        <activity android:name=".View.SplashActivity"
-            android:theme="@style/SplashTheme"
-            android:screenOrientation="fullSensor">
+        android:theme="@style/AppTheme">
+        <receiver
+            android:name=".Receiver.AppNetwork"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.BACKGROUND_DATA_SETTING_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="a74a781e501d031236f6ee1960b4d00e" />
+
+        <activity
+            android:name=".View.SplashActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,77 +43,70 @@
         <activity
             android:name=".View.LoginActivity"
             android:label="SmartMemo"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.SignUpActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.MapFragment"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.MemoListFragment"
-            android:label = "@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.TodoListFragment"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".View.AddTodo"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".View.AddTodo"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <service
             android:name=".Service.LocationUpdatesService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="location" />
-        <activity
-            android:name=".View.AlarmFragment"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <receiver android:name=".Receiver.DeviceBootTimeReceiver"
+
+        <receiver
+            android:name=".Receiver.DeviceBootTimeReceiver"
             android:enabled="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".Receiver.DeviceBootPlaceReceiver"
+        <receiver
+            android:name=".Receiver.DeviceBootPlaceReceiver"
             android:enabled="false">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".Receiver.DeviceBootTodoReceiver"
+        <receiver
+            android:name=".Receiver.DeviceBootTodoReceiver"
             android:enabled="false">
             <intent-filter>
-                <action android:name="android.intent.action.BATTERY_CHANGED"/>
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".Receiver.TimeReceiver">
-        </receiver>
-        <receiver android:name=".Receiver.TodoReceiver">
-        </receiver>
-        <receiver android:name=".Receiver.PlaceReceiver">
-        </receiver>
+        <receiver android:name=".Receiver.TimeReceiver" />
+        <receiver android:name=".Receiver.TodoReceiver" />
+        <receiver android:name=".Receiver.PlaceReceiver" />
+
         <activity
             android:name=".View.AddFolder"
             android:label="@string/add_group"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -110,35 +116,33 @@
                 <data
                     android:host="smartmemo.page.link/invite"
                     android:scheme="https" />
-                <data android:scheme="@string/kakao_scheme"
-                    android:host="@string/kakaolink_host" />
+                <data
+                    android:host="@string/kakaolink_host"
+                    android:scheme="@string/kakao_scheme" />
             </intent-filter>
         </activity>
         <activity
             android:name=".View.AddMemo"
             android:label="@string/write_memo"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.ShowMemo"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.MemberData"
             android:label="회원 정보"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.MemberDataChange"
             android:label="회원 정보 수정"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.ModifyGroup"
             android:label="그룹 설정"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -148,15 +152,15 @@
                 <data
                     android:host="smartmemo.page.link/invite"
                     android:scheme="https" />
-                <data android:scheme="@string/kakao_scheme"
-                    android:host="@string/kakaolink_host" />
+                <data
+                    android:host="@string/kakaolink_host"
+                    android:scheme="@string/kakao_scheme" />
             </intent-filter>
         </activity>
         <activity
             android:name=".View.PlaceAlarmDetailActivity"
             android:label="TODO 장소 알람 설정"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

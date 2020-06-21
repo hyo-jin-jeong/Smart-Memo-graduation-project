@@ -33,7 +33,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
         setHasOptionsMenu(true)
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,8 +45,6 @@ class MemoListFragment : Fragment(), MemoContract.View {
         noMemoTextView = view.findViewById(R.id.textView_non_memo)
         return view
     }
-
-
 
     override fun onStart() {
         super.onStart()

@@ -5,30 +5,35 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.kakao.kakaolink.v2.KakaoLinkResponse
 import com.kakao.kakaolink.v2.KakaoLinkService
-import com.kakao.message.template.*
+import com.kakao.message.template.ButtonObject
+import com.kakao.message.template.ContentObject
+import com.kakao.message.template.FeedTemplate
+import com.kakao.message.template.LinkObject
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
-import com.kakao.smartmemo.Contract.AddGroupContract
+import com.kakao.smartmemo.Contract.AddFolderContract
 import com.kakao.smartmemo.Presenter.AddGroupPresenter
 import com.kakao.smartmemo.R
 import com.kakao.util.helper.log.Logger
 
+class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddFolderContract.View{
 
-class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContract.View{
-
-    lateinit var presenter : AddGroupContract.Presenter
+    lateinit var presenter : AddFolderContract.Presenter
     lateinit var toolbar: Toolbar
     lateinit var groupName : EditText
-    lateinit var themeColor : View
-    lateinit var colorPicker: ImageView
-    lateinit var groupExitBtn : Button
+    private lateinit var themeColor : View
+    private lateinit var colorPicker: ImageView
+    private lateinit var groupExitBtn : Button
     var groupId = (System.currentTimeMillis()*10000).toInt().toString()
     var color = (System.currentTimeMillis()*1000).toInt()
     var value = "1"
@@ -114,7 +119,7 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
         themeColor.setBackgroundColor(color)
     }
 
-    fun kakaoLink() {
+    private fun kakaoLink() {
         val params = FeedTemplate
             .newBuilder(
                 ContentObject.newBuilder(
@@ -154,7 +159,5 @@ class AddFolder : AppCompatActivity(), ColorPickerDialogListener, AddGroupContra
                 override fun onSuccess(result: KakaoLinkResponse?) { // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
                 }
             })
-
     }
-
 }

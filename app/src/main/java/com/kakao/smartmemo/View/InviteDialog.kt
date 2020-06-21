@@ -41,7 +41,6 @@ class InviteDialog(context: Context) {
         }
     }
 
-
     interface MyDialogOKClickedListener {
         fun onOKClicked(content : String)
     }

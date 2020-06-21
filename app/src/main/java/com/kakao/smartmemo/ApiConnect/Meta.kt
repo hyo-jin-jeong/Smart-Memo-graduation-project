@@ -5,7 +5,6 @@ import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-
 class Meta : Parcelable {
     @SerializedName("same_name")
     @Expose

@@ -13,7 +13,6 @@ import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Object.FolderObject
 
-
 class TodoModel {
     private var firebase = FirebaseDatabase.getInstance().reference
     private var firebaseTodo = firebase.child("Todo")
@@ -25,7 +24,6 @@ class TodoModel {
     private lateinit var onAddTodoListener: AddTodoContract.OnAddTodoListener
     private lateinit var onDialogListener : DialogContract.OnDialogListener
 
-    constructor()
     constructor(onTodoListener: TodoContract.OnTodoListener) {
         this.onTodoListener = onTodoListener
     }
@@ -60,10 +58,7 @@ class TodoModel {
         var placeAgain: Int = 0
     )
 
-    fun addTodo(
-        todoData: TodoData,
-        placeList: ArrayList<PlaceData>
-    ) { // Todo create와 update를 모두 하는 함수
+    fun addTodo(todoData: TodoData, placeList: ArrayList<PlaceData>) {
         var i = 0
         var todoId = ""
         todoId = if (todoData.todoId == "") {
@@ -74,6 +69,7 @@ class TodoModel {
         } else {
             todoData.todoId
         }
+
         var todotmp = TodoTmp(todoData.title, todoData.groupId)
         var timeAlarm = TimeAlarm(
             todoData.setTimeAlarm,
@@ -83,14 +79,11 @@ class TodoModel {
         )
         var placeAlarm = PlaceAlarm(todoData.setPlaceAlarm, todoData.placeDate, todoData.placeAgain)
 
-
         firebaseTodo.child(todoId).child("PlaceAlarm").child("setPlaceAlarm").addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) { }
-
             override fun onDataChange(setPlaceAlarmSnapshot: DataSnapshot) {
                 if (setPlaceAlarmSnapshot.value.toString().toBoolean()) {
                     firebaseTodoId.child(todoId).removeValue()
-
                     if (placeAlarm.setPlaceAlarm) {
                         placeList.forEach {
                             if (it.placeId == "") {
@@ -198,16 +191,12 @@ class TodoModel {
                     }
                 }
             }
-
         })
     }
 
     fun getGroupTodo(groupId: String) {
         var todoList = mutableListOf<TodoData>()
-        var placeList = mutableListOf<PlaceData>()
         var i = 0
-        var j = 0
-        var m = 0
 
         firebaseGroup.child(groupId).child("TodoInfo").addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {  }
@@ -219,7 +208,6 @@ class TodoModel {
                             override fun onDataChange(todoDataSnapshot: DataSnapshot) {
                                 val placeAlarm = todoDataSnapshot.child("PlaceAlarm").getValue(PlaceAlarm::class.java)
                                 val timeAlarm = todoDataSnapshot.child("TimeAlarm").getValue(TimeAlarm::class.java)
-
                                 if (timeAlarm != null && placeAlarm != null) {
                                     todoList.add(i, TodoData(
                                         todoId.key.toString(),
@@ -234,12 +222,10 @@ class TodoModel {
                                 }
                             }
                         })
-
                     }
-                }else{
+                } else{
                     onTodoListener.onGroupSuccess(todoList)
                 }
-
             }
         })
     }
@@ -277,7 +263,7 @@ class TodoModel {
                                             if (status == "addTodo") {
                                                 onAddTodoListener.onSuccess(placeList)
                                             } else if (status == "map") {
-                                                onPlaceListener.onSuccess(placeList, "todo")
+                                                onPlaceListener.onPlaceSuccess(placeList, "todo")
                                             }
 
                                         } else if (m == placeSnapshot.children.count() - 1 && j == todoSnapshot.children.count() - 1) {
@@ -296,7 +282,7 @@ class TodoModel {
                                             if (status == "addTodo") {
                                                 onAddTodoListener.onSuccess(placeList)
                                             } else if (status == "map") {
-                                                onPlaceListener.onSuccess(placeList, "todo")
+                                                onPlaceListener.onPlaceSuccess(placeList, "todo")
                                             }
                                         } else if (j == todoSnapshot.children.count() - 1) {
                                             j=0
@@ -305,15 +291,11 @@ class TodoModel {
                                             j++
                                         }
                                     }
-
                                 }
-
                             }
-
                         })
                     }
                 }
-
             })
         }
     }
@@ -345,7 +327,6 @@ class TodoModel {
                     }
                     i++
                 }
-
             })
         }
     }
@@ -363,44 +344,4 @@ class TodoModel {
             }
         })
     }
-
-//    fun getTodoInfo(todoList: MutableList<PlaceData>) {
-//        var i = 0
-//        var j = 0
-//        var todoInfoList = mutableListOf<PlaceAlarmData>()
-//        todoList.forEach {
-//            firebasePlace.child(it.place).addValueEventListener(object : ValueEventListener {
-//                override fun onCancelled(p0: DatabaseError) { }
-//
-//                override fun onDataChange(todoSnapshot: DataSnapshot) {
-//                    todoSnapshot.children.forEach { todoId ->
-//                        if (todoId.key.toString() != "PlaceId") {
-//                            firebaseTodo.child(todoId.key.toString()).addValueEventListener(object : ValueEventListener {
-//                                override fun onCancelled(p0: DatabaseError) { }
-//                                override fun onDataChange(todoAlarmSnapshot: DataSnapshot) {
-//                                    var placeAlarm = todoAlarmSnapshot.getValue(PlaceAlarm::class.java)
-//                                    var groupId = todoAlarmSnapshot.child("groupId").value.toString()
-//                                    var title = todoAlarmSnapshot.child("title").value.toString()
-//                                    todoInfoList.add(
-//                                        PlaceAlarmData(todoId.key.toString(),it.place, placeAlarm!!.placeDate, title, placeAlarm!!.setPlaceAlarm, groupId))
-//
-//                                    if (todoSnapshot.children.count() - 1 == i && todoList.size - 1 == j) {
-//                                        onDialogListener.onTodoSuccess(todoInfoList)
-//                                    } else if (todoSnapshot.children.count() - 1 == i) {
-//                                        i = 0
-//                                        j++
-//                                    } else {
-//                                        i++
-//                                    }
-//                                }
-//                            })
-//                        }
-//
-//
-//                    }
-//                }
-//
-//            })
-//        }
-//    }
 }

@@ -29,17 +29,13 @@ class LocationModel {
     fun convertAddressFromMapPOIItem(mapPOIItem: MapPOIItem) {
 
         val apiClient = ApiClient()
-        val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(
-            ApiInterface::class.java
-        )
+        val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(ApiInterface::class.java)
 
         var longitude = mapPOIItem.mapPoint.mapPointGeoCoord.longitude.toString()
         var latitude =  mapPOIItem.mapPoint.mapPointGeoCoord.latitude.toString()
 
-        val call: Call<AddressResult?>? = apiInterface.getConvertAddressFromCoordinate(
-            restApiKey, longitude, latitude)
+        val call: Call<AddressResult?>? = apiInterface.getConvertAddressFromCoordinate(restApiKey, longitude, latitude)
         val callback: Callback<AddressResult?> = object : Callback<AddressResult?> {
-            //리스폰 시, 대응할 구현체
             override fun onResponse(
                 call: Call<AddressResult?>,
                 response: Response<AddressResult?>
@@ -55,12 +51,12 @@ class LocationModel {
                                 if(onTodoDetailListener != null)
                                     onTodoDetailListener!!.onSuccess(mapPOIItem, curRoadAddress)
                                 else
-                                    onMapListener!!.onSuccess(mapPOIItem, curRoadAddress)
+                                    onMapListener!!.onMapSuccess(mapPOIItem, curRoadAddress)
                             } else {
                                 if(onTodoDetailListener != null)
                                     onTodoDetailListener!!.onSuccess(mapPOIItem, curBuildingName)
                                 else
-                                    onMapListener!!.onSuccess(mapPOIItem, curBuildingName)
+                                    onMapListener!!.onMapSuccess(mapPOIItem, curBuildingName)
                             }
                         }
                         else {
@@ -69,12 +65,12 @@ class LocationModel {
                                 if(onTodoDetailListener != null)
                                     onTodoDetailListener!!.onSuccess(mapPOIItem, "주소를 가져올 수 없음")
                                 else
-                                    onMapListener!!.onSuccess(mapPOIItem, "주소를 가져올 수 없음")
+                                    onMapListener!!.onMapSuccess(mapPOIItem, "주소를 가져올 수 없음")
                             } else {
                                 if(onTodoDetailListener != null)
                                     onTodoDetailListener!!.onSuccess(mapPOIItem, curNumberAddress)
                                 else
-                                    onMapListener!!.onSuccess(mapPOIItem, curNumberAddress)
+                                    onMapListener!!.onMapSuccess(mapPOIItem, curNumberAddress)
                             }
                         }
                     }
@@ -91,5 +87,4 @@ class LocationModel {
         }
         call!!.enqueue(callback)
     }
-
 }

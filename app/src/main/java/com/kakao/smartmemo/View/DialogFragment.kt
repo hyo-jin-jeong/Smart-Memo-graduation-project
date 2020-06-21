@@ -129,15 +129,13 @@ class DialogFragment : DialogFragment(), DialogContract.View {
     }
 
     fun setTodoList(todoList: MutableList<PlaceData>, latitude: Double, longitude: Double) {
-        var j = 0
-        for (i in todoList) {
+        for ((j, i) in todoList.withIndex()) {
             if(i.latitude == latitude && i.longitude == longitude) {
                 this.todo.add(i)
             }
             if(todoList.size-1 == j){
                 presenter.getTodoList(todo)
             }
-            j++
         }
     }
 }

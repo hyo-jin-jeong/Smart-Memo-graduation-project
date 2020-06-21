@@ -6,7 +6,7 @@ import com.kakao.smartmemo.Contract.MemoDeleteAdapterContract
 import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.Model.MemoModel
 
-class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
+class MemoPresenter : MemoContract.Presenter, MemoContract.OnMemoListener{
     var view: MemoContract.View
     var model: MemoModel
     private lateinit var adapterView : MemoAdapterContract.View
@@ -18,7 +18,6 @@ class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
         this.view = view
         this.model = MemoModel(this)
     }
-
 
     override fun setMemoAdapterModel(model: MemoAdapterContract.Model) {
         adapterModel = model
@@ -58,13 +57,9 @@ class MemoPresenter : MemoContract.Presenter,MemoContract.OnMemoListener{
         view.showAllMemo(memoList)
     }
 
-    override fun onFailer() {
-
-    }
+    override fun onFailure() {  }
 
     override fun onDeleteSuccess() {
         view.onSuccess()
     }
-
-
 }

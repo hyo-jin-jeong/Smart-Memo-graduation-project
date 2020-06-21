@@ -6,7 +6,7 @@ import com.kakao.smartmemo.Contract.MainContract
 import com.kakao.smartmemo.Model.FolderModel
 import com.kakao.smartmemo.Model.UserModel
 
-class MainPresenter : MainContract.Presenter,MainContract.onMainListener{
+class MainPresenter : MainContract.Presenter,MainContract.OnMainListener{
 
     private var view : MainContract.View
     var folderModel: FolderModel
@@ -36,14 +36,11 @@ class MainPresenter : MainContract.Presenter,MainContract.onMainListener{
         userModel.checkFolderMember(groupId,groupName)
     }
 
-
-
     override fun onSuccess() {
         view.onSuccess()
     }
 
     override fun onFailure() {
-        Log.e("groupdata 받아오기 실패", "실패!!!")
+        Log.e("MainPresenter", "groupdata 받아오기 실패")
     }
-
 }

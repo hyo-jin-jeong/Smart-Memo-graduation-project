@@ -6,7 +6,7 @@ interface MemoDialogContract {
     }
 
     interface Presenter {
-        fun setMemoDialogAdatperModel(model: MemoDialogAdapterContract.Model)
-        fun setMemoDialogAdatperView(view: MemoDialogAdapterContract.View)
+        fun setMemoDialogAdapterModel(model: MemoDialogAdapterContract.Model)
+        fun setMemoDialogAdapterView(view: MemoDialogAdapterContract.View)
     }
 }

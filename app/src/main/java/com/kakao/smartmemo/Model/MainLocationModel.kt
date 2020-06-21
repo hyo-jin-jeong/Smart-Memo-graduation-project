@@ -17,9 +17,7 @@ class MainLocationModel {
     fun convertAddressFromPoint(x: String, y: String) {
 
         val apiClient = ApiClient()
-        val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(
-            ApiInterface::class.java
-        )
+        val apiInterface: ApiInterface = apiClient.getApiClient()!!.create(ApiInterface::class.java)
 
         longitude = x
         latitude = y

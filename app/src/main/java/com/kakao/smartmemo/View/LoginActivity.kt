@@ -17,6 +17,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.kakao.smartmemo.Contract.LoginContract
+import com.kakao.smartmemo.Object.UserObject
 import com.kakao.smartmemo.Presenter.LoginPresenter
 import com.kakao.smartmemo.R
 
@@ -48,14 +49,10 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
                 loginDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
                 loginDialog.setMessage("로그인 하는 중")
                 loginDialog.show()
-                presenter.checkUser(this, email.text.toString(), pw.text.toString())
+                presenter.checkUser(this, email.text.toString().trim(), pw.text.toString().trim())
             } else {
                 Toast.makeText(applicationContext, "로그인 중입니다. 잠시만 기다려주십시오.", Toast.LENGTH_SHORT).show()
             }
-            //else {
-            //Toast.makeText(this, "다시 입력해주세요.", Toast.LENGTH_SHORT).show()
-            // 나중에 애니메이션 넣기
-            //}
         }
 
         val searchInfoButton = findViewById<Button>(R.id.search_id_pw)
@@ -77,14 +74,21 @@ class LoginActivity: AppCompatActivity(), LoginContract.View {
         }
 
     }
-//    졸작 최종 완성되면 주석해제하기
-//    override fun onResume() {
-//        super.onResume()
-//        if (UserObject.email != null && UserObject.password != null) {
-//            email.setText(UserObject.email)
-//            pw.setText(UserObject.password)
-//        }
-//    }
+
+    override fun onStart() {
+        super.onStart()
+        if(presenter.checkCurrentUser()) {
+            startMainActivity()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (UserObject.email != null && UserObject.password != null) {
+            email.setText(UserObject.email)
+            pw.setText(UserObject.password)
+        }
+    }
 
     override fun startMainActivity() {
         if(intent.hasExtra("value")) {

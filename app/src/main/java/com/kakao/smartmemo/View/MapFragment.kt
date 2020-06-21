@@ -70,8 +70,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     private var convertedAddress: String? = null
     private var currentLocation: Location? = null
 
-    private var statusTodo =""
-    private var statusMemo=""
     private lateinit var cont: Context
     private lateinit var v:View
     private var btnClickCount = 0
@@ -179,10 +177,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
     override fun onStart() {
         super.onStart()
 
@@ -212,7 +206,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         usingMapView = false
         mapViewContainer.removeAllViews()
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater)
@@ -325,7 +318,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
 
         val searchManager = this.context!!.getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchView.setSearchableInfo(searchManager.getSearchableInfo((activity as MainActivity).componentName))
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -456,7 +448,6 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
         //이거는 확인하고 시간있으면 고쳐야해서 둠
         p0!!.setOnTouchListener(object : View.OnTouchListener {
             private val longClickDuration = 1500L
-
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 if (event?.action == MotionEvent.ACTION_UP) {
                     if ((System.currentTimeMillis() - then) > longClickDuration) {
@@ -520,24 +511,15 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
     }
 
 
-    override fun onCurrentLocationUpdateFailed(p0: MapView?) {
-    }
+    override fun onCurrentLocationUpdateFailed(p0: MapView?) { }
 
-    override fun onCurrentLocationUpdate(p0: MapView?, p1: MapPoint?, p2: Float) {
+    override fun onCurrentLocationUpdate(p0: MapView?, p1: MapPoint?, p2: Float) { }
 
-    }
+    override fun onCurrentLocationUpdateCancelled(p0: MapView?) { }
 
-    override fun onCurrentLocationUpdateCancelled(p0: MapView?) {
+    override fun onCurrentLocationDeviceHeadingUpdate(p0: MapView?, p1: Float) { }
 
-    }
-
-    override fun onCurrentLocationDeviceHeadingUpdate(p0: MapView?, p1: Float) {
-
-    }
-
-    override fun onReverseGeoCoderFailedToFindAddress(p0: MapReverseGeoCoder?) {
-
-    }
+    override fun onReverseGeoCoderFailedToFindAddress(p0: MapReverseGeoCoder?) { }
 
     override fun onReverseGeoCoderFoundAddress(p0: MapReverseGeoCoder?, p1: String?) {
         p0.toString()
@@ -588,7 +570,7 @@ class MapFragment : Fragment(), MapView.POIItemEventListener, MapView.MapViewEve
                 }
                 m++
             }
-        }else{
+        } else{
             memo = placeList
             for (i in memo) {
                 var mapPoint = MapPoint.mapPointWithGeoCoord(i.latitude, i.longitude)

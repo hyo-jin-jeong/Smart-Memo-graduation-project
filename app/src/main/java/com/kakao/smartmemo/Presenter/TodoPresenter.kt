@@ -56,9 +56,7 @@ class TodoPresenter : TodoContract.Presenter, TodoContract.OnTodoListener {
         view.showAllTodo(todoData)
     }
 
-    override fun onFailure() {
-
-    }
+    override fun onFailure() { }
 
     override fun onGroupSuccess(todoList: MutableList<TodoData>) {
         view.showAllTodo(todoList)
@@ -67,5 +65,4 @@ class TodoPresenter : TodoContract.Presenter, TodoContract.OnTodoListener {
     override fun onOnePlaceSuccess(placeList: MutableList<PlaceData>) {
         view.sendPlaceData(placeList)
     }
-
 }

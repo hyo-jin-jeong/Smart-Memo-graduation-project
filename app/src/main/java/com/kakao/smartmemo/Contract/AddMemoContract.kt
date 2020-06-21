@@ -8,7 +8,6 @@ interface AddMemoContract {
     }
     interface Presenter{
         fun addMemo(memoData: MemoData)
-        fun updateMemo(memoData: MemoData)
         fun deleteMemoInfo(groupId:String,memoId:String)
     }
 }

@@ -10,7 +10,6 @@ import com.kakao.smartmemo.Data.MemoData
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.R
 import kotlinx.android.synthetic.main.memo_list_view.view.*
-import kotlinx.android.synthetic.main.memo_list_view.view.memo_date
 
 
 class MemoListAdapter(private val memoList: MutableList<MemoData>) : RecyclerView.Adapter<MemoListAdapter.MainViewHolder>(), MemoAdapterContract.Model, MemoAdapterContract.View { //memoList RecycleView

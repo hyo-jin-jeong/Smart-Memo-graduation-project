@@ -6,8 +6,6 @@ interface ModifyGroupContract {
         fun deleteGroup(groupId: String)
     }
 
-    interface View {
-
-    }
+    interface View {  }
 
 }

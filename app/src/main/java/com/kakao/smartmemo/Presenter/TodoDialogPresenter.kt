@@ -11,6 +11,7 @@ class TodoDialogPresenter: TodoDialogContract.Presenter {
     constructor(view: TodoDialogContract.View) {
         this.view = view
     }
+
     override fun setTodoDialogAdapterModel(model: TodoDialogAdapterContract.Model) {
         adapterModel = model
     }

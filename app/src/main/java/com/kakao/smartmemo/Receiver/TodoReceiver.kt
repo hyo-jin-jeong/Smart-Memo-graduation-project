@@ -18,11 +18,11 @@ class TodoReceiver : BroadcastReceiver(){
         val notificationManager: NotificationManager = context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notificationIntent = Intent(context, MainActivity::class.java)
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
 
         val pendingIntent = PendingIntent.getActivity(context, 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val notificationbuilder  = NotificationCompat.Builder(context, CHANNEL_ID)
+        val notificationBuilder  = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(pendingIntent) // 알림을 눌렀을때 실행할 작업 인텐트 설정
             .setWhen(System.currentTimeMillis()) //miliSecond단위로 넣어주면 내부적으로 파싱함.
@@ -34,11 +34,11 @@ class TodoReceiver : BroadcastReceiver(){
             .setFullScreenIntent(pendingIntent,true) //헤드업알림
 
         //헤드업알림
-        val contentview = RemoteViews(context.packageName, R.layout.todolist_headup_alarm)
-        contentview.setTextViewText(R.id.notification_Title, "T O D O L I S T")
-        contentview.setTextViewText(R.id.todolist_textView, "1. 영양제 먹기\n2. 학교 가기\n3. 병원가기\n4. 비타민 사기\n5. 카페")
-        contentview.setTextViewText(R.id.todolist_location, "● 삼성약국/녹십자약국/온누리약국")
-        notificationbuilder.setContent(contentview)
+        val contentView = RemoteViews(context.packageName, R.layout.todolist_headup_alarm)
+        contentView.setTextViewText(R.id.notification_Title, "T O D O L I S T")
+        contentView.setTextViewText(R.id.todolist_textView, "1. 영양제 먹기\n2. 학교 가기\n3. 병원가기\n4. 비타민 사기\n5. 카페")
+        contentView.setTextViewText(R.id.todolist_location, "● 삼성약국/녹십자약국/온누리약국")
+        notificationBuilder.setContent(contentView)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { //Oreo 버전 이후부터 channel설정해줘야함.
             val serviceChannel = NotificationChannel(
@@ -50,12 +50,12 @@ class TodoReceiver : BroadcastReceiver(){
             notificationManager.createNotificationChannel(serviceChannel)
         }
 
-        notificationManager?.notify(9999, notificationbuilder.build())
+        notificationManager?.notify(9999, notificationBuilder.build())
     }
 
     companion object {
-        val CHANNEL_ID = "TODO"
-        val CHANNEL_NAME = "알림채널 TODO"
-        val CHANNEL_DESCRITION = "알림채널 TODO 리시버"
+        const val CHANNEL_ID = "TODO"
+        const val CHANNEL_NAME = "알림채널 TODO"
+        const val CHANNEL_DESCRITION = "알림채널 TODO 리시버"
     }
 }

@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.*
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.kakao.smartmemo.Adapter.ManagementAdapter
 import com.kakao.smartmemo.Contract.ManagementFragmentContract
@@ -17,9 +19,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 class ManagementFragment : Fragment(), ManagementFragmentContract.View {
 
     private lateinit var presenter : ManagementFragmentContract.Presenter
-    lateinit var userEmail : TextView
-    lateinit var userName : TextView
-    lateinit var userAddr : TextView
+    private lateinit var userEmail : TextView
+    private lateinit var userName : TextView
+    private lateinit var userAddr : TextView
     lateinit var kakaoAlarmTime : TextView
     lateinit var changeInfo : TextView
     lateinit var cont : Context

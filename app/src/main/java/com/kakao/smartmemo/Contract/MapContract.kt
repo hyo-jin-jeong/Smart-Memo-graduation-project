@@ -17,12 +17,12 @@ interface MapContract {
         fun getTodoPlaceAlarm(status: String)
     }
     interface OnMapListener{
-        fun onSuccess(mapPOIItem: MapPOIItem, locationName: String?)
-        fun onFailer()
+        fun onMapSuccess(mapPOIItem: MapPOIItem, locationName: String?)
+        fun onMapFailure()
     }
     interface OnPlaceListener {
-        fun onSuccess(placeList: MutableList<PlaceData>, status: String)
-        fun onFailure()
+        fun onPlaceSuccess(placeList: MutableList<PlaceData>, status: String)
+        fun onPlaceFailure()
     }
 
 }

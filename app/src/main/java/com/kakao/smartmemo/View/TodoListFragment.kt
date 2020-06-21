@@ -27,7 +27,7 @@ import java.time.LocalDateTime
 class TodoListFragment : Fragment(), TodoContract.View {
 
     private lateinit var presenter : TodoContract.Presenter
-    private lateinit var todolist : ListView
+    private lateinit var todoList : ListView
     private lateinit var bottomNavigationView : BottomNavigationView
     private lateinit var textViewTodoList : TextView
     private lateinit var adapter : TodoAdapter
@@ -57,8 +57,8 @@ class TodoListFragment : Fragment(), TodoContract.View {
 
         presenter = TodoPresenter(this)
 
-        todolist = view.findViewById(R.id.todolist) as ListView
-        todolist.setOnItemClickListener { parent, view, position, id ->
+        todoList = view.findViewById(R.id.todolist) as ListView
+        todoList.setOnItemClickListener { parent, view, position, id ->
             onePlaceIntent = Intent(cont, AddTodo::class.java)
             if (todoArrayList[position].setPlaceAlarm) {
                 presenter.getOnePlaceTodo(todoArrayList[position].todoId)
@@ -146,18 +146,18 @@ class TodoListFragment : Fragment(), TodoContract.View {
         if (todoData.isEmpty()) {
             todoArrayList.clear()
             noTodoTextView.visibility = VISIBLE
-            todolist.visibility = GONE
+            todoList.visibility = GONE
         } else {
             todoArrayList.clear()
             todoArrayList = todoData
             noTodoTextView.visibility = GONE
-            todolist.visibility = VISIBLE
+            todoList.visibility = VISIBLE
         }
 
         adapter = TodoAdapter(cont, todoArrayList)
-        todolist.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-        todolist.isClickable = true
-        todolist.adapter = adapter
+        todoList.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        todoList.isClickable = true
+        todoList.adapter = adapter
         presenter.setTodoAdapterModel(adapter)
         presenter.setTodoAdapterView(adapter)
         adapter.notifyAdapter()
@@ -191,9 +191,9 @@ class TodoListFragment : Fragment(), TodoContract.View {
                             }
                         }
                         presenter.deleteTodo(selectedItem)
-                        todolist.clearChoices()
+                        todoList.clearChoices()
                         adapter = TodoAdapter(cont, todoArrayList)
-                        todolist.adapter = adapter
+                        todoList.adapter = adapter
                         bottomNavigationView.visibility = GONE //하단메뉴 안보이게
                         presenter.setTodoAdapterModel(adapter)
                         presenter.setTodoAdapterView(adapter)
@@ -210,7 +210,7 @@ class TodoListFragment : Fragment(), TodoContract.View {
             }
         }
         todoDeleteAdapter = TodoDeleteAdapter(cont, todoArrayList)
-        todolist.adapter = todoDeleteAdapter
+        todoList.adapter = todoDeleteAdapter
         presenter.setTodoDeleteAdapterModel(todoDeleteAdapter)
         presenter.setTodoDeleteAdapterView(todoDeleteAdapter)
         bottomNavigationView.visibility = VISIBLE //하단메뉴 보이게

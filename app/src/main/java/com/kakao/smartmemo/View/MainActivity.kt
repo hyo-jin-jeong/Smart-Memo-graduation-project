@@ -3,8 +3,10 @@ package com.kakao.smartmemo.View
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -26,9 +28,11 @@ import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Model.MainLocationModel
 import com.kakao.smartmemo.Presenter.MainPresenter
 import com.kakao.smartmemo.R
-
+import com.kakao.smartmemo.Receiver.AppNetwork
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View {
+    private lateinit var filter: IntentFilter
+    private lateinit var receiver: AppNetwork
     lateinit var presenter : MainContract.Presenter
     private lateinit var myToolbar: Toolbar
     private lateinit var fabRotateStart:Animation
@@ -38,9 +42,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     private lateinit var fab:FloatingActionButton
     private lateinit var fabMemo:FloatingActionButton
     private lateinit var fabTodo:FloatingActionButton
-    lateinit var mDrawerLayout: DrawerLayout
+    private lateinit var mDrawerLayout: DrawerLayout
     private val context: Context = this
-    var openFlag:Boolean = false
+    private var openFlag:Boolean = false
 
 
     private lateinit var mainLocationModel: MainLocationModel
@@ -53,6 +57,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        receiver = AppNetwork()
+        registerReceiver(receiver, filter)
 
         if(intent.hasExtra("value")) {
             val value = intent.getStringExtra("value")
@@ -100,13 +108,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
 
         tabs.getTabAt(2)?.icon?.setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN)
 
-        // Toolbar
         myToolbar = findViewById(R.id.toolbar)
 
         setSupportActionBar(myToolbar)
 
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
 
         setFloatingIcon()
         fab.setOnClickListener(this)
@@ -121,7 +127,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         val handlerThread = HandlerThread(MainActivity::class.java.simpleName)
         handlerThread.start()
         mServiceHandler = Handler(handlerThread.looper)
-
     }
 
     private fun createLocationRequest() {
@@ -228,5 +233,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,MainContract.View
         dialog.dialogDismiss()
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
+    }
 }
