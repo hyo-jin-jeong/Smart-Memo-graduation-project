@@ -1,12 +1,11 @@
 package com.kakao.smartmemo.Presenter
 
+import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Contract.TodoDateAdapterContract
 import com.kakao.smartmemo.Contract.TodoPlaceAdapterContract
-import com.kakao.smartmemo.Contract.AddTodoContract
 import com.kakao.smartmemo.Data.PlaceData
 import com.kakao.smartmemo.Data.TodoData
 import com.kakao.smartmemo.Model.TodoModel
-import kotlin.collections.ArrayList
 
 class AddTodoPresenter : AddTodoContract.Presenter, AddTodoContract.OnAddTodoListener {
 
@@ -62,8 +61,7 @@ class AddTodoPresenter : AddTodoContract.Presenter, AddTodoContract.OnAddTodoLis
         view.onSuccess(placeList)
     }
 
-    override fun onFailure() {
-    }
+    override fun onFailure() { }
 
     override fun onAddSuccess() {
         view.onAddSuccess()

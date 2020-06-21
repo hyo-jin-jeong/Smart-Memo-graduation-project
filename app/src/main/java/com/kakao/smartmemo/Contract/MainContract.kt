@@ -7,11 +7,12 @@ interface MainContract {
         fun getGroupInfo()
         fun checkFolderMember(groupId: String?, groupName: String?)
     }
+
     interface View {
        fun onSuccess()
     }
 
-    interface onMainListener {
+    interface OnMainListener {
         fun onSuccess()
         fun onFailure()
     }

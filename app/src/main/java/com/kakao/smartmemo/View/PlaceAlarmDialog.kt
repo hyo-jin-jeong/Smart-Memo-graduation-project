@@ -1,7 +1,9 @@
 package com.kakao.smartmemo.View
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +18,6 @@ class PlaceAlarmDialog(todo: MutableList<PlaceAlarmData>) : Fragment(), TodoDial
     private lateinit var presenter : TodoDialogPresenter
     private lateinit var placeAlarmList: RecyclerView
     private var todo = todo
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +36,4 @@ class PlaceAlarmDialog(todo: MutableList<PlaceAlarmData>) : Fragment(), TodoDial
 
         return view
     }
-
-
 }

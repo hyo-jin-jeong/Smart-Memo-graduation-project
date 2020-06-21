@@ -9,11 +9,10 @@ interface PlaceAlarmDetailContract {
 
     interface View {
         fun getLocationName(mapPOIItem: MapPOIItem, locationName: String?)
-
     }
 
     interface OnTodoDetailListener{
         fun onSuccess(mapPOIItem: MapPOIItem, locationName: String?)
-        fun onFailer()
+        fun onFailure()
     }
 }

@@ -17,10 +17,6 @@ class AddMemoPresenter: AddMemoContract.Presenter {
         model.addMemo(memoData)
     }
 
-    override fun updateMemo(memoData: MemoData) {
-
-    }
-
     override fun deleteMemoInfo(groupId:String,memoId:String) {
         model.deleteMemoInfo(groupId,memoId)
     }

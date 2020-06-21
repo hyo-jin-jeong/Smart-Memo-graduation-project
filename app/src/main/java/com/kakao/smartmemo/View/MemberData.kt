@@ -18,11 +18,11 @@ import com.kakao.smartmemo.R
 
 class MemberData :AppCompatActivity() , MemberDataContract.View{
     lateinit var presenter:MemberDataContract.Presenter
-    lateinit var memberToolbar: Toolbar
-    lateinit var userEmail : TextView
-    lateinit var userName : TextView
-    lateinit var userAddr : TextView
-    lateinit var kakaoAlarmTime : TextView
+    private lateinit var memberToolbar: Toolbar
+    private lateinit var userEmail : TextView
+    private lateinit var userName : TextView
+    private lateinit var userAddr : TextView
+    private lateinit var kakaoAlarmTime : TextView
     lateinit var changeInfo : TextView
     lateinit var memberExit : Button
     lateinit var logoutLayout : RelativeLayout
@@ -61,7 +61,7 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
             userName.text = UserObject.user_name
             userAddr.text = UserObject.addr
             kakaoAlarmTime.text = UserObject.kakao_alarm_time
-        } else { // null 이라면
+        } else {
             Toast.makeText(applicationContext, "정보를 가져오는데 실패했습니다.\n앱을 다시 시작해주세요.", Toast.LENGTH_SHORT).show()
         }
 
@@ -143,7 +143,6 @@ class MemberData :AppCompatActivity() , MemberDataContract.View{
                 finish()
                 return true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }

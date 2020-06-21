@@ -29,22 +29,19 @@ class MapPresenter: MapContract.Presenter, MapContract.OnMapListener, MapContrac
         todoModel.getPlaceTodo(status)
     }
 
-    override fun onSuccess(mapPOIItem: MapPOIItem, locationName: String?) {
+    override fun onMapSuccess(mapPOIItem: MapPOIItem, locationName: String?) {
         view.getLocationName(mapPOIItem, locationName)
     }
 
-    override fun onFailer() {
-
-    }
+    override fun onMapFailure() { }
 
     override fun convertAddressFromMapPOIItem(mapPOIItem: MapPOIItem) {
         locationModel.convertAddressFromMapPOIItem(mapPOIItem)
     }
 
-    override fun onSuccess(placeList: MutableList<PlaceData>, status: String) {
+    override fun onPlaceSuccess(placeList: MutableList<PlaceData>, status: String) {
         view.onSuccess(placeList, status)
     }
 
-    override fun onFailure() {
-    }
+    override fun onPlaceFailure() { }
 }

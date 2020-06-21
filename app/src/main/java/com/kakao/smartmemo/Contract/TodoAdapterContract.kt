@@ -6,6 +6,5 @@ interface TodoAdapterContract {
         fun notifyAdapter()
     }
 
-    interface Model {
-    }
+    interface Model { }
 }

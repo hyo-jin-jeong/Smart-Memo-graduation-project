@@ -464,6 +464,5 @@ class LocationUpdatesService : Service() {
          */
         private val NOTIFICATION_ID_NOTIFICATION = 123
         private val NOTIFICATION_ID = 12345678
-        const val MSG_SEND_TO_SERVICE = 3
     }
 }

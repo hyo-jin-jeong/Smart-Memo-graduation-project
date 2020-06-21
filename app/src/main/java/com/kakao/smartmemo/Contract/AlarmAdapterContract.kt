@@ -6,12 +6,5 @@ interface AlarmAdapterContract {
         fun notifyAdapter()
     }
 
-    interface Model {
-        fun addTimeAlarm()
-        fun addPlaceAlarm()
-        fun updateTimeAlarm()
-        fun updatePlaceAlarm()
-        fun deleteTimeAlarm()
-        fun deletePlaceAlarm()
-    }
+    interface Model {  }
 }

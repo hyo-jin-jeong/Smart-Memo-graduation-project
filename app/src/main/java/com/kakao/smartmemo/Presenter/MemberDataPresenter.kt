@@ -5,7 +5,7 @@ import com.kakao.smartmemo.Model.UserModel
 
 class MemberDataPresenter : MemberDataContract.Presenter, MemberDataContract.OnDeleteUserListener{
     private var view : MemberDataContract.View
-    var userModel: UserModel
+    private var userModel: UserModel
 
     constructor(view:MemberDataContract.View){
         this.view= view

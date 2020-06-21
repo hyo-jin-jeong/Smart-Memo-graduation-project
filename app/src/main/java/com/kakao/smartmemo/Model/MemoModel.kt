@@ -80,7 +80,6 @@ class MemoModel {
                     }
                 })
         }
-
     }
 
     fun getPlaceMemo() {
@@ -110,7 +109,7 @@ class MemoModel {
                                                     )
                                                 )
                                                 if (i == FolderObject.folderInfo.size - 1 && j == memoIdSnapshot.children.count() - 1) {
-                                                    onPlaceListener.onSuccess(placeList, "memo")
+                                                    onPlaceListener.onPlaceSuccess(placeList, "memo")
                                                     i = 0
                                                 } else if (j == memoIdSnapshot.children.count() - 1) {
                                                     j = 0
@@ -126,7 +125,7 @@ class MemoModel {
                         } else {
                             if (i == FolderObject.folderInfo.size - 1) {
                                 i = 0
-                                onPlaceListener.onSuccess(placeList, "memo")
+                                onPlaceListener.onPlaceSuccess(placeList, "memo")
                             }
                             i++
                         }
@@ -149,7 +148,6 @@ class MemoModel {
 
 
     fun getFolderMemo(folderId: String) {
-        var j = 0
         var memoList = mutableListOf<MemoData>()
         firebaseGroup.child(folderId).child("MemoInfo")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -163,7 +161,6 @@ class MemoModel {
                                     override fun onDataChange(groupMemoSnapshot: DataSnapshot) {
                                         with(groupMemoSnapshot) {
                                             this.getValue(MemoData::class.java)?.let { memoList.add(it) }
-
                                             if (memoList.size == memoIdSnapshot.children.count()) {
                                                 onMemoListener.onSuccess(memoList)
                                             }
@@ -173,7 +170,7 @@ class MemoModel {
                                 })
 
                         }
-                    }else{
+                    } else{
                         onMemoListener.onSuccess(memoList)
                     }
 
@@ -210,7 +207,5 @@ class MemoModel {
             })
         }
     }
-
-
 }
 

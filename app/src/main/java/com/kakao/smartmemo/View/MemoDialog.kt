@@ -30,8 +30,8 @@ class MemoDialog(memo: MutableList<MemoData>) : Fragment(), MemoDialogContract.V
         var memoAdapter = MemoDialogAdapter(memo)
         recyclerView = view.findViewById<RecyclerView?>(R.id.alarm_settings_view) as RecyclerView
         recyclerView.adapter = memoAdapter
-        presenter.setMemoDialogAdatperView(memoAdapter)
-        presenter.setMemoDialogAdatperModel(memoAdapter)
+        presenter.setMemoDialogAdapterView(memoAdapter)
+        presenter.setMemoDialogAdapterModel(memoAdapter)
         recyclerView.layoutManager = LinearLayoutManager(view.context)
 
         return view

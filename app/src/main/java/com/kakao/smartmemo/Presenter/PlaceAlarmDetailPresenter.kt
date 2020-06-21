@@ -17,9 +17,7 @@ class PlaceAlarmDetailPresenter: PlaceAlarmDetailContract.Presenter, PlaceAlarmD
         view.getLocationName(mapPOIItem, locationName)
     }
 
-    override fun onFailer() {
-
-    }
+    override fun onFailure() { }
 
     override fun convertAddressFromMapPOIItem(mapPOIItem: MapPOIItem) {
         locationModel.convertAddressFromMapPOIItem(mapPOIItem)

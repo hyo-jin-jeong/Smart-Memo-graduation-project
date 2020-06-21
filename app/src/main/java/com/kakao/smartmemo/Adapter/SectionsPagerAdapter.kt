@@ -4,9 +4,12 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.kakao.smartmemo.*
 import com.kakao.smartmemo.Contract.MainAdapterContract
-import com.kakao.smartmemo.View.*
+import com.kakao.smartmemo.R
+import com.kakao.smartmemo.View.ManagementFragment
+import com.kakao.smartmemo.View.MapFragment
+import com.kakao.smartmemo.View.MemoListFragment
+import com.kakao.smartmemo.View.TodoListFragment
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_text_1,

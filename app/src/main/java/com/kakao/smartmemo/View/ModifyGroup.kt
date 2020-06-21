@@ -6,8 +6,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.kakao.kakaolink.v2.KakaoLinkResponse
@@ -18,25 +18,24 @@ import com.kakao.message.template.FeedTemplate
 import com.kakao.message.template.LinkObject
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
-import com.kakao.smartmemo.R
 import com.kakao.smartmemo.Contract.ModifyGroupContract
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Presenter.ModifyGroupPresenter
+import com.kakao.smartmemo.R
 import com.kakao.util.helper.log.Logger
 
 class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupContract.View{
 
     lateinit var presenter: ModifyGroupContract.Presenter
-
     lateinit var toolbar: Toolbar
-    lateinit var folderNameEdit : EditText
-    lateinit var folderNameText :  TextView
-    lateinit var themeColor : View
-    lateinit var folderMemberSet:TextView
-    lateinit var colorPicker: ImageView
-    lateinit var groupExitBtn : Button
-    lateinit var kakaoImg : ImageView
-    lateinit var kakaoText : TextView
+    private lateinit var folderNameEdit : EditText
+    private lateinit var folderNameText :  TextView
+    private lateinit var themeColor : View
+    private lateinit var folderMemberSet:TextView
+    private lateinit var colorPicker: ImageView
+    private lateinit var groupExitBtn : Button
+    private lateinit var kakaoImg : ImageView
+    private lateinit var kakaoText : TextView
     lateinit var folderId : String
 
     private var count = 0
@@ -163,7 +162,7 @@ class ModifyGroup : AppCompatActivity(), ColorPickerDialogListener, ModifyGroupC
         themeColor.setBackgroundColor(color)
     }
 
-    fun kakaoLink() {
+    private fun kakaoLink() {
         val params = FeedTemplate
             .newBuilder(
                 ContentObject.newBuilder(

@@ -5,7 +5,6 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 
-
 interface ApiInterface {
     //키워드로 검색
     @GET("v2/local/search/keyword.json")

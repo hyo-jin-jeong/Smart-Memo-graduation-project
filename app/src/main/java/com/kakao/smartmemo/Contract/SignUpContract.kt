@@ -5,14 +5,14 @@ import android.app.Activity
 interface SignUpContract {
     interface Presenter {
         fun addUser(context: Activity, email:String, pw:String, name:String, address:String)
-        fun addFirestoreUser()
+        fun addFirebaseUser()
     }
     interface View {
         fun onSignUpSuccess(message: String)
         fun onSignUpFailure(message: String)
     }
 
-    interface onSignUpListener {
+    interface OnSignUpListener {
         fun onSuccess(message: String)
         fun onFailure(message: String)
     }

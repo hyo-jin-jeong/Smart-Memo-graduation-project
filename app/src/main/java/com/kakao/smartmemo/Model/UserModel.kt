@@ -10,24 +10,21 @@ import com.kakao.smartmemo.Contract.*
 import com.kakao.smartmemo.Object.FolderObject
 import com.kakao.smartmemo.Object.UserObject
 
-
 class UserModel {
     private lateinit var onLoginListener: LoginContract.OnLoginListener
-    private lateinit var onSignUpListener: SignUpContract.onSignUpListener
+    private lateinit var onSignUpListener: SignUpContract.OnSignUpListener
     private lateinit var onPasswordChangeListener: MemberChangeContract.OnPasswordChangeSuccessListener
     private lateinit var onDeleteUserListener: MemberDataContract.OnDeleteUserListener
-    private lateinit var onMainListener: MainContract.onMainListener
+    private lateinit var onMainListener: MainContract.OnMainListener
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var firebaseUser = FirebaseDatabase.getInstance().reference.child("User")
     private var firebaseGroup = FirebaseDatabase.getInstance().reference.child("Group")
-
-    constructor()
 
     constructor(onLoginListener: LoginContract.OnLoginListener) {
         this.onLoginListener = onLoginListener
     }
 
-    constructor(onSignUpListener: SignUpContract.onSignUpListener) {
+    constructor(onSignUpListener: SignUpContract.OnSignUpListener) {
         this.onSignUpListener = onSignUpListener
     }
 
@@ -38,7 +35,7 @@ class UserModel {
     constructor(onDeleteUserListener: MemberDataContract.OnDeleteUserListener) {
         this.onDeleteUserListener = onDeleteUserListener
     }
-    constructor(onMainListener:MainContract.onMainListener) {
+    constructor(onMainListener:MainContract.OnMainListener) {
         this.onMainListener = onMainListener
     }
 
@@ -57,17 +54,9 @@ class UserModel {
                 onLoginListener.onSuccess()
             }
         })
-
-
     }
 
-    fun addAuthUser(
-        context: Activity,
-        email: String,
-        pw: String,
-        name: String,
-        address: String
-    ) { // user 추가하는 함수
+    fun addAuthUser(context: Activity, email: String, pw: String, name: String, address: String) {
         auth.createUserWithEmailAndPassword(email, pw).addOnCompleteListener(context) { task ->
             if (task.isSuccessful) {
                 UserObject.uid = auth.uid.toString()
@@ -82,7 +71,7 @@ class UserModel {
         }
     }
 
-    fun addFirestoreUser() {
+    fun addFirebaseUser() {
         val groupId = "기본폴더" + System.currentTimeMillis()
         firebaseUser.updateChildren(
             mapOf(UserObject.uid to UserObject)
@@ -109,11 +98,11 @@ class UserModel {
         }
     }
 
-    fun deleteUser() { // collection에서 user 삭제하는 함수
+    fun deleteUser() {
 
     }
 
-    fun deleteAuth() { // authentication에서 사용자 삭제하는 함수
+    fun deleteAuth() {
         val user = auth.currentUser
         user?.delete()?.continueWith { task ->
             if (task.isSuccessful) {
@@ -125,11 +114,17 @@ class UserModel {
         }
     }
 
-    fun checkUser(
-        context: Activity,
-        email: String,
-        password: String
-    ) { // 유효한 사용자인지 FirebaseAuth를 사용하여 확인
+    fun checkCurrentUser() : Boolean {
+        return if (auth.currentUser != null) {
+            UserObject.uid = auth.uid.toString()
+            getProfile()
+            true
+        } else {
+            false
+        }
+    }
+
+    fun checkUser(context: Activity, email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(context) { task ->
             if (task.isSuccessful) {
                 with(UserObject) {
@@ -170,7 +165,6 @@ class UserModel {
                 this.folderInfo.clear()
             }
             auth.signOut()
-        } else {
         }
     }
 
@@ -193,7 +187,6 @@ class UserModel {
     fun checkFolderMember(groupId: String?, groupName: String?) {
         firebaseGroup.child(groupId.toString()).child("MemberInfo").addListenerForSingleValueEvent(object:ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {}
-
             override fun onDataChange(memberSnapshot: DataSnapshot) {
                 memberSnapshot.children.forEach {userEmail->
                     if(userEmail.value != UserObject.email){
@@ -201,10 +194,8 @@ class UserModel {
                         firebaseUser.child(UserObject.uid).child("GroupInfo").updateChildren(mapOf(groupId to groupName))
                         onMainListener.onSuccess()
                     }
-
                 }
             }
-
         })
     }
 }

@@ -43,7 +43,6 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
         }
         setSupportActionBar(memoToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -51,7 +50,7 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
         menuInflater.inflate(R.menu.select_options_in_showmemo, menu)
         return true
     }
-    // 뒤로가기 버튼 누르면 이전 액티비티로 돌아가는 것을 판단해주는 함수
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -72,6 +71,7 @@ class ShowMemo : AppCompatActivity(), ShowMemoContract.View {
         }
         return super.onOptionsItemSelected(item)
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         if (resultCode == Activity.RESULT_OK) {

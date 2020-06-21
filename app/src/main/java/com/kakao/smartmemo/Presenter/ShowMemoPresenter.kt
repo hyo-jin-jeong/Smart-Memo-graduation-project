@@ -13,14 +13,6 @@ class ShowMemoPresenter: ShowMemoContract.Presenter {
         this.model = MemoModel()
     }
 
-    override fun getMemo() {
-
-    }
-
-    override fun updateMemo() {
-
-    }
-
     override fun deleteMemo(memoData: MemoData) {
         model.deleteOneMemo(memoData)
     }

@@ -5,10 +5,9 @@ interface ManagementFragmentContract {
 
 
     }
+
     interface  Presenter{
         fun setManagementAdapterView(adapter: ManagementAdapterContract.View)
         fun setManagementAdapterModel(adapter: ManagementAdapterContract.Model)
-
-
     }
 }

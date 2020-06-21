@@ -11,6 +11,7 @@ interface MemberChangeContract {
         fun checkPassword(confirmPassword: String) :Boolean{return true}
         fun deleteUser(){}
     }
+
     interface  View{
         fun onSuccess()
         fun onFailure()

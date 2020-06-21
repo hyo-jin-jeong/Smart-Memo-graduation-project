@@ -12,11 +12,11 @@ class MemoDialogPresenter : MemoDialogContract.Presenter {
         this.view = view
     }
 
-    override fun setMemoDialogAdatperModel(model: MemoDialogAdapterContract.Model) {
+    override fun setMemoDialogAdapterModel(model: MemoDialogAdapterContract.Model) {
         adapterModel = model
     }
 
-    override fun setMemoDialogAdatperView(view: MemoDialogAdapterContract.View) {
+    override fun setMemoDialogAdapterView(view: MemoDialogAdapterContract.View) {
         adapterView = view
         adapterView.onClickFunc = {onClickListener(it)}
     }

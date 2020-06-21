@@ -4,7 +4,7 @@ import android.app.Activity
 import com.kakao.smartmemo.Contract.SignUpContract
 import com.kakao.smartmemo.Model.UserModel
 
-class SignUpPresenter : SignUpContract.Presenter, SignUpContract.onSignUpListener {
+class SignUpPresenter : SignUpContract.Presenter, SignUpContract.OnSignUpListener {
     var userModel:UserModel
     private var view : SignUpContract.View
 
@@ -17,9 +17,10 @@ class SignUpPresenter : SignUpContract.Presenter, SignUpContract.onSignUpListene
         userModel.addAuthUser(context, email, pw, name, address)
     }
 
-    override fun addFirestoreUser() {
-        userModel.addFirestoreUser()
+    override fun addFirebaseUser() {
+        userModel.addFirebaseUser()
     }
+
     override fun onSuccess(message: String) {
         view.onSignUpSuccess(message)
     }

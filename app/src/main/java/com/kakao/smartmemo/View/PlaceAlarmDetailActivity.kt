@@ -10,9 +10,10 @@ import android.os.Bundle
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.*
-import android.view.Menu
-import android.view.MenuItem
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.SearchView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -36,7 +37,6 @@ import net.daum.mf.map.api.MapView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 
 class PlaceAlarmDetailActivity : AppCompatActivity(), PlaceAlarmDetailContract.View,
     MapView.POIItemEventListener, MapView.MapViewEventListener {

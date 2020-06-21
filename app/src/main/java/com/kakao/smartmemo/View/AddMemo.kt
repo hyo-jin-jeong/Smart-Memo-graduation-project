@@ -42,13 +42,12 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_memo)
-        //Toolbar 달기
+
         memoToolbar = findViewById<Toolbar>(R.id.addMemoToolbar)
         setSupportActionBar(memoToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         memoToolbar.title = resources.getString(R.string.write_memo)
 
-        //presenter 초기화
         presenter = AddMemoPresenter(this)
         titleEdit = findViewById(R.id.memo_title)
         dateText = findViewById(R.id.memo_date)
@@ -56,7 +55,6 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         selectGroupBtn = findViewById(R.id.select_group)
         groupName = findViewById(R.id.memo_group)
         placeNameText = findViewById(R.id.place_name)
-
 
         val date = Date(System.currentTimeMillis())
         val formatDate = SimpleDateFormat("yyyy.MM.dd")
@@ -91,8 +89,6 @@ class AddMemo : AppCompatActivity(), AddMemoContract.View {
         return super.onCreateOptionsMenu(menu)
     }
 
-
-    // 뒤로가기 버튼 누르면 이전 액티비티로 돌아가는 것을 판단해주는 함수
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
