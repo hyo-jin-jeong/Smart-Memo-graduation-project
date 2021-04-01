@@ -35,6 +35,7 @@ GPS 기반 메모 어플리케이션
 ![image](https://user-images.githubusercontent.com/55984573/113248980-e9fabb00-92f8-11eb-9c20-f0a5a43c0bbb.png)
 ![image](https://user-images.githubusercontent.com/55984573/113248987-ebc47e80-92f8-11eb-85c2-d7136ac357b5.png)
 
+![image](https://user-images.githubusercontent.com/55984573/113249062-0ac31080-92f9-11eb-987f-46769c39413a.png)
 
 
 ### 5. 프로젝트 기술 스택
