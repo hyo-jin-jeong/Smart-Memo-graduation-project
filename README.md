@@ -26,11 +26,11 @@ GPS 기반 메모 어플리케이션
 
 
 ### 4. 프로젝트 작동 모습
-#### 로그인
+#### - 로그인
 ![image](https://user-images.githubusercontent.com/55984573/113248939-dd766280-92f8-11eb-98e2-517690122593.png)
 ![image](https://user-images.githubusercontent.com/55984573/113248948-df402600-92f8-11eb-99b0-54dc0da8ffe1.png)
 
-#### 메모
+#### - 메모
 ![image](https://user-images.githubusercontent.com/55984573/113248955-e1a28000-92f8-11eb-8dc7-4389d3073693.png)
 ![image](https://user-images.githubusercontent.com/55984573/113248961-e36c4380-92f8-11eb-9f45-9498fc11f00b.png)
 ![image](https://user-images.githubusercontent.com/55984573/113248969-e5360700-92f8-11eb-98fa-025f6443dcc9.png)
