@@ -27,6 +27,8 @@ GPS 기반 메모 어플리케이션
 
 ### 4. 프로젝트 작동 모습
 ![image](https://user-images.githubusercontent.com/55984573/113248798-98eac700-92f8-11eb-88db-56335beef86a.png)
+![image](https://user-images.githubusercontent.com/55984573/113248876-b6b82c00-92f8-11eb-9ef2-e73d3b6c96ca.png)
+![image](https://user-images.githubusercontent.com/55984573/113248905-c8013880-92f8-11eb-860c-53d3c7fdf208.png)
 
 
 ### 5. 프로젝트 기술 스택
