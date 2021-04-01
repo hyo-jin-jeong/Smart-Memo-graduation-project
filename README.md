@@ -26,9 +26,15 @@ GPS 기반 메모 어플리케이션
 
 
 ### 4. 프로젝트 작동 모습
-![image](https://user-images.githubusercontent.com/55984573/113248798-98eac700-92f8-11eb-88db-56335beef86a.png)
-![image](https://user-images.githubusercontent.com/55984573/113248876-b6b82c00-92f8-11eb-9ef2-e73d3b6c96ca.png)
-![image](https://user-images.githubusercontent.com/55984573/113248905-c8013880-92f8-11eb-860c-53d3c7fdf208.png)
+![image](https://user-images.githubusercontent.com/55984573/113248939-dd766280-92f8-11eb-98e2-517690122593.png)
+![image](https://user-images.githubusercontent.com/55984573/113248948-df402600-92f8-11eb-99b0-54dc0da8ffe1.png)
+![image](https://user-images.githubusercontent.com/55984573/113248955-e1a28000-92f8-11eb-8dc7-4389d3073693.png)
+![image](https://user-images.githubusercontent.com/55984573/113248961-e36c4380-92f8-11eb-9f45-9498fc11f00b.png)
+![image](https://user-images.githubusercontent.com/55984573/113248969-e5360700-92f8-11eb-98fa-025f6443dcc9.png)
+![image](https://user-images.githubusercontent.com/55984573/113248975-e830f780-92f8-11eb-8c20-72b21a5f6c8c.png)
+![image](https://user-images.githubusercontent.com/55984573/113248980-e9fabb00-92f8-11eb-9c20-f0a5a43c0bbb.png)
+![image](https://user-images.githubusercontent.com/55984573/113248987-ebc47e80-92f8-11eb-85c2-d7136ac357b5.png)
+
 
 
 ### 5. 프로젝트 기술 스택
