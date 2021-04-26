@@ -73,15 +73,19 @@ GPS 기반 메모 어플리케이션
 
 #### 사용 기술
 - Kakao Maps API
+   
    앱 내에서 사용할 지도로 Kakao 지도를 이용
    
 - Firebase Authentication
+   
    유효한 사용자인지 판별할 도구
    
 - Realtime Database
+   
    사용자 데이터 변화를 실시간으로 업데이트하기 위해 사용
    
 - Dynamic Link & Kakao Link
+   
    앱 내 기능 중에 그룹 인원 초대기능을 구현하기 위해 사용
 
 
